@@ -82,7 +82,7 @@ export default function SocialProof() {
         </motion.div>
 
         {/* Testimonial cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12 md:gap-6">
           {testimonials.map((t, i) => (
             <motion.div
               key={t.name}
@@ -107,7 +107,7 @@ export default function SocialProof() {
               >
                 {/* Quote mark */}
                 <div
-                  className="text-5xl font-bold mb-4 leading-none"
+                  className="text-3xl sm:text-4xl font-bold mb-3 leading-none"
                   style={{
                     background: `linear-gradient(135deg, ${t.accent}, ${t.accent}80)`,
                     WebkitBackgroundClip: "text",
@@ -153,7 +153,7 @@ export default function SocialProof() {
           {metrics.map((m, i) => (
             <div key={m.label}>
               <div
-                className="text-4xl md:text-5xl font-black mb-2"
+                className="text-3xl sm:text-4xl md:text-5xl font-black mb-2"
                 style={{
                   background: "linear-gradient(135deg, #00D4FF, #6600FF)",
                   WebkitBackgroundClip: "text",

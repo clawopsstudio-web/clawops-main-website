@@ -205,7 +205,7 @@ export default function SystemActivation() {
           </div>
 
           {/* Main visual stage — responsive height */}
-          <div className="relative mt-8 h-[420px] w-full max-w-6xl overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.02] sm:mt-12 sm:h-[500px] sm:rounded-[32px] md:h-[540px]">
+          <div className="relative mt-6 h-[340px] w-full max-w-6xl overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.02] sm:mt-10 sm:h-[440px] sm:rounded-[32px] md:h-[520px]">
 
             {/* Network connection lines — NO drop-shadow filter, plain stroke only */}
             <svg
@@ -230,7 +230,7 @@ export default function SystemActivation() {
                 <div
                   key={panel.id}
                   ref={(el) => { panelRefs.current[index] = el; }}
-                  className="sa-panel absolute w-[130px] rounded-2xl border border-white/[0.08] bg-white/[0.03] p-3 backdrop-blur-sm sm:w-[152px] sm:p-4"
+                  className="sa-panel absolute w-[148px] rounded-2xl border border-white/[0.08] bg-white/[0.03] p-3 backdrop-blur-sm sm:w-[160px] sm:p-4"
                   style={{
                     left: panel.x,
                     top: panel.y,

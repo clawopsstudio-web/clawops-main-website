@@ -138,12 +138,12 @@ export default function Problem() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(255,255,255,0.5)]">
             THE PROBLEM
           </p>
-          <h2 className="mt-4 text-3xl font-bold tracking-[-0.03em] text-white sm:text-5xl md:text-6xl">
+          <h2 className="mt-3 text-2xl font-bold tracking-[-0.03em] text-white sm:text-4xl md:text-5xl">
             Your Business Has a Scaling Problem
           </h2>
         </motion.div>
 
-        <div className="mt-14 grid gap-6 md:grid-cols-3">
+        <div className="mt-10 grid gap-4 md:grid-cols-3 md:gap-6">
           {problems.map((problem, index) => {
             const Icon = problem.icon;
 
@@ -162,7 +162,7 @@ export default function Problem() {
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] text-[#00D4FF] transition duration-300 group-hover:border-[rgba(0,212,255,0.4)] group-hover:shadow-[0_0_30px_rgba(0,212,255,0.12)]">
                   <Icon />
                 </div>
-                <h3 className="mt-6 text-2xl font-semibold text-white">{problem.title}</h3>
+                <h3 className="mt-4 text-xl font-semibold text-white sm:mt-6 sm:text-2xl">{problem.title}</h3>
                 <p className="mt-4 text-base leading-7 text-[rgba(255,255,255,0.5)]">
                   {problem.description}
                 </p>
@@ -177,7 +177,7 @@ export default function Problem() {
           transition={{ duration: 0.7, delay: 0.55 }}
           className="mx-auto mt-14 max-w-3xl rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] px-6 py-8 text-center"
         >
-          <p className="text-xl font-medium leading-8 text-white md:text-2xl">
+          <p className="text-base font-medium leading-7 text-white sm:text-xl md:text-2xl">
             Most teams lose{" "}
             <span className="text-[#00D4FF]">
               <CountUpPercentage value={23} />%

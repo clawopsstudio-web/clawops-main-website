@@ -92,7 +92,7 @@ export default function Pricing() {
           </p>
         </motion.div>
 
-        <div className="mt-14 flex flex-col justify-center gap-8 md:flex-row md:items-stretch">
+        <div className="mt-10 flex flex-col justify-center gap-5 md:flex-row md:items-stretch md:gap-6">
           {tiers.map((tier, index) => (
             <motion.div
               key={tier.name}
@@ -126,7 +126,7 @@ export default function Pricing() {
               </span>
 
               <div className="mt-6 flex items-end gap-1">
-                <span className="text-5xl font-bold tracking-tight text-white">{tier.price}</span>
+                <span className="text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl">{tier.price}</span>
                 <span className="mb-1 text-sm text-[rgba(255,255,255,0.5)]">{tier.period}</span>
               </div>
 

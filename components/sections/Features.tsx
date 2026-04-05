@@ -98,7 +98,7 @@ export default function Features() {
           <span className="text-xs font-bold tracking-[0.3em] uppercase text-accent/70">
             Features
           </span>
-          <h2 className="text-3xl md:text-5xl font-bold mt-4 mb-4">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mt-3 mb-3">
             Everything your AI team needs
           </h2>
           <p className="text-white/50 text-lg max-w-2xl mx-auto">
@@ -108,7 +108,7 @@ export default function Features() {
         </motion.div>
 
         {/* Feature cards grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {features.map((feature, i) => (
             <FeatureCard
               key={i}

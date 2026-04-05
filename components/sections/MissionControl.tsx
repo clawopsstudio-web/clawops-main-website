@@ -109,7 +109,7 @@ export default function MissionControl() {
           <p className="font-mono text-xs uppercase tracking-[0.32em] text-[rgba(255,255,255,0.5)]">
             MISSION CONTROL
           </p>
-          <h2 className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-white sm:text-5xl md:text-6xl">
+          <h2 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-white sm:text-4xl md:text-5xl">
             Real-Time Agency Intelligence
           </h2>
           <p className="mt-5 text-lg text-[rgba(255,255,255,0.5)] max-w-xl mx-auto">
@@ -184,7 +184,7 @@ export default function MissionControl() {
           initial={{ opacity: 0, y: 24 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.25, ease: "easeOut" }}
-          className="mx-auto flex max-w-4xl flex-col items-center justify-center gap-8 px-6 py-8 md:flex-row md:gap-12"
+          className="mx-auto flex max-w-4xl flex-col items-center justify-center gap-4 px-4 py-6 sm:gap-6 md:flex-row md:gap-10"
         >
           {metrics.map((metric) => (
             <CountUpNumber key={metric.label} {...metric} isInView={isInView} />

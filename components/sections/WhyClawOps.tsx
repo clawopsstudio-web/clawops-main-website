@@ -110,7 +110,7 @@ export default function WhyClawOps() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(255,255,255,0.45)]">
             WHY CLAWOPS
           </p>
-          <h2 className="mt-4 text-3xl font-bold tracking-[-0.03em] text-white sm:text-5xl md:text-6xl">
+          <h2 className="mt-3 text-2xl font-bold tracking-[-0.03em] text-white sm:text-4xl md:text-5xl">
             Why Not Just Build It Yourself?
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-[rgba(255,255,255,0.5)]">
@@ -124,7 +124,7 @@ export default function WhyClawOps() {
           initial={{ opacity: 0, y: 32 }}
           animate={isInView ? { opacity: 1, y: 0 } : undefined}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="mt-14 overflow-hidden rounded-2xl border border-[rgba(255,255,255,0.08)]"
+          className="mt-8 overflow-hidden rounded-2xl border border-[rgba(255,255,255,0.08)]"
         >
           {/* Header */}
           <div className="grid grid-cols-3 border-b border-[rgba(255,255,255,0.06)]">
@@ -167,7 +167,7 @@ export default function WhyClawOps() {
         </motion.div>
 
         {/* Differentiators */}
-        <div className="mt-16 grid gap-6 md:grid-cols-2">
+        <div className="mt-10 grid gap-4 md:grid-cols-2 md:gap-6">
           {differentiators.map((item, i) => (
             <motion.div
               key={item.title}

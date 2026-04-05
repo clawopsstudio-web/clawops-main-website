@@ -170,7 +170,7 @@ export default function AIDepartments() {
           <p className="font-mono text-xs uppercase tracking-[0.32em] text-[rgba(255,255,255,0.5)]">
             AI DEPARTMENTS
           </p>
-          <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-white sm:text-5xl md:text-6xl">
+          <h2 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-white sm:text-4xl md:text-5xl">
             Every Department. Fully Staffed.
           </h2>
           <p className="mt-5 text-lg text-[rgba(255,255,255,0.5)] max-w-xl mx-auto">
@@ -179,7 +179,7 @@ export default function AIDepartments() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 md:gap-5">
           {departments.map((department, index) => {
             const { Icon } = department;
 
@@ -201,7 +201,7 @@ export default function AIDepartments() {
                 </div>
 
                 <div>
-                  <h3 className="text-2xl font-semibold tracking-[-0.03em] text-white">
+                  <h3 className="text-lg font-semibold tracking-[-0.03em] text-white sm:text-xl md:text-2xl">
                     {department.title}
                   </h3>
                   <p className="mt-3 text-sm leading-6 text-[rgba(255,255,255,0.5)] md:text-[15px]">

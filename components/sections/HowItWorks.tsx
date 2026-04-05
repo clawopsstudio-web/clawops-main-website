@@ -117,7 +117,7 @@ export default function HowItWorks() {
           <p className="font-mono text-xs uppercase tracking-[0.32em] text-[rgba(255,255,255,0.5)]">
             HOW IT WORKS
           </p>
-          <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-white sm:text-5xl md:text-6xl">
+          <h2 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-white sm:text-4xl md:text-5xl">
             Live in 48 Hours, Not 48 Days
           </h2>
         </motion.div>
@@ -126,7 +126,7 @@ export default function HowItWorks() {
           <DesktopConnector isInView={isInView} />
           <MobileConnector isInView={isInView} />
 
-          <div className="relative grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
+          <div className="relative grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-6">
             {steps.map((step, index) => (
               <motion.article
                 key={step.number}
@@ -141,10 +141,10 @@ export default function HowItWorks() {
                   </div>
 
                   <div className="relative z-10">
-                    <h3 className="text-2xl font-semibold tracking-[-0.03em] text-white">
+                    <h3 className="text-lg font-semibold tracking-[-0.03em] text-white sm:text-xl md:text-2xl">
                       {step.title}
                     </h3>
-                    <p className="mt-4 text-[15px] leading-7 text-[rgba(255,255,255,0.5)]">
+                    <p className="mt-3 text-sm leading-6 text-[rgba(255,255,255,0.5)] sm:mt-4 sm:text-[15px]">
                       {step.description}
                     </p>
                   </div>

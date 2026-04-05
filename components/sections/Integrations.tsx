@@ -72,16 +72,16 @@ export default function Integrations() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(255,255,255,0.45)]">
             INTEGRATIONS
           </p>
-          <h2 className="mt-4 text-3xl font-bold tracking-[-0.03em] text-white sm:text-5xl md:text-6xl">
+          <h2 className="mt-3 text-2xl font-bold tracking-[-0.03em] text-white sm:text-4xl md:text-5xl">
             Connects to Your Stack
           </h2>
-          <p className="mx-auto mt-5 max-w-2xl text-lg text-[rgba(255,255,255,0.5)]">
+          <p className="mx-auto mt-3 max-w-2xl text-base text-[rgba(255,255,255,0.5)] sm:mt-5">
             Workers don&apos;t just chat — they operate. Connect via messaging apps,
             browser sessions, APIs, webhooks, or MCP. Your stack, your way.
           </p>
         </motion.div>
 
-        <div className="mt-16 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3 md:mt-12">
           {integrationCategories.map((cat, i) => (
             <motion.div
               key={cat.label}

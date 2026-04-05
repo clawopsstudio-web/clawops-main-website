@@ -235,7 +235,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-            className="max-w-4xl text-[2.5rem] font-bold leading-[1.08] tracking-[-0.04em] text-white sm:text-5xl md:text-7xl lg:text-8xl"
+            className="max-w-4xl text-2xl font-bold leading-[1.08] tracking-[-0.04em] text-white sm:text-4xl md:text-6xl lg:text-7xl"
           >
             {phase.headline}{" "}
             <span
@@ -257,7 +257,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-5 max-w-2xl text-base leading-relaxed text-[rgba(255,255,255,0.48)] sm:mt-6 sm:text-lg md:text-xl"
+            className="mt-4 max-w-2xl text-sm leading-relaxed text-[rgba(255,255,255,0.48)] sm:mt-6 sm:text-base md:text-lg"
           >
             {phase.subtext}
           </motion.p>
