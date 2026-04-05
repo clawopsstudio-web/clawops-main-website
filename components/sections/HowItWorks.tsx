@@ -95,7 +95,7 @@ export default function HowItWorks() {
     <section
       ref={sectionRef}
       id="how-it-works"
-      className="relative overflow-hidden bg-[#04040c] px-4 pt-12 pb-16 md:pt-16 md:pb-20"
+      className="relative overflow-hidden bg-[#04040c] px-6 pt-16 pb-20 md:pt-20 md:pb-24"
     >
       {/* Top gradient divider */}
       <div
@@ -107,7 +107,7 @@ export default function HowItWorks() {
       />
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_left,rgba(0,212,255,0.1),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(102,0,255,0.12),transparent_30%)]" />
 
-      <div className="relative mx-auto max-w-7xl">
+      <div className="relative mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}

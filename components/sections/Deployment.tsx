@@ -54,7 +54,7 @@ export default function Deployment() {
     <section
       ref={ref}
       id="deployment"
-      className="relative overflow-hidden bg-[#04040c] px-4 py-16 md:py-20"
+      className="relative overflow-hidden bg-[#04040c] px-6 py-16 md:py-20"
     >
       {/* Top gradient divider */}
       <div

@@ -11,7 +11,7 @@ export default function CTA() {
     <section
       ref={ref}
       id="cta"
-      className="relative py-16 md:py-24 px-4 overflow-hidden"
+      className="relative overflow-hidden bg-[#04040c] px-6 py-16 md:py-24"
     >
       {/* Background */}
       <div className="absolute inset-0 pointer-events-none">

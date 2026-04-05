@@ -193,7 +193,7 @@ export default function SystemActivation() {
           }}
         />
 
-        <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col items-center justify-center px-4">
+        <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col items-center justify-center px-6">
           {/* Section header */}
           <div className="text-center px-2">
             <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/40 sm:text-xs">

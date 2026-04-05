@@ -60,7 +60,7 @@ export default function Pricing() {
     <section
       ref={sectionRef}
       id="pricing"
-      className="relative overflow-hidden px-4 pt-12 pb-16 md:pt-16 md:pb-24"
+      className="relative overflow-hidden bg-[#04040c] px-6 pt-16 pb-20 md:pt-20 md:pb-28"
     >
       {/* Top gradient divider */}
       <div
@@ -92,7 +92,7 @@ export default function Pricing() {
           </p>
         </motion.div>
 
-        <div className="mt-10 flex flex-col justify-center gap-5 md:flex-row md:items-stretch md:gap-6">
+        <div className="mt-10 grid gap-5 md:grid-cols-2 md:max-w-3xl md:mx-auto md:gap-6">
           {tiers.map((tier, index) => (
             <motion.div
               key={tier.name}
@@ -100,9 +100,9 @@ export default function Pricing() {
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.65, delay: 0.12 + index * 0.14, ease: "easeOut" }}
               className={[
-                "relative flex w-full max-w-[420px] flex-col rounded-[28px] border bg-[rgba(255,255,255,0.03)] p-8 md:p-10",
+                "relative flex w-full flex-col rounded-[28px] border bg-[rgba(255,255,255,0.03)] p-8 md:p-10",
                 tier.highlight
-                  ? "scale-100 border-[#00D4FF] md:scale-[1.03]"
+                  ? "border-[#00D4FF] shadow-[0_0_0_1px_rgba(0,212,255,0.35)]"
                   : "border-[rgba(255,255,255,0.08)]",
               ].join(" ")}
               style={
@@ -110,7 +110,7 @@ export default function Pricing() {
                   ? {
                       background:
                         "linear-gradient(180deg, rgba(0,212,255,0.07) 0%, rgba(255,255,255,0.03) 48%, rgba(102,0,255,0.08) 100%)",
-                      boxShadow: "0 0 40px rgba(0,212,255,0.08)",
+                      boxShadow: "0 0 60px rgba(0,212,255,0.12), 0 0 0 1px rgba(0,212,255,0.35)",
                     }
                   : undefined
               }

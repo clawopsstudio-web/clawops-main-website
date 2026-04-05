@@ -108,7 +108,7 @@ export default function Problem() {
     <section
       ref={sectionRef}
       id="problem"
-      className="relative overflow-hidden bg-[#04040c] px-4 pt-12 pb-16 md:pt-16 md:pb-24"
+      className="relative overflow-hidden bg-[#04040c] px-6 pt-16 pb-20 md:pt-20 md:pb-28"
     >
       {/* Top gradient divider */}
       <div

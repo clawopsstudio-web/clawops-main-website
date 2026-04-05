@@ -112,7 +112,7 @@ export default function Capabilities() {
     <section
       ref={ref}
       id="capabilities"
-      className="relative overflow-hidden bg-[#04040c] px-4 py-16 md:py-20"
+      className="relative overflow-hidden bg-[#04040c] px-6 py-16 md:py-20"
     >
       {/* Background */}
       <div

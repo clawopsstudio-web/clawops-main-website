@@ -146,7 +146,7 @@ export default function AIDepartments() {
     <section
       ref={sectionRef}
       id="ai-departments"
-      className="relative overflow-hidden bg-[#04040c] px-4 pt-12 pb-16 md:px-6 md:pt-16 md:pb-24"
+      className="relative overflow-hidden bg-[#04040c] px-6 pt-16 pb-20 md:pt-20 md:pb-28"
     >
       {/* Top gradient divider */}
       <div
@@ -160,7 +160,7 @@ export default function AIDepartments() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,212,255,0.1),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(102,0,255,0.12),transparent_30%)]" />
       </div>
 
-      <div className="relative mx-auto max-w-7xl">
+      <div className="relative mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 28 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}

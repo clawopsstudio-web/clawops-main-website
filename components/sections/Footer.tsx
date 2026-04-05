@@ -15,7 +15,7 @@ export default function Footer() {
 
   return (
     <footer className="relative border-t border-[rgba(255,255,255,0.06)] bg-[#04040c]">
-      <div className="max-w-7xl mx-auto px-6 py-16">
+      <div className="max-w-6xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-12">
           <div className="md:col-span-2">
             <a href="#" className="inline-flex items-center gap-2 mb-4 group">

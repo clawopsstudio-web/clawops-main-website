@@ -86,7 +86,7 @@ export default function MissionControl() {
     <section
       ref={sectionRef}
       id="mission-control"
-      className="relative overflow-hidden bg-[#04040c] px-4 pt-12 pb-16 md:pt-16 md:pb-24"
+      className="relative overflow-hidden bg-[#04040c] px-6 pt-16 pb-20 md:pt-20 md:pb-28"
     >
       {/* Top gradient divider */}
       <div
@@ -99,7 +99,7 @@ export default function MissionControl() {
       <div className="absolute inset-0 opacity-100 pointer-events-none [background-image:linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:64px_64px]" />
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(0,212,255,0.12),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(102,0,255,0.14),transparent_35%)]" />
 
-      <div className="relative mx-auto max-w-7xl">
+      <div className="relative mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}

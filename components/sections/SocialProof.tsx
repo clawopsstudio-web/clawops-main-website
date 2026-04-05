@@ -63,7 +63,7 @@ export default function SocialProof() {
         }}
       />
 
-      <div className="max-w-7xl mx-auto px-6 relative">
+      <div className="max-w-6xl mx-auto px-6 relative">
         {/* Section header */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
