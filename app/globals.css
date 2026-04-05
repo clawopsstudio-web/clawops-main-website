@@ -1,26 +1,422 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-bg: #04040c;
+  --color-surface: rgba(255, 255, 255, 0.03);
+  --color-surface-hover: rgba(255, 255, 255, 0.06);
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-bright: #00D4FF;
+  --color-accent: #00D4FF;
+  --color-accent-dim: rgba(0, 212, 255, 0.12);
+  --color-violet: #6600FF;
+  --color-muted: rgba(255, 255, 255, 0.5);
+  --color-muted-light: rgba(255, 255, 255, 0.35);
+  --color-green: #00FF88;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  background-color: #04040c;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  background-color: #04040c;
+  color: white;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Smooth scroll via Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Selection */
+::selection {
+  background-color: rgba(0, 212, 255, 0.25);
+  color: white;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #04040c;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 212, 255, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 212, 255, 0.5);
+}
+
+/* Badge shimmer sweep — premium glass-like light drift */
+@keyframes badgeShimmer {
+  0%   { background-position: -100% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Glass card */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-hover:hover {
+  border-color: rgba(0, 212, 255, 0.4);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Gradient text utility */
+.gradient-text {
+  background: linear-gradient(135deg, #00D4FF, #6600FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Gradient border */
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, #00D4FF, #6600FF);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Glow effects */
+.glow-blue {
+  box-shadow: 0 0 30px rgba(0, 212, 255, 0.15), 0 0 60px rgba(0, 212, 255, 0.05);
+}
+
+.glow-blue-sm {
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.25);
+}
+
+.glow-violet {
+  box-shadow: 0 0 30px rgba(102, 0, 255, 0.2);
+}
+
+/* Grid background pattern */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* Dot grid pattern */
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Scanline overlay */
+.scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  pointer-events: none;
+}
+
+/* Shimmer animation */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 212, 255, 0.06) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* Pulse ring animation */
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+.pulse-ring {
+  animation: pulse-ring 2s ease-out infinite;
+}
+
+/* Float animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+.float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Status dot pulse */
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.status-pulse {
+  animation: status-pulse 2s ease-in-out infinite;
+}
+
+/* Bounce animation */
+@keyframes bounce-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+.bounce-y {
+  animation: bounce-y 1.8s ease-in-out infinite;
+}
+
+/* Cinematic scanline — subtle horizontal sweep */
+@keyframes scanline {
+  0%   { transform: translateX(-100%); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+/* ─── Hero pill premium micro-motion ──────────────────────────────────── */
+
+/* 1. Soft radial glow pulse — lives behind the live dot */
+@keyframes dot-glow-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%       { opacity: 0.85; transform: scale(1.35); }
+}
+.dot-glow-pulse {
+  animation: dot-glow-pulse 2.4s ease-in-out infinite;
+}
+
+/* 2. Shimmer sweep — drifts across the pill background, very subtle */
+@keyframes pill-shimmer {
+  0%   { background-position: -180% center; opacity: 0; }
+  10%  { opacity: 1; }
+  60%  { opacity: 0.8; }
+  100% { background-position: 180% center; opacity: 0; }
+}
+.pill-shimmer {
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255,255,255,0.055) 48%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.055) 52%,
+    transparent 70%
+  );
+  background-size: 200% 100%;
+  animation: pill-shimmer 4.5s ease-in-out infinite;
+}
+
+/* 3. Active progress dot — gentle brightness breath */
+@keyframes dot-breathe {
+  0%, 100% { filter: brightness(1); }
+  50%       { filter: brightness(1.45); }
+}
+.dot-breathe {
+  animation: dot-breathe 2.4s ease-in-out infinite;
+}
+
+/* 4. Pill container — barely perceptible scale breath, feels "alive" not "moving" */
+@keyframes pill-breathe {
+  0%, 100% { box-shadow: 0 0 0px 0px rgba(0,212,255,0), 0 2px 20px rgba(0,0,0,0.3); }
+  50%       { box-shadow: 0 0 14px 2px rgba(0,212,255,0.08), 0 2px 20px rgba(0,0,0,0.3); }
+}
+.pill-breathe {
+  animation: pill-breathe 4s ease-in-out infinite;
+}
+
+/* ─── Star twinkle animations — 4 phase-offset variants ─────────────────── */
+/* Each class cycles opacity between 30% → 100% → 30% at different phases.
+ * Phase-reactive color tinting is applied inline per star. */
+@keyframes star-twinkle-1 {
+  0%, 100% { opacity: var(--star-base, 0.3); }
+  50%       { opacity: calc(var(--star-base, 0.3) + 0.35); }
+}
+@keyframes star-twinkle-2 {
+  0%, 100% { opacity: calc(var(--star-base, 0.3) + 0.1); }
+  40%       { opacity: calc(var(--star-base, 0.3) + 0.4); }
+  80%       { opacity: calc(var(--star-base, 0.3) + 0.05); }
+}
+@keyframes star-twinkle-3 {
+  0%, 100% { opacity: var(--star-base, 0.3); }
+  30%       { opacity: calc(var(--star-base, 0.3) + 0.3); }
+  70%       { opacity: var(--star-base, 0.3); }
+}
+@keyframes star-twinkle-4 {
+  0%, 100% { opacity: calc(var(--star-base, 0.3) + 0.15); }
+  50%       { opacity: var(--star-base, 0.3); }
+  75%       { opacity: calc(var(--star-base, 0.3) + 0.45); }
+}
+
+.star-twinkle-1 { animation-name: star-twinkle-1; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+.star-twinkle-2 { animation-name: star-twinkle-2; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+.star-twinkle-3 { animation-name: star-twinkle-3; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+.star-twinkle-4 { animation-name: star-twinkle-4; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+
+/* Fade in up - used by Framer Motion */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Trust marquee animation */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+}
+
+/* Section transitions */
+section {
+  position: relative;
+}
+
+/* Focus states */
+*:focus-visible {
+  outline: 2px solid rgba(0, 212, 255, 0.5);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Button base */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: #00D4FF;
+  color: #04040c;
+}
+
+.btn-primary:hover {
+  background: #33DDFF;
+  box-shadow: 0 0 24px rgba(0, 212, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-ghost:hover {
+  border-color: rgba(0, 212, 255, 0.6);
+  color: #00D4FF;
+  background: rgba(0, 212, 255, 0.06);
+}
+
+/* Pre-label style */
+.pre-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-muted-light);
+}
+
+/* ─── 3D Scene container — mounts inside Hero behind all content ─────────── */
+.scene-container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  /* Allow pointer events to pass through to text/CTAs */
+  overflow: hidden;
+}
+
+.scene-container canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ─── Hero pill shimmer sweep ──────────────────────────────────────────────── */
+@keyframes shimmerSweep {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.pill-shimmer {
+  animation: shimmerSweep 3s ease-in-out infinite;
 }
