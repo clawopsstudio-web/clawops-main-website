@@ -81,7 +81,7 @@ export default function Integrations() {
           </p>
         </motion.div>
 
-        <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3 md:mt-12">
+        <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3 md:mt-12">
           {integrationCategories.map((cat, i) => (
             <motion.div
               key={cat.label}

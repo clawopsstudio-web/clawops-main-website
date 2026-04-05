@@ -95,7 +95,7 @@ export default function HowItWorks() {
     <section
       ref={sectionRef}
       id="how-it-works"
-      className="relative overflow-hidden bg-[#04040c] px-6 pt-16 pb-20 md:pt-20 md:pb-24"
+      className="relative overflow-hidden bg-[#04040c] px-6 pt-12 pb-12 md:pt-20 md:pb-20"
     >
       {/* Top gradient divider */}
       <div
@@ -112,7 +112,7 @@ export default function HowItWorks() {
           initial={{ opacity: 0, y: 24 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="mx-auto mb-10 max-w-3xl text-center md:mb-14"
+          className="mx-auto mb-8 max-w-3xl text-center md:mb-14"
         >
           <p className="font-mono text-xs uppercase tracking-[0.32em] text-[rgba(255,255,255,0.5)]">
             HOW IT WORKS

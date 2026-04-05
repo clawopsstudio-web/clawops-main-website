@@ -131,7 +131,7 @@ export default function FAQ() {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : undefined}
           transition={{ duration: 0.6 }}
-          className="text-center mb-10"
+          className="text-center mb-8 md:mb-10"
         >
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(255,255,255,0.45)]">
             FAQ

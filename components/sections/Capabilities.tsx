@@ -112,7 +112,7 @@ export default function Capabilities() {
     <section
       ref={ref}
       id="capabilities"
-      className="relative overflow-hidden bg-[#04040c] px-6 py-16 md:py-20"
+      className="relative overflow-hidden bg-[#04040c] px-6 pt-12 pb-16 md:pt-16 md:pb-20"
     >
       {/* Background */}
       <div
@@ -144,7 +144,7 @@ export default function Capabilities() {
         </motion.div>
 
         {/* Grid */}
-        <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3 md:gap-5">
+        <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3 md:gap-5">
           {capabilities.map((cap, i) => {
             const Icon = cap.icon;
             return (

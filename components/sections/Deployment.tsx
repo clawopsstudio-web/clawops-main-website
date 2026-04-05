@@ -93,7 +93,7 @@ export default function Deployment() {
         </motion.div>
 
         {/* Platform cards */}
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4 md:mt-12">
           {platforms.map((platform, i) => (
             <motion.div
               key={platform.name}
@@ -121,7 +121,7 @@ export default function Deployment() {
           initial={{ opacity: 0, y: 24 }}
           animate={isInView ? { opacity: 1, y: 0 } : undefined}
           transition={{ duration: 0.7, delay: 0.5 }}
-          className="mt-16 rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.025)] p-8 text-center"
+          className="mt-10 rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.025)] p-6 text-center md:mt-16 md:p-8"
         >
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(0,212,255,0.1)] border border-[rgba(0,212,255,0.2)] text-[#00D4FF]">

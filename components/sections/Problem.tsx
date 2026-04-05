@@ -108,7 +108,7 @@ export default function Problem() {
     <section
       ref={sectionRef}
       id="problem"
-      className="relative overflow-hidden bg-[#04040c] px-6 pt-16 pb-20 md:pt-20 md:pb-28"
+      className="relative overflow-hidden bg-[#04040c] px-6 pt-14 pb-12 md:pt-20 md:pb-20"
     >
       {/* Top gradient divider */}
       <div
@@ -143,7 +143,7 @@ export default function Problem() {
           </h2>
         </motion.div>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-3 md:gap-6">
+        <div className="mt-8 grid gap-4 md:grid-cols-3 md:gap-6">
           {problems.map((problem, index) => {
             const Icon = problem.icon;
 

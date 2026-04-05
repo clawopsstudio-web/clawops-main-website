@@ -45,7 +45,7 @@ export default function SocialProof() {
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="social-proof" className="py-16 md:py-24 relative" ref={ref}>
+    <section id="social-proof" className="py-12 md:py-24 relative" ref={ref}>
       {/* Top gradient divider */}
       <div
         aria-hidden="true"
@@ -69,7 +69,7 @@ export default function SocialProof() {
           initial={{ opacity: 0, y: 24 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center mb-12"
+          className="text-center mb-8 md:mb-12"
         >
           <p className="pre-label mb-4">RESULTS</p>
           <h2 className="text-[clamp(1.5rem,4vw,2rem)] font-bold text-white mb-4">
@@ -82,7 +82,7 @@ export default function SocialProof() {
         </motion.div>
 
         {/* Testimonial cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12 md:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 md:mb-12 md:gap-6">
           {testimonials.map((t, i) => (
             <motion.div
               key={t.name}
@@ -143,7 +143,7 @@ export default function SocialProof() {
           initial={{ opacity: 0, y: 24 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="grid grid-cols-3 gap-8 text-center"
+          className="grid grid-cols-3 gap-4 md:gap-8 text-center"
         >
           {metrics.map((m, i) => (
             <div key={m.label}>

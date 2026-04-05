@@ -23,9 +23,9 @@ export default function WhyClawOps() {
   ];
 
   return (
-    <section className="py-24 px-6 bg-[#0a0a0a]">
+    <section className="py-16 md:py-24 px-6 bg-[#0a0a0a]">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 md:mb-16">
           <span className="text-emerald-400 text-sm font-medium tracking-wider uppercase">
             Why ClawOps vs DIY
           </span>
