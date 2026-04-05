@@ -138,7 +138,7 @@ export default function Problem() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(255,255,255,0.5)]">
             THE PROBLEM
           </p>
-          <h2 className="mt-4 text-4xl font-bold tracking-[-0.03em] text-white md:text-6xl">
+          <h2 className="mt-4 text-3xl font-bold tracking-[-0.03em] text-white sm:text-5xl md:text-6xl">
             Your Business Has a Scaling Problem
           </h2>
         </motion.div>

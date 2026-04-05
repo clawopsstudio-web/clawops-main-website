@@ -69,10 +69,10 @@ export default function SocialProof() {
           initial={{ opacity: 0, y: 24 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center mb-20"
+          className="text-center mb-12"
         >
           <p className="pre-label mb-4">RESULTS</p>
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+          <h2 className="text-3xl sm:text-5xl md:text-5xl font-bold text-white mb-4">
             What Teams Are Saying
           </h2>
           <p className="text-[rgba(255,255,255,0.5)] text-lg max-w-xl mx-auto">
@@ -82,7 +82,7 @@ export default function SocialProof() {
         </motion.div>
 
         {/* Testimonial cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-24">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
           {testimonials.map((t, i) => (
             <motion.div
               key={t.name}

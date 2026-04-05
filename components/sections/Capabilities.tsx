@@ -134,7 +134,7 @@ export default function Capabilities() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(255,255,255,0.45)]">
             WHAT YOU GET
           </p>
-          <h2 className="mt-4 text-4xl font-bold tracking-[-0.03em] text-white md:text-6xl">
+          <h2 className="mt-4 text-3xl font-bold tracking-[-0.03em] text-white sm:text-5xl md:text-6xl">
             Prebuilt Workers, Not a Chatbot
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-[rgba(255,255,255,0.5)]">
@@ -144,7 +144,7 @@ export default function Capabilities() {
         </motion.div>
 
         {/* Grid */}
-        <div className="mt-16 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {capabilities.map((cap, i) => {
             const Icon = cap.icon;
             return (

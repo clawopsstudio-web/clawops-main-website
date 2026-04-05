@@ -112,12 +112,12 @@ export default function HowItWorks() {
           initial={{ opacity: 0, y: 24 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="mx-auto mb-14 max-w-3xl text-center md:mb-16"
+          className="mx-auto mb-10 max-w-3xl text-center md:mb-14"
         >
           <p className="font-mono text-xs uppercase tracking-[0.32em] text-[rgba(255,255,255,0.5)]">
             HOW IT WORKS
           </p>
-          <h2 className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-white sm:text-5xl md:text-6xl">
+          <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-white sm:text-5xl md:text-6xl">
             Live in 48 Hours, Not 48 Days
           </h2>
         </motion.div>

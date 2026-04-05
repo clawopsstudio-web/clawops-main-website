@@ -110,7 +110,7 @@ export default function WhyClawOps() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(255,255,255,0.45)]">
             WHY CLAWOPS
           </p>
-          <h2 className="mt-4 text-4xl font-bold tracking-[-0.03em] text-white md:text-6xl">
+          <h2 className="mt-4 text-3xl font-bold tracking-[-0.03em] text-white sm:text-5xl md:text-6xl">
             Why Not Just Build It Yourself?
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-[rgba(255,255,255,0.5)]">
