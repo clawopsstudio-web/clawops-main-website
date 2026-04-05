@@ -44,7 +44,7 @@ export default function Integrations() {
     <section
       ref={ref}
       id="integrations"
-      className="relative overflow-hidden bg-[#04040c] px-4 py-24 md:py-32"
+      className="relative overflow-hidden bg-[#04040c] px-4 py-24 md:py-24"
     >
       {/* Top gradient divider */}
       <div

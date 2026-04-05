@@ -45,7 +45,7 @@ export default function SocialProof() {
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="social-proof" className="py-32 relative" ref={ref}>
+    <section id="social-proof" className="py-16 md:py-24 relative" ref={ref}>
       {/* Top gradient divider */}
       <div
         aria-hidden="true"

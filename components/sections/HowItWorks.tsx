@@ -135,7 +135,7 @@ export default function HowItWorks() {
                 transition={{ duration: 0.6, delay: index * 0.2, ease: "easeOut" }}
                 className="relative flex"
               >
-                <div className="relative w-full rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] p-8 pt-24 md:pt-28 lg:pl-20 lg:pt-8">
+                <div className="relative w-full rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] p-6 md:p-8">
                   <div className="pointer-events-none absolute left-8 top-6 bg-[linear-gradient(135deg,#00D4FF,#6600FF)] bg-clip-text text-[72px] font-semibold leading-none tracking-[-0.08em] text-transparent opacity-10 md:text-[96px] lg:left-6 lg:top-4">
                     {step.number}
                   </div>

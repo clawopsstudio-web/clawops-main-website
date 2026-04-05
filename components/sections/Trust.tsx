@@ -31,7 +31,7 @@ export default function Trust() {
     <section
       ref={sectionRef}
       id="trust"
-      className="relative overflow-hidden px-4 pt-12 pb-24 md:pt-16 md:pb-32"
+      className="relative overflow-hidden px-4 pt-12 pb-16 md:pt-16 md:pb-24"
     >
       {/* Top gradient divider */}
       <div

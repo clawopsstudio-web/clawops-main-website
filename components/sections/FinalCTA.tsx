@@ -9,7 +9,7 @@ export default function FinalCTA() {
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="cta" className="relative pt-12 pb-40 md:pt-16" ref={ref}>
+    <section id="cta" className="relative pt-12 pb-20 md:pt-16 md:pb-24" ref={ref}>
       {/* Top gradient divider */}
       <div
         aria-hidden="true"

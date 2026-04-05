@@ -86,7 +86,7 @@ export default function MissionControl() {
     <section
       ref={sectionRef}
       id="mission-control"
-      className="relative overflow-hidden bg-[#04040c] px-4 pt-12 pb-24 md:pt-16 md:pb-32"
+      className="relative overflow-hidden bg-[#04040c] px-4 pt-12 pb-16 md:pt-16 md:pb-24"
     >
       {/* Top gradient divider */}
       <div
