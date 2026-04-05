@@ -96,7 +96,7 @@ export default function UseCases() {
           className="text-center mb-10"
         >
           <p className="pre-label mb-4">USE CASES</p>
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
+          <h2 className="text-[clamp(1.5rem,4vw,2rem)] font-bold text-white mb-4">
             Built for Real Business Work
           </h2>
           <p className="text-[rgba(255,255,255,0.5)] text-sm max-w-xl mx-auto sm:text-base">

@@ -55,7 +55,7 @@ export default function Trust() {
           <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-[rgba(255,255,255,0.5)]">
             TRUSTED INFRASTRUCTURE
           </p>
-          <h2 className="mt-3 text-2xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl">
+          <h2 className="mt-3 text-[clamp(1.5rem,4vw,2rem)] font-bold tracking-tight text-white md:text-5xl">
             Built on Systems That Scale
           </h2>
         </motion.div>

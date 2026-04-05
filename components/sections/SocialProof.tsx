@@ -72,7 +72,7 @@ export default function SocialProof() {
           className="text-center mb-12"
         >
           <p className="pre-label mb-4">RESULTS</p>
-          <h2 className="text-3xl sm:text-5xl md:text-5xl font-bold text-white mb-4">
+          <h2 className="text-[clamp(1.5rem,4vw,2rem)] font-bold text-white mb-4">
             What Teams Are Saying
           </h2>
           <p className="text-[rgba(255,255,255,0.5)] text-lg max-w-xl mx-auto">
@@ -153,7 +153,7 @@ export default function SocialProof() {
           {metrics.map((m, i) => (
             <div key={m.label}>
               <div
-                className="text-3xl sm:text-4xl md:text-5xl font-black mb-2"
+                className="text-[clamp(1.75rem,3.5vw,2.5rem)] font-black mb-2"
                 style={{
                   background: "linear-gradient(135deg, #00D4FF, #6600FF)",
                   WebkitBackgroundClip: "text",

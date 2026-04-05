@@ -83,7 +83,7 @@ export default function Deployment() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(255,255,255,0.45)]">
             WHERE THEY WORK
           </p>
-          <h2 className="mt-3 text-2xl font-bold tracking-[-0.03em] text-white sm:text-4xl md:text-6xl">
+          <h2 className="mt-3 text-[clamp(1.5rem,4vw,2rem)] font-bold tracking-[-0.03em] text-white md:text-6xl">
             Talk to Your AI. In Your App.
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-[rgba(255,255,255,0.5)]">

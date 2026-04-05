@@ -98,7 +98,7 @@ export default function Features() {
           <span className="text-xs font-bold tracking-[0.3em] uppercase text-accent/70">
             Features
           </span>
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mt-3 mb-3">
+          <h2 className="text-[clamp(1.5rem,4vw,2rem)] font-bold mt-3 mb-3">
             Everything your AI team needs
           </h2>
           <p className="text-white/50 text-lg max-w-2xl mx-auto">

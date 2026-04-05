@@ -199,7 +199,7 @@ export default function SystemActivation() {
             <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/40 sm:text-xs">
               SYSTEM ACTIVATION
             </p>
-            <h2 className="mt-3 text-2xl font-bold tracking-[-0.04em] text-white sm:mt-4 sm:text-4xl md:text-6xl">
+            <h2 className="mt-3 text-[clamp(1.5rem,4vw,2rem)] font-bold tracking-[-0.04em] text-white sm:mt-4 md:text-6xl">
               From Chaos to Connected Agency
             </h2>
           </div>

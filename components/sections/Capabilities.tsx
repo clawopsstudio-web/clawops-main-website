@@ -134,7 +134,7 @@ export default function Capabilities() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(255,255,255,0.45)]">
             WHAT YOU GET
           </p>
-          <h2 className="mt-3 text-2xl font-bold tracking-[-0.03em] text-white sm:text-4xl md:text-5xl">
+          <h2 className="mt-3 text-[clamp(1.5rem,4vw,2rem)] font-bold tracking-[-0.03em] text-white md:text-5xl">
             Prebuilt Workers, Not a Chatbot
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-base text-[rgba(255,255,255,0.5)] sm:mt-5 sm:text-base">

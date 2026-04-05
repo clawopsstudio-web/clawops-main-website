@@ -235,7 +235,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-            className="max-w-4xl text-2xl font-bold leading-[1.08] tracking-[-0.04em] text-white sm:text-4xl md:text-6xl lg:text-7xl"
+            className="max-w-4xl text-[clamp(2rem,5vw,2.75rem)] font-bold leading-[1.08] tracking-[-0.04em] text-white md:text-6xl lg:text-7xl"
           >
             {phase.headline}{" "}
             <span

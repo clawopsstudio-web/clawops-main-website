@@ -109,7 +109,7 @@ export default function MissionControl() {
           <p className="font-mono text-xs uppercase tracking-[0.32em] text-[rgba(255,255,255,0.5)]">
             MISSION CONTROL
           </p>
-          <h2 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-white sm:text-4xl md:text-5xl">
+          <h2 className="mt-3 text-[clamp(1.5rem,4vw,2rem)] font-semibold tracking-[-0.04em] text-white md:text-5xl">
             Real-Time Agency Intelligence
           </h2>
           <p className="mt-5 text-lg text-[rgba(255,255,255,0.5)] max-w-xl mx-auto">

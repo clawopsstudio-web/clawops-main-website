@@ -84,7 +84,7 @@ export default function Pricing() {
           <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-[rgba(255,255,255,0.5)]">
             PRICING
           </p>
-          <h2 className="mt-4 text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl">
+          <h2 className="mt-3 text-[clamp(1.5rem,4vw,2rem)] font-bold tracking-tight text-white md:text-5xl">
             Simple, Transparent Pricing
           </h2>
           <p className="mt-4 mx-auto max-w-xl text-base text-[rgba(255,255,255,0.45)]">
@@ -126,7 +126,7 @@ export default function Pricing() {
               </span>
 
               <div className="mt-6 flex items-end gap-1">
-                <span className="text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl">{tier.price}</span>
+                <span className="text-[clamp(1.75rem,4vw,2.5rem)] font-bold tracking-tight text-white">{tier.price}</span>
                 <span className="mb-1 text-sm text-[rgba(255,255,255,0.5)]">{tier.period}</span>
               </div>
 
