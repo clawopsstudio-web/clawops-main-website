@@ -1,0 +1,7 @@
+export { default as StepProfile } from './StepProfile'
+export { default as StepIndustry } from './StepIndustry'
+export { default as StepUseCase } from './StepUseCase'
+export { default as StepIntegrations } from './StepIntegrations'
+export { default as StepGoals } from './StepGoals'
+export { default as StepComplete } from './StepComplete'
+export { default as StepIndicator } from './StepIndicator'
