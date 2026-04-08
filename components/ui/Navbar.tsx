@@ -82,17 +82,23 @@ export default function Navbar() {
             ))}
           </ul>
 
-          {/* Desktop CTA */}
+          {/* Desktop Auth Buttons */}
           <div className="hidden items-center gap-3 md:flex">
             <Link
-              href="/pricing"
+              href="/auth/login"
+              className="rounded-lg px-4 py-2 text-sm font-medium text-white/70 hover:text-white transition-colors"
+            >
+              Log In
+            </Link>
+            <Link
+              href="/auth/signup"
               className="rounded-lg px-4 py-2 text-sm font-semibold text-white transition-all duration-300"
               style={{
                 background: "linear-gradient(135deg, #00D4FF, #6600FF)",
                 boxShadow: "0 0 20px rgba(0,212,255,0.25)",
               }}
             >
-              Deploy AI Team
+              Get Started Free
             </Link>
           </div>
 
@@ -131,14 +137,14 @@ export default function Navbar() {
               ))}
               <li className="mt-4">
                 <Link
-                  href="/pricing"
+                  href="/auth/signup"
                   onClick={() => setIsOpen(false)}
                   className="block rounded-xl py-3 text-center text-sm font-semibold text-white"
                   style={{
                     background: "linear-gradient(135deg, #00D4FF, #6600FF)",
                   }}
                 >
-                  Deploy AI Team
+                  Get Started Free
                 </Link>
               </li>
             </ul>
