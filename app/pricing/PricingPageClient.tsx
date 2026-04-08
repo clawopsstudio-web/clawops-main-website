@@ -9,578 +9,410 @@ const PLANS = [
     name: "Starter",
     price: 49,
     originalPrice: 79,
-    tagline: "Your first AI worker. Zero overhead.",
+    tagline: "Your first AI worker. Everything included.",
     highlight: false,
     color: "#00D4FF",
-    workers: "1 Worker",
-    workersDetail: "Support, Research, Content, or Ops",
     specs: {
-      ram: "2 GB",
-      storage: "20 GB NVMe",
-      vcpus: "1 vCPU",
-      bandwidth: "Unlimited",
+      vcpus: "2 vCPU",
+      ram: "4 GB",
+      storage: "50 GB NVMe SSD",
       uptime: "99.5%",
     },
-    models: ["Claude 4.4 (Mini)", "GPT-4o-mini", "Gemini 2.5-flash"],
+    agents: "2 AI Agents",
+    workflows: "5 n8n Workflows",
+    browser: "1 Browser Session",
+    localModel: "Gemma 4 2B (local)",
+    models: ["Claude Opus 4.6", "GPT-4.4", "MiniMax 2.5"],
     features: [
-      "1 AI Worker (choose role)",
+      "2 AI Agents (any roles)",
       "Telegram integration",
       "Browser automation",
-      "50 tasks/month",
+      "5 n8n workflows",
+      "1 browser session",
+      "Gemma 4 2B (local Ollama)",
+      "All cloud models",
+      "30-day history",
       "Email support",
-      "1 team member",
-      "7-day history",
     ],
     cta: "Start with Starter",
     popular: false,
   },
   {
     name: "Pro",
-    price: 149,
-    originalPrice: 249,
+    price: 99,
+    originalPrice: 149,
     tagline: "Full AI team. Real leverage.",
     highlight: true,
     color: "#6600FF",
-    workers: "3 Workers",
-    workersDetail: "Mix & match any roles",
     specs: {
-      ram: "4 GB",
-      storage: "60 GB NVMe",
-      vcpus: "2 vCPU",
-      bandwidth: "Unlimited",
+      vcpus: "4 vCPU",
+      ram: "8 GB",
+      storage: "100 GB NVMe SSD",
       uptime: "99.9%",
     },
-    models: [
-      "Claude 4.6 (Opus)",
-      "GPT-4o",
-      "GPT-4o-mini",
-      "Gemini 2.5-flash",
-      "MiniMax 2.5",
-      "Gemma 4 2B (local)",
-    ],
+    agents: "5 AI Agents",
+    workflows: "20 n8n Workflows",
+    browser: "3 Browser Sessions",
+    localModel: "Gemma 4 2B + 7B",
+    models: ["Claude Opus 4.6", "GPT-4.4", "MiniMax 2.5", "GPT-4o", "Gemini 2.5"],
     features: [
-      "3 AI Workers (any roles)",
-      "Telegram + WhatsApp + Discord",
+      "5 AI Agents (any roles)",
+      "Telegram + WhatsApp + Slack",
       "Browser + API automation",
-      "500 tasks/month",
-      "Priority support (4h SLA)",
-      "5 team members",
-      "30-day history",
+      "20 n8n workflows",
+      "3 browser sessions",
+      "Gemma 4 2B + 7B (local)",
+      "All cloud models",
+      "60-day history",
+      "Priority support",
       "Webhook + Zapier + n8n",
-      "Custom instructions",
-      "Monthly strategy call",
+      "Custom agent instructions",
     ],
-    cta: "Deploy Pro Team",
+    cta: "Go Pro",
     popular: true,
   },
   {
-    name: "Agency",
-    price: 399,
-    originalPrice: 599,
-    tagline: "Scale to your entire client roster.",
+    name: "Business",
+    price: 149,
+    originalPrice: 249,
+    tagline: "Unlimited scale. White-label ready.",
     highlight: false,
     color: "#00D4FF",
-    workers: "10 Workers",
-    workersDetail: "Deploy across clients",
     specs: {
-      ram: "8 GB",
-      storage: "200 GB NVMe",
-      vcpus: "4 vCPU",
-      bandwidth: "Unlimited",
+      vcpus: "6 vCPU",
+      ram: "12 GB",
+      storage: "200 GB NVMe SSD",
       uptime: "99.95%",
     },
-    models: [
-      "Claude 4.6 (Opus)",
-      "GPT-4o",
-      "GPT-4o-mini",
-      "Gemini 2.5-flash",
-      "MiniMax 2.5",
-      "Gemma 4 2B (local)",
-      "Ollama any model",
-    ],
+    agents: "Unlimited AI Agents",
+    workflows: "Unlimited n8n",
+    browser: "5 Browser Sessions",
+    localModel: "Gemma 4 2B + 7B + Custom",
+    models: ["Claude Opus 4.6", "GPT-4.4", "MiniMax 2.5", "GPT-4o", "Gemini 2.5", "Any Ollama model"],
     features: [
-      "10 AI Workers (any roles)",
+      "Unlimited AI Agents",
       "All messaging platforms",
       "Browser + API + MCP automation",
-      "Unlimited tasks",
-      "Dedicated support (1h SLA)",
-      "Unlimited team members",
+      "Unlimited n8n workflows",
+      "5 browser sessions",
+      "Gemma 4 2B + 7B + Custom models",
+      "All cloud models + any Ollama",
       "90-day history",
+      "Dedicated support (1h SLA)",
       "White-label dashboard",
       "Client sub-accounts",
       "Custom integrations",
-      "Weekly strategy sessions",
+      "Monthly strategy sessions",
       "SLA guarantee",
     ],
-    cta: "Go Agency Scale",
+    cta: "Go Business",
     popular: false,
   },
 ];
 
-const MODEL_INFO = [
+const COMPARISON = [
+  { feature: "AI Agents", starter: "2", pro: "5", business: "Unlimited" },
+  { feature: "n8n Workflows", starter: "5", pro: "20", business: "Unlimited" },
+  { feature: "Browser Sessions", starter: "1", pro: "3", business: "5" },
+  { feature: "Cloud Models", starter: "3", pro: "5+", business: "All + Custom" },
+  { feature: "Local Model (Ollama)", starter: "Gemma 2B", pro: "Gemma 2B + 7B", business: "Any model" },
+  { feature: "Messaging Platforms", starter: "Telegram", pro: "3 platforms", business: "All platforms" },
+  { feature: "History Retention", starter: "30 days", pro: "60 days", business: "90 days" },
+  { feature: "Support", starter: "Email", pro: "Priority (4h)", business: "Dedicated (1h)" },
+  { feature: "White-label", starter: false, pro: false, business: true },
+  { feature: "Client Sub-accounts", starter: false, pro: false, business: true },
+  { feature: "Strategy Sessions", starter: false, pro: "Monthly", business: "Weekly" },
+  { feature: "SLA Guarantee", starter: false, pro: false, business: true },
+];
+
+const FAQS = [
   {
-    name: "Claude Opus 4.6",
-    provider: "Anthropic",
-    context: "200K tokens",
-    strength: "Long documents, deep reasoning",
-    bestFor: "Research, analysis, strategy",
-    badge: "Best for reasoning",
-    color: "#FF6B35",
+    q: "How does billing work?",
+    a: "All plans are billed monthly. You can upgrade or downgrade anytime. No long-term contracts required.",
   },
   {
-    name: "GPT-4.4",
-    provider: "OpenAI",
-    context: "128K tokens",
-    strength: "Code, structured outputs, function calling",
-    bestFor: "DevOps, automation, structured tasks",
-    badge: "Best for coding",
-    color: "#00D4FF",
+    q: "What's included in the VPS?",
+    a: "Every plan includes a dedicated Contabo VPS with the specified resources. Your OpenClaw instance runs 24/7 on your own server.",
   },
   {
-    name: "MiniMax 2.5",
-    provider: "MiniMax",
-    context: "100K tokens",
-    strength: "Fast, cost-effective, multilingual",
-    bestFor: "High-volume content, translation",
-    badge: "Best value",
-    color: "#00FF88",
+    q: "What AI models can I use?",
+    a: "All plans include access to Claude Opus 4.6, GPT-4.4, and MiniMax 2.5 via API. Pro and Business also include Gemma running locally via Ollama — zero API cost.",
   },
   {
-    name: "Gemma 4 2B",
-    provider: "Google (local)",
-    context: "8K tokens",
-    strength: "Zero API cost, offline capable, private",
-    bestFor: "Simple tasks, privacy-sensitive workloads",
-    badge: "Best for privacy",
-    color: "#6600FF",
+    q: "What's n8n and why does it matter?",
+    a: "n8n is a powerful workflow automation tool. It handles repetitive, high-volume tasks (like syncing data between apps) so your AI agents only handle complex reasoning. This saves tokens and reduces costs significantly.",
+  },
+  {
+    q: "Can I use my own VPS?",
+    a: "Yes. You can connect your own Contabo VPS or use ours. Your VPS is provisioned with OpenClaw, Ollama, n8n, and all integrations pre-configured.",
+  },
+  {
+    q: "What happens if I exceed my plan limits?",
+    a: "We'll notify you when you're approaching limits. Plans can be upgraded anytime — changes take effect immediately.",
+  },
+  {
+    q: "Do you offer refunds?",
+    a: "We offer a 7-day money-back guarantee on all plans. If you're not satisfied within the first week, we'll refund you in full.",
   },
 ];
 
-function CheckIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="flex-shrink-0 mt-0.5" aria-hidden="true">
-      <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function XIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="flex-shrink-0 mt-0.5 text-[rgba(255,255,255,0.15)]" aria-hidden="true">
-      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function ArrowIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 export default function PricingPageClient() {
-  const [annual, setAnnual] = useState(true);
-  const headerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(headerRef, { once: true });
+  const [annual, setAnnual] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true });
 
   return (
-    <main className="min-h-screen bg-[#04040c]">
+    <div className="min-h-screen bg-[#04040c] text-white">
       {/* Hero */}
-      <div ref={headerRef} className="relative overflow-hidden px-6 pt-32 pb-16 text-center">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(0,212,255,0.1),transparent_60%)]" />
-          <div className="absolute inset-0 grid-bg opacity-40" />
+      <div className="relative py-24 px-6 text-center overflow-hidden">
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(0,212,255,0.12),transparent)]" />
         </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="relative z-10 mx-auto max-w-4xl"
-        >
-          <p className="pre-label mb-4">PRICING</p>
-          <h1 className="text-[clamp(2rem,5vw,3.5rem)] font-bold tracking-[-0.04em] text-white md:text-5xl lg:text-6xl">
-            AI Workers.
+        <div className="relative z-10 max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[rgba(0,212,255,0.2)] bg-[rgba(0,212,255,0.06)] mb-6">
+            <span className="text-xs font-mono text-[#00D4FF]">Simple, transparent pricing</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            The cost of not automating
             <br />
             <span className="bg-gradient-to-r from-[#00D4FF] to-[#6600FF] bg-clip-text text-transparent">
-              Priced to actually make sense.
+              is higher than this.
             </span>
           </h1>
-          <p className="mx-auto mt-5 max-w-xl text-base text-[rgba(255,255,255,0.5)] sm:text-lg">
-            No per-message billing surprises. No hidden infra costs. Flat monthly
-            subscriptions with everything included.
+          <p className="text-lg text-[rgba(255,255,255,0.5)] max-w-xl mx-auto">
+            Pick a plan. Get your VPS. Deploy your AI team in minutes — not weeks.
           </p>
 
-          {/* Billing toggle */}
-          <div className="mt-8 inline-flex items-center gap-3 rounded-full border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] p-1">
+          {/* Annual toggle */}
+          <div className="flex items-center justify-center gap-3 mt-8">
+            <span className={`text-sm ${!annual ? "text-white" : "text-white/40"}`}>Monthly</span>
             <button
-              onClick={() => setAnnual(true)}
-              className={`rounded-full px-5 py-2 text-sm font-medium transition-all duration-200 ${
-                annual
-                  ? "bg-gradient-to-r from-[#00D4FF] to-[#6600FF] text-white shadow-lg"
-                  : "text-[rgba(255,255,255,0.45)] hover:text-white"
-              }`}
+              onClick={() => setAnnual(!annual)}
+              className={`relative w-14 h-7 rounded-full transition-colors ${annual ? "bg-[#6600FF]" : "bg-white/10"}`}
             >
-              Annual
-              <span className="ml-2 rounded bg-[rgba(255,255,255,0.15)] px-1.5 py-0.5 text-[10px]">Save 40%</span>
+              <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-transform ${annual ? "translate-x-8" : "translate-x-1"}`} />
             </button>
-            <button
-              onClick={() => setAnnual(false)}
-              className={`rounded-full px-5 py-2 text-sm font-medium transition-all duration-200 ${
-                !annual
-                  ? "bg-gradient-to-r from-[#00D4FF] to-[#6600FF] text-white shadow-lg"
-                  : "text-[rgba(255,255,255,0.45)] hover:text-white"
-              }`}
-            >
-              Monthly
-            </button>
+            <span className={`text-sm ${annual ? "text-white" : "text-white/40"}`}>
+              Annual <span className="text-[#00D4FF] text-xs font-bold">(-40%)</span>
+            </span>
           </div>
-        </motion.div>
+        </div>
       </div>
 
-      {/* Pricing cards */}
-      <div className="relative px-6 pb-20">
-        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 lg:grid-cols-3">
+      {/* Pricing Cards */}
+      <div className="max-w-6xl mx-auto px-6 pb-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {PLANS.map((plan, i) => (
             <motion.div
               key={plan.name}
-              initial={{ opacity: 0, y: 32 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
-              className={`relative rounded-2xl overflow-hidden ${
-                plan.highlight ? "ring-2 ring-[#6600FF] ring-offset-2 ring-offset-[#04040c]" : ""
+              initial={{ opacity: 0, y: 30 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: i * 0.1 }}
+              className={`relative rounded-2xl border overflow-hidden ${
+                plan.highlight
+                  ? "border-[#6600FF] bg-[rgba(102,0,255,0.06)]"
+                  : "border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)]"
               }`}
-              style={{ gridRow: plan.highlight ? "span 1" : "auto" }}
             >
-              {/* Popular badge */}
-              {plan.popular && (
-                <div className="absolute -top-px left-1/2 -translate-x-1/2 z-10">
-                  <div className="rounded-b-xl bg-gradient-to-r from-[#6600FF] to-[#00D4FF] px-5 py-1 text-[10px] font-mono font-bold uppercase tracking-widest text-white shadow-lg">
-                    Most Popular
-                  </div>
-                </div>
+              {plan.highlight && (
+                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-[#6600FF] to-[#00D4FF]" />
               )}
 
-              <div
-                className={`relative flex h-full flex-col rounded-2xl border p-8 ${
-                  plan.highlight
-                    ? "border-[rgba(102,0,255,0.4)] bg-[rgba(102,0,255,0.06)]"
-                    : "border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)]"
-                }`}
-              >
-                {/* Header */}
-                <div className="mb-6">
-                  <div className="mb-3 flex items-center gap-2">
-                    <div
-                      className="h-2 w-2 rounded-full"
-                      style={{ background: plan.color, boxShadow: `0 0 8px ${plan.color}` }}
-                    />
-                    <span className="font-mono text-xs uppercase tracking-widest" style={{ color: plan.color }}>
-                      {plan.workers}
-                    </span>
+              <div className="p-6">
+                {/* Plan header */}
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <h3 className="text-xl font-bold">{plan.name}</h3>
+                    <p className="text-sm text-white/50 mt-1">{plan.tagline}</p>
                   </div>
-                  <h2 className="text-2xl font-bold text-white">{plan.name}</h2>
-                  <p className="mt-1 text-sm text-[rgba(255,255,255,0.45)]">{plan.tagline}</p>
-
-                  {/* Price */}
-                  <div className="mt-6 flex items-end gap-2">
-                    <span className="text-[clamp(2.5rem,4vw,3.5rem)] font-bold tracking-tight text-white">
-                      ${annual ? Math.round(plan.price * 0.6) : plan.price}
+                  {plan.highlight && (
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#6600FF] text-white">
+                      POPULAR
                     </span>
-                    <span className="mb-2 text-sm text-[rgba(255,255,255,0.35)]">/mo</span>
-                    {annual && (
-                      <span className="mb-3 rounded bg-[rgba(0,255,136,0.12)] px-2 py-0.5 text-xs text-[#00FF88]">
-                        billed annually
-                      </span>
-                    )}
+                  )}
+                </div>
+
+                {/* Price */}
+                <div className="mb-6">
+                  <div className="flex items-end gap-1">
+                    <span className="text-4xl font-bold">${annual ? Math.round(plan.price * 0.6) : plan.price}</span>
+                    <span className="text-white/40 mb-1 ml-1">/month</span>
                   </div>
                   {annual && (
-                    <p className="mt-1 text-xs text-[rgba(255,255,255,0.25)] line-through">
-                      ${plan.originalPrice}/mo regular
+                    <p className="text-xs text-white/30 mt-1">
+                      Billed ${Math.round(plan.price * 0.6 * 12)} yearly
                     </p>
                   )}
                 </div>
 
-                {/* Specs */}
-                <div className="mb-6 grid grid-cols-2 gap-2 rounded-xl border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.02)] p-3">
-                  {[
-                    { label: "RAM", value: plan.specs.ram },
-                    { label: "vCPUs", value: plan.specs.vcpus },
-                    { label: "Storage", value: plan.specs.storage },
-                    { label: "Uptime", value: plan.specs.uptime },
-                  ].map((s) => (
-                    <div key={s.label} className="flex flex-col">
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-[rgba(255,255,255,0.25)]">{s.label}</span>
-                      <span className="mt-0.5 text-sm font-semibold text-white">{s.value}</span>
-                    </div>
-                  ))}
+                {/* VPS Specs */}
+                <div className="mb-4 p-4 rounded-xl bg-black/30 border border-white/5">
+                  <p className="text-[10px] font-mono text-white/30 mb-2 uppercase tracking-wider">VPS Hardware</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {Object.entries(plan.specs).map(([key, value]) => (
+                      <div key={key} className="flex items-center gap-2">
+                        <span className="text-[#00D4FF] text-xs">{value}</span>
+                        <span className="text-white/30 text-[10px] capitalize">{key}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
-                {/* Models */}
-                <div className="mb-6">
-                  <p className="mb-2 text-[10px] font-mono uppercase tracking-widest text-[rgba(255,255,255,0.25)]">
-                    Included Models
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {plan.models.map((m) => (
-                      <span
-                        key={m}
-                        className="rounded-md border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.04)] px-2 py-1 text-[10px] text-[rgba(255,255,255,0.6)]"
-                      >
-                        {m}
-                      </span>
-                    ))}
-                    {plan.models.includes("Gemma 4 2B (local)") && (
-                      <span className="rounded-md border border-[rgba(0,255,136,0.2)] bg-[rgba(0,255,136,0.06)] px-2 py-1 text-[10px] text-[#00FF88]">
-                        local
-                      </span>
-                    )}
+                {/* Key capabilities */}
+                <div className="space-y-1.5 mb-6">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-green-400">&#10003;</span>
+                    <span>{plan.agents}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-green-400">&#10003;</span>
+                    <span>{plan.workflows}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-green-400">&#10003;</span>
+                    <span>{plan.browser}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-green-400">&#10003;</span>
+                    <span>{plan.localModel}</span>
                   </div>
                 </div>
 
                 {/* Features */}
-                <div className="mb-8 flex-1 space-y-2.5">
+                <ul className="space-y-2 mb-6">
                   {plan.features.map((f) => (
-                    <div key={f} className="flex items-start gap-2.5">
-                      <CheckIcon />
-                      <span className="text-sm text-[rgba(255,255,255,0.6)]">{f}</span>
-                    </div>
+                    <li key={f} className="flex items-start gap-2 text-sm text-white/60">
+                      <span className="text-green-400 mt-0.5">&#10003;</span>
+                      {f}
+                    </li>
                   ))}
-                </div>
+                </ul>
 
                 {/* CTA */}
-                <a
-                  href="#"
-                  className={`group flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 ${
+                <button
+                  className={`w-full py-3 rounded-xl font-semibold text-sm transition-all hover:-translate-y-0.5 ${
                     plan.highlight
-                      ? "bg-gradient-to-r from-[#6600FF] to-[#00D4FF] text-white shadow-lg shadow-[rgba(102,0,255,0.3)] hover:shadow-xl"
-                      : "border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.05)] text-white hover:border-[rgba(0,212,255,0.4)] hover:bg-[rgba(0,212,255,0.08)]"
+                      ? "bg-gradient-to-r from-[#6600FF] to-[#00D4FF] text-white shadow-lg shadow-purple-500/20"
+                      : "border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] text-white/80"
                   }`}
                 >
                   {plan.cta}
-                  <span className="transition-transform group-hover:translate-x-1">
-                    <ArrowIcon />
-                  </span>
-                </a>
+                </button>
               </div>
             </motion.div>
           ))}
         </div>
       </div>
 
-      {/* Model comparison section */}
-      <div className="relative border-t border-[rgba(255,255,255,0.06)] px-6 py-20">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_50%,rgba(102,0,255,0.06),transparent_60%)]" />
-
-        <div className="relative z-10 mx-auto max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="mb-12 text-center"
-          >
-            <p className="pre-label mb-3">AI MODELS</p>
-            <h2 className="text-[clamp(1.5rem,4vw,2.5rem)] font-bold tracking-[-0.03em] text-white">
-              Choose Your Brain
-            </h2>
-            <p className="mx-auto mt-3 max-w-xl text-sm text-[rgba(255,255,255,0.45)]">
-              All plans include access to top-tier models. Pro and Agency unlock Gemma
-              4 2B for local, zero-cost inference on your VPS.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {MODEL_INFO.map((model, i) => (
-              <motion.div
-                key={model.name}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="group relative rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] p-5 hover:border-[rgba(255,255,255,0.15)] transition-colors"
-              >
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"
-                  style={{
-                    background: `radial-gradient(circle at 50% 0%, ${model.color}10, transparent 60%)`,
-                  }}
-                />
-                <div className="relative z-10">
-                  <div className="mb-3 flex items-center justify-between">
-                    <span
-                      className="rounded px-2 py-0.5 text-[10px] font-mono font-bold uppercase"
-                      style={{
-                        background: `${model.color}15`,
-                        border: `1px solid ${model.color}30`,
-                        color: model.color,
-                      }}
-                    >
-                      {model.badge}
-                    </span>
-                    <span className="text-[10px] font-mono text-[rgba(255,255,255,0.2)]">{model.provider}</span>
-                  </div>
-                  <h3 className="text-base font-bold text-white">{model.name}</h3>
-                  <p className="mt-0.5 font-mono text-[10px] text-[rgba(255,255,255,0.3)]">{model.context} context</p>
-                  <div className="mt-3 space-y-1.5">
-                    <div>
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-[rgba(255,255,255,0.2)]">Strength</span>
-                      <p className="text-xs text-[rgba(255,255,255,0.55)]">{model.strength}</p>
-                    </div>
-                    <div>
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-[rgba(255,255,255,0.2)]">Best for</span>
-                      <p className="text-xs text-[rgba(255,255,255,0.55)]">{model.bestFor}</p>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Local model setup info */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="mt-8 rounded-xl border border-[rgba(0,255,136,0.15)] bg-[rgba(0,255,136,0.04)] p-5"
-          >
-            <div className="flex items-start gap-3">
-              <div className="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-[rgba(0,255,136,0.1)]">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00FF88" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="3" width="20" height="14" rx="2"/>
-                  <path d="M8 21h8M12 17v4"/>
-                </svg>
-              </div>
-              <div>
-                <h4 className="text-sm font-semibold text-white">Run Gemma 4 2B locally — zero API cost</h4>
-                <p className="mt-1 text-xs text-[rgba(255,255,255,0.45)]">
-                  Pro and Agency plans include Ollama pre-installed on your VPS. Gemma 4 2B runs entirely
-                  on your own hardware — no data leaves your server, and inference is free after setup.
-                  Estimated install time: 10 minutes.
-                </p>
-                <p className="mt-2 font-mono text-[10px] text-[#00FF88]">
-                  ollama run gemma3:2b
-                </p>
-              </div>
+      {/* Why n8n + OpenClaw */}
+      <div className="max-w-4xl mx-auto px-6 pb-20">
+        <div className="rounded-2xl border border-[rgba(0,212,255,0.15)] bg-[rgba(0,212,255,0.04)] p-8">
+          <h2 className="text-2xl font-bold mb-2">Why n8n + OpenClaw together?</h2>
+          <p className="text-white/50 mb-6">
+            Most AI automation tools make you choose between power and simplicity. We give you both.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h3 className="font-semibold mb-2 text-[#00D4FF]">OpenClaw</h3>
+              <p className="text-sm text-white/50">
+                Handles complex reasoning, multi-step tasks, web browsing, code execution, and conversations.
+                Your AI brain — understands context, makes decisions, adapts.
+              </p>
             </div>
-          </motion.div>
+            <div>
+              <h3 className="font-semibold mb-2 text-[#6600FF]">n8n</h3>
+              <p className="text-sm text-white/50">
+                Handles repetitive, high-volume automations — syncing data, sending emails, updating spreadsheets,
+                triggering webhooks. Zero AI tokens wasted on boring work.
+              </p>
+            </div>
+          </div>
+          <p className="mt-4 text-sm text-white/40">
+            <strong className="text-white">Result:</strong> Your AI team runs faster, cheaper, and smarter — because each tool does what it's best at.
+          </p>
+        </div>
+      </div>
+
+      {/* Comparison Table */}
+      <div className="max-w-4xl mx-auto px-6 pb-20">
+        <h2 className="text-2xl font-bold text-center mb-8">Compare Plans</h2>
+        <div className="rounded-2xl border border-[rgba(255,255,255,0.08)] overflow-hidden">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-[rgba(255,255,255,0.06)]">
+                <th className="text-left p-4 text-white/40 text-sm font-medium">Feature</th>
+                <th className="text-center p-4 text-sm font-medium">Starter</th>
+                <th className="text-center p-4 text-sm font-medium text-[#6600FF]">Pro</th>
+                <th className="text-center p-4 text-sm font-medium">Business</th>
+              </tr>
+            </thead>
+            <tbody>
+              {COMPARISON.map((row, i) => (
+                <tr key={row.feature} className={`border-b border-[rgba(255,255,255,0.04)] ${i % 2 === 0 ? "bg-white/[0.01]" : ""}`}>
+                  <td className="p-4 text-sm text-white/60">{row.feature}</td>
+                  <td className="p-4 text-center text-sm">
+                    {typeof row.starter === "boolean" ? (
+                      row.starter ? <span className="text-green-400">&#10003;</span> : <span className="text-white/20">&#10005;</span>
+                    ) : (
+                      <span className="text-white/80">{row.starter}</span>
+                    )}
+                  </td>
+                  <td className="p-4 text-center text-sm">
+                    {typeof row.pro === "boolean" ? (
+                      row.pro ? <span className="text-green-400">&#10003;</span> : <span className="text-white/20">&#10005;</span>
+                    ) : (
+                      <span className="text-white/80">{row.pro}</span>
+                    )}
+                  </td>
+                  <td className="p-4 text-center text-sm">
+                    {typeof row.business === "boolean" ? (
+                      row.business ? <span className="text-green-400">&#10003;</span> : <span className="text-white/20">&#10005;</span>
+                    ) : (
+                      <span className="text-white/80">{row.business}</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
 
       {/* FAQ */}
-      <PricingFAQ />
-
-      {/* CTA */}
-      <div className="relative px-6 py-20">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_100%,rgba(0,212,255,0.08),transparent_60%)]" />
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="relative z-10 mx-auto max-w-2xl text-center"
-        >
-          <h2 className="text-[clamp(1.5rem,4vw,2.5rem)] font-bold tracking-[-0.03em] text-white">
-            Not sure which plan fits?
-          </h2>
-          <p className="mt-4 text-[rgba(255,255,255,0.5)]">
-            Book a free 30-minute strategy call. We&apos;ll map your workflows and recommend
-            the right configuration — no sales pressure.
-          </p>
-          <a
-            href="#"
-            className="mt-8 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#00D4FF] to-[#6600FF] px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-[rgba(0,212,255,0.2)] transition-all hover:-translate-y-0.5 hover:shadow-xl"
-          >
-            Book Free Strategy Call
-            <ArrowIcon />
-          </a>
-          <p className="mt-4 text-xs text-[rgba(255,255,255,0.25)]">
-            Or email us at hello@clawops.studio
-          </p>
-        </motion.div>
-      </div>
-    </main>
-  );
-}
-
-function PricingFAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-
-  const faqs = [
-    {
-      q: "What's included in the VPS spec?",
-      a: "Your subscription includes a fully managed VPS on Contabo with the listed RAM, storage, and vCPUs. We handle provisioning, security hardening, network setup, and ongoing maintenance. You own the VPS; we manage it.",
-    },
-    {
-      q: "Can I change plans later?",
-      a: "Yes. Upgrade instantly — your VPS specs will be updated. Downgrade takes effect at the next billing cycle. No lock-in.",
-    },
-    {
-      q: "What counts as a 'task'?",
-      a: "A task is a single unit of work completed by a worker — answering a support question, generating a lead list, drafting a report. Our flow-based billing tracks work done, not API tokens.",
-    },
-    {
-      q: "How does the Agency plan work for client management?",
-      a: "Agency gives you sub-accounts for each client. Each sub-account has its own workers, settings, and reporting. You control everything from a single dashboard. Fully white-label — your clients see your branding, not ours.",
-    },
-    {
-      q: "Is Gemma 4 2B really free to run?",
-      a: "Gemma 4 2B via Ollama runs on your VPS with zero API cost. It uses about 2GB RAM. Setup takes ~10 minutes. Great for simple, repetitive tasks where you want zero variable billing.",
-    },
-    {
-      q: "What's the 99.9% uptime guarantee?",
-      a: "Pro and Agency plans include a 99.9% uptime SLA. If we drop below that in any calendar month, you receive a prorated credit. Our actual track record is 99.95%.",
-    },
-  ];
-
-  return (
-    <div className="border-t border-[rgba(255,255,255,0.06)] px-6 py-20">
-      <div className="mx-auto max-w-3xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-8 text-center"
-        >
-          <p className="pre-label mb-3">FAQ</p>
-          <h2 className="text-3xl font-bold tracking-[-0.03em] text-white">Pricing Questions</h2>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)]"
-        >
-          {faqs.map((faq, i) => (
-            <div key={i} className="border-b border-[rgba(255,255,255,0.06)] last:border-0">
+      <div className="max-w-3xl mx-auto px-6 pb-24" ref={ref}>
+        <h2 className="text-2xl font-bold text-center mb-8">Frequently Asked Questions</h2>
+        <div className="space-y-3">
+          {FAQS.map((faq, i) => (
+            <div key={i} className="border border-[rgba(255,255,255,0.08)] rounded-xl overflow-hidden">
               <button
-                onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className="flex w-full items-center justify-between gap-4 p-5 text-left transition-colors hover:text-white"
+                onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                className="w-full flex items-center justify-between p-5 text-left hover:bg-white/[0.02] transition-colors"
               >
-                <span className="text-sm font-medium text-white/80">{faq.q}</span>
-                <svg
-                  width="16" height="16" viewBox="0 0 24 24" fill="none"
-                  className={`flex-shrink-0 transition-transform ${openIndex === i ? "rotate-180" : ""}`}
-                  style={{ color: openIndex === i ? "#00D4FF" : "rgba(255,255,255,0.4)" }}
-                  aria-hidden="true"
-                >
-                  <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <span className="font-medium text-sm">{faq.q}</span>
+                <span className={`text-white/40 text-lg transition-transform ${openFaq === i ? "rotate-45" : ""}`}>+</span>
               </button>
-              {openIndex === i && (
-                <div className="px-5 pb-5">
-                  <p className="text-sm leading-relaxed text-[rgba(255,255,255,0.45)]">{faq.a}</p>
-                </div>
+              {openFaq === i && (
+                <div className="px-5 pb-5 text-sm text-white/50 leading-relaxed">{faq.a}</div>
               )}
             </div>
           ))}
-        </motion.div>
+        </div>
+      </div>
+
+      {/* CTA Banner */}
+      <div className="max-w-4xl mx-auto px-6 pb-24">
+        <div className="rounded-2xl p-8 text-center" style={{ background: "linear-gradient(135deg, rgba(0,212,255,0.1), rgba(102,0,255,0.1))", border: "1px solid rgba(255,255,255,0.08)" }}>
+          <h2 className="text-2xl font-bold mb-2">Still not sure which plan is right?</h2>
+          <p className="text-white/50 mb-6">Book a free 30-min strategy call. We'll help you figure out the best setup.</p>
+          <a
+            href="mailto:hello@clawops.studio"
+            className="inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-0.5"
+            style={{ background: "linear-gradient(135deg, #00D4FF, #6600FF)" }}
+          >
+            Book a Free Strategy Call
+          </a>
+        </div>
       </div>
     </div>
   );
