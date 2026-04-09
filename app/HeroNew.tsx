@@ -4,11 +4,13 @@ import { useRef } from 'react'
 import Link from 'next/link'
 import { motion, useScroll, useTransform } from 'framer-motion'
 
-/* ─── Animated background — visible floating elements ─── */
-function FloatingShapes() {
-  const { scrollYProgress } = useScroll()
-  const orb1Y = useTransform(scrollYProgress, [0, 0.3], ['0px', '-120px'])
-  const orb2Y = useTransform(scrollYProgress, [0, 0.3], ['0px', '-60px'])
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* ─── Animated background — visible floating elements with 3D scroll parallax ─── */
+function FloatingShapes({ bgOrb1Y, bgOrb1X, bgOrb2Y, bgOrb2X, bgRingScale, bgRingOpacity, bgParticleY, scrollYProgress }: {
+  bgOrb1Y: any; bgOrb1X: any; bgOrb2Y: any; bgOrb2X: any;
+  bgRingScale: any; bgRingOpacity: any; bgParticleY: any;
+  scrollYProgress: any;
+}) {
   const ringRotate = useTransform(scrollYProgress, [0, 1], ['0deg', '180deg'])
   const ring2Rotate = useTransform(scrollYProgress, [0, 1], ['0deg', '-120deg'])
   const particleOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0])
@@ -55,15 +57,15 @@ function FloatingShapes() {
   ]
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0" aria-hidden="true">
 
-      {/* Large glowing orbs — more visible */}
-      <motion.div style={{ y: orb1Y }}
+      {/* Large glowing orbs — 3D parallax */}
+      <motion.div style={{ y: bgOrb1Y, x: bgOrb1X }}
         className="absolute -top-16 -left-16 w-[500px] h-[500px]">
         <div className="w-full h-full rounded-full"
           style={{ background: 'radial-gradient(circle, rgba(0,212,255,0.25) 0%, rgba(0,212,255,0.12) 30%, transparent 65%)' }} />
       </motion.div>
-      <motion.div style={{ y: orb2Y }}
+      <motion.div style={{ y: bgOrb2Y, x: bgOrb2X }}
         className="absolute -bottom-20 right-0 w-[600px] h-[600px]">
         <div className="w-full h-full rounded-full"
           style={{ background: 'radial-gradient(circle, rgba(102,0,255,0.28) 0%, rgba(102,0,255,0.12) 30%, transparent 65%)' }} />
@@ -77,8 +79,8 @@ function FloatingShapes() {
           style={{ background: 'radial-gradient(circle, rgba(0,212,255,0.15) 0%, transparent 65%)' }} />
       </motion.div>
 
-      {/* Rotating ring set — outer */}
-      <motion.div style={{ rotate: ringRotate }}
+      {/* Rotating ring set — 3D scroll parallax */}
+      <motion.div style={{ rotate: ringRotate, scale: bgRingScale, opacity: bgRingOpacity }}
         className="absolute top-[10%] right-[5%] w-64 h-64 md:w-80 md:h-80">
         <svg viewBox="0 0 256 256" className="w-full h-full opacity-25">
           <circle cx="128" cy="128" r="110" fill="none" stroke="#00D4FF" strokeWidth="1" strokeDasharray="6 8" />
@@ -95,8 +97,8 @@ function FloatingShapes() {
         </svg>
       </motion.div>
 
-      {/* Animated particles */}
-      <motion.div style={{ opacity: particleOpacity }} className="absolute inset-0">
+      {/* Animated particles — 3D parallax */}
+      <motion.div style={{ opacity: particleOpacity, y: bgParticleY }} className="absolute inset-0">
         {particles.map((p, i) => (
           <motion.div key={i}
             className="absolute rounded-full"
@@ -220,25 +222,55 @@ export default function HeroNew() {
   const textOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0])
   const textY = useTransform(scrollYProgress, [0, 0.12], ['0px', '-30px'])
 
+  // 3D scroll parallax — text content moves up and fades as user scrolls
+  // Each layer moves at a different speed for depth
+  const headlineY = useTransform(scrollYProgress, [0, 0.12], ['0px', '-40px'])
+  const headlineRotateX = useTransform(scrollYProgress, [0, 0.1], ['0deg', '-3deg'])
+  const subtextY = useTransform(scrollYProgress, [0, 0.12], ['0px', '-20px'])
+  const ctaY = useTransform(scrollYProgress, [0, 0.12], ['0px', '-10px'])
+  const badgeY = useTransform(scrollYProgress, [0, 0.12], ['0px', '-15px'])
+
+  // Background parallax — orbs and rings move at different speeds creating depth
+  const bgOrb1Y = useTransform(scrollYProgress, [0, 0.3], ['0px', '-150px'])
+  const bgOrb1X = useTransform(scrollYProgress, [0, 0.3], ['0px', '80px'])
+  const bgOrb2Y = useTransform(scrollYProgress, [0, 0.3], ['0px', '-80px'])
+  const bgOrb2X = useTransform(scrollYProgress, [0, 0.3], ['0px', '-40px'])
+  const bgRingScale = useTransform(scrollYProgress, [0, 1], [1, 0.7])
+  const bgRingOpacity = useTransform(scrollYProgress, [0, 0.3, 1], [1, 1, 0])
+  const bgParticleY = useTransform(scrollYProgress, [0, 1], ['0px', '-200px'])
+
   return (
     <div className="relative overflow-hidden" style={{ minHeight: '100vh' }}>
       <div className="absolute inset-0" style={{ background: 'linear-gradient(160deg, #0a0a1a 0%, #0f0f2a 40%, #08081a 100%)' }} />
-      <FloatingShapes />
-<motion.div style={{ opacity: textOpacity, y: textY }} className="relative z-10">
+      <FloatingShapes
+        bgOrb1Y={bgOrb1Y} bgOrb1X={bgOrb1X}
+        bgOrb2Y={bgOrb2Y} bgOrb2X={bgOrb2X}
+        bgRingScale={bgRingScale} bgRingOpacity={bgRingOpacity}
+        bgParticleY={bgParticleY}
+        scrollYProgress={scrollYProgress}
+      />
+      <motion.div style={{ opacity: textOpacity, y: textY }}
+        className="relative z-30">
         <div className="min-h-screen flex flex-col">
           <div className="flex-1 flex items-center px-6 lg:px-12 pt-24 md:pt-28 pb-24 md:pb-12">
             <div className="max-w-3xl mx-auto text-center md:text-left">
 
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                style={{ y: badgeY }}
                 transition={{ duration: 0.6 }}
                 className="inline-flex items-center gap-2 mx-auto md:mx-0 bg-[rgba(0,212,255,0.08)] border border-[rgba(0,212,255,0.2)] text-[#00D4FF] px-4 py-1.5 rounded-full text-xs font-medium mb-8">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
                 Built on OpenClaw — The Agentic OS for Scale
               </motion.div>
 
-              <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
+              <motion.h1
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                style={{ y: headlineY, rotateX: headlineRotateX, perspective: 1000 }}
                 transition={{ duration: 0.7, delay: 0.1 }}
-                className="text-[clamp(2.5rem,7vw,5rem)] font-black leading-[1.05] tracking-[-0.03em] mb-6">
+                className="text-[clamp(2.5rem,7vw,5rem)] font-black leading-[1.05] tracking-[-0.03em] mb-6"
+              >
                 <span className="text-white">The Agentic OS for</span>
                 <br />
                 <span className="bg-gradient-to-r from-[#00D4FF] via-[#9966FF] to-[#00D4FF] bg-clip-text text-transparent">
@@ -248,7 +280,10 @@ export default function HeroNew() {
                 <span className="text-white">Without Hiring.</span>
               </motion.h1>
 
-              <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                style={{ y: subtextY }}
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="text-lg md:text-xl text-[rgba(255,255,255,0.5)] mb-10 max-w-xl leading-relaxed">
                 ClawOps is the business layer on OpenClaw — giving you autonomous AI agents that{" "}
@@ -256,7 +291,10 @@ export default function HeroNew() {
                 Your Sales Agent closes. Your Support Agent resolves. Your Ops Agent runs. You sleep.
               </motion.p>
 
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                style={{ y: ctaY }}
                 transition={{ duration: 0.6, delay: 0.3 }}
                 className="flex flex-wrap gap-4 mb-12">
                 <Link href="/auth/signup"
