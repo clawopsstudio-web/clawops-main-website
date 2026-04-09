@@ -79,7 +79,7 @@ export default function AmpereStylePricing() {
   const router = useRouter()
 
   return (
-    <div className="container mx-auto px-4 py-16">
+    <div className="container mx-auto px-4 py-16 bg-[#04040c]">
       {/* Header */}
       <div className="text-center mb-16">
         <h1 className="text-4xl md:text-6xl font-bold mb-4">

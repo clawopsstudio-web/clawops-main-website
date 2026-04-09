@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useRef } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { motion, useScroll, useTransform } from 'framer-motion'
 
 /* ─── Floating 3D shapes that react to scroll ─── */
@@ -125,17 +124,7 @@ const QUICK_STATS = [
   { value: '500+', label: 'Integrations ready' },
 ]
 
-const FEATURE_CARDS = [
-  { icon: '🤖', title: 'Deploy Unlimited Agents', desc: 'Sales, Support, Research, Ops — run them all simultaneously. Each is independent. One flat monthly fee covers them all.', color: '#00D4FF' },
-  { icon: '💰', title: 'No API Bills. Ever.', desc: 'Your queries run on your own infrastructure. No per-token billing. No token costs. No surprise invoices at the end of the month.', color: '#6600FF' },
-  { icon: '🔌', title: '500+ Integrations Ready', desc: 'Telegram, WhatsApp, Slack, HubSpot, Notion, and 495 more. Pre-built connectors, OAuth handled, live in minutes.', color: '#00D4FF' },
-  { icon: '⚡', title: 'Instant Response Times', desc: 'Every request processed on your own infrastructure. No API queues. No rate limits. Agents respond in under 50ms, every time.', color: '#6600FF' },
-  { icon: '🔒', title: 'Complete Data Privacy', desc: 'Client data never touches a third-party API. Your prompts, your data, your responses — all on your own infrastructure.', color: '#00D4FF' },
-  { icon: '🌐', title: 'Works 24/7 — Auto-Retries', desc: 'Agents recover from failures automatically. If a task fails, it retries. If a tool goes down, it adapts. No ops team required.', color: '#6600FF' },
-]
-
 export default function HeroNew() {
-  const [showVideo, setShowVideo] = useState(false)
   const { scrollYProgress } = useScroll()
   const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0])
   const heroScale = useTransform(scrollYProgress, [0, 0.15], [1, 0.95])
@@ -150,7 +139,7 @@ export default function HeroNew() {
       <FloatingShapes />
       <FloatingCards />
 
-      {/* Hero Content */}
+      {/* Hero Content — fades + scales on scroll */}
       <motion.div style={{ opacity: heroOpacity, scale: heroScale }} className="relative z-10">
         <div className="min-h-screen flex flex-col">
           <div className="flex-1 flex items-center px-6 lg:px-12 pt-28 pb-12">
@@ -227,109 +216,6 @@ export default function HeroNew() {
           <div className="w-px h-10 bg-gradient-to-b from-[rgba(0,212,255,0.4)] to-transparent" />
         </div>
       </motion.div>
-
-      {/* ── Product Demo Video ── */}
-      <div className="relative z-10 px-6 lg:px-12 py-12 md:py-16">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-6">
-            <h2 className="text-xl md:text-2xl font-bold text-white">See It in Action</h2>
-            <p className="text-sm text-[rgba(255,255,255,0.4)] mt-1">Real agent workflows. Click to watch.</p>
-          </div>
-          <div className="relative rounded-2xl overflow-hidden border border-[rgba(255,255,255,0.08)] shadow-2xl" style={{ boxShadow: '0 0 60px rgba(0,212,255,0.05)' }}>
-            <div className="relative aspect-video bg-[#06060f]">
-              {showVideo ? (
-                /* Video playing */
-                <video
-                  src="/clawops-ai-os-demo.mp4"
-                  controls
-                  autoPlay
-                  className="absolute inset-0 w-full h-full object-cover"
-                  onEnded={() => setShowVideo(false)}
-                />
-              ) : (
-                <>
-                  <Image
-                    src="/clawops-ai-os-hero.jpg"
-                    alt="ClawOps demo — AI agent dashboard"
-                    fill
-                    className="object-cover"
-                    priority
-                  />
-                  {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#06060f] via-[rgba(6,6,15,0.2)] to-transparent" />
-                  {/* Play button */}
-                  <button
-                    onClick={() => setShowVideo(true)}
-                    className="absolute inset-0 flex items-center justify-center cursor-pointer group"
-                    aria-label="Play demo video"
-                  >
-                    <div className="w-20 h-20 rounded-full bg-[rgba(0,212,255,0.15)] backdrop-blur-sm border border-[rgba(0,212,255,0.3)] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                      <div className="w-14 h-14 rounded-full bg-[#00D4FF] flex items-center justify-center shadow-lg shadow-[#00D4FF]/30">
-                        <svg className="w-5 h-5 text-[#06060f] ml-0.5" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M8 5v14l11-7z"/>
-                        </svg>
-                      </div>
-                    </div>
-                  </button>
-                  {/* Badge */}
-                  <div className="absolute bottom-4 left-4 bg-[rgba(0,212,255,0.1)] border border-[rgba(0,212,255,0.2)] text-[#00D4FF] text-xs px-3 py-1 rounded-full backdrop-blur-sm">
-                    12s demo
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-          <p className="text-center text-[rgba(255,255,255,0.3)] text-xs mt-3">Click play to watch — real agent workflows, no staging</p>
-        </div>
-      </div>
-
-      {/* ── Feature Cards ── */}
-      <div className="relative z-10 px-6 lg:px-12 pb-16 md:pb-24">
-        <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {FEATURE_CARDS.map((card, i) => (
-              <motion.div
-                key={card.title}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{ duration: 0.6, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] as const }}
-                className="rounded-2xl border border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.02)] p-5 hover:bg-[rgba(255,255,255,0.04)] transition-all duration-300"
-                style={{ borderLeftColor: card.color, borderLeftWidth: '2px' }}
-              >
-                <div className="text-3xl mb-3">{card.icon}</div>
-                <h3 className="text-base font-semibold text-white mb-2">{card.title}</h3>
-                <p className="text-sm text-[rgba(255,255,255,0.45)] leading-relaxed">{card.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Social proof bar */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="mt-10 rounded-2xl border border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.02)] p-6 md:p-8"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-              <div>
-                <div className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#00D4FF] to-[#6600FF] bg-clip-text text-transparent">$3,000/mo</div>
-                <p className="text-sm text-[rgba(255,255,255,0.4)] mt-1">Saved vs hiring humans</p>
-              </div>
-              <div className="border-t md:border-t-0 md:border-l border-[rgba(255,255,255,0.06)]">
-                <div className="text-3xl md:text-4xl font-black text-white">100%</div>
-                <p className="text-sm text-[rgba(255,255,255,0.4)] mt-1">Private — no API data sharing</p>
-              </div>
-              <div className="border-t md:border-t-0 md:border-l border-[rgba(255,255,255,0.06)]">
-                <div className="text-3xl md:text-4xl font-black text-white">3 min</div>
-                <p className="text-sm text-[rgba(255,255,255,0.4)] mt-1">From signup to first agent live</p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-
     </div>
   )
 }
