@@ -74,7 +74,7 @@ export default function FinalCTA() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
-              href="#cta"
+              href="/signup"
               className="group relative px-8 py-4 rounded-xl font-semibold text-white overflow-hidden"
               style={{
                 background: "linear-gradient(135deg, #00D4FF, #6600FF)",
@@ -82,7 +82,7 @@ export default function FinalCTA() {
               }}
             >
               <span className="relative z-10 flex items-center gap-2">
-                Book a 30-Minute Strategy Call
+                Deploy Your Agent
                 <svg
                   width="16"
                   height="16"
@@ -102,7 +102,7 @@ export default function FinalCTA() {
               href="#pricing"
               className="px-8 py-4 rounded-xl font-semibold text-[rgba(255,255,255,0.7)] border border-[rgba(255,255,255,0.12)] hover:border-[rgba(255,255,255,0.25)] hover:text-white transition-all"
             >
-              See Pricing
+              View Plans
             </a>
           </div>
 
