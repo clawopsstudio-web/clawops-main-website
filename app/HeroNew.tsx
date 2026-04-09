@@ -67,7 +67,7 @@ function FloatingCards() {
     <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
       <motion.div initial={{ opacity: 0, y: 40, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute top-[20%] right-[5%] hidden lg:block">
+        className="absolute bottom-[18%] right-[2%] hidden xl:block">
         <div className="w-48 h-32 rounded-2xl border border-[rgba(0,212,255,0.18)] bg-[rgba(6,6,15,0.9)] backdrop-blur-md p-4"
           style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.6), 0 0 30px rgba(0,212,255,0.04)' }}>
           <div className="flex items-center gap-2 mb-2">
@@ -86,7 +86,7 @@ function FloatingCards() {
 
       <motion.div initial={{ opacity: 0, y: 40, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8, delay: 0.75, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute bottom-[22%] left-[2%] hidden lg:block">
+        className="absolute bottom-[18%] left-[2%] hidden xl:block">
         <div className="w-44 h-28 rounded-2xl border border-[rgba(102,0,255,0.22)] bg-[rgba(6,6,15,0.9)] backdrop-blur-md p-4"
           style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.6), 0 0 30px rgba(102,0,255,0.04)' }}>
           <div className="text-xs text-[rgba(255,255,255,0.4)] mb-1">Revenue This Month</div>
@@ -130,7 +130,7 @@ export default function HeroNew() {
 
       <motion.div style={{ opacity: textOpacity, y: textY }} className="relative z-10">
         <div className="min-h-screen flex flex-col">
-          <div className="flex-1 flex items-center px-6 lg:px-12 pt-24 md:pt-28 pb-12">
+          <div className="flex-1 flex items-center px-6 lg:px-12 pt-24 md:pt-28 pb-0 md:pb-12">
             <div className="max-w-3xl mx-auto md:mx-0">
 
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
