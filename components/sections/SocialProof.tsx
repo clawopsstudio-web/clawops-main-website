@@ -60,15 +60,8 @@ export default function SocialProof() {
     <section
       ref={ref}
       id="social-proof"
-      className="relative overflow-hidden bg-[#04040c] px-6 py-16 md:py-24"
+      className="relative bg-[#04040c] px-6 py-16 md:py-24"
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-px"
-        style={{
-          background: "linear-gradient(90deg, transparent, rgba(0,212,255,0.3), rgba(102,0,255,0.3), transparent)",
-        }}
-      />
 
       <div className="relative z-10 mx-auto max-w-6xl">
         {/* Stats row */}
