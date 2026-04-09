@@ -67,7 +67,7 @@ function FloatingCards() {
     <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
       <motion.div initial={{ opacity: 0, y: 40, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute top-[35%] right-[4%] hidden xl:block">
+        className="absolute top-[6%] right-[3%] hidden xl:block">
         <div className="w-48 h-32 rounded-2xl border border-[rgba(0,212,255,0.18)] bg-[rgba(6,6,15,0.9)] backdrop-blur-md p-4"
           style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.6), 0 0 30px rgba(0,212,255,0.04)' }}>
           <div className="flex items-center gap-2 mb-2">
@@ -86,7 +86,7 @@ function FloatingCards() {
 
       <motion.div initial={{ opacity: 0, y: 40, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8, delay: 0.75, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute top-[35%] left-[2%] hidden xl:block">
+        className="absolute top-[6%] left-[3%] hidden xl:block">
         <div className="w-44 h-28 rounded-2xl border border-[rgba(102,0,255,0.22)] bg-[rgba(6,6,15,0.9)] backdrop-blur-md p-4"
           style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.6), 0 0 30px rgba(102,0,255,0.04)' }}>
           <div className="text-xs text-[rgba(255,255,255,0.4)] mb-1">Revenue This Month</div>
@@ -97,7 +97,7 @@ function FloatingCards() {
 
       <motion.div initial={{ opacity: 0, y: 40, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8, delay: 0.95, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute top-[60%] right-[4%] hidden xl:block">
+        className="absolute top-[20%] right-[3%] hidden xl:block">
         <div className="w-38 h-28 rounded-2xl border border-[rgba(0,212,255,0.14)] bg-[rgba(6,6,15,0.9)] backdrop-blur-md p-4"
           style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.6), 0 0 30px rgba(0,212,255,0.03)' }}>
           <div className="text-xs text-[rgba(255,255,255,0.4)] mb-2">Powered by</div>
@@ -126,9 +126,7 @@ export default function HeroNew() {
     <div className="relative overflow-hidden" style={{ minHeight: '100vh' }}>
       <div className="absolute inset-0" style={{ background: 'linear-gradient(160deg, #0a0a1a 0%, #0f0f2a 40%, #08081a 100%)' }} />
       <FloatingShapes />
-      <FloatingCards />
-
-      <motion.div style={{ opacity: textOpacity, y: textY }} className="relative z-10">
+<motion.div style={{ opacity: textOpacity, y: textY }} className="relative z-10">
         <div className="min-h-screen flex flex-col">
           <div className="flex-1 flex items-center px-6 lg:px-12 pt-24 md:pt-28 pb-24 md:pb-12">
             <div className="max-w-3xl mx-auto md:mx-0">
