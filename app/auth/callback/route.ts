@@ -1,39 +1,24 @@
-import { NextResponse } from 'next/server'
-import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
-  const next = searchParams.get('next') ?? '/dashboard'
+  const plan = searchParams.get('plan') || 'pro'
+  const next = searchParams.get('next') || '/auth/payment'
 
   if (code) {
-    const cookieStore = new Map<string, string>()
-    const supabase = createServerClient(
+    const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get(name: string) {
-            return cookieStore.get(name)
-          },
-          set(name: string, value: string, options: CookieOptions) {
-            cookieStore.set(name, value)
-          },
-          remove(name: string, options: CookieOptions) {
-            cookieStore.delete(name)
-          },
-        },
-      }
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
     const { error } = await supabase.auth.exchangeCodeForSession(code)
+    
     if (!error) {
-      const response = NextResponse.redirect(`${origin}${next}`)
-      for (const [name, value] of cookieStore) {
-        response.cookies.set(name, value)
-      }
-      return response
+      const redirectUrl = new URL(`${origin}${next}?plan=${plan}`)
+      return NextResponse.redirect(redirectUrl)
     }
   }
 
-  return NextResponse.redirect(`${origin}/login`)
+  return NextResponse.redirect(`${origin}/auth/login?error=callback_error`)
 }
