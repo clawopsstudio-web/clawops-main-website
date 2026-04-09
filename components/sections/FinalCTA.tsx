@@ -69,7 +69,7 @@ export default function FinalCTA() {
           </h2>
           <p className="text-[rgba(255,255,255,0.55)] text-lg mb-10 max-w-lg mx-auto leading-relaxed">
             Book a 30-minute strategy call. We&apos;ll map your workflows, identify the highest-impact
-            automation, and have a worker running in your apps within 48 hours.
+            automation, and have a worker deployed and running in minutes.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -107,7 +107,7 @@ export default function FinalCTA() {
           </div>
 
           <p className="mt-6 text-[rgba(255,255,255,0.25)] text-xs font-mono">
-            No credit card required &middot; Live in 48 hours &middot; Cancel anytime
+            No credit card required &middot; Deployed in minutes &middot; Cancel anytime
           </p>
         </motion.div>
       </div>
