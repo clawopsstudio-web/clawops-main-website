@@ -129,11 +129,11 @@ export default function HeroNew() {
 <motion.div style={{ opacity: textOpacity, y: textY }} className="relative z-10">
         <div className="min-h-screen flex flex-col">
           <div className="flex-1 flex items-center px-6 lg:px-12 pt-24 md:pt-28 pb-24 md:pb-12">
-            <div className="max-w-3xl mx-auto md:mx-0">
+            <div className="max-w-3xl mx-auto text-center md:text-left">
 
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                className="inline-flex items-center gap-2 bg-[rgba(0,212,255,0.08)] border border-[rgba(0,212,255,0.2)] text-[#00D4FF] px-4 py-1.5 rounded-full text-xs font-medium mb-8">
+                className="inline-flex items-center gap-2 mx-auto md:mx-0 bg-[rgba(0,212,255,0.08)] border border-[rgba(0,212,255,0.2)] text-[#00D4FF] px-4 py-1.5 rounded-full text-xs font-medium mb-8">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
                 Built on OpenClaw — The Agentic OS for Scale
               </motion.div>
@@ -162,21 +162,21 @@ export default function HeroNew() {
                 transition={{ duration: 0.6, delay: 0.3 }}
                 className="flex flex-wrap gap-4 mb-12">
                 <Link href="/auth/signup"
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-[#00D4FF] to-[#6600FF] hover:opacity-90 text-white font-semibold px-8 py-4 rounded-xl transition-opacity text-base">
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-[#00D4FF] to-[#6600FF] hover:opacity-90 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(0,212,255,0.3)] active:scale-[0.98] text-white font-semibold px-8 py-4 rounded-xl transition-all text-base">
                   Run Your Business on AI — Free
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
                 </Link>
                 <Link href="/how-it-works"
-                  className="inline-flex items-center gap-2 bg-[rgba(255,255,255,0.06)] hover:bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.1)] text-white font-medium px-8 py-4 rounded-xl transition-all text-base">
+                  className="inline-flex items-center gap-2 bg-[rgba(255,255,255,0.06)] hover:bg-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] active:scale-[0.98] border border-[rgba(255,255,255,0.1)] text-white font-medium px-8 py-4 rounded-xl transition-all text-base">
                   See How It Works
                 </Link>
               </motion.div>
 
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.5 }}
-                className="flex flex-wrap gap-8 border-t border-[rgba(255,255,255,0.08)] pt-8">
+                className="flex flex-wrap gap-8 border-t border-[rgba(255,255,255,0.08)] pt-8 justify-center md:justify-start">
                 {QUICK_STATS.map((s) => (
                   <div key={s.label}>
                     <div className="text-2xl md:text-3xl font-bold text-white">{s.value}</div>

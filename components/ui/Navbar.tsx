@@ -11,14 +11,6 @@ const navLinks = [
   { label: "Pricing", href: "/pricing" },
 ];
 
-const productLinks = [
-  { label: "Capabilities", href: "/#capabilities" },
-  { label: "How It Works", href: "/how-it-works" },
-  { label: "Use Cases", href: "/use-cases" },
-  { label: "Integrations", href: "/integrations" },
-  { label: "Pricing", href: "/pricing" },
-];
-
 function MenuIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" aria-hidden="true">
@@ -61,7 +53,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <div
-              className="flex h-8 w-8 items-center justify-center rounded-lg"
+              className="flex h-8 w-8 items-center justify-center rounded-lg transition-transform hover:scale-105"
               style={{
                 background: "linear-gradient(135deg, #00D4FF, #6600FF)",
                 boxShadow: "0 0 16px rgba(0,212,255,0.4)",
@@ -93,13 +85,13 @@ export default function Navbar() {
           <div className="hidden items-center gap-3 md:flex">
             <Link
               href="/auth/login"
-              className="rounded-lg px-4 py-2 text-sm font-medium text-white/70 hover:text-white transition-colors"
+              className="rounded-lg px-4 py-2 text-sm font-medium text-white/70 transition-all hover:bg-white/5 hover:text-white"
             >
               Log In
             </Link>
             <Link
               href="/auth/signup"
-              className="rounded-lg px-4 py-2 text-sm font-semibold text-white transition-all duration-300"
+              className="rounded-lg px-4 py-2 text-sm font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgba(0,212,255,0.35)]"
               style={{
                 background: "linear-gradient(135deg, #00D4FF, #6600FF)",
                 boxShadow: "0 0 20px rgba(0,212,255,0.25)",
@@ -136,7 +128,7 @@ export default function Navbar() {
                   <Link
                     href={link.href}
                     onClick={() => setIsOpen(false)}
-                    className="block rounded-lg py-3 text-base text-[rgba(255,255,255,0.7)] hover:bg-[rgba(255,255,255,0.05)] hover:text-white"
+                    className="block rounded-lg py-3 text-base text-[rgba(255,255,255,0.7)] transition-colors hover:bg-[rgba(255,255,255,0.05)] hover:text-white"
                   >
                     {link.label}
                   </Link>
@@ -146,7 +138,7 @@ export default function Navbar() {
                 <Link
                   href="/auth/signup"
                   onClick={() => setIsOpen(false)}
-                  className="block rounded-xl py-3 text-center text-sm font-semibold text-white"
+                  className="block rounded-xl py-3 text-center text-sm font-semibold text-white transition-all hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(0,212,255,0.3)]"
                   style={{
                     background: "linear-gradient(135deg, #00D4FF, #6600FF)",
                   }}

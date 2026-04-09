@@ -171,9 +171,9 @@ export default function AmpereStylePricing() {
 
               <button
                 onClick={() => router.push(`/auth/signup?plan=${plan.name.toLowerCase()}`)}
-                className={`w-full py-3 rounded-lg font-semibold transition-all ${
+                className={`w-full py-3 rounded-lg font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] ${
                   plan.highlight
-                    ? 'bg-gradient-to-r from-[#00D4FF] to-[#6600FF] text-white hover:opacity-90'
+                    ? 'bg-gradient-to-r from-[#00D4FF] to-[#6600FF] text-white hover:opacity-90 hover:shadow-[0_0_25px_rgba(0,212,255,0.3)]'
                     : 'bg-[#2d2d44] text-white hover:bg-[#3d3d54]'
                 }`}
               >
