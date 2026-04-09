@@ -4,21 +4,21 @@ import SmoothScroll from "@/components/ui/SmoothScroll";
 import GlobalStarField from "@/components/ui/GlobalStarField";
 
 export const metadata: Metadata = {
-  title: "ClawOps — AI Workers That Run in Your Apps",
+  title: "ClawOps — Pay for Infrastructure, Not AI Costs",
   description:
-    "Preconfigured AI workers deployed through Telegram, WhatsApp, Slack, and browser sessions — support, research, content, and ops, running 24/7 without prompt engineering.",
-  keywords: "AI workers, AI automation, AI assistants, messaging AI, browser automation, ClawOps",
+    "Pre-configured VPS + local AI agents. No API bills. No per-token costs. Deploy your AI workforce in 3 minutes starting at $49/month.",
+  keywords: "AI workers, AI automation, local AI, VPS AI, no API costs, AI infrastructure, ClawOps",
   openGraph: {
-    title: "ClawOps — AI Workers That Run in Your Apps",
+    title: "ClawOps — Pay for Infrastructure, Not AI Costs",
     description:
-      "Preconfigured AI workers deployed through Telegram, WhatsApp, Slack, and browser sessions.",
+      "Pre-configured VPS + local AI agents. No API bills. Deploy your AI workforce in 3 minutes.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ClawOps — AI Workers That Run in Your Apps",
+    title: "ClawOps — Pay for Infrastructure, Not AI Costs",
     description:
-      "Preconfigured AI workers deployed through Telegram, WhatsApp, Slack, and browser sessions.",
+      "Pre-configured VPS + local AI agents. No API bills. Deploy your AI workforce in 3 minutes.",
   },
   icons: {
     icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦷</text></svg>",

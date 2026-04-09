@@ -29,7 +29,7 @@ const faqs: FAQItem[] = [
   {
     question: "How long does it take to get started?",
     answer:
-      "We target 48 hours for deployment. After a quick strategy call to map your workflows, we configure, connect, and activate your agents. You'll be operational in two business days.",
+      "Your VPS is provisioned and your first agent is live in 3 minutes. Pre-built integrations connect in minutes. No strategy call needed unless you want one.",
   },
   {
     question: "Do you need access to my sensitive data?",

@@ -1,198 +1,149 @@
 'use client';
 
-"use client";
-
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 
-function BrainIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">
-      <path d="M12 4C8 4 5 7 5 11c0 2 .9 3.8 2.4 5.1L7 18h10l-.4-1.9C18.1 14.8 19 13 19 11c0-4-3-7-7-7z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M9 12h6M12 9v6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-    </svg>
-  );
-}
-
-function BrowserIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">
-      <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.6"/>
-      <path d="M3 9h18" stroke="currentColor" strokeWidth="1.6"/>
-      <circle cx="7" cy="6.5" r="0.75" fill="currentColor"/>
-      <circle cx="10" cy="6.5" r="0.75" fill="currentColor"/>
-      <circle cx="13" cy="6.5" r="0.75" fill="currentColor"/>
-    </svg>
-  );
-}
-
-function ZapIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">
-      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
-
-function ChatIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
-
-function CloudIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">
-      <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
-
-function BlocksIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">
-      <rect x="2" y="7" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.6"/>
-      <rect x="15" y="7" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.6"/>
-      <rect x="2" y="16" width="7" height="5" rx="1" stroke="currentColor" strokeWidth="1.6"/>
-      <path d="M15 13.5h5M17.5 16v-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-    </svg>
-  );
-}
-
 const capabilities = [
   {
-    icon: BrainIcon,
-    label: "Skills Stack",
-    title: "Preconfigured, Not Prompted",
-    description: "Each worker ships with battle-tested skills — research, content, outreach, support, ops — ready on day one. No prompt engineering required.",
-    accent: "#00D4FF",
+    emoji: "🖥️",
+    title: "Your AI Infrastructure",
+    description: "Pre-configured VPS with GPU-ready specs. 2-6 vCPUs, 4-12GB RAM, 50-200GB NVMe SSD. Yours exclusively.",
+    highlight: "No shared resources. No noisy neighbors.",
   },
   {
-    icon: BrowserIcon,
-    label: "Virtual Chrome",
-    title: "Browser Automation",
-    description: "Workers browse in a real browser with full session context. Scrape, interact, and extract from any site — even ones without APIs.",
-    accent: "#6600FF",
+    emoji: "🔒",
+    title: "Local, Private AI",
+    description: "Run Gemma 4 2B, 7B, or any open model completely on your VPS. Zero API calls to OpenAI or Anthropic. Your data never leaves.",
+    highlight: "100% data sovereignty. Zero API costs.",
   },
   {
-    icon: ZapIcon,
-    label: "Integration Paths",
-    title: "API · Webhook · MCP · Browser",
-    description: "Connect everything: direct API calls, authenticated browser sessions, webhook triggers, and native MCP protocol. Pick what fits your stack.",
-    accent: "#00D4FF",
+    emoji: "🤖",
+    title: "Multi-Agent Ecosystem",
+    description: "Deploy specialized agents — Sales, Support, Research, Ops — all running on the same VPS. Each agent handles what it does best.",
+    highlight: "Unlimited agents on Business plan.",
   },
   {
-    icon: ChatIcon,
-    label: "Messaging Native",
-    title: "Works in Your Chat Apps",
-    description: "Deploy workers on Telegram, WhatsApp, Discord, or Slack. Your team talks to the automation like a colleague — no dashboards to learn.",
-    accent: "#6600FF",
+    emoji: "🔌",
+    title: "500+ Integrations",
+    description: "Chrome browser automation, WhatsApp, Telegram, Slack, GHL, n8n, webhooks, MCP protocol. If it has an API, we connect it.",
+    highlight: "Playwright + native integrations built in.",
   },
   {
-    icon: CloudIcon,
-    label: "Content Autopilot",
-    title: "Always-On Research",
-    description: "Workers monitor your data sources, surface changes, and push summaries to your team automatically. NotebookLM-style intelligence, deployed.",
-    accent: "#00D4FF",
+    emoji: "⚡",
+    title: "Zero Latency",
+    description: "Your agents run on your VPS. No API queues. No rate limits. No per-token billing. Instant responses, always.",
+    highlight: "<50ms response time. Guaranteed.",
   },
   {
-    icon: BlocksIcon,
-    label: "AI Teams",
-    title: "Workers That Coordinate",
-    description: "Specialized AI workers assigned to research, drafting, review, and delivery — collaborating as a real team. No bottleneck at a single chatbot.",
-    accent: "#6600FF",
+    emoji: "🔐",
+    title: "Complete Privacy",
+    description: "Your client data, strategies, and workflows stay on your infrastructure. GDPR compliant. Enterprise-grade encryption.",
+    highlight: "HIPAA-ready configuration available.",
   },
 ];
 
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 30 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as const } },
+};
+
 export default function Capabilities() {
   const ref = useRef<HTMLElement>(null);
-  const isInView = useInView(ref, { once: true, amount: 0.1 });
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
     <section
       ref={ref}
       id="capabilities"
-      className="relative overflow-hidden bg-[#04040c] px-6 pt-12 pb-16 md:pt-16 md:pb-20"
+      className="relative overflow-hidden bg-[#04040c] px-6 py-20 md:py-32"
     >
-      {/* Background */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-px"
+        style={{
+          background: "linear-gradient(90deg, transparent, rgba(0,212,255,0.3), rgba(102,0,255,0.3), transparent)",
+        }}
+      />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
         style={{
-          background: "radial-gradient(ellipse 80% 60% at 50% 50%, rgba(102,0,255,0.07) 0%, transparent 70%)",
+          background: "radial-gradient(ellipse 80% 50% at 50% 50%, rgba(0,212,255,0.05), transparent 70%)",
         }}
       />
 
       <div className="relative z-10 mx-auto max-w-6xl">
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : undefined}
           transition={{ duration: 0.6 }}
           className="text-center"
         >
-          <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(255,255,255,0.45)]">
-            WHAT YOU GET
+          <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(255,255,255,0.5)]">
+            What You Get
           </p>
           <h2 className="mt-3 text-[clamp(1.5rem,4vw,2rem)] font-bold tracking-[-0.03em] text-white md:text-5xl">
-            Prebuilt Workers, Not a Chatbot
+            Everything Your AI Workers Need to Work
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-base text-[rgba(255,255,255,0.5)] sm:mt-5 sm:text-base">
-            Not a chatbot you have to prompt. A worker with skills, integrations, and
-            automation primitives — deployed and running in days.
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-[rgba(255,255,255,0.5)]">
+            One subscription. Full infrastructure. No per-user fees. No API bills.
           </p>
         </motion.div>
 
-        {/* Grid */}
-        <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3 md:gap-5">
-          {capabilities.map((cap, i) => {
-            const Icon = cap.icon;
-            return (
-              <motion.div
-                key={cap.label}
-                initial={{ opacity: 0, y: 40 }}
-                animate={isInView ? { opacity: 1, y: 0 } : undefined}
-                transition={{ duration: 0.65, delay: 0.1 * i, ease: [0.16, 1, 0.3, 1] }}
-                className="group relative rounded-2xl border border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.025)] p-6 transition-all duration-500 hover:-translate-y-1"
-                style={{ "--cap-accent": cap.accent } as React.CSSProperties}
-              >
-                {/* Top accent line */}
-                <div className="absolute inset-x-6 top-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{background: `linear-gradient(90deg, transparent, ${cap.accent}60, transparent)`}} />
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate={isInView ? "show" : "hidden"}
+          className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+        >
+          {capabilities.map((cap) => (
+            <motion.div
+              key={cap.title}
+              variants={item}
+              className="group relative rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] p-6 transition-all duration-300 hover:border-[rgba(0,212,255,0.3)] hover:bg-[rgba(255,255,255,0.04)]"
+            >
+              <div className="text-4xl mb-4">{cap.emoji}</div>
+              <h3 className="text-lg font-semibold text-white">{cap.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-[rgba(255,255,255,0.45)]">
+                {cap.description}
+              </p>
+              <div className="mt-4 rounded-lg bg-[rgba(0,212,255,0.08)] px-3 py-1.5">
+                <p className="text-xs font-medium text-[#00D4FF]">{cap.highlight}</p>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
 
-                {/* Label badge */}
-                <div className="mb-5 flex items-center gap-2">
-                  <div
-                    className="flex h-6 w-6 items-center justify-center rounded-md text-white"
-                    style={{ background: `${cap.accent}18` }}
-                  >
-                    <Icon />
-                  </div>
-                  <span
-                    className="font-mono text-[10px] uppercase tracking-widest"
-                    style={{ color: cap.accent }}
-                  >
-                    {cap.label}
-                  </span>
-                </div>
-
-                <h3 className="text-xl font-bold text-white">{cap.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-[rgba(255,255,255,0.48)]">
-                  {cap.description}
-                </p>
-
-                {/* Hover glow */}
-                <div
-                  className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                  style={{
-                    background: `radial-gradient(ellipse 60% 50% at 50% 0%, ${cap.accent}0c 0%, transparent 70%)`,
-                  }}
-                />
-              </motion.div>
-            );
-          })}
-        </div>
+        {/* Bottom trust bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : undefined}
+          transition={{ duration: 0.6, delay: 0.7 }}
+          className="mt-12 flex flex-wrap items-center justify-center gap-6 md:gap-10"
+        >
+          {[
+            "Pre-configured in 3 minutes",
+            "No credit card to start",
+            "Cancel anytime",
+            "24/7 operation",
+            "SSL encrypted",
+          ].map((item) => (
+            <div key={item} className="flex items-center gap-2">
+              <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4 text-[#00D4FF]" aria-hidden="true">
+                <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span className="text-sm text-[rgba(255,255,255,0.4)]">{item}</span>
+            </div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );

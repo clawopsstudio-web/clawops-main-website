@@ -1,104 +1,70 @@
 'use client';
 
-"use client";
+import { motion, animate, useInView } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
-import { motion, animate, useInView, useMotionValue, useTransform } from "framer-motion";
-import { useEffect, useRef } from "react";
-
-function PhoneIcon() {
+function DollarIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">
-      <path
-        d="M7.5 4.5H5.7C4.872 4.5 4.2 5.172 4.2 6C4.2 13.622 10.378 19.8 18 19.8C18.828 19.8 19.5 19.128 19.5 18.3V16.5L15.9 15.3L14.244 16.956C11.9 15.763 8.237 12.1 7.044 9.756L8.7 8.1L7.5 4.5Z"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
-function ClockIcon() {
+function CpuIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">
-      <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="1.6" />
-      <path
-        d="M12 7.8V12L15.3 13.8"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" strokeWidth="1.6" />
+      <rect x="9" y="9" width="6" height="6" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
     </svg>
   );
 }
 
-function LayersIcon() {
+function ScaleIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">
-      <path
-        d="M12 4L20 8L12 12L4 8L12 4Z"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M4 12L12 16L20 12"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M4 16L12 20L20 16"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d="M16 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1zM2 16l3-8 3 8c-.87.65-1.92 1-3 1S.87 16.65 2 16zM12 2C9.24 2 7 4.24 7 7s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
-function CountUpPercentage({ value }: { value: number }) {
+function CountUpNumber({ value, prefix = "", suffix = "" }: { value: number; prefix?: string; suffix?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.8 });
-  const motionValue = useMotionValue(0);
-  const rounded = useTransform(motionValue, (latest) => Math.round(latest));
+  const [display, setDisplay] = useState(0);
 
   useEffect(() => {
     if (!isInView) return;
-    const controls = animate(motionValue, value, {
-      duration: 1.6,
+    const controls = animate(0, value, {
+      duration: 1.8,
       ease: [0.16, 1, 0.3, 1],
+      onUpdate: (v) => setDisplay(Math.round(v)),
     });
-
     return () => controls.stop();
-  }, [isInView, motionValue, value]);
+  }, [isInView, value]);
 
-  return <motion.span ref={ref}>{rounded}</motion.span>;
+  return <span ref={ref}>{prefix}{display}{suffix}</span>;
 }
 
 const problems = [
   {
-    icon: PhoneIcon,
-    title: "Leads Go Cold",
+    icon: DollarIcon,
+    title: "You're Paying Twice",
     description:
-      "Prospects wait hours for a response. By the time you reply, they've moved on.",
+      "Every AI tool you use charges per token. GPT calls, Claude API, Gemini searches. The bills stack up fast — and they scale against your growth.",
   },
   {
-    icon: ClockIcon,
-    title: "The Bottleneck",
+    icon: CpuIcon,
+    title: "Your Data Leaves Your Control",
     description:
-      "Every decision, every follow-up, every approval runs through you. You can't scale past 24 hours a day.",
+      "Every prompt sent to OpenAI or Anthropic goes through their servers. Confidential client data. Internal strategies. Sales pipelines. You're handing it over.",
   },
   {
-    icon: LayersIcon,
-    title: "Tools That Don't Talk",
+    icon: ScaleIcon,
+    title: "Latency Kills the Experience",
     description:
-      "Your stack doesn't connect to itself. Manual work fills the gaps between your apps.",
+      "API queues. Rate limits. Expensive context windows. Your AI worker is waiting in line when it should be working.",
   },
 ];
 
@@ -112,7 +78,6 @@ export default function Problem() {
       id="problem"
       className="relative overflow-hidden bg-[#04040c] px-6 pt-14 pb-12 md:pt-20 md:pb-20"
     >
-      {/* Top gradient divider */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 h-px"
@@ -138,17 +103,19 @@ export default function Problem() {
           className="text-center"
         >
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(255,255,255,0.5)]">
-            THE PROBLEM
+            The Problem
           </p>
           <h2 className="mt-3 text-[clamp(1.5rem,4vw,2rem)] font-bold tracking-[-0.03em] text-white md:text-5xl">
-            Your Business Has a Scaling Problem
+            You&apos;re Paying for AI the Wrong Way
           </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-[rgba(255,255,255,0.5)]">
+            Most businesses pay for AI twice — once in API bills, once in the limitations that come with it.
+          </p>
         </motion.div>
 
-        <div className="mt-8 grid gap-4 md:grid-cols-3 md:gap-6">
+        <div className="mt-10 grid gap-4 md:grid-cols-3 md:gap-6">
           {problems.map((problem, index) => {
             const Icon = problem.icon;
-
             return (
               <motion.article
                 key={problem.title}
@@ -177,15 +144,21 @@ export default function Problem() {
           initial={{ opacity: 0, y: 24 }}
           animate={isInView ? { opacity: 1, y: 0 } : undefined}
           transition={{ duration: 0.7, delay: 0.55 }}
-          className="mx-auto mt-14 max-w-3xl rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] px-6 py-8 text-center"
+          className="mx-auto mt-14 grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6"
         >
-          <p className="text-base font-medium leading-7 text-white sm:text-xl md:text-2xl">
-            Most teams lose{" "}
-            <span className="text-[#00D4FF]">
-              <CountUpPercentage value={23} />%
-            </span>{" "}
-            of hot leads to slow response times. Every hour that passes cuts your close rate in half.
-          </p>
+          {[
+            { value: 3000, prefix: "$", suffix: "+", label: "avg AI API spend/month" },
+            { value: 40, prefix: "", suffix: "%", label: "data privacy risk" },
+            { value: 500, prefix: "+", suffix: "ms", label: "avg API latency" },
+            { value: 100, prefix: "", suffix: "%", label: "predictable cost model" },
+          ].map((stat) => (
+            <div key={stat.label} className="rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] p-5 text-center">
+              <div className="text-2xl font-bold text-[#00D4FF] md:text-3xl">
+                <CountUpNumber value={stat.value} prefix={stat.prefix} suffix={stat.suffix} />
+              </div>
+              <p className="mt-1 text-xs text-[rgba(255,255,255,0.4)]">{stat.label}</p>
+            </div>
+          ))}
         </motion.div>
       </div>
     </section>

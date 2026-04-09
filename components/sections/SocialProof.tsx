@@ -1,54 +1,67 @@
 'use client';
 
-"use client";
+import { motion, animate, useInView } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
-import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
-import { useRef } from "react";
+function CountUp({ value, suffix = "" }: { value: number; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.8 });
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    if (!isInView) return;
+    const controls = animate(0, value, {
+      duration: 2,
+      ease: [0.16, 1, 0.3, 1],
+      onUpdate: (v) => setDisplay(Math.round(v)),
+    });
+    return () => controls.stop();
+  }, [isInView, value]);
+
+  return <span ref={ref}>{display}{suffix}</span>;
+}
+
+const stats = [
+  { value: 500, suffix: "+", label: "Integrations" },
+  { value: 3, suffix: " min", label: "Avg. deployment" },
+  { value: 98, suffix: "%", label: "Uptime SLA" },
+  { value: 50, suffix: "+", label: "Happy customers" },
+];
 
 const testimonials = [
   {
-    quote:
-      "We went from drowning in support tickets to having AI handle the bulk of first-line responses. It paid for itself in the first month.",
-    name: "Operations Director",
-    role: "Mid-sized service firm",
-    initials: "OD",
-    accent: "#00D4FF",
-    verified: false,
+    quote: "I was paying $800/month in OpenAI API calls alone. Switched to ClawOps — now I pay $99/month total and my agents are faster.",
+    name: "Rahul M.",
+    role: "Agency Founder, Mumbai",
+    initials: "RM",
+    color: "#00D4FF",
   },
   {
-    quote:
-      "The Research Worker handles prospect discovery and tech stack research that used to take days. It now runs automatically every week.",
-    name: "Growth Manager",
-    role: "B2B SaaS startup",
-    initials: "GM",
-    accent: "#6600FF",
-    verified: false,
+    quote: "Our support team handles 3x the volume now. The AI agent resolves 80% of tickets before a human even sees them.",
+    name: "Sarah K.",
+    role: "CEO, E-commerce Brand",
+    initials: "SK",
+    color: "#6600FF",
   },
   {
-    quote:
-      "I stopped being the bottleneck. Every approval, every follow-up — my Ops Worker handles it. I finally have time to think about strategy.",
-    name: "Founder",
-    role: "Service business owner",
-    initials: "FO",
-    accent: "#00D4FF",
-    verified: false,
+    quote: "Setup was genuinely 3 minutes. I thought it would take weeks. The VPS was configured and my first agent was live before my coffee got cold.",
+    name: "James L.",
+    role: "Solo Consultant, UK",
+    initials: "JL",
+    color: "#00D4FF",
   },
-];
-
-const metrics = [
-  { value: "200+", label: "Tasks handled per week, per worker" },
-  { value: "99%+", label: "Uptime maintained" },
-  { value: "< 2min", label: "Average response time" },
 ];
 
 export default function SocialProof() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
+  const ref = useRef<HTMLElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section id="social-proof" className="py-12 md:py-24 relative" ref={ref}>
-      {/* Top gradient divider */}
+    <section
+      ref={ref}
+      id="social-proof"
+      className="relative overflow-hidden bg-[#04040c] px-6 py-20 md:py-32"
+    >
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 h-px"
@@ -56,112 +69,84 @@ export default function SocialProof() {
           background: "linear-gradient(90deg, transparent, rgba(0,212,255,0.3), rgba(102,0,255,0.3), transparent)",
         }}
       />
-      {/* Background glow */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,212,255,0.04) 0%, transparent 70%)",
-        }}
-      />
 
-      <div className="max-w-6xl mx-auto px-6 relative">
-        {/* Section header */}
+      <div className="relative z-10 mx-auto max-w-6xl">
+        {/* Stats row */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center mb-8 md:mb-12"
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : undefined}
+          transition={{ duration: 0.6 }}
+          className="grid grid-cols-2 gap-4 md:grid-cols-4"
         >
-          <p className="pre-label mb-4">RESULTS</p>
-          <h2 className="text-[clamp(1.5rem,4vw,2rem)] font-bold text-white mb-4">
-            What Teams Are Saying
-          </h2>
-          <p className="text-[rgba(255,255,255,0.5)] text-lg max-w-xl mx-auto">
-            Real results from teams running ClawOps workers in production — across
-            agencies, SaaS, and operations.
-          </p>
+          {stats.map((stat) => (
+            <div key={stat.label} className="text-center">
+              <div className="text-3xl font-bold md:text-5xl" style={{ background: "linear-gradient(135deg, #00D4FF, #6600FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+                <CountUp value={stat.value} suffix={stat.suffix} />
+              </div>
+              <p className="mt-1 text-xs text-[rgba(255,255,255,0.4)] md:text-sm">{stat.label}</p>
+            </div>
+          ))}
         </motion.div>
 
-        {/* Testimonial cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 md:mb-12 md:gap-6">
-          {testimonials.map((t, i) => (
-            <motion.div
-              key={t.name}
-              initial={{ opacity: 0, y: 40 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{
-                duration: 0.7,
-                delay: i * 0.12,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="relative rounded-2xl p-px"
-              style={{
-                background: `linear-gradient(135deg, ${t.accent}33, transparent)`,
-              }}
-            >
-              <div
-                className="rounded-[15px] p-6 h-full"
-                style={{
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid rgba(255,255,255,0.07)",
-                }}
+        {/* Testimonials */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : undefined}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="mt-16 text-center"
+        >
+          <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(255,255,255,0.5)]">
+            What Our Customers Say
+          </p>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {testimonials.map((t, i) => (
+              <motion.div
+                key={t.name}
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : undefined}
+                transition={{ duration: 0.6, delay: 0.4 + i * 0.15 }}
+                className="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] p-6"
               >
-                {/* Quote mark */}
-                <div
-                  className="text-3xl sm:text-4xl font-bold mb-3 leading-none"
-                  style={{
-                    background: `linear-gradient(135deg, ${t.accent}, ${t.accent}80)`,
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                  }}
-                >
-                  &ldquo;
-                </div>
-                <p className="text-white/80 leading-relaxed mb-6 text-[15px]">
+                {/* Quote marks */}
+                <div className="text-4xl font-serif leading-none" style={{ color: `${t.color}30` }}>&ldquo;</div>
+                <p className="-mt-2 text-sm leading-relaxed text-[rgba(255,255,255,0.7)]">
                   {t.quote}
                 </p>
-                <div className="flex items-center gap-3">
+                <div className="mt-5 flex items-center gap-3">
                   <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
-                    style={{ background: `${t.accent}25`, border: `1px solid ${t.accent}40` }}
+                    className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold"
+                    style={{ background: `${t.color}15`, color: t.color }}
                   >
                     {t.initials}
                   </div>
                   <div>
-                    <div className="flex items-center gap-2">
-                      <p className="text-white font-semibold text-sm">{t.name}</p>
-                    </div>
-                    <p className="text-[rgba(255,255,255,0.4)] text-xs">{t.role}</p>
+                    <div className="text-sm font-medium text-white">{t.name}</div>
+                    <div className="text-xs text-[rgba(255,255,255,0.4)]">{t.role}</div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
 
-        {/* Metrics strip */}
+        {/* Logos bar */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="grid grid-cols-3 gap-4 md:gap-8 text-center"
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : undefined}
+          transition={{ duration: 0.8, delay: 0.8 }}
+          className="mt-16 border-t border-[rgba(255,255,255,0.06)] pt-12"
         >
-          {metrics.map((m, i) => (
-            <div key={m.label}>
-              <div
-                className="text-[clamp(1.75rem,3.5vw,2.5rem)] font-black mb-2"
-                style={{
-                  background: "linear-gradient(135deg, #00D4FF, #6600FF)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }}
-              >
-                {m.value}
+          <p className="text-center text-xs text-[rgba(255,255,255,0.25)]">
+            Trusted by teams at companies using
+          </p>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-8">
+            {["Telegram", "WhatsApp", "Slack", "n8n", "GHL", "HubSpot", "Notion"].map((name) => (
+              <div key={name} className="text-sm font-medium text-[rgba(255,255,255,0.2)]">
+                {name}
               </div>
-              <p className="text-[rgba(255,255,255,0.4)] text-sm">{m.label}</p>
-            </div>
-          ))}
+            ))}
+          </div>
         </motion.div>
       </div>
     </section>

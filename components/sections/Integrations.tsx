@@ -1,7 +1,5 @@
 'use client';
 
-"use client";
-
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
@@ -14,29 +12,42 @@ const integrationCategories = [
   {
     label: "Browser & Web",
     color: "#6600FF",
-    items: ["Virtual Chrome", "Authenticated Sessions", "Web Scraping", "Form Filling", "Multi-Tab"],
+    items: ["Virtual Chrome", "Authenticated Sessions", "Web Scraping", "Form Filling", "Multi-Tab Automation"],
   },
   {
-    label: "Data & APIs",
+    label: "Marketing & Sales",
     color: "#00D4FF",
-    items: ["REST API", "Webhooks", "MCP Protocol", "GraphQL", "Zapier / n8n"],
+    items: ["Go High Level", "HubSpot", "Pipedrive", "Salesforce", "Calendly"],
   },
   {
     label: "Productivity",
     color: "#6600FF",
-    items: ["Google Workspace", "Notion", "Airtable", "HubSpot", "GHL / GoHighLevel"],
+    items: ["Google Workspace", "Notion", "Airtable", "Trello", "Linear"],
   },
   {
-    label: "Content & Research",
+    label: "Automation",
     color: "#00D4FF",
-    items: ["Web Search", "PDF Processing", "Content Summarization", "Data Extraction", "Monitoring"],
+    items: ["n8n", "Zapier", "Make.com", "MCP Protocol", "REST API / Webhooks"],
   },
   {
-    label: "Custom",
+    label: "Research & Data",
     color: "#6600FF",
-    items: ["Any web app", "Internal tools", "Legacy systems", "Custom APIs", "SaaS platforms"],
+    items: ["Firecrawl", "Web Search", "PDF Processing", "Data Extraction", "Monitoring"],
   },
 ];
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08 },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as const } },
+};
 
 export default function Integrations() {
   const ref = useRef<HTMLElement>(null);
@@ -46,9 +57,8 @@ export default function Integrations() {
     <section
       ref={ref}
       id="integrations"
-      className="relative overflow-hidden bg-[#04040c] px-6 py-20 md:py-28"
+      className="relative overflow-hidden bg-[#04040c] px-6 py-20 md:py-32"
     >
-      {/* Top gradient divider */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 h-px"
@@ -60,7 +70,7 @@ export default function Integrations() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
         style={{
-          background: "radial-gradient(ellipse 60% 40% at 50% 50%, rgba(102,0,255,0.08) 0%, transparent 70%)",
+          background: "radial-gradient(ellipse 70% 40% at 50% 0%, rgba(0,212,255,0.06), transparent 60%)",
         }}
       />
 
@@ -71,60 +81,62 @@ export default function Integrations() {
           transition={{ duration: 0.6 }}
           className="text-center"
         >
-          <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(255,255,255,0.45)]">
-            INTEGRATIONS
+          <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(255,255,255,0.5)]">
+            Integrations
           </p>
           <h2 className="mt-3 text-[clamp(1.5rem,4vw,2rem)] font-bold tracking-[-0.03em] text-white md:text-5xl">
-            Connects to Your Stack
+            Connects to Everything You Already Use
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-base text-[rgba(255,255,255,0.5)] sm:mt-5">
-            Workers don&apos;t just chat — they operate. Connect via messaging apps,
-            browser sessions, APIs, webhooks, or MCP. Your stack, your way.
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-[rgba(255,255,255,0.5)]">
+            Pre-built connectors for 500+ tools. If it has an API or runs in a browser, your AI workers can use it.
           </p>
         </motion.div>
 
-        <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3 md:mt-12">
-          {integrationCategories.map((cat, i) => (
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate={isInView ? "show" : "hidden"}
+          className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+        >
+          {integrationCategories.map((cat) => (
             <motion.div
               key={cat.label}
-              initial={{ opacity: 0, y: 32 }}
-              animate={isInView ? { opacity: 1, y: 0 } : undefined}
-              transition={{ duration: 0.55, delay: 0.08 * i, ease: [0.16, 1, 0.3, 1] }}
-              className="rounded-2xl border border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.025)] p-6"
+              variants={item}
+              className="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] p-6"
             >
-              <div className="mb-4 flex items-center gap-2">
-                <span
-                  className="font-mono text-[10px] uppercase tracking-widest"
-                  style={{ color: cat.color }}
-                >
-                  {cat.label}
-                </span>
+              <div
+                className="mb-4 inline-block rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider"
+                style={{ background: `${cat.color}15`, color: cat.color }}
+              >
+                {cat.label}
               </div>
-              <div className="flex flex-wrap gap-2">
-                {cat.items.map((item) => (
-                  <span
-                    key={item}
-                    className="rounded-md border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.04)] px-3 py-1.5 text-xs text-[rgba(255,255,255,0.65)]"
-                  >
-                    {item}
-                  </span>
+              <ul className="space-y-2">
+                {cat.items.map((tool) => (
+                  <li key={tool} className="flex items-center gap-2 text-sm text-[rgba(255,255,255,0.5)]">
+                    <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5 flex-shrink-0" style={{ color: cat.color }} aria-hidden="true">
+                      <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    {tool}
+                  </li>
                 ))}
-              </div>
+              </ul>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Bottom note */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : undefined}
-          transition={{ duration: 0.5, delay: 0.6 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
           className="mt-10 text-center"
         >
           <p className="text-sm text-[rgba(255,255,255,0.35)]">
-            Don&apos;t see your tool? Workers operate through browser automation — meaning they work with
-            virtually any web app, even ones without an API.
+            Don&apos;t see your tool? Our MCP protocol connects to any REST API in minutes.
           </p>
+          <a href="/signup" className="mt-2 inline-block text-sm font-medium text-[#00D4FF] hover:text-white transition-colors">
+            Request an integration &rarr;
+          </a>
         </motion.div>
       </div>
     </section>
