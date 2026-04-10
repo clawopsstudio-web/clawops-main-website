@@ -174,3 +174,4 @@ export default function LoginPage() {
     </div>
   )
 }
+/* Auth fix deployed: Fri Apr 10 23:39:49 CEST 2026 */
