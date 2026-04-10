@@ -33,7 +33,10 @@ function LoginContent() {
     setError('')
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/auth/callback?next=/dashboard` },
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
+        skipBrowserRedirect: false,
+      },
     })
     if (error) {
       setError(error.message)
