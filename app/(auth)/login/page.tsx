@@ -1,69 +1,38 @@
 'use client';
 
-// ============================================================================
-// ClawOps Studio — Login Page
-// Phase 1 MVP
-// ============================================================================
-
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/client';
 
 export default function LoginPage() {
   const router = useRouter();
-  const supabase = createClient();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    // Check if already logged in
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        router.push('/dashboard');
-      }
-    });
-  }, [supabase, router]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
-
-    const { data, error: authError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (authError) {
-      setError(authError.message);
-      setIsLoading(false);
-    } else if (data.user) {
-      // Wait a tick for cookie to be set, then verify session before redirect
-      const { data: { user: verifiedUser } } = await supabase.auth.getUser();
-      if (verifiedUser) {
-        // Use window.location for full page reload to ensure cookies propagate
-        window.location.href = '/dashboard';
-      } else {
-        setError('Session verification failed. Please try again.');
-        setIsLoading(false);
-      }
+    
+    // MOCK AUTH - just accept anything
+    await new Promise(r => setTimeout(r, 800));
+    
+    if (email && password) {
+      router.push('/dashboard');
     } else {
-      setError('Login failed. Please try again.');
+      setError('Please enter email and password');
       setIsLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-[#04040c] flex items-center justify-center p-4">
-      {/* Background */}
       <div className="fixed inset-0 grid-bg pointer-events-none" />
       <div className="fixed inset-0 bg-gradient-radial from-[#00D4FF]/5 to-transparent pointer-events-none" />
 
       <div className="w-full max-w-md relative">
-        {/* Logo */}
         <div className="flex flex-col items-center mb-8">
           <div className="w-12 h-12 rounded-xl bg-[#00D4FF]/10 border border-[#00D4FF]/30 flex items-center justify-center mb-3 glow-blue-sm">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" strokeWidth="2">
@@ -76,7 +45,6 @@ export default function LoginPage() {
           <p className="text-sm text-white/40 mt-1">Sign in to your ClawOps workspace</p>
         </div>
 
-        {/* Form Card */}
         <div className="rounded-2xl bg-white/[0.03] border border-white/[0.08] p-8 backdrop-blur-sm">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -127,8 +95,8 @@ export default function LoginPage() {
           <div className="mt-6 text-center">
             <p className="text-sm text-white/30">
               No account?{' '}
-              <Link href="/signup" className="text-[#00D4FF]/70 hover:text-[#00D4FF] transition-colors font-medium">
-                Create one
+              <Link href="/dashboard" className="text-[#00D4FF]/70 hover:text-[#00D4FF] font-medium">
+                Get started
               </Link>
             </p>
           </div>
