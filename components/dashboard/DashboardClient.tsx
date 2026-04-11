@@ -45,18 +45,26 @@ const PRIORITY_COLORS: Record<string, { text: string; bg: string; border: string
 }
 
 const STATUS_BADGES: Record<string, string> = {
-  pending:    'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
-  in_progress:'bg-blue-500/15 text-blue-400 border-blue-500/30',
-  completed:  'bg-green-500/15 text-green-400 border-green-500/30',
-  tracked:    'bg-gray-500/15 text-gray-400 border-gray-500/30',
-  running:    'bg-green-500/15 text-green-400 border-green-500/30',
+  pending:     'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
+  in_progress: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
+  completed:   'bg-green-500/15 text-green-400 border-green-500/30',
+  tracked:     'bg-gray-500/15 text-gray-400 border-gray-500/30',
+  running:     'bg-green-500/15 text-green-400 border-green-500/30',
 }
 
-const quickLinks = [
-  { label: 'Chrome DevTools', href: 'https://vmi3094584-1.tailec7a72.ts.net/chrome/', color: '#00D4FF', desc: 'VNC browser' },
-  { label: 'n8n Workflows', href: 'https://vmi3094584-1.tailec7a72.ts.net/n8n/', color: '#6600FF', desc: 'Automation' },
-  { label: 'Paperclip', href: 'http://localhost:3100', color: '#FF6B35', desc: 'File mgmt' },
-  { label: 'OpenClaw Gateway', href: 'http://localhost:18789', color: '#00FF88', desc: 'AI gateway' },
+const QUICK_LINKS = [
+  { label: 'Skills Library', href: '/dashboard/skills-library', color: '#10b981', desc: '5400+ skills', icon: '🧠', internal: true },
+  { label: 'Guides',         href: '/guides',                  color: '#4285F4', desc: 'Step-by-step docs', icon: '📚', internal: true },
+  { label: 'Quick Start',    href: '/quick-start',             color: '#FFB800', desc: '5-min setup', icon: '⚡', internal: true },
+  { label: 'Mission Control',href: '/dashboard/mission-control', color: '#FF6B35', desc: 'System health', icon: '🚀', internal: true },
+  { label: 'n8n Workflows', href: 'https://vmi3094584-1.tailec7a72.ts.net/n8n/', color: '#6600FF', desc: 'Automation', icon: '⚙️', internal: false },
+  { label: 'Chrome VNC',    href: 'https://vmi3094584-1.tailec7a72.ts.net/chrome/', color: '#00D4FF', desc: 'Browser', icon: '🌐', internal: false },
+]
+
+const INTEGRATIONS = [
+  { name: 'GoHighLevel', icon: '📊', color: '#FF6B35', desc: 'CRM, contacts, pipelines, SMS', badge: 'CRM' },
+  { name: 'n8n', icon: '⚙️', color: '#EA4B71', desc: 'Workflow automation & webhooks', badge: 'Automation' },
+  { name: 'Google Workspace', icon: '📁', color: '#4285F4', desc: 'Gmail, Drive, Docs, Sheets', badge: 'Productivity' },
 ]
 
 const MODEL_OPTIONS = [
@@ -78,7 +86,6 @@ export default function DashboardClient({ data }: { data: DashboardData }) {
   const addTask = async () => {
     if (!newTaskTitle.trim()) return
     setAddingTask(true)
-    const { data: { user } } = await supabase.auth.getUser()
     const { data: task, error } = await supabase
       .from('tasks')
       .insert({
@@ -116,9 +123,7 @@ export default function DashboardClient({ data }: { data: DashboardData }) {
   }
 
   return (
-        <div>
-
-
+    <div>
       <main className="flex-1 overflow-y-auto">
         {/* Header */}
         <div className="border-b border-[rgba(255,255,255,0.06)] bg-[rgba(4,4,12,0.8)] backdrop-blur-xl px-8 py-6">
@@ -140,19 +145,63 @@ export default function DashboardClient({ data }: { data: DashboardData }) {
         </div>
 
         <div className="px-8 py-6 space-y-6">
+
+          {/* Integration Status */}
+          <div>
+            <h2 className="text-xs font-semibold text-[rgba(255,255,255,0.3)] uppercase tracking-wider mb-3">
+              Integrations
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {INTEGRATIONS.map((int, i) => (
+                <motion.div
+                  key={int.name}
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: i * 0.07 }}
+                >
+                  <Link href="/dashboard/settings?tab=integrations">
+                    <div className="group relative overflow-hidden rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] p-5 hover:border-[rgba(255,255,255,0.15)] transition-all hover:-translate-y-0.5 cursor-pointer">
+                      <div
+                        className="pointer-events-none absolute inset-0 opacity-20"
+                        style={{ background: `radial-gradient(circle at 100% 0%, ${int.color}30, transparent 60%)` }}
+                      />
+                      <div className="relative z-10">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-3">
+                            <span className="text-2xl">{int.icon}</span>
+                            <div>
+                              <p className="text-sm font-semibold text-white group-hover:text-cyan-400 transition-colors">{int.name}</p>
+                              <p className="text-xs text-[rgba(255,255,255,0.4)]">{int.desc}</p>
+                            </div>
+                          </div>
+                          <span className="text-[9px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 font-medium border border-red-500/30">
+                            Not Connected
+                          </span>
+                        </div>
+                        <p className="text-xs text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                          Click to connect →
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
           {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               { label: 'Active Agents', value: data.activeAgents, icon: '🤖', color: '#00D4FF' },
               { label: 'Pending Tasks', value: pendingTasks, icon: '📋', color: '#FFB800' },
               { label: 'Completed', value: data.completedTasks, icon: '✅', color: '#00FF88' },
-              { label: 'VPS Instances', value: instances.length, icon: '🖥️', color: '#6600FF' },
+              { label: 'Skills Installed', value: 0, icon: '🧠', color: '#10b981' },
             ].map((stat, i) => (
               <motion.div
                 key={stat.label}
                 initial={{ opacity: 0, scale: 0.95, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: i * 0.07 }}
+                transition={{ duration: 0.4, delay: 0.1 + i * 0.07 }}
                 className="relative overflow-hidden rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] p-5"
               >
                 <div
@@ -179,7 +228,7 @@ export default function DashboardClient({ data }: { data: DashboardData }) {
           >
             <div className="border-b border-[rgba(255,255,255,0.06)] px-5 py-4">
               <h2 className="text-sm font-semibold text-white">Available AI Models</h2>
-              <p className="text-xs text-[rgba(255,255,255,0.35)]">Your workers use these models for inference</p>
+              <p className="text-xs text-[rgba(255,255,255,0.35)]">Your agents use these models for inference</p>
             </div>
             <div className="p-5 grid grid-cols-2 md:grid-cols-4 gap-3">
               {MODEL_OPTIONS.map((model) => (
@@ -312,11 +361,66 @@ export default function DashboardClient({ data }: { data: DashboardData }) {
 
             {/* Right column */}
             <div className="space-y-4">
-              {/* VPS Instances */}
+              {/* Skills Library CTA */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.35 }}
+                className="overflow-hidden rounded-xl border border-[rgba(102,0,255,0.3)] bg-[rgba(102,0,255,0.05)]"
+              >
+                <div className="p-5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xl">🧠</span>
+                    <h2 className="text-sm font-semibold text-white">Skills Library</h2>
+                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-[rgba(102,0,255,0.2)] text-purple-400 font-medium">5400+</span>
+                  </div>
+                  <p className="text-xs text-[rgba(255,255,255,0.4)] mb-3">
+                    Install pre-built AI skills for GHL, n8n, Google Workspace, and more. One-click setup.
+                  </p>
+                  <Link
+                    href="/dashboard/skills-library"
+                    className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold text-white transition-all hover:-translate-y-0.5"
+                    style={{ background: 'linear-gradient(135deg, #6600FF, #00D4FF)', boxShadow: '0 0 20px rgba(102,0,255,0.25)' }}
+                  >
+                    Browse Skills →
+                  </Link>
+                </div>
+              </motion.div>
+
+              {/* Quick Links */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.45 }}
+                className="overflow-hidden rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)]"
+              >
+                <div className="border-b border-[rgba(255,255,255,0.06)] px-5 py-4">
+                  <h2 className="text-sm font-semibold text-white">Quick Access</h2>
+                </div>
+                <div className="p-5 grid grid-cols-2 gap-2">
+                  {QUICK_LINKS.map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      target={link.internal ? undefined : '_blank'}
+                      rel={link.internal ? undefined : 'noopener noreferrer'}
+                      className="group flex items-center gap-2.5 rounded-lg border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] px-3 py-3 transition-all hover:border-[rgba(255,255,255,0.15)] hover:bg-[rgba(255,255,255,0.05)] hover:-translate-y-0.5"
+                    >
+                      <span className="text-base">{link.icon}</span>
+                      <div className="min-w-0">
+                        <p className="text-xs font-medium text-white group-hover:text-cyan-400 transition-colors">{link.label}</p>
+                        <p className="text-[10px] text-[rgba(255,255,255,0.3)]">{link.desc}</p>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* VPS Instances */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.5 }}
                 className="overflow-hidden rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)]"
               >
                 <div className="border-b border-[rgba(255,255,255,0.06)] px-5 py-4 flex items-center justify-between">
@@ -350,35 +454,6 @@ export default function DashboardClient({ data }: { data: DashboardData }) {
                       ))}
                     </div>
                   )}
-                </div>
-              </motion.div>
-
-              {/* Quick Actions */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.45 }}
-                className="overflow-hidden rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)]"
-              >
-                <div className="border-b border-[rgba(255,255,255,0.06)] px-5 py-4">
-                  <h2 className="text-sm font-semibold text-white">Quick Actions</h2>
-                </div>
-                <div className="p-5 grid grid-cols-2 gap-2">
-                  {quickLinks.map((link) => (
-                    <a
-                      key={link.label}
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group flex items-center gap-2 rounded-lg border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] px-3 py-3 transition-all hover:border-[rgba(255,255,255,0.15)] hover:bg-[rgba(255,255,255,0.05)]"
-                    >
-                      <div className="h-2 w-2 rounded-full flex-shrink-0" style={{ background: link.color, boxShadow: `0 0 6px ${link.color}` }} />
-                      <div className="min-w-0">
-                        <p className="text-xs font-medium text-white truncate">{link.label}</p>
-                        <p className="text-[10px] text-[rgba(255,255,255,0.3)]">{link.desc}</p>
-                      </div>
-                    </a>
-                  ))}
                 </div>
               </motion.div>
             </div>
