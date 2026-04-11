@@ -43,12 +43,11 @@ function LoginContent() {
     setLoadingGoogle(true)
     setError('')
     
-    const currentOrigin = window.location.origin
-    
+    // Let Supabase handle redirect automatically using Redirect URLs from dashboard
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${currentOrigin}/auth/callback?next=/dashboard`,
+        // No redirectTo - uses Supabase dashboard Redirect URLs config
       },
     })
     
