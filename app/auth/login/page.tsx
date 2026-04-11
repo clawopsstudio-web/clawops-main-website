@@ -43,16 +43,21 @@ function LoginContent() {
     setLoadingGoogle(true)
     setError('')
     
-    // Let Supabase handle redirect automatically using Redirect URLs from dashboard
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        // No redirectTo - uses Supabase dashboard Redirect URLs config
-      },
-    })
-    
-    if (error) {
-      setError(error.message)
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          // Redirect to dashboard after callback
+          redirectTo: 'https://www.clawops.studio/dashboard',
+        },
+      })
+      
+      if (error) {
+        setError(error.message)
+        setLoadingGoogle(false)
+      }
+    } catch (err: any) {
+      setError(err.message || 'OAuth failed')
       setLoadingGoogle(false)
     }
   }
