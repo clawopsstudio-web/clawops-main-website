@@ -1,7 +1,7 @@
+import DashboardShell from '@/components/dashboard/DashboardShell'
 import DashboardClient from '@/components/dashboard/DashboardClient'
 import { MOCK_TASKS } from '@/lib/mock-data'
 
-// Local types matching DashboardClient
 interface Profile {
   full_name: string
   company: string
@@ -18,7 +18,6 @@ interface Instance {
 const anyTasks: any[] = MOCK_TASKS.slice(0, 10)
 
 export default async function DashboardPage() {
-  // Use mock data for now - skip Supabase DB calls
   const dashboardData = {
     profile: {
       full_name: 'Pulkit',
@@ -27,12 +26,16 @@ export default async function DashboardPage() {
     } as Profile,
     tasks: anyTasks,
     tasksTotal: MOCK_TASKS.length,
-    pendingTasks: MOCK_TASKS.filter(t => t.status === 'TODO').length,
-    completedTasks: MOCK_TASKS.filter(t => t.status === 'DONE').length,
+    pendingTasks: MOCK_TASKS.filter((t: any) => t.status === 'TODO').length,
+    completedTasks: MOCK_TASKS.filter((t: any) => t.status === 'DONE').length,
     instances: [] as Instance[],
     activeAgents: 3,
     userEmail: 'pulkit@clawops.studio',
   }
 
-  return <DashboardClient data={dashboardData as any} />
+  return (
+    <DashboardShell>
+      <DashboardClient data={dashboardData as any} />
+    </DashboardShell>
+  )
 }
