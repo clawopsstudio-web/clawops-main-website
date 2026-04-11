@@ -127,7 +127,7 @@ export default function Integrations() {
           <p className="text-sm text-[rgba(255,255,255,0.3)]">
             Don&apos;t see your tool? Our MCP protocol connects to any REST API.
           </p>
-          <Link href="/auth/signup" className="mt-2 inline-block text-sm font-medium text-[#00D4FF] hover:text-white hover:bg-white/5 px-3 py-1.5 rounded-lg transition-all">
+          <Link href="/dashboard" className="mt-2 inline-block text-sm font-medium text-[#00D4FF] hover:text-white hover:bg-white/5 px-3 py-1.5 rounded-lg transition-all">
             Request an integration &rarr;
           </Link>
         </motion.div>

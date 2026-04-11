@@ -117,7 +117,7 @@ export default function UseCases() {
                   </svg>
                   <span className="text-xs font-medium text-[#10b981]">{uc.metrics}</span>
                 </div>
-                <a href="/auth/signup" className="text-xs font-medium text-[rgba(255,255,255,0.3)] hover:text-white hover:bg-white/5 px-2 py-1 rounded transition-all">
+                <a href="/dashboard" className="text-xs font-medium text-[rgba(255,255,255,0.3)] hover:text-white hover:bg-white/5 px-2 py-1 rounded transition-all">
                   Activate &rarr;
                 </a>
               </div>

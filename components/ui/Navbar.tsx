@@ -84,13 +84,13 @@ export default function Navbar() {
           {/* Desktop Auth Buttons */}
           <div className="hidden items-center gap-3 md:flex">
             <Link
-              href="/auth/login"
+              href="/dashboard"
               className="rounded-lg px-4 py-2 text-sm font-medium text-white/70 transition-all hover:bg-white/5 hover:text-white"
             >
               Log In
             </Link>
             <Link
-              href="/auth/signup"
+              href="/dashboard"
               className="rounded-lg px-4 py-2 text-sm font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgba(0,212,255,0.35)]"
               style={{
                 background: "linear-gradient(135deg, #00D4FF, #6600FF)",
@@ -136,7 +136,7 @@ export default function Navbar() {
               ))}
               <li className="mt-4">
                 <Link
-                  href="/auth/signup"
+                  href="/dashboard"
                   onClick={() => setIsOpen(false)}
                   className="block rounded-xl py-3 text-center text-sm font-semibold text-white transition-all hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(0,212,255,0.3)]"
                   style={{

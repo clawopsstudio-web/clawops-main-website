@@ -49,7 +49,7 @@ export default function FinalCTA() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="/auth/signup"
+            <a href="/dashboard"
               className="group relative px-8 py-4 rounded-xl font-semibold text-white overflow-hidden transition-all hover:scale-[1.03] hover:shadow-[0_0_35px_rgba(0,212,255,0.35)]"
               style={{ background: "linear-gradient(135deg, #00D4FF, #6600FF)", boxShadow: "0 0 30px rgba(0,212,255,0.25)" }}>
               <span className="relative z-10 flex items-center gap-2">
