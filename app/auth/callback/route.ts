@@ -5,20 +5,21 @@ export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
   const plan = searchParams.get('plan') || 'pro'
-  const next = searchParams.get('next') || '/dashboard'
+
+  console.log('[AUTH] Callback received, code:', !!code)
 
   if (!code) {
     return NextResponse.redirect(`${origin}/auth/login?error=no_code`)
   }
 
-  // Create redirect URL
-  const redirectUrl = new URL(`${origin}${next}`, origin)
+  // Build the final redirect URL explicitly to /dashboard
+  const redirectUrl = new URL(`${origin}/dashboard`)
   if (plan) redirectUrl.searchParams.set('plan', plan)
-
-  // Create the response object we'll return
+  
+  // Create response - we'll add cookies to this
   let response = NextResponse.redirect(redirectUrl)
 
-  // Create SSR client with cookies linked to our response
+  // Create SSR client with explicit cookie handling
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -28,15 +29,17 @@ export async function GET(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
+          // Set cookies on both request (for reading) and response (for returning)
           cookiesToSet.forEach(({ name, value, options }) => {
+            // Update request cookies
             request.cookies.set(name, value)
+            // Set on response with explicit, compatible options
             response.cookies.set(name, value, {
-              httpOnly: options.httpOnly ?? true,
-              secure: options.secure ?? true,
-              sameSite: (options.sameSite as 'lax' | 'strict' | 'none') ?? 'lax',
-              path: options.path ?? '/',
+              httpOnly: true,
+              secure: true,
+              sameSite: 'lax',
+              path: '/',
               maxAge: options.maxAge,
-              domain: options.domain,
             })
           })
         },
@@ -44,25 +47,38 @@ export async function GET(request: NextRequest) {
     }
   )
 
-  // Wait for SIGNED_IN event before returning - this ensures cookies are set
+  // Wait for the auth state to change (this triggers cookie setting)
   await new Promise<void>((resolve) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      console.log('[AUTH] State change:', event)
       if (event === 'SIGNED_IN') {
         subscription.unsubscribe()
         resolve()
       }
     })
-
-    // Also timeout after 5 seconds to prevent infinite waiting
+    // Safety timeout
     setTimeout(resolve, 5000)
   })
 
-  // Now exchange the code - cookies will be set by onAuthStateChange handler
+  // Now do the exchange
   const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 
   if (error || !data.session) {
-    console.error('Auth callback error:', error?.message)
+    console.error('[AUTH] Exchange error:', error?.message)
     return NextResponse.redirect(`${origin}/auth/login?error=callback_error`)
+  }
+
+  console.log('[AUTH] Session created, user:', data.user?.email)
+
+  // Explicitly set the access token as a fallback cookie
+  if (data.session.access_token) {
+    response.cookies.set('sb-access-token', data.session.access_token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    })
   }
 
   return response
