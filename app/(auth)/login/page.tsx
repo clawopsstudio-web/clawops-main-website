@@ -5,26 +5,54 @@
 // Phase 1 MVP
 // ============================================================================
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAuthStore } from '@/lib/store';
+import { createClient } from '@/lib/supabase/client';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, isLoading } = useAuthStore();
+  const supabase = createClient();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // Check if already logged in
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        router.push('/dashboard');
+      }
+    });
+  }, [supabase, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    const result = await login(email, password);
-    if (result.success) {
-      router.push('/dashboard');
+    setIsLoading(true);
+
+    const { data, error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (authError) {
+      setError(authError.message);
+      setIsLoading(false);
+    } else if (data.user) {
+      // Wait a tick for cookie to be set, then verify session before redirect
+      const { data: { user: verifiedUser } } = await supabase.auth.getUser();
+      if (verifiedUser) {
+        // Use window.location for full page reload to ensure cookies propagate
+        window.location.href = '/dashboard';
+      } else {
+        setError('Session verification failed. Please try again.');
+        setIsLoading(false);
+      }
     } else {
-      setError(result.error || 'Login failed');
+      setError('Login failed. Please try again.');
+      setIsLoading(false);
     }
   };
 

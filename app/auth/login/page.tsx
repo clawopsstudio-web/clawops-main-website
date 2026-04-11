@@ -19,12 +19,23 @@ function LoginContent() {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) {
       setError(error.message)
       setLoading(false)
+    } else if (data.user) {
+      // Wait a tick for cookie to be set, then verify session before redirect
+      const { data: { user: verifiedUser } } = await supabase.auth.getUser()
+      if (verifiedUser) {
+        // Use window.location for full page reload to ensure cookies propagate
+        window.location.href = '/dashboard'
+      } else {
+        setError('Session verification failed. Please try again.')
+        setLoading(false)
+      }
     } else {
-      router.push('/dashboard')
+      setError('Login failed. Please try again.')
+      setLoading(false)
     }
   }
 
