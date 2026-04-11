@@ -20,33 +20,31 @@ function LoginContent() {
     setLoading(true)
     setError('')
     
-    // Debug: check if supabase client exists
-    if (!supabase) {
-      setError('Supabase client not initialized. Check environment variables.')
-      setLoading(false)
-      return
-    }
+    // Short timeout only for UI feedback
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10000)
     
     try {
-      console.log('Attempting login with:', email)
       const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-      console.log('Login response:', { data, error })
+      clearTimeout(timeoutId)
       
       if (error) {
         setError(error.message)
         setLoading(false)
-        return
-      }
-      
-      if (data?.session) {
+      } else if (data.user) {
+        // Success - redirect
         window.location.href = '/dashboard'
       } else {
-        setError('Login failed. Please try again.')
+        setError('Login failed')
         setLoading(false)
       }
     } catch (err: any) {
-      console.error('Login exception:', err)
-      setError(err.message || 'An unexpected error occurred')
+      clearTimeout(timeoutId)
+      if (err.name === 'AbortError') {
+        setError('Request timed out. Check your network.')
+      } else {
+        setError(err.message)
+      }
       setLoading(false)
     }
   }
