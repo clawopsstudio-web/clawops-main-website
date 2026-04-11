@@ -6,7 +6,9 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get('code')
   const plan = searchParams.get('plan') || 'pro'
 
-  console.log('[AUTH] Callback with code:', !!code)
+  const next = searchParams.get('next') || '/dashboard'
+
+  console.log('[AUTH] Callback with code:', !!code, 'next:', next)
 
   if (!code) {
     return NextResponse.redirect(`${origin}/auth/login?error=no_code`)
@@ -17,12 +19,12 @@ export async function GET(request: NextRequest) {
 <!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="refresh" content="0;url=/dashboard?plan=${plan}">
+  <meta http-equiv="refresh" content="0;url=${next}?plan=${plan}">
   <title>Logging in...</title>
 </head>
 <body>
   <p>Logging you in...</p>
-  <script>setTimeout(() => window.location.href = '/dashboard?plan=${plan}', 50)</script>
+  <script>setTimeout(() => window.location.href = '${next}?plan=${plan}', 50)</script>
 </body>
 </html>`
 
