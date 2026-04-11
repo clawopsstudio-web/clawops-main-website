@@ -12,13 +12,29 @@ import {
   Radio,
   Bot,
   ScrollText,
+  BookOpen,
+  Puzzle,
+  Zap as ZapIcon,
+  Gauge,
 } from 'lucide-react';
 
-const SIDEBAR_ITEMS = [
+const NAV_ITEMS = [
   { href: '/dashboard', label: 'Overview', icon: LayoutDashboard, exact: true },
-  { href: '/dashboard/mission-control', label: 'Mission Control', icon: Zap, badge: 'NEW' },
+  { href: '/dashboard/skills-library', label: 'Skills Library', icon: Puzzle, section: 'tools' },
+  { href: '/dashboard/mcp-library', label: 'MCP Servers', icon: Server, section: 'tools' },
+  { href: '/guides', label: 'Guides', icon: BookOpen, external: true, section: 'tools' },
+  { href: '/quick-start', label: 'Quick Start', icon: ZapIcon, external: true, section: 'tools' },
+  { href: '/dashboard/mission-control', label: 'Mission Control', icon: Gauge, badge: 'NEW' },
   { href: '/dashboard/settings', label: 'Settings', icon: Settings },
 ];
+
+// Group items by section
+const grouped = NAV_ITEMS.reduce<Record<string, typeof NAV_ITEMS>>((acc, item) => {
+  const section = (item as any).section || 'main';
+  if (!acc[section]) acc[section] = [];
+  acc[section].push(item);
+  return acc;
+}, {});
 
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -45,7 +61,8 @@ export default function DashboardShell({ children }: { children: React.ReactNode
 
         {/* Nav */}
         <nav className="flex-1 overflow-y-auto px-2 py-3">
-          {SIDEBAR_ITEMS.map((item) => {
+          {/* Main nav */}
+          {grouped.main?.map((item) => {
             const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
             return (
               <Link
@@ -61,15 +78,50 @@ export default function DashboardShell({ children }: { children: React.ReactNode
                   <item.icon className="w-4 h-4" />
                   {item.label}
                 </div>
-                {item.badge && (
-                  <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 font-medium">
-                    {item.badge}
-                  </span>
-                )}
-                {!item.badge && isActive && <ChevronRight className="w-3 h-3 opacity-50" />}
+                <div className="flex items-center gap-1">
+                  {item.badge && (
+                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 font-medium">
+                      {item.badge}
+                    </span>
+                  )}
+                  {!item.badge && isActive && <ChevronRight className="w-3 h-3 opacity-50" />}
+                </div>
               </Link>
             );
           })}
+
+          {/* Tools section */}
+          {grouped.tools && grouped.tools.length > 0 && (
+            <>
+              <div className="my-3 mx-3 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }} />
+              <p className="px-3 text-[10px] font-semibold text-white/20 uppercase tracking-wider mb-1">
+                Tools
+              </p>
+              {grouped.tools.map((item) => {
+                const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    target={item.external ? '_blank' : undefined}
+                    rel={item.external ? 'noopener noreferrer' : undefined}
+                    className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm mb-0.5 transition-all ${
+                      isActive
+                        ? 'bg-cyan-500/10 text-cyan-400 font-medium'
+                        : 'text-white/50 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <item.icon className="w-4 h-4" />
+                      {item.label}
+                    </div>
+                    {item.external && <span className="text-[9px] text-white/20">↗</span>}
+                    {!item.external && isActive && <ChevronRight className="w-3 h-3 opacity-50" />}
+                  </Link>
+                );
+              })}
+            </>
+          )}
         </nav>
 
         {/* Bottom */}
