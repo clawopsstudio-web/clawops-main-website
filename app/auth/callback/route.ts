@@ -5,10 +5,9 @@ export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
   const plan = searchParams.get('plan') || 'pro'
-
   const next = searchParams.get('next') || '/dashboard'
 
-  console.log('[AUTH] Callback with code:', !!code, 'next:', next)
+  console.log('[AUTH] Callback - origin:', origin, 'code:', !!code, 'next:', next)
 
   if (!code) {
     return NextResponse.redirect(`${origin}/auth/login?error=no_code`)
@@ -43,7 +42,7 @@ export async function GET(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          console.log('[AUTH] Setting cookies:', cookiesToSet.length)
+          console.log('[AUTH] Setting', cookiesToSet.length, 'cookies')
           cookiesToSet.forEach(({ name, value, options }) => {
             request.cookies.set(name, value)
             response.cookies.set(name, value, {
@@ -51,6 +50,7 @@ export async function GET(request: NextRequest) {
               secure: true,
               sameSite: 'lax',
               path: '/',
+              domain: undefined, // Let browser determine domain
               maxAge: options.maxAge,
             })
           })
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
     }
   )
 
-  // Register listener and DO THE EXCHANGE FIRST - this triggers the auth state change
+  // Exchange code for session
   const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 
   if (error || !data.session) {
@@ -67,14 +67,15 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(`${origin}/auth/login?error=callback_error`)
   }
 
-  console.log('[AUTH] Success, user:', data.user?.email)
+  console.log('[AUTH] Success - user:', data.user?.email)
 
-  // Explicitly set the access token
+  // Explicitly set access token
   response.cookies.set('sb-access-token', data.session.access_token, {
     httpOnly: true,
     secure: true,
     sameSite: 'lax',
     path: '/',
+    domain: undefined,
     maxAge: 60 * 60 * 24 * 7,
   })
 
@@ -83,6 +84,7 @@ export async function GET(request: NextRequest) {
     secure: true,
     sameSite: 'lax',
     path: '/',
+    domain: undefined,
     maxAge: 60 * 60 * 24 * 7,
   })
 
