@@ -374,9 +374,9 @@ export default function SkillsLibrary() {
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-1">Skills Library</h1>
+        <h1 className="text-3xl font-bold mb-1">Skills &amp; Plugins Library</h1>
         <p className="text-gray-400 text-sm">
-          {skills.length} skills available — install one-click to power up your AI agents
+          {skills.length} skills &amp; plugins — install in one-click to power up your AI agent teams
         </p>
       </div>
 

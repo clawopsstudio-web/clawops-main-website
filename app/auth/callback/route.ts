@@ -7,38 +7,12 @@ export async function GET(request: NextRequest) {
   const plan = searchParams.get('plan') || 'pro'
   const next = searchParams.get('next') || '/dashboard'
 
-  console.log('[AUTH] Callback - request origin:', origin, 'code:', !!code, 'next:', next, 'plan:', plan)
-
+  // If no code, redirect to login with error
   if (!code) {
     return NextResponse.redirect(`${origin}/auth/login?error=no_code`)
   }
 
-  // Use the actual origin from request (supports custom domains)
-  const redirectUrl = `${origin}${next}?plan=${plan}`
-  
-  const html = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta http-equiv="refresh" content="0;url=${redirectUrl}">
-  <title>Logging in...</title>
-</head>
-<body>
-  <p>Logging you in...</p>
-  <script>
-    setTimeout(() => {
-      window.location.href = '${redirectUrl}';
-    }, 50);
-  </script>
-</body>
-</html>`
-
-  const response = new NextResponse(html, {
-    status: 200,
-    headers: { 'Content-Type': 'text/html' },
-  })
-
-  // SSR client that applies cookies to our response
+  // Create Supabase server client
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -48,17 +22,8 @@ export async function GET(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          console.log('[AUTH] Setting', cookiesToSet.length, 'cookies')
           cookiesToSet.forEach(({ name, value, options }) => {
             request.cookies.set(name, value)
-            response.cookies.set(name, value, {
-              httpOnly: true,
-              secure: true,
-              sameSite: 'lax',
-              path: '/',
-              domain: undefined,
-              maxAge: options.maxAge,
-            })
           })
         },
       },
@@ -66,33 +31,44 @@ export async function GET(request: NextRequest) {
   )
 
   // Exchange code for session
-  const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+  const { data: { session }, error } = await supabase.auth.exchangeCodeForSession(code)
 
-  if (error || !data.session) {
-    console.error('[AUTH] Error:', error?.message)
+  if (error || !session) {
+    console.error('[AUTH] Callback error:', error?.message)
     return NextResponse.redirect(`${origin}/auth/login?error=callback_error`)
   }
 
-  console.log('[AUTH] Success - user:', data.user?.email)
+  // Create response and set cookies on it
+  const redirectUrl = new URL(next, origin)
+  redirectUrl.searchParams.set('plan', plan)
 
-  // Explicitly set access token
-  response.cookies.set('sb-access-token', data.session.access_token, {
+  const response = NextResponse.redirect(redirectUrl)
+
+  // Set auth cookies on the response (from the session)
+  response.cookies.set('sb-access-token', session.access_token, {
     httpOnly: true,
     secure: true,
     sameSite: 'lax',
     path: '/',
-    domain: undefined,
     maxAge: 60 * 60 * 24 * 7,
   })
 
-  response.cookies.set('sb-user-id', data.user.id, {
-    httpOnly: false,
+  response.cookies.set('sb-refresh-token', session.refresh_token, {
+    httpOnly: true,
     secure: true,
     sameSite: 'lax',
     path: '/',
-    domain: undefined,
+    maxAge: 60 * 60 * 24 * 30,
+  })
+
+  response.cookies.set('supabase-auth-token', JSON.stringify([session.access_token, session.refresh_token]), {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'lax',
+    path: '/',
     maxAge: 60 * 60 * 24 * 7,
   })
 
+  console.log('[AUTH] Callback success for:', session.user?.email)
   return response
 }

@@ -1,31 +1,41 @@
-'use client';
+'use client'
 
-// ============================================================================
-// ClawOps Studio — Dashboard Layout
-// Phase 1 MVP
-// ============================================================================
-
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Sidebar from '@/components/dashboard/Sidebar';
-import { useAuthStore, useUIStore } from '@/lib/store';
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabase/client'
 
 export default function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const { isAuthenticated } = useAuthStore();
-  const { sidebarCollapsed } = useUIStore();
-  const router = useRouter();
+  const router = useRouter()
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/login');
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        router.push('/auth/login')
+      } else {
+        setLoading(false)
+      }
     }
-  }, [isAuthenticated, router]);
+    checkSession()
 
-  if (!isAuthenticated) {
+    // Also listen for session changes (e.g. after OAuth callback)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        router.push('/auth/login')
+      } else {
+        setLoading(false)
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [router])
+
+  if (loading) {
     return (
       <div className="min-h-screen bg-[#04040c] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -35,20 +45,8 @@ export default function DashboardLayout({
           <p className="text-sm text-white/40">Loading dashboard...</p>
         </div>
       </div>
-    );
+    )
   }
 
-  return (
-    <div className="min-h-screen bg-[#04040c]">
-      <Sidebar />
-      <main
-        className="transition-all duration-300"
-        style={{ marginLeft: sidebarCollapsed ? '68px' : '240px' }}
-      >
-        <div className="min-h-screen">
-          {children}
-        </div>
-      </main>
-    </div>
-  );
+  return <>{children}</>
 }

@@ -7,8 +7,8 @@ const steps = [
   {
     number: "01",
     title: "Install Your OS",
-    description: "Point ClawOps at your infrastructure. Our installer handles the rest — kernel, models, agent runtime, and skills library. Your OS boots in under 5 minutes.",
-    detail: "One-click install, fully managed",
+    description: "Point ClawOps at your infrastructure. Our installer handles the rest — kernel, models, agent runtime, and 5,400+ skills & plugins. Your AI OS boots in 30 minutes — pre-configured, not blank.",
+    detail: "Powered by OpenClaw's multi-agent runtime",
     color: "#00D4FF",
   },
   {
@@ -20,8 +20,8 @@ const steps = [
   },
   {
     number: "03",
-    title: "Boot Your Agents",
-    description: "Pick your vertical. Install the skills. Your agents wake up and start running — following up with leads, resolving tickets, building reports. On their own. 24/7.",
+    title: "Boot Your Agent Team",
+    description: "Pick your vertical. Install the skills & plugins. Your agents wake up and start running — following up with leads, resolving tickets, building reports. On their own. 24/7.",
     detail: "Autonomous 24/7 operation — you only step in when needed",
     color: "#00D4FF",
   },
@@ -65,10 +65,10 @@ export default function HowItWorks() {
             BOOT SEQUENCE
           </p>
           <h2 className="mt-3 text-[clamp(1.75rem,4vw,2.5rem)] font-bold tracking-[-0.03em] text-white md:text-5xl">
-            From Signup to Running AI OS<br className="hidden md:block" /> in Under 5 Minutes
+            From Signup to Running AI Team<br className="hidden md:block" /> in Under 30 Minutes
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-base md:text-lg text-[rgba(255,255,255,0.45)] leading-relaxed">
-            No DevOps. No configuration. No terminal. Install the OS, connect your apps, boot your agents.
+            No DevOps. No configuration. No terminal. Your agents arrive pre-configured with skills and plugins — ready to work, not ready to be set up.
           </p>
         </motion.div>
 
@@ -101,9 +101,9 @@ export default function HowItWorks() {
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={isInView ? { opacity: 1, scale: 1 } : undefined}
           transition={{ duration: 0.5, delay: 0.8 }}
           className="mx-auto mt-12 max-w-sm rounded-2xl border border-[rgba(0,212,255,0.15)] bg-[rgba(0,212,255,0.03)] p-6 text-center">
-          <div className="text-3xl font-bold text-white">&lt; 5 minutes</div>
+          <div className="text-3xl font-bold text-white">&lt; 30 minutes</div>
           <p className="mt-2 text-sm text-[rgba(255,255,255,0.45)]">
-            From signup to your AI OS up and running
+            From signup to your AI agent team up and running
           </p>
         </motion.div>
       </div>

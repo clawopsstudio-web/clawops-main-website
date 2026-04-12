@@ -84,7 +84,7 @@ export default function Navbar() {
           {/* Desktop Auth Buttons */}
           <div className="hidden items-center gap-2 md:flex">
             <Link
-              href="/login"
+              href="/auth/login"
               className="rounded-lg px-4 py-2 text-sm font-medium text-white/70 transition-all hover:bg-white/5 hover:text-white"
             >
               Log In

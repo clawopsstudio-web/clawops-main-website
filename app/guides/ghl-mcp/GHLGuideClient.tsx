@@ -29,7 +29,7 @@ const steps = [
   {
     title: 'Install the GHL MCP Skill',
     description: 'Enable the GHL MCP skill to give your AI agents full CRM capabilities.',
-    detail: '1. Go to Skills Library\n2. Find "GHL CRM MCP"\n3. Click "Install"\n4. Enter the same PIT Token and Location ID\n5. Your agents can now search contacts, update pipelines, and trigger workflows',
+    detail: '1. Go to Skills & Plugins Library\n2. Find "GHL CRM MCP"\n3. Click "Install"\n4. Enter the same PIT Token and Location ID\n5. Your agents can now search contacts, update pipelines, and trigger workflows',
     icon: '🧠',
     tip: 'Once installed, your AI agents will have access to all GHL actions automatically.',
   },

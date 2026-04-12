@@ -157,9 +157,9 @@ export default function Hero() {
             className="mt-12 grid w-full max-w-lg grid-cols-1 gap-px rounded-2xl border border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.03)] p-0.5 backdrop-blur-sm sm:mt-14 sm:grid-cols-3"
           >
             {[
-              { value: "5,400+", label: "Skills Available", color: "#00D4FF" },
-              { value: "< 5 min", label: "Agent Setup", color: "#6600FF" },
-              { value: "24/7", label: "Autonomous Agents", color: "#00D4FF" },
+              { value: "5,400+", label: "Skills & Plugins", color: "#00D4FF" },
+              { value: "< 30 min", label: "To Running Agents", color: "#6600FF" },
+              { value: "24/7", label: "Autonomous Teams", color: "#00D4FF" },
             ].map((p) => (
               <div key={p.label} className="flex flex-col items-center bg-[rgba(4,4,12,0.6)] py-5 first:rounded-l-xl last:rounded-r-xl">
                 <span
@@ -172,6 +172,16 @@ export default function Hero() {
               </div>
             ))}
           </motion.div>
+
+          {/* Setup time explanation */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className="mt-3 text-center font-mono text-[10px] text-[rgba(255,255,255,0.22)] max-w-sm"
+          >
+            Others say 1-click. We say 30 min — because your agents land with skills, plugins, and workflows already wired. Ready to work, not ready to be set up.
+          </motion.p>
 
           {/* Social proof */}
           <motion.div

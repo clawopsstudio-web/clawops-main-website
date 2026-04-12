@@ -20,7 +20,7 @@ import {
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Overview', icon: LayoutDashboard, exact: true },
-  { href: '/dashboard/skills-library', label: 'Skills Library', icon: Puzzle, section: 'tools' },
+  { href: '/dashboard/skills-library', label: 'Skills & Plugins', icon: Puzzle, section: 'tools' },
   { href: '/dashboard/mcp-library', label: 'MCP Servers', icon: Server, section: 'tools' },
   { href: '/guides', label: 'Guides', icon: BookOpen, external: true, section: 'tools' },
   { href: '/quick-start', label: 'Quick Start', icon: ZapIcon, external: true, section: 'tools' },

@@ -85,7 +85,7 @@ export default function MCPServersGuideClient() {
 
         <div className="flex justify-between items-center mt-10 pt-6" style={{ borderTop: '1px solid #2d2d44' }}>
           <Link href="/guides/chrome-vnc" className="text-sm text-gray-400 hover:text-white transition-colors">← Chrome VNC</Link>
-          <Link href="/guides/skills-library" className="text-sm text-[#00D4FF] hover:text-[#00b8e6]">Skills Library →</Link>
+          <Link href="/guides/skills-library" className="text-sm text-[#00D4FF] hover:text-[#00b8e6]">Skills & Plugins Library →</Link>
         </div>
       </div>
     </div>

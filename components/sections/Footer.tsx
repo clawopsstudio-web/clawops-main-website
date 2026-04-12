@@ -37,7 +37,10 @@ export default function Footer() {
               <span className="text-white font-bold text-lg group-hover:text-[#00D4FF] transition-colors">ClawOps</span>
             </a>
             <p className="text-[rgba(255,255,255,0.45)] text-sm leading-relaxed max-w-xs">
-              Deploy unlimited AI agents on your own infrastructure. One flat monthly price.
+              The Agentic OS for your business. Deploy AI agent teams that work 24/7 — with 5,400+ skills &amp; plugins included.
+            </p>
+            <p className="text-[rgba(255,255,255,0.2)] text-[10px] font-mono mt-3">
+              Powered by OpenClaw's multi-agent runtime
             </p>
             <div className="flex items-center gap-3 mt-6">
               {["Twitter/X", "LinkedIn"].map((label) => (
@@ -102,7 +105,7 @@ export default function Footer() {
             &copy; {currentYear} ClawOps Studio. All rights reserved.
           </p>
           <p className="text-[rgba(255,255,255,0.2)] text-xs font-mono">
-            The Agentic OS for Your Business &middot; Deploy unlimited agents &middot; Pay once
+            The Agentic OS for Your Business &middot; 5,400+ Skills &amp; Plugins &middot; Pay once
           </p>
         </div>
       </div>

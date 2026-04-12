@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 import GlobalStarField from "@/components/ui/GlobalStarField";
+import AuthProvider from "@/components/providers/AuthProvider";
 
 export const metadata: Metadata = {
   title: {
@@ -92,7 +93,9 @@ export default function RootLayout({
       <body className="bg-[#04040c] text-white antialiased overflow-x-hidden">
         {/* Fixed star field persists across all pages/sections */}
         <GlobalStarField />
-        <SmoothScroll>{children}</SmoothScroll>
+        <SmoothScroll>
+          <AuthProvider>{children}</AuthProvider>
+        </SmoothScroll>
       </body>
     </html>
   );

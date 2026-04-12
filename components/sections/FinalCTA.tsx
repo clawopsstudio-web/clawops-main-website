@@ -45,7 +45,7 @@ export default function FinalCTA() {
             Forever.
           </h2>
           <p className="text-[rgba(255,255,255,0.55)] text-lg mb-10 max-w-lg mx-auto leading-relaxed">
-            The Agentic OS for your business. Autonomous agents. Your tools. One platform.
+            The Agentic OS for your business. AI agent teams. 5,400+ skills &amp; plugins. One platform.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

@@ -53,7 +53,7 @@ const STATUS_BADGES: Record<string, string> = {
 }
 
 const QUICK_LINKS = [
-  { label: 'Skills Library', href: '/dashboard/skills-library', color: '#10b981', desc: '5400+ skills', icon: '🧠', internal: true },
+  { label: 'Skills & Plugins', href: '/dashboard/skills-library', color: '#10b981', desc: '5400+ skills & plugins', icon: '🧠', internal: true },
   { label: 'Guides',         href: '/guides',                  color: '#4285F4', desc: 'Step-by-step docs', icon: '📚', internal: true },
   { label: 'Quick Start',    href: '/quick-start',             color: '#FFB800', desc: '5-min setup', icon: '⚡', internal: true },
   { label: 'Mission Control',href: '/dashboard/mission-control', color: '#FF6B35', desc: 'System health', icon: '🚀', internal: true },
@@ -192,7 +192,7 @@ export default function DashboardClient({ data }: { data: DashboardData }) {
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: 'Active Agents', value: data.activeAgents, icon: '🤖', color: '#00D4FF' },
+              { label: 'Agent Teams', value: data.activeAgents, icon: '🤖', color: '#00D4FF' },
               { label: 'Pending Tasks', value: pendingTasks, icon: '📋', color: '#FFB800' },
               { label: 'Completed', value: data.completedTasks, icon: '✅', color: '#00FF88' },
               { label: 'Skills Installed', value: 0, icon: '🧠', color: '#10b981' },

@@ -6,9 +6,9 @@ import { motion } from 'framer-motion'
 
 const steps = [
   {
-    title: 'Browse the Skills Library',
-    description: 'The Skills Library has pre-configured skill packs for GHL, n8n, Google Workspace, and more.',
-    detail: '1. Go to Dashboard → Skills Library\n2. Browse skills by category:\n   • CRM: GoHighLevel, HubSpot, Pipedrive\n   • Productivity: Google Workspace, Notion, Linear\n   • Automation: n8n, Make, Zapier\n   • Communication: Telegram, Slack, Discord\n   • Browser: Chrome VNC, Playwright\n\n3. Use the search bar to find specific skills\n4. Filter by category or platform',
+    title: 'Browse the Skills & Plugins Library',
+    description: 'The Skills & Plugins Library has pre-configured skill packs for GHL, n8n, Google Workspace, and more.',
+    detail: '1. Go to Dashboard → Skills & Plugins Library\n2. Browse skills by category:\n   • CRM: GoHighLevel, HubSpot, Pipedrive\n   • Productivity: Google Workspace, Notion, Linear\n   • Automation: n8n, Make, Zapier\n   • Communication: Telegram, Slack, Discord\n   • Browser: Chrome VNC, Playwright\n\n3. Use the search bar to find specific skills\n4. Filter by category or platform',
     icon: '🧠',
     tip: 'Skills are curated and tested. Each skill includes setup instructions, prerequisites, and example usage.',
   },
@@ -30,7 +30,7 @@ export default function SkillsLibraryGuideClient() {
         <div className="flex items-center gap-2 text-sm text-gray-500 mb-8">
           <Link href="/guides" className="hover:text-white transition-colors">Guides</Link>
           <span>/</span>
-          <span className="text-gray-300">Skills Library</span>
+          <span className="text-gray-300">Skills & Plugins Library</span>
         </div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
@@ -80,7 +80,7 @@ export default function SkillsLibraryGuideClient() {
         <div className="mt-10 text-center">
           <Link href="/dashboard/skills-library" className="inline-flex items-center gap-2 rounded-xl px-8 py-4 text-base font-semibold text-white transition-all hover:scale-105"
             style={{ background: 'linear-gradient(135deg, #00D4FF, #6600FF)', boxShadow: '0 0 30px rgba(0,212,255,0.3)' }}>
-            🧠 Browse Skills Library
+            🧠 Browse Skills & Plugins Library
           </Link>
         </div>
 

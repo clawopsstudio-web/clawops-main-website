@@ -57,8 +57,8 @@ const capabilities = [
       </svg>
     ),
     label: "APP STORE",
-    title: "5,400+ Integrations",
-    description: "Skills for GHL, n8n, Google Workspace, and 500+ other tools. Install an agent skill in one click — like an app store for your AI workforce.",
+    title: "5,400+ Skills & Plugins",
+    description: "Skills and plugins for GHL, n8n, Google Workspace, and 500+ other tools. Install an agent skill in one click — like an app store for your AI workforce.",
     highlight: "Skills for every vertical. One-click install.",
     color: "#6600FF",
   },

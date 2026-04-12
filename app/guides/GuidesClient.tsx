@@ -68,7 +68,7 @@ const guides = [
   {
     slug: 'skills-library',
     icon: '🧠',
-    title: 'Skills Library',
+    title: 'Skills & Plugins Library',
     description: 'Install pre-built skills for GHL, Google Workspace, n8n, and more. One-click setup, zero configuration needed.',
     steps: 2,
     time: '2 min',
