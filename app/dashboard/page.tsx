@@ -54,7 +54,8 @@ function DashboardContent() {
           .eq('user_id', user.id)
           .order('created_at', { ascending: false })
           .limit(20),
-        fetch('/api/openclaw-status').then(r => r.ok ? r.json() : null).catch(() => null),
+        // Browser fetches directly from VPS Tailscale domain (browsers can reach Tailscale, Vercel server cannot)
+        fetch('https://vmi3094584-1.tailec7a72.ts.net/api/openclaw-status/').then(r => r.ok ? r.json() : null).catch(() => null),
       ])
 
       const profile = profileRes.data
