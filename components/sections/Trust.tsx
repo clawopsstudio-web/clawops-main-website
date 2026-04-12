@@ -8,7 +8,7 @@ import { motion, useInView } from "framer-motion";
 const proofCards = [
   {
     title: "Deploy in 48 Hours",
-    body: "Most agencies are live within 48 hours of kickoff — no months-long implementations, no IT department required.",
+    body: "Most teams are live within 48 hours — no months-long implementations, no IT department required.",
     accent: "#00D4FF",
   },
   {
@@ -18,7 +18,7 @@ const proofCards = [
   },
   {
     title: "Works in Every Timezone",
-    body: "AI employees handle leads, support, and follow-ups while you sleep — so your agency never misses an opportunity.",
+    body: "AI agents handle leads, support, and follow-ups while you sleep — so your business never misses an opportunity.",
     accent: "#00D4FF",
   },
 ];

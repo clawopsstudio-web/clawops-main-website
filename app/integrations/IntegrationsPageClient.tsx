@@ -45,7 +45,7 @@ const INTEGRATIONS = [
       { name: "Notion", desc: "Read/write Notion databases and pages automatically.", icon: "N" },
       { name: "Airtable", desc: "Manage Airtable bases with AI-powered workflows.", icon: "A" },
       { name: "HubSpot", desc: "Sync CRM data, create contacts, log activities.", icon: "H" },
-      { name: "GHL / GoHighLevel", desc: "Full GHL integration for agency automation.", icon: "L" },
+      { name: "GHL / GoHighLevel", desc: "Full GHL integration for CRM automation.", icon: "L" },
     ],
   },
   {

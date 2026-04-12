@@ -16,7 +16,7 @@ const features = [
       </svg>
     ),
     title: "Vertical-Specific AI",
-    description: "Agents trained for your industry — real estate, agencies, HVAC, legal — not generic chatbots.",
+    description: "Agents trained for your industry — real estate, healthcare, legal, e-commerce — not generic chatbots.",
   },
   {
     icon: (

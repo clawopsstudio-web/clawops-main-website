@@ -176,8 +176,8 @@ export default function AIDepartments() {
             Every Department. Fully Staffed.
           </h2>
           <p className="mt-5 text-lg text-[rgba(255,255,255,0.5)] max-w-xl mx-auto">
-            Six specialized AI agents. One unified agency OS. Each one trained on how
-            agencies actually operate.
+            Six specialized AI agents. One unified AI OS. Each one trained on your
+            business workflows.
           </p>
         </motion.div>
 

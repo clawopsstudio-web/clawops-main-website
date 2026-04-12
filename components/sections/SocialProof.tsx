@@ -32,7 +32,7 @@ const testimonials = [
   {
     quote: "We cut our OpenAI bill from $2,400/mo to $149/mo for the same client workload. The agents are faster because there's no API queue. Billing is predictable now — that's the part my CFO loves most.",
     name: "Rahul M.",
-    role: "Agency Founder, Mumbai",
+    role: "Founder, Mumbai",
     initials: "RM",
     color: "#00D4FF",
   },

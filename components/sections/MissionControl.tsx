@@ -112,7 +112,7 @@ export default function MissionControl() {
             MISSION CONTROL
           </p>
           <h2 className="mt-3 text-[clamp(1.5rem,4vw,2rem)] font-semibold tracking-[-0.04em] text-white md:text-5xl">
-            Real-Time Agency Intelligence
+            Real-Time AI Intelligence
           </h2>
           <p className="mt-5 text-lg text-[rgba(255,255,255,0.5)] max-w-xl mx-auto">
             Watch every agent in real-time. See tasks completed, response times, and

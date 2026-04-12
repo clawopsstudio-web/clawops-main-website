@@ -69,7 +69,7 @@ const PLANS = [
     savings: '$54,000/year',
     painPoints: [
       'Scale to unlimited clients with one subscription',
-      'White-label capability for your agency',
+      'Multi-agent capability for your team',
       'Your own VPS infrastructure with dedicated resources'
     ]
   }

@@ -30,7 +30,7 @@ const phaseContent = {
   },
   3: {
     title: "Mission Control Active",
-    body: "Your agency runs — even when you sleep.",
+    body: "Your business runs — even when you sleep.",
   },
 } as const;
 
@@ -200,7 +200,7 @@ export default function SystemActivation() {
               SYSTEM ACTIVATION
             </p>
             <h2 className="mt-3 text-[clamp(1.5rem,4vw,2rem)] font-bold tracking-[-0.04em] text-white sm:mt-4 md:text-6xl">
-              From Chaos to Connected Agency
+              From Chaos to Connected Business
             </h2>
           </div>
 

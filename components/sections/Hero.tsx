@@ -148,7 +148,7 @@ export default function Hero() {
             {[
               { value: "5,400+", label: "Skills Available", color: "#00D4FF" },
               { value: "< 5 min", label: "Agent Setup", color: "#6600FF" },
-              { value: "White-label", label: "Your Brand", color: "#00D4FF" },
+              { value: "24/7", label: "Autonomous Agents", color: "#00D4FF" },
             ].map((p) => (
               <div key={p.label} className="flex flex-col items-center bg-[rgba(4,4,12,0.6)] py-5 first:rounded-l-xl last:rounded-r-xl">
                 <span
@@ -170,10 +170,10 @@ export default function Hero() {
             className="mt-14 w-full"
           >
             <p className="mb-4 text-center font-mono text-[10px] uppercase tracking-[0.2em] text-[rgba(255,255,255,0.2)]">
-              Built for agencies, agencies building
+              Works with your stack
             </p>
             <div className="flex flex-wrap items-center justify-center gap-6">
-              {["Agencies", "SaaS Founders", "Resellers", "Consultants", "Auto-dealers"].map((name) => (
+              {["GoHighLevel", "n8n", "Google Workspace", "Slack", "Telegram"].map((name) => (
                 <span key={name} className="font-mono text-xs font-medium tracking-wide text-[rgba(255,255,255,0.18)]">
                   {name}
                 </span>
