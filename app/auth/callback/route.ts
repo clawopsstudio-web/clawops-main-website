@@ -7,12 +7,15 @@ export async function GET(request: NextRequest) {
   const plan = searchParams.get('plan') || 'pro'
   const next = searchParams.get('next') || '/dashboard'
 
-  // If no code, redirect to login with error
   if (!code) {
     return NextResponse.redirect(`${origin}/auth/login?error=no_code`)
   }
 
-  // Create Supabase server client
+  // Create the redirect response now — we'll attach all auth cookies to this
+  const redirectUrl = new URL(next, origin)
+  if (plan) redirectUrl.searchParams.set('plan', plan)
+  const redirectResponse = NextResponse.redirect(redirectUrl)
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -22,15 +25,21 @@ export async function GET(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
+          // Attach every cookie from @supabase/ssr to our redirect response
           cookiesToSet.forEach(({ name, value, options }) => {
-            request.cookies.set(name, value)
+            redirectResponse.cookies.set(name, value, {
+              httpOnly: options.httpOnly ?? true,
+              secure: options.secure ?? true,
+              sameSite: 'lax',
+              path: options.path ?? '/',
+              maxAge: options.maxAge,
+            })
           })
         },
       },
     }
   )
 
-  // Exchange code for session
   const { data: { session }, error } = await supabase.auth.exchangeCodeForSession(code)
 
   if (error || !session) {
@@ -38,22 +47,15 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(`${origin}/auth/login?error=callback_error`)
   }
 
-  // Create response and set cookies on it
-  const redirectUrl = new URL(next, origin)
-  redirectUrl.searchParams.set('plan', plan)
-
-  const response = NextResponse.redirect(redirectUrl)
-
-  // Set auth cookies on the response (from the session)
-  response.cookies.set('sb-access-token', session.access_token, {
+  // Also add explicit session marker cookies for our middleware
+  redirectResponse.cookies.set('sb-access-token', session.access_token, {
     httpOnly: true,
     secure: true,
     sameSite: 'lax',
     path: '/',
     maxAge: 60 * 60 * 24 * 7,
   })
-
-  response.cookies.set('sb-refresh-token', session.refresh_token, {
+  redirectResponse.cookies.set('sb-refresh-token', session.refresh_token, {
     httpOnly: true,
     secure: true,
     sameSite: 'lax',
@@ -61,14 +63,6 @@ export async function GET(request: NextRequest) {
     maxAge: 60 * 60 * 24 * 30,
   })
 
-  response.cookies.set('supabase-auth-token', JSON.stringify([session.access_token, session.refresh_token]), {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 60 * 60 * 24 * 7,
-  })
-
-  console.log('[AUTH] Callback success for:', session.user?.email)
-  return response
+  console.log('[AUTH] Callback success for:', session.user?.email, '→ redirecting to', next)
+  return redirectResponse
 }
