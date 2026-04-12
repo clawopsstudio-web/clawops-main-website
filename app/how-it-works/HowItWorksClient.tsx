@@ -41,9 +41,9 @@ const FLOW_STEPS = [
   {
     step: "03",
     label: "Provisioning",
-    title: "AI Sets Up Your VPS",
+    title: "AI Sets Up Your OS",
     description:
-      "Our system provisions your dedicated VPS, installs OpenClaw, configures your workers, and connects your integrations — all automatically.",
+      "We handle the setup. You get autonomous agents running your business — configured, connected, and working.",
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="3" width="20" height="14" rx="2"/>
@@ -81,7 +81,7 @@ const TECH_DETAILS = [
       </svg>
     ),
     title: "Secure by Default",
-    desc: "Hardened VPS, encrypted comms, role-based access, audit logs.",
+    desc: "Hardened infrastructure, encrypted comms, role-based access, audit logs.",
     color: "#00D4FF",
   },
   {
@@ -102,7 +102,7 @@ const TECH_DETAILS = [
       </svg>
     ),
     title: "Transparent Scaling",
-    desc: "Upgrade VPS specs anytime. Workers adapt automatically.",
+    desc: "Scale your infrastructure anytime. Workers adapt automatically.",
     color: "#00FF88",
   },
   {

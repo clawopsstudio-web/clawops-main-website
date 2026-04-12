@@ -53,10 +53,10 @@ const INTEGRATIONS = [
     color: "#00D4FF",
     items: [
       { name: "OpenClaw Gateway", desc: "Central hub for managing all AI workers.", icon: "O" },
-      { name: "Ollama (Local)", desc: "Run Gemma 4 2B and other models locally on your VPS.", icon: "L" },
+      { name: "Ollama (Local)", desc: "Run Gemma 4 2B and other models on managed infrastructure.", icon: "L" },
       { name: "Supabase", desc: "Database, auth, and real-time subscriptions.", icon: "S" },
-      { name: "Contabo VPS", desc: "Fully managed VPS provisioning and management.", icon: "V" },
-      { name: "CLI Access", desc: "SSH into your VPS, manage workers from terminal.", icon: "C" },
+      { name: "Contabo VPS", desc: "Fully managed infrastructure provisioning and management.", icon: "V" },
+      { name: "CLI Access", desc: "SSH access, manage workers from terminal.", icon: "C" },
     ],
   },
   {

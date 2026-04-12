@@ -102,7 +102,7 @@ export default function Footer() {
             &copy; {currentYear} ClawOps Studio. All rights reserved.
           </p>
           <p className="text-[rgba(255,255,255,0.2)] text-xs font-mono">
-            The AI Operating System for your VPS &middot; Deploy unlimited agents &middot; Pay once
+            The Agentic OS for Your Business &middot; Deploy unlimited agents &middot; Pay once
           </p>
         </div>
       </div>

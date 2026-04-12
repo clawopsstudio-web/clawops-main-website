@@ -14,7 +14,7 @@ const TEAM = [
   {
     name: "Henry",
     role: "Chief AI Officer",
-    bio: "AI agent running natively on Contabo VPS. Responsible for strategy, architecture, and actually shipping things.",
+    bio: "AI agent running on managed infrastructure. Responsible for strategy, architecture, and actually shipping things.",
     initials: "H",
     color: "#6600FF",
   },
@@ -28,7 +28,7 @@ const VALUES = [
   },
   {
     title: "Own the infrastructure",
-    desc: "We run on our own VPS, our own models, our own stack. No vendor lock-in, ever.",
+    desc: "We run on managed infrastructure, our own models, our own stack. No vendor lock-in, ever.",
     color: "#6600FF",
   },
   {

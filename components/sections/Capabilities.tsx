@@ -14,9 +14,9 @@ const capabilities = [
       </svg>
     ),
     label: "HARDWARE",
-    title: "Bare Metal VPS",
-    description: "Run your AI agents on your own Contabo VPS — no cloud rental markup, no API per-call fees. Pure hardware, fully owned.",
-    highlight: "One-time VPS cost. Unlimited agent hours.",
+    title: "Managed Infrastructure",
+    description: "Your agents run on optimized infrastructure — no cloud rental markup, no per-call API fees. We handle the setup, you own the workforce.",
+    highlight: "Predictable cost. Unlimited agent hours.",
     color: "#00D4FF",
   },
   {
@@ -28,7 +28,7 @@ const capabilities = [
     ),
     label: "KERNEL",
     title: "Local Models",
-    description: "Gemma 4 2B, Qwen, DeepSeek — running locally on your VPS. No data leaves your server. No API bills per request.",
+    description: "Gemma 4 2B, Qwen, DeepSeek — running on managed infrastructure. No data leaves your server. No per-call API bills.",
     highlight: "Private by architecture. Zero per-call costs.",
     color: "#6600FF",
   },
@@ -70,7 +70,7 @@ const capabilities = [
     ),
     label: "EXECUTION",
     title: "Edge Execution",
-    description: "Agents run on your VPS, milliseconds from your data. No round-trip to cloud APIs. Real-time automation with zero latency.",
+    description: "Agents run on managed infrastructure, close to your data. No round-trip to cloud APIs. Real-time automation with zero latency.",
     highlight: "Local execution. Zero network latency.",
     color: "#00D4FF",
   },
@@ -82,7 +82,7 @@ const capabilities = [
     ),
     label: "FIREWALL",
     title: "Data Sovereignty",
-    description: "Your client data, your prompts, your business intelligence — all stays on your VPS. Not training data for someone else's model. Not subject to their API outages.",
+    description: "Your client data, your prompts, your business intelligence — all stays on managed infrastructure. Not training data for someone else's model. Not subject to their API outages.",
     highlight: "Your data. Your server. Your control.",
     color: "#6600FF",
   },
@@ -99,7 +99,7 @@ const item = {
 };
 
 const trustItems = [
-  "Runs on your own VPS",
+  "Runs on optimized infrastructure",
   "Local AI models — zero per-call fees",
   "5,400+ skills ready to install",
   "One-time infrastructure cost",
@@ -130,7 +130,7 @@ export default function Capabilities() {
             The Operating System<br className="hidden md:block" /> for Your AI Stack.
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-base md:text-lg text-[rgba(255,255,255,0.45)] leading-relaxed">
-            Hardware. Kernel. Processes. App Store. Firewall. Everything your AI stack needs — running on a VPS you own.
+            Hardware. Kernel. Processes. App Store. Firewall. Everything your AI stack needs — running on managed infrastructure you control.
           </p>
         </motion.div>
 

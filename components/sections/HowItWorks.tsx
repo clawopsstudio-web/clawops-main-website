@@ -7,8 +7,8 @@ const steps = [
   {
     number: "01",
     title: "Install Your OS",
-    description: "Point OpenClaw at your Contabo VPS. Our installer handles the rest — kernel, models, agent runtime, and skills library. Your OS boots in under 5 minutes.",
-    detail: "One-click install on your own VPS",
+    description: "Point ClawOps at your infrastructure. Our installer handles the rest — kernel, models, agent runtime, and skills library. Your OS boots in under 5 minutes.",
+    detail: "One-click install, fully managed",
     color: "#00D4FF",
   },
   {
@@ -103,7 +103,7 @@ export default function HowItWorks() {
           className="mx-auto mt-12 max-w-sm rounded-2xl border border-[rgba(0,212,255,0.15)] bg-[rgba(0,212,255,0.03)] p-6 text-center">
           <div className="text-3xl font-bold text-white">&lt; 5 minutes</div>
           <p className="mt-2 text-sm text-[rgba(255,255,255,0.45)]">
-            From signup to your AI OS running on your own VPS
+            From signup to your AI OS up and running
           </p>
         </motion.div>
       </div>

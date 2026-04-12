@@ -16,7 +16,7 @@ export default function PrivacyPage() {
               <ul className="list-disc pl-5 space-y-2">
                 <li><strong className="text-white">Account information:</strong> Name, email, company, billing address.</li>
                 <li><strong className="text-white">Usage data:</strong> Worker activity logs, task completion records, integration connection timestamps.</li>
-                <li><strong className="text-white">VPS data:</strong> Server metrics, resource usage, logs — stored on your provisioned VPS.</li>
+                <li><strong className="text-white">Infrastructure data:</strong> Server metrics, resource usage, logs — stored on managed infrastructure.</li>
                 <li><strong className="text-white">Communication data:</strong> Messages sent to and from AI workers via connected platforms.</li>
               </ul>
             </section>
@@ -34,7 +34,7 @@ export default function PrivacyPage() {
 
             <section>
               <h2 className="text-lg font-semibold text-white mb-3">3. Data Storage and Security</h2>
-              <p>User data is stored in Supabase (PostgreSQL) with encryption at rest and in transit. VPS data remains on your dedicated server — we do not access it unless for support purposes. We implement industry-standard security measures including TLS, access controls, and audit logging.</p>
+              <p>User data is stored in Supabase (PostgreSQL) with encryption at rest and in transit. Infrastructure data remains on your dedicated server — we do not access it unless for support purposes. We implement industry-standard security measures including TLS, access controls, and audit logging.</p>
             </section>
 
             <section>
@@ -43,7 +43,7 @@ export default function PrivacyPage() {
               <ul className="list-disc pl-5 space-y-2 mt-2">
                 <li><strong className="text-white">Supabase</strong> — Database and authentication</li>
                 <li><strong className="text-white">PayPal</strong> — Payment processing</li>
-                <li><strong className="text-white">Contabo</strong> — VPS provisioning</li>
+                <li><strong className="text-white">Contabo</strong> — Infrastructure provisioning</li>
                 <li><strong className="text-white">Anthropic / OpenAI / Google</strong> — AI model providers (your prompts and outputs)</li>
               </ul>
               <p className="mt-2">We do not sell your data to advertisers or data brokers.</p>

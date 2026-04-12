@@ -55,7 +55,7 @@ const jsonLd = {
   name: 'ClawOps — AI Agent Platform',
   description: 'The Agentic OS for businesses that want to scale without hiring. Powered by OpenClaw. Autonomous agents running Sales, Support, and Ops 24/7. Flat pricing from $49/mo.',
   applicationCategory: 'BusinessApplication',
-  operatingSystem: 'Self-hosted VPS (Ampere ARM)',
+  operatingSystem: 'Self-hosted (Ampere ARM)',
   offers: {
     '@type': 'AggregateOffer',
     lowPrice: '49',

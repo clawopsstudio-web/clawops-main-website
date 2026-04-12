@@ -131,8 +131,8 @@ const FAQS = [
     a: "All plans are billed monthly. You can upgrade or downgrade anytime. No long-term contracts required.",
   },
   {
-    q: "What's included in the VPS?",
-    a: "Every plan includes a dedicated Contabo VPS with the specified resources. Your OpenClaw instance runs 24/7 on your own server.",
+    q: "What's included in the plan?",
+    a: "Every plan includes managed infrastructure with the specified resources. Your OpenClaw agents run 24/7 on dedicated servers.",
   },
   {
     q: "What AI models can I use?",
@@ -143,7 +143,7 @@ const FAQS = [
     a: "n8n is a powerful workflow automation tool. It handles repetitive, high-volume tasks (like syncing data between apps) so your AI agents only handle complex reasoning. This saves tokens and reduces costs significantly.",
   },
   {
-    q: "Can I use my own VPS?",
+    q: "Can I use my own infrastructure?",
     a: "Yes. You can connect your own Contabo VPS or use ours. Your VPS is provisioned with OpenClaw, Ollama, n8n, and all integrations pre-configured.",
   },
   {
@@ -248,7 +248,7 @@ export default function PricingPageClient() {
 
                 {/* VPS Specs */}
                 <div className="mb-4 p-4 rounded-xl bg-black/30 border border-white/5">
-                  <p className="text-[10px] font-mono text-white/30 mb-2 uppercase tracking-wider">VPS Hardware</p>
+                  <p className="text-[10px] font-mono text-white/30 mb-2 uppercase tracking-wider">Infrastructure</p>
                   <div className="grid grid-cols-2 gap-2">
                     {Object.entries(plan.specs).map(([key, value]) => (
                       <div key={key} className="flex items-center gap-2">

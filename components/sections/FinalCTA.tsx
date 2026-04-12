@@ -45,7 +45,7 @@ export default function FinalCTA() {
             Forever.
           </h2>
           <p className="text-[rgba(255,255,255,0.55)] text-lg mb-10 max-w-lg mx-auto leading-relaxed">
-            The Agentic OS for your VPS. Hardware you own. Models that run local. Agents that work 24/7. Skills for every vertical. One platform, zero per-call API fees.
+            The Agentic OS for your business. Autonomous agents. Your tools. One platform.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -67,7 +67,7 @@ export default function FinalCTA() {
           </div>
 
           <p className="mt-6 text-[rgba(255,255,255,0.25)] text-xs font-mono">
-            One-time VPS cost &middot; Unlimited agent hours &middot; Your data stays local &middot; No API per-call fees
+            One-time infrastructure cost &middot; Unlimited agent hours &middot; Your data stays local &middot; No API per-call fees
           </p>
         </motion.div>
       </div>

@@ -18,7 +18,7 @@ export default function TermsPage() {
 
             <section>
               <h2 className="text-lg font-semibold text-white mb-3">2. Services Description</h2>
-              <p>ClawOps provides AI worker deployment services, including preconfigured automation agents, VPS infrastructure management, and integration tools. Services are provided on a subscription basis as described at <a href="/pricing" className="text-[#00D4FF] hover:underline">/pricing</a>.</p>
+              <p>ClawOps provides AI worker deployment services, including preconfigured automation agents, managed infrastructure, and integration tools. Services are provided on a subscription basis as described at <a href="/pricing" className="text-[#00D4FF] hover:underline">/pricing</a>.</p>
             </section>
 
             <section>
