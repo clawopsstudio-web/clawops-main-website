@@ -2,8 +2,20 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function proxy(request: NextRequest) {
-  // Create the response object FIRST — we pass it to createServerClient
-  // so that setAll mutates THIS SAME reference (Bug #2 fix)
+  const pathname = request.nextUrl.pathname
+  const cookies = request.cookies.getAll()
+
+  // DEBUG: Log all requests to auth routes
+  if (pathname.startsWith('/auth') || pathname === '/' || pathname.startsWith('/dashboard')) {
+    console.log('[PROXY DEBUG]', pathname, 'cookies:', cookies.map(c => c.name).join(', ') || 'none')
+  }
+
+  // TEMPORARY: Let ALL requests through — disable auth protection for debugging
+  // Remove this return and uncomment auth logic below once we confirm the routing works
+  return NextResponse.next()
+
+  // --- AUTH LOGIC (disabled for debug) ---
+  /*
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -11,12 +23,8 @@ export async function proxy(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
+        getAll() { return request.cookies.getAll() },
         setAll(cookiesToSet) {
-          // Mutate the SAME supabaseResponse object that we'll return
-          // This is critical — without this, cookies are lost
           cookiesToSet.forEach(({ name, value, options }) => {
             request.cookies.set(name, value)
             supabaseResponse.cookies.set(name, value, options ?? {})
@@ -26,38 +34,26 @@ export async function proxy(request: NextRequest) {
     }
   )
 
-  // getUser() validates JWT server-side — never check raw cookie names
-  // Never use getSession() in middleware — doesn't revalidate the token
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
+  console.log('[PROXY] pathname:', pathname, 'user:', user?.email || 'none')
 
-  const pathname = request.nextUrl.pathname
+  const isProtected = pathname.startsWith('/dashboard') || pathname.startsWith('/settings')
+  const isAuthRoute = pathname.startsWith('/auth/login') || pathname.startsWith('/auth/signup')
 
-  const isProtected =
-    pathname.startsWith('/dashboard') ||
-    pathname.startsWith('/settings')
-
-  const isAuthRoute =
-    pathname.startsWith('/auth/login') ||
-    pathname.startsWith('/auth/signup')
-
-  // Redirect unauthenticated users away from protected routes
   if (!user && isProtected) {
     const url = request.nextUrl.clone()
     url.pathname = '/auth/login'
     return NextResponse.redirect(url)
   }
 
-  // Redirect authenticated users away from auth pages (no login loops)
   if (user && isAuthRoute) {
     const url = request.nextUrl.clone()
     url.pathname = '/dashboard'
     return NextResponse.redirect(url)
   }
 
-  // Return the SAME supabaseResponse that had cookies set on it
   return supabaseResponse
+  */
 }
 
 export const config = {
