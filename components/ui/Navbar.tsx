@@ -7,8 +7,6 @@ import { motion, AnimatePresence } from "framer-motion";
 const navLinks = [
   { label: "How It Works", href: "/how-it-works" },
   { label: "Use Cases", href: "/use-cases" },
-  { label: "Guides", href: "/guides" },
-  { label: "Quick Start", href: "/quick-start" },
   { label: "Integrations", href: "/integrations" },
   { label: "Pricing", href: "/pricing" },
 ];
@@ -70,12 +68,12 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop nav */}
-          <ul className="hidden items-center gap-1 md:flex">
+          <ul className="hidden items-center gap-0.5 md:flex">
             {navLinks.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="rounded-lg px-3.5 py-2 text-sm text-[rgba(255,255,255,0.55)] transition-all duration-200 hover:bg-[rgba(255,255,255,0.06)] hover:text-white"
+                  className="rounded-lg px-3 py-1.5 text-sm text-[rgba(255,255,255,0.55)] transition-all duration-200 hover:bg-[rgba(255,255,255,0.06)] hover:text-white"
                 >
                   {link.label}
                 </Link>
@@ -84,7 +82,7 @@ export default function Navbar() {
           </ul>
 
           {/* Desktop Auth Buttons */}
-          <div className="hidden items-center gap-3 md:flex">
+          <div className="hidden items-center gap-2 md:flex">
             <Link
               href="/login"
               className="rounded-lg px-4 py-2 text-sm font-medium text-white/70 transition-all hover:bg-white/5 hover:text-white"

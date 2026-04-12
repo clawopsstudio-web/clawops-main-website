@@ -74,11 +74,9 @@ export default function Hero() {
                 <span className="dot-breathe relative inline-flex h-2 w-2 rounded-full bg-[#00D4FF]" />
               </span>
               <span className="font-mono text-xs font-medium tracking-wide text-[rgba(0,212,255,0.9)]">
-                <span key={verticalIdx} className="inline-block text-white/70">
-                  {VERTICALS[verticalIdx]}
-                </span>
+                The AI OS for Your VPS
               </span>
-              <span className="text-[rgba(255,255,255,0.2)] text-xs">— Vertical AI Agents</span>
+              <span className="text-[rgba(255,255,255,0.2)] text-xs">— Deployed in 5 Minutes</span>
               <span className="pill-shimmer absolute inset-0 rounded-full" />
             </div>
           </motion.div>
@@ -90,10 +88,14 @@ export default function Hero() {
             transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             className="max-w-4xl text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.08] tracking-[-0.04em] text-white md:text-6xl lg:text-7xl"
           >
-            The Agentic OS
+            The AI Operating System
             <br className="hidden md:block" />
             <span className="bg-gradient-to-r from-[#00D4FF] to-[#6600FF] bg-clip-text text-transparent">
-              {" "}for Vertical SaaS.
+              {" "}For Your VPS.
+            </span>
+            <br className="hidden md:block" />
+            <span className="text-white/80">
+              Built for Your Team.
             </span>
           </motion.h1>
 
@@ -104,8 +106,7 @@ export default function Hero() {
             transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="mt-5 max-w-2xl text-base leading-relaxed text-[rgba(255,255,255,0.48)] sm:text-lg md:text-xl"
           >
-            Build, deploy, and white-label AI agents for any industry — in days, not months.
-            GoHighLevel CRM agents. n8n automation agents. Google Workspace agents. One platform.
+            Deploy autonomous AI agents on your own VPS. GHL agents. n8n agents. Google Workspace agents. One platform.
           </motion.p>
 
           {/* CTAs */}
