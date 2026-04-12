@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, Suspense } from 'react'
+import { useState, Suspense, useEffect } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
@@ -14,6 +14,17 @@ function LoginContent() {
   const [loading, setLoading] = useState(false)
   const [loadingGoogle, setLoadingGoogle] = useState(false)
   const [error, setError] = useState('')
+
+  // If user already has a session, redirect to dashboard
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        window.location.href = '/dashboard'
+      }
+    }
+    checkSession()
+  }, [])
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -39,8 +50,7 @@ function LoginContent() {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          // Redirect to dashboard after callback
-          redirectTo: 'https://www.clawops.studio/dashboard',
+          redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
         },
       })
       
