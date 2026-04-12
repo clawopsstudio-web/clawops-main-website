@@ -5,18 +5,16 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 import DashboardShell from '@/components/dashboard/DashboardShell'
 import DashboardClient from '@/components/dashboard/DashboardClient'
-import { MOCK_TASKS } from '@/lib/mock-data'
 
 export default function DashboardPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [userEmail, setUserEmail] = useState('')
   const [userName, setUserName] = useState('')
+  const [dashboardData, setDashboardData] = useState<any>(null)
 
   useEffect(() => {
     const checkAuth = async () => {
-      // getSession reads from the Supabase client's local storage + cookies
-      // This is the SAME session that the auth callback established
       const { data: { session }, error } = await supabase.auth.getSession()
 
       if (error || !session) {
@@ -25,19 +23,67 @@ export default function DashboardPage() {
         return
       }
 
-      console.log('[DASHBOARD] Session found for:', session.user?.email)
-      setUserEmail(session.user?.email || '')
+      const user = session.user
+      console.log('[DASHBOARD] Session found for:', user.email)
+
+      // Fetch profile + tasks from Supabase in parallel
+      const [profileRes, tasksRes] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single(),
+        supabase
+          .from('tasks')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(20),
+      ])
+
+      const profile = profileRes.data
+      const tasks = tasksRes.data || []
+
+      console.log('[DASHBOARD] Profile:', profile)
+      console.log('[DASHBOARD] Tasks:', tasks.length)
+
+      setUserEmail(user.email || '')
       setUserName(
-        session.user?.user_metadata?.full_name ||
-        session.user?.email?.split('@')[0] ||
+        profile?.full_name ||
+        user.user_metadata?.full_name ||
+        user.email?.split('@')[0] ||
         'User'
       )
+
+      setDashboardData({
+        profile: {
+          full_name: profile?.full_name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+          company: profile?.company || user.user_metadata?.company || '',
+          avatar_url: profile?.avatar_url || user.user_metadata?.avatar_url || '',
+        },
+        // Use real tasks if any, else fall back to showing empty state
+        tasks: tasks.map((t: any) => ({
+          id: t.id,
+          title: t.title,
+          description: t.description,
+          status: t.status?.toUpperCase() || 'TODO',
+          priority: t.priority || 'MEDIUM',
+          due_date: t.due_date,
+          created_at: t.created_at,
+        })),
+        tasksTotal: tasks.length,
+        pendingTasks: tasks.filter((t: any) => t.status === 'TODO' || t.status === 'todo').length,
+        completedTasks: tasks.filter((t: any) => t.status === 'DONE' || t.status === 'done').length,
+        instances: [],
+        activeAgents: 1,
+        userEmail: user.email || '',
+      })
+
       setLoading(false)
     }
 
     checkAuth()
 
-    // Also listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!session) {
         router.replace('/auth/login')
@@ -60,24 +106,9 @@ export default function DashboardPage() {
     )
   }
 
-  const dashboardData = {
-    profile: {
-      full_name: userName,
-      company: '',
-      avatar_url: '',
-    },
-    tasks: MOCK_TASKS.slice(0, 10),
-    tasksTotal: MOCK_TASKS.length,
-    pendingTasks: MOCK_TASKS.filter((t: any) => t.status === 'TODO').length,
-    completedTasks: MOCK_TASKS.filter((t: any) => t.status === 'DONE').length,
-    instances: [],
-    activeAgents: 1,
-    userEmail: userEmail,
-  }
-
   return (
     <DashboardShell>
-      <DashboardClient data={dashboardData as any} />
+      <DashboardClient data={dashboardData} />
     </DashboardShell>
   )
 }
