@@ -173,7 +173,7 @@ export default function MCPLibrary() {
 
           <div className="mt-6 bg-[#0f0f1a] rounded-lg p-3">
             <p className="text-xs text-gray-400">
-              💡 Your OpenClaw VPS must be able to reach the MCP server URL. For internal services, use the Tailscale domain (e.g. <code className="text-emerald-400">https://vmi3094584-1.tailec7a72.ts.net/n8n/mcp/...</code>)
+              💡 Your OpenClaw VPS must be able to reach the MCP server URL. For internal services, use the Tailscale domain (e.g. <code className="text-emerald-400">https://app.clawops.studio/n8n/mcp/...</code>)
             </p>
           </div>
         </div>

@@ -17,7 +17,7 @@ export function useGatewayConnection() {
 
       try {
         // Connect to Contabo VPS Gateway
-        const gatewayUrl = 'wss://vmi3094584-1.tailec7a72.ts.net:18789';
+        const gatewayUrl = 'wss://app.clawops.studio:18789';
         console.log('Connecting to gateway:', gatewayUrl);
         await connectGateway(gatewayUrl);
 

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-const VPS_API = 'https://vmi3094584-1.tailec7a72.ts.net/api/openclaw-status'
+const VPS_API = 'https://app.clawops.studio'
 const TIMEOUT_MS = 5000
 
 export async function GET(request: Request) {

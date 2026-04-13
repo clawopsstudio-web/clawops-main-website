@@ -8,7 +8,7 @@ const steps = [
   {
     title: 'Access the Browser (No Setup Required)',
     description: 'Your Chrome browser is already running on the ClawOps VPS. Access it via VNC.',
-    detail: '1. Open your browser and go to:\n   https://vmi3094584-1.tailec7a72.ts.net/chrome/\n\n2. You\'ll see a real Chrome browser running on your VPS\n3. This browser is controlled by AI agents\n4. The browser runs in a Docker container, isolated from the host',
+    detail: '1. Open your browser and go to:\n   https://app.clawops.studio/chrome/\n\n2. You\'ll see a real Chrome browser running on your VPS\n3. This browser is controlled by AI agents\n4. The browser runs in a Docker container, isolated from the host',
     icon: '🌐',
     tip: 'The VNC URL uses Tailscale Funnel. It\'s publicly accessible but secured by Tailscale authentication.',
   },

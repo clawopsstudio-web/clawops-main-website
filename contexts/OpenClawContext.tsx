@@ -36,7 +36,7 @@ const OpenClawContext = createContext<OpenClawContextValue | undefined>(undefine
 export function OpenClawProvider({ children }: { children: ReactNode }) {
   // Use Tailscale Funnel URL for public access
   const gateway = useOpenClawGateway({
-    url: process.env.NEXT_PUBLIC_OPENCLAW_GATEWAY_URL ?? 'https://vmi3094584-1.tailec7a72.ts.net',
+    url: process.env.NEXT_PUBLIC_OPENCLAW_GATEWAY_URL ?? 'https://app.clawops.studio',
     token: process.env.NEXT_PUBLIC_OPENCLAW_GATEWAY_TOKEN ?? 'a1a9f317b073ff79360260354ba6a83781e59eb2e134b495',
     autoConnect: true,
   });

@@ -19,7 +19,7 @@ export async function GET() {
     const knownServers = {
       'n8n-google': {
         name: 'n8n-google',
-        base_url: 'https://vmi3094584-1.tailec7a72.ts.net/n8n/mcp/89a55f12-1823-4f0d-9568-980732c57a89',
+        base_url: 'https://app.clawops.studio/n8n/mcp/89a55f12-1823-4f0d-9568-980732c57a89',
         tools: 44,
         status: 'healthy',
         description: 'Google Workspace via n8n MCP — Gmail, Drive, Docs, Sheets, Calendar, Tasks',
