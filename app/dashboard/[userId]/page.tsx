@@ -13,7 +13,7 @@ export default async function UserDashboardPage({ params }: Props) {
 
   // Server-side auth check
   const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = await createClient(cookieStore)
   const { data: { session }, error: authError } = await supabase.auth.getSession()
 
   if (authError || !session) {
