@@ -4,19 +4,11 @@ import type { NextRequest } from 'next/server'
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Intercept /dashboard (without trailing slash) → redirect to app domain
-  if (pathname === '/dashboard') {
+  // Intercept /dashboard (with or without trailing slash) on www/apex
+  // Redirect to app.clawops.studio preserving the path
+  if (pathname === '/dashboard' || pathname === '/dashboard/') {
     return NextResponse.redirect(
-      new URL('/auth/login', 'https://app.clawops.studio'),
-      307
-    )
-  }
-
-  // Intercept /dashboard/ (with trailing slash) → redirect to app domain
-  // The client-side code will handle auth check and forward to correct userId
-  if (pathname === '/dashboard/') {
-    return NextResponse.redirect(
-      new URL('/auth/login', 'https://app.clawops.studio'),
+      new URL('/dashboard/', 'https://app.clawops.studio'),
       307
     )
   }
