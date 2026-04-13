@@ -116,7 +116,13 @@ function SettingsContent() {
 }
 
 function ProfileTab({ uploading, setUploading, saved, setSaved }: { uploading: boolean; setUploading: (v: boolean) => void; saved: boolean; setSaved: (v: boolean) => void }) {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<{
+    fullName: string;
+    email: string;
+    company: string;
+    timezone: string;
+    bio: string;
+  }>({
     fullName: '',
     email: '',
     company: '',
@@ -134,11 +140,12 @@ function ProfileTab({ uploading, setUploading, saved, setSaved }: { uploading: b
         .select('*')
         .eq('id', user.id)
         .single()
-      setForm({
-        fullName: p?.full_name || user.user_metadata?.full_name || '',
+      setForm(prev => ({
+        ...prev,
+        fullName: (p?.full_name as string) || (user.user_metadata?.full_name as string) || '',
         email: user.email || '',
-        company: p?.company || user.user_metadata?.company || '',
-          })
+        company: (p?.company as string) || (user.user_metadata?.company as string) || '',
+      }))
     }
     load()
   }, [])
@@ -179,20 +186,6 @@ function ProfileTab({ uploading, setUploading, saved, setSaved }: { uploading: b
     })
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
-  };
-
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    await new Promise(r => setTimeout(r, 1500));
-    setUploading(false);
-  };
-
-  const handleSave = async () => {
-    await new Promise(r => setTimeout(r, 500));
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
   };
 
   return (
