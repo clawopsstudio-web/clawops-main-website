@@ -103,6 +103,7 @@ function DashboardContent() {
         } : null,
         instances: [],
         userEmail: user.email || '',
+        userId: user.id,
       })
 
       setLoading(false)

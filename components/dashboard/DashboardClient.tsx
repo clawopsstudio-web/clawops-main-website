@@ -46,6 +46,7 @@ interface DashboardData {
   activeAgents: number
   openclaw: OpenClawData | null
   userEmail?: string
+  userId?: string
 }
 
 const PRIORITY_COLORS: Record<string, { text: string; bg: string; border: string }> = {
@@ -67,8 +68,8 @@ const QUICK_LINKS = [
   { label: 'Guides',         href: '/guides',                  color: '#4285F4', desc: 'Step-by-step docs', icon: '📚', internal: true },
   { label: 'Quick Start',    href: '/quick-start',             color: '#FFB800', desc: '5-min setup', icon: '⚡', internal: true },
   { label: 'Mission Control',href: '/dashboard/mission-control', color: '#FF6B35', desc: 'System health', icon: '🚀', internal: true },
-  { label: 'n8n Workflows', href: 'https://app.clawops.studio/n8n/', color: '#6600FF', desc: 'Automation', icon: '⚙️', internal: false },
-  { label: 'Chrome VNC',    href: 'https://app.clawops.studio/chrome/', color: '#00D4FF', desc: 'Browser', icon: '🌐', internal: false },
+  { label: 'n8n Workflows', href: data.userId ? `/${data.userId}/n8n/` : '#', color: '#6600FF', desc: 'Automation', icon: '⚙️', internal: false },
+  { label: 'Chrome VNC',    href: data.userId ? `/${data.userId}/chrome/` : '#', color: '#00D4FF', desc: 'Browser', icon: '🌐', internal: false },
 ]
 
 const INTEGRATIONS = [
