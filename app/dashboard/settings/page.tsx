@@ -284,6 +284,31 @@ function ProfileTab({ uploading, setUploading, saved, setSaved }: { uploading: b
 }
 
 function SubscriptionTab() {
+  const [subscription, setSubscription] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const load = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) return
+      const { data: sub } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .single()
+      setSubscription(sub)
+      setLoading(false)
+    }
+    load()
+  }, [])
+
+  const planName = subscription?.plan === 'agency' ? 'Agency' : subscription?.plan === 'team' ? 'Team' : subscription?.plan === 'pro' ? 'Pro' : subscription?.plan === 'trial' ? 'Trial' : '—'
+  const planPrice = subscription?.amount ? `$${Number(subscription.amount)}` : '$0'
+  const nextBilling = subscription?.current_period_end ? new Date(subscription.current_period_end).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'
+  const agentLimit = subscription?.plan === 'agency' ? 'Unlimited' : subscription?.plan === 'team' ? '15' : subscription?.plan === 'pro' ? '5' : '1'
+  const statusColor = subscription?.status === 'active' ? 'cyan' : subscription?.status === 'trialing' ? 'yellow' : 'red'
+  const statusLabel = subscription?.status === 'active' ? 'Active' : subscription?.status === 'trialing' ? 'Trial' : subscription?.status === 'past_due' ? 'Past Due' : 'Cancelled'
+
   return (
     <div className="max-w-4xl space-y-8">
       <div>
@@ -292,6 +317,12 @@ function SubscriptionTab() {
       </div>
 
       {/* Current Plan Banner */}
+      {loading ? (
+        <div className="rounded-xl border border-cyan-500/30 bg-gradient-to-r from-cyan-500/5 to-purple-500/5 p-6 animate-pulse">
+          <div className="h-6 w-48 bg-white/10 rounded mb-2" />
+          <div className="h-4 w-32 bg-white/5 rounded" />
+        </div>
+      ) : (
       <div className="rounded-xl border border-cyan-500/30 bg-gradient-to-r from-cyan-500/5 to-purple-500/5 p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -299,8 +330,8 @@ function SubscriptionTab() {
               <Crown className="w-5 h-5 text-cyan-400" />
             </div>
             <div>
-              <p className="text-sm text-white/50">Current Plan</p>
-              <p className="text-xl font-bold text-white">Pro — $99/month</p>
+              <p className="text-sm text-white/50">Current Plan — <span className={`text-${statusColor}-400`}>{statusLabel}</span></p>
+              <p className="text-xl font-bold text-white">{planName} — {planPrice}/month</p>
             </div>
           </div>
           <button className="px-4 py-2 rounded-lg text-sm font-medium text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/10 transition-colors">
@@ -310,21 +341,19 @@ function SubscriptionTab() {
         <div className="mt-4 flex items-center gap-6 text-sm">
           <div>
             <p className="text-white/50">Agents</p>
-            <p className="font-semibold text-white">5 / 5 used</p>
+            <p className="font-semibold text-white">Unlimited</p>
           </div>
           <div>
             <p className="text-white/50">Messages</p>
-            <p className="font-semibold text-white">12,450 / 25,000</p>
+            <p className="font-semibold text-white">Unlimited</p>
           </div>
           <div>
             <p className="text-white/50">Next Billing</p>
-            <p className="font-semibold text-white">May 11, 2026</p>
+            <p className="font-semibold text-white">{nextBilling}</p>
           </div>
         </div>
-        <div className="mt-3 w-full h-1.5 rounded-full bg-white/5">
-          <div className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-purple-500" style={{ width: '50%' }} />
-        </div>
       </div>
+      )}
 
       {/* Plan Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
