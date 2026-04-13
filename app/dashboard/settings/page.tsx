@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
+import { supabase } from '@/lib/supabase/client';
 import { useSearchParams } from 'next/navigation';
 import { useOpenClaw } from '@/contexts/OpenClawContext';
 import {
@@ -116,12 +117,69 @@ function SettingsContent() {
 
 function ProfileTab({ uploading, setUploading, saved, setSaved }: { uploading: boolean; setUploading: (v: boolean) => void; saved: boolean; setSaved: (v: boolean) => void }) {
   const [form, setForm] = useState({
-    fullName: 'Pulkit',
-    email: 'pulkit@clawops.studio',
-    company: 'ClawOps Studio',
+    fullName: '',
+    email: '',
+    company: '',
     timezone: 'Asia/Kolkata',
-    bio: 'Building AI-powered automation for businesses.',
-  });
+    bio: '',
+  })
+
+  useEffect(() => {
+    const load = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) return
+      const user = session.user
+      const { data: p } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+      setForm({
+        fullName: p?.full_name || user.user_metadata?.full_name || '',
+        email: user.email || '',
+        company: p?.company || user.user_metadata?.company || '',
+          })
+    }
+    load()
+  }, [])
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) return
+
+    // Upload to Supabase Storage
+    const ext = file.name.split('.').pop()
+    const path = `avatars/${session.user.id}.${ext}`
+    const { error } = await supabase.storage
+      .from('avatars')
+      .upload(path, file, { upsert: true })
+
+    if (!error) {
+      const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path)
+      await supabase.from('profiles').upsert({
+        id: session.user.id,
+        avatar_url: urlData.publicUrl,
+        updated_at: new Date().toISOString(),
+      })
+    }
+    setUploading(false)
+  };
+
+  const handleSave = async () => {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) return
+    await supabase.from('profiles').upsert({
+      id: session.user.id,
+      full_name: form.fullName,
+      company: form.company,
+      updated_at: new Date().toISOString(),
+    })
+    setSaved(true)
+    setTimeout(() => setSaved(false), 2000)
+  };
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
