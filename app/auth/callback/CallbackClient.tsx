@@ -34,9 +34,13 @@ export default function CallbackClient() {
       console.log('[AUTH CALLBACK] Session established for:', data.user?.email)
       setStatus('success')
 
-      const destination = next.startsWith('/')
-        ? `${window.location.origin}${next}`
-        : next
+      // Redirect directly to VPS-hosted dashboard
+      const userId = data.user?.id
+      const destination = userId
+        ? `https://app.clawops.studio/${userId}/dashboard`
+        : next.startsWith('http')
+          ? next
+          : `${window.location.origin}${next}`
 
       console.log('[AUTH CALLBACK] Redirecting to:', destination)
       window.location.href = destination

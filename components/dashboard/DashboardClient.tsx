@@ -63,15 +63,6 @@ const STATUS_BADGES: Record<string, string> = {
   running:     'bg-green-500/15 text-green-400 border-green-500/30',
 }
 
-const QUICK_LINKS = [
-  { label: 'Skills & Plugins', href: '/dashboard/skills-library', color: '#10b981', desc: '5400+ skills & plugins', icon: '🧠', internal: true },
-  { label: 'Guides',         href: '/guides',                  color: '#4285F4', desc: 'Step-by-step docs', icon: '📚', internal: true },
-  { label: 'Quick Start',    href: '/quick-start',             color: '#FFB800', desc: '5-min setup', icon: '⚡', internal: true },
-  { label: 'Mission Control',href: '/dashboard/mission-control', color: '#FF6B35', desc: 'System health', icon: '🚀', internal: true },
-  { label: 'n8n Workflows', href: data.userId ? `/${data.userId}/n8n/` : '#', color: '#6600FF', desc: 'Automation', icon: '⚙️', internal: false },
-  { label: 'Chrome VNC',    href: data.userId ? `/${data.userId}/chrome/` : '#', color: '#00D4FF', desc: 'Browser', icon: '🌐', internal: false },
-]
-
 const INTEGRATIONS = [
   { name: 'GoHighLevel', icon: '📊', color: '#FF6B35', desc: 'CRM, contacts, pipelines, SMS', badge: 'CRM' },
   { name: 'n8n', icon: '⚙️', color: '#EA4B71', desc: 'Workflow automation & webhooks', badge: 'Automation' },
@@ -86,6 +77,15 @@ const MODEL_OPTIONS = [
 ]
 
 export default function DashboardClient({ data }: { data: DashboardData }) {
+  const quickLinks = [
+    { label: 'Skills & Plugins', href: '/dashboard/skills-library', color: '#10b981', desc: '5400+ skills & plugins', icon: '🧠', internal: true },
+    { label: 'Guides',         href: '/guides',                  color: '#4285F4', desc: 'Step-by-step docs', icon: '📚', internal: true },
+    { label: 'Quick Start',    href: '/quick-start',             color: '#FFB800', desc: '5-min setup', icon: '⚡', internal: true },
+    { label: 'Mission Control',href: '/dashboard/mission-control', color: '#FF6B35', desc: 'System health', icon: '🚀', internal: true },
+    { label: 'n8n Workflows',  href: data.userId ? `/${data.userId}/n8n/` : '#', color: '#6600FF', desc: 'Automation', icon: '⚙️', internal: false },
+    { label: 'Chrome VNC',    href: data.userId ? `/${data.userId}/chrome/` : '#', color: '#00D4FF', desc: 'Browser', icon: '🌐', internal: false },
+  ]
+
   const [tasks, setTasks] = useState<Task[]>(data.tasks)
   const [newTaskTitle, setNewTaskTitle] = useState('')
   const [newTaskPriority, setNewTaskPriority] = useState('medium')
@@ -499,7 +499,7 @@ export default function DashboardClient({ data }: { data: DashboardData }) {
                   <h2 className="text-sm font-semibold text-white">Quick Access</h2>
                 </div>
                 <div className="p-5 grid grid-cols-2 gap-2">
-                  {QUICK_LINKS.map((link) => (
+                  {quickLinks.map((link) => (
                     <a
                       key={link.label}
                       href={link.href}
