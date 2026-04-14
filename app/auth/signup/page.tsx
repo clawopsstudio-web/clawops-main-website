@@ -31,7 +31,7 @@ function SignUpContent() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?plan=${planKey}&next=/dashboard`,
+        redirectTo: `https://app.clawops.studio/auth/callback?plan=${planKey}&next=/dashboard`,
       },
     })
     if (error) {
@@ -48,7 +48,7 @@ function SignUpContent() {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback?plan=${planKey}&next=/auth/payment`,
+        emailRedirectTo: `https://app.clawops.studio/auth/callback?plan=${planKey}&next=/auth/payment`,
       },
     })
     if (error) {

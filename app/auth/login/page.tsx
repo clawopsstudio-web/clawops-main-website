@@ -33,10 +33,11 @@ function LoginContent() {
     setError('')
     
     try {
+      // Always redirect to app.clawops.studio for auth — this is where Supabase expects the callback
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: 'https://app.clawops.studio/auth/callback',
         },
       })
       
