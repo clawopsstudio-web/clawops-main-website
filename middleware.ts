@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { createServerClient, parseCookieHeader, serializeCookieHeader } from '@supabase/ssr'
+import { createServerClient, parseCookieHeader } from '@supabase/ssr'
+
+interface CookieHeader {
+  name: string
+  value: string
+}
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -19,8 +24,11 @@ export async function middleware(request: NextRequest) {
 
   // Build cookie interface from Next.js request/response
   const cookieStore = {
-    getAll() {
-      return parseCookieHeader(request.cookies.toString())
+    getAll(): CookieHeader[] {
+      return parseCookieHeader(request.cookies.toString()).map(c => ({
+        name: c.name,
+        value: c.value ?? '',
+      }))
     },
     setAll(cookiesToSet) {
       cookiesToSet.forEach(({ name, value, options }) => {
