@@ -1,25 +1,34 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 
+const APP_URL = 'https://app.clawops.studio'
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const code = searchParams.get('code')
   const error = searchParams.get('error')
   const next = searchParams.get('next')
 
-  console.log('[Auth Callback Route]', { code: code?.substring(0, 15), error, next })
+  console.log('[Auth Callback]', {
+    hasCode: !!code,
+    codePrefix: code?.substring(0, 10),
+    error,
+    next,
+  })
 
-  // Handle OAuth errors
+  // Handle OAuth errors from Supabase
   if (error) {
-    return NextResponse.redirect(new URL(`/auth/login?error=${error}`, request.url))
+    console.log('[Auth Callback] OAuth error:', error)
+    return NextResponse.redirect(new URL(`/auth/login?error=${error}`, APP_URL))
   }
 
   // Must have a code
   if (!code) {
-    return NextResponse.redirect(new URL('/auth/login?error=no_code', request.url))
+    console.log('[Auth Callback] No code in URL — redirect to login')
+    return NextResponse.redirect(new URL('/auth/login?error=no_code', APP_URL))
   }
 
-  // Exchange code for session
+  // Exchange the code for a session
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -28,29 +37,30 @@ export async function GET(request: NextRequest) {
   const { data, error: authError } = await supabase.auth.exchangeCodeForSession(code)
 
   if (authError || !data.session) {
-    console.error('[Auth Callback] Exchange failed:', authError?.message)
-    return NextResponse.redirect(new URL(`/auth/login?error=session_error`, request.url))
+    console.error('[Auth Callback] Code exchange failed:', authError?.message)
+    return NextResponse.redirect(new URL('/auth/login?error=session_error', APP_URL))
   }
 
   const { access_token, refresh_token } = data.session
   const userId = data.session.user.id
 
-  console.log('[Auth Callback] Session OK for user:', userId)
+  console.log('[Auth Callback] Session created for user:', userId)
 
-  // Redirect destination
+  // Determine redirect destination
   const dest = next || `/${userId}/dashboard`
+  const redirectUrl = new URL(dest, APP_URL)
 
-  // Create redirect response WITH cookies set
-  const response = NextResponse.redirect(new URL(dest, request.url), 302)
+  // Create the redirect response
+  const response = NextResponse.redirect(redirectUrl, 302)
 
-  // Set auth cookies on the response
+  // Set auth cookies on the response so middleware can read them
   response.cookies.set('sb-access-token', access_token, {
     path: '/',
     maxAge: 3600,
     domain: '.app.clawops.studio',
     sameSite: 'lax',
     secure: true,
-    httpOnly: false, // needs to be readable by client-side JS AND middleware
+    httpOnly: false,
   })
   response.cookies.set('sb-refresh-token', refresh_token, {
     path: '/',
@@ -69,6 +79,6 @@ export async function GET(request: NextRequest) {
     httpOnly: false,
   })
 
-  console.log('[Auth Callback] Redirecting to:', dest)
+  console.log('[Auth Callback] Redirecting to:', redirectUrl.toString())
   return response
 }
