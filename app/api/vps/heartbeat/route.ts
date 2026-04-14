@@ -1,21 +1,21 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
+// Heartbeat is a server-to-server call from the VPS — use service role key to bypass RLS
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-// Heartbeat — VPS calls this every 30 seconds to update its status
+// Heartbeat — VPS calls this every minute to update its status
 export async function POST(request: Request) {
   try {
-    const { tunnel_url, status, openclaw_version, agent_count, specs, system } = await request.json()
+    const { tunnel_url, status, openclaw_version, agent_count, specs } = await request.json()
 
     if (!tunnel_url) {
       return NextResponse.json({ error: 'tunnel_url required' }, { status: 400 })
     }
 
-    // Update the VPS instance by tunnel_url
     const { data, error } = await supabase
       .from('vps_instances')
       .update({
@@ -30,16 +30,15 @@ export async function POST(request: Request) {
       .select('id, status')
       .single()
 
-    if (error) {
-      return NextResponse.json({
-        ok: false,
-        error: error.message,
-        note: 'vps_instances table may not exist'
-      }, { status: 200 }) // Return 200 so VPS doesn't stop sending
+    if (error || !data) {
+      console.error('[heartbeat] error:', error)
+      // Return 200 so the VPS keeps retrying even if this VPS isn't in the DB yet
+      return NextResponse.json({ ok: false, error: error?.message }, { status: 200 })
     }
 
     return NextResponse.json({ ok: true, vps_id: data.id, status: data.status })
   } catch (err) {
+    console.error('[heartbeat] uncaught:', err)
     return NextResponse.json({ ok: false, error: 'Internal error' }, { status: 200 })
   }
 }
