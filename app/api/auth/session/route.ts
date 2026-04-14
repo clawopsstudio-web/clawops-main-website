@@ -8,6 +8,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing token or userId' }, { status: 400 })
     }
 
+    // Build response first, then set cookies on it
     const response = NextResponse.json({ success: true })
 
     const cookieOpts = {
@@ -30,7 +31,7 @@ export async function POST(request: Request) {
     })
 
     return response
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: 'Failed to set session' }, { status: 500 })
   }
 }
