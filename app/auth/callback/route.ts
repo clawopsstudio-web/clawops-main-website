@@ -1,54 +1,66 @@
 import { NextResponse } from 'next/server'
-import { createServerClient, parseCookieHeader, serializeCookieHeader } from '@supabase/ssr'
-
-interface ParsedCookie {
-  name: string
-  value: string
-}
+import { createServerClient, parseCookieHeader } from '@supabase/ssr'
 
 export async function GET(request: Request) {
   const url = new URL(request.url)
   const code = url.searchParams.get('code')
 
-  // Single cookie store for entire handler — this is the critical fix
-  // Calling cookies() twice creates TWO separate stores; client writes to one, session reads from the other
+  // Single cookie store instance — critical fix for the double-cookies() bug
   const cookieStore = await import('next/headers').then(m => m.cookies())
 
-  // Read raw cookie header from the actual incoming request
-  const cookieHeader = request.headers.get('cookie') || ''
+  // Build a response helper that can carry cookies forward
+  type ResponseLike = {
+    cookies: {
+      get(name: string): string | undefined
+      getAll(): Array<{ name: string; value: string }>
+      set(name: string, value: string, options?: Record<string, unknown>): void
+    }
+  }
 
-  // Create server client using the SAME cookieStore instance throughout
+  // In-memory cookie store that persists across the handler
+  const memCookies: Array<{ name: string; value: string; opts: Record<string, unknown> }> = []
+
+  const memCookieStore: Parameters<typeof createServerClient>[2]['cookies'] = {
+    getAll() {
+      // Merge incoming request cookies with ones we've set in this handler
+      const requestCookies = parseCookieHeader(request.headers.get('cookie') || '')
+        .map(c => ({ name: c.name, value: c.value ?? '' }))
+      const memCookieMap = new Map(memCookies.map(c => [c.name, c]))
+      const merged = [...requestCookies]
+      for (const mc of memCookies) {
+        if (!merged.find(c => c.name === mc.name)) {
+          merged.push({ name: mc.name, value: mc.value })
+        }
+      }
+      return merged
+    },
+    setAll(cookiesToSet) {
+      for (const cookie of cookiesToSet) {
+        const existing = memCookies.findIndex(c => c.name === cookie.name)
+        const opts = {
+          domain: '.app.clawops.studio',
+          secure: true,
+          sameSite: 'lax' as const,
+          httpOnly: true,
+          path: '/',
+          ...(cookie.options as Record<string, unknown>),
+        }
+        if (existing >= 0) {
+          memCookies[existing] = { name: cookie.name, value: cookie.value, opts }
+        } else {
+          memCookies.push({ name: cookie.name, value: cookie.value, opts })
+        }
+      }
+    },
+  }
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll(): ParsedCookie[] {
-          const parsed = parseCookieHeader(cookieHeader)
-          return parsed.map(c => ({ name: c.name, value: c.value ?? '' }))
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            try {
-              cookieStore.set(name, value, {
-                ...options,
-                domain: '.app.clawops.studio',
-                secure: true,
-                sameSite: 'lax',
-                httpOnly: true,
-                path: '/',
-              } as Parameters<typeof cookieStore.set>[1])
-            } catch {
-              // Can fail in some server contexts — suppress
-            }
-          })
-        },
-      },
-    }
+    { cookies: memCookieStore }
   )
 
   if (code) {
-    // Exchange OAuth code for session — this sets cookies via setAll()
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (error || !data.session) {
@@ -56,31 +68,26 @@ export async function GET(request: Request) {
       return NextResponse.redirect(new URL('/auth/login?error=auth_callback_failed', request.url))
     }
 
-    // Direct to user-specific dashboard to avoid extra redirect step
+    // Redirect directly to user-specific dashboard
     const destination = `/${data.session.user.id}/dashboard`
-    const redirectUrl = new URL(destination, request.url)
+    const response = NextResponse.redirect(new URL(destination, request.url))
 
-    // Build response with explicit Set-Cookie headers from the cookie store
-    const response = NextResponse.redirect(redirectUrl)
-
-    // Manually extract all cookies set by the server client and add to redirect response
-    // This ensures cookies are in the Set-Cookie header of the redirect
-    for (const cookie of cookieStore.getAll()) {
-      const serialized = serializeCookieHeader(cookie.name, cookie.value, {
+    // Apply all cookies set during exchange to the redirect response
+    for (const cookie of memCookies) {
+      response.cookies.set(cookie.name, cookie.value, {
         domain: '.app.clawops.studio',
         secure: true,
         sameSite: 'lax',
         httpOnly: true,
         path: '/',
-        maxAge: cookie.value ? 34560000 : undefined,
+        maxAge: 34560000,
       })
-      response.headers.append('Set-Cookie', serialized)
     }
 
     return response
   }
 
-  // No code — check if user has an existing session
+  // No code — check existing session
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) {
     return NextResponse.redirect(new URL('/auth/login', request.url))

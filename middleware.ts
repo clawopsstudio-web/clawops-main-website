@@ -7,6 +7,12 @@ interface CookieHeader {
   value: string
 }
 
+interface SetCookie {
+  name: string
+  value: string
+  options?: Record<string, unknown>
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
@@ -30,7 +36,7 @@ export async function middleware(request: NextRequest) {
         value: c.value ?? '',
       }))
     },
-    setAll(cookiesToSet) {
+    setAll(cookiesToSet: SetCookie[]) {
       cookiesToSet.forEach(({ name, value, options }) => {
         response.cookies.set(name, value, {
           domain: '.app.clawops.studio',
