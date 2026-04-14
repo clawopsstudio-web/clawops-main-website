@@ -34,9 +34,14 @@ interface OpenClawContextValue {
 const OpenClawContext = createContext<OpenClawContextValue | undefined>(undefined);
 
 export function OpenClawProvider({ children }: { children: ReactNode }) {
-  // Use Tailscale Funnel URL for public access
+  // WebSocket URL for the OpenClaw Gateway.
+  // Nginx proxies /gateway/ → OpenClaw Gateway (port 18789) with WS upgrade headers.
+  // Must use wss:// (WebSocket Secure) for public HTTPS access.
+  const gatewayUrl = process.env.NEXT_PUBLIC_OPENCLAW_GATEWAY_URL
+    ?? 'wss://app.clawops.studio/gateway/'
+
   const gateway = useOpenClawGateway({
-    url: process.env.NEXT_PUBLIC_OPENCLAW_GATEWAY_URL ?? 'https://app.clawops.studio',
+    url: gatewayUrl,
     token: process.env.NEXT_PUBLIC_OPENCLAW_GATEWAY_TOKEN ?? 'a1a9f317b073ff79360260354ba6a83781e59eb2e134b495',
     autoConnect: true,
   });
