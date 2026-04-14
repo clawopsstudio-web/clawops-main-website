@@ -53,8 +53,8 @@ export async function GET(request: Request) {
       return NextResponse.redirect(new URL('/auth/login?error=auth_callback_failed', request.url))
     }
 
-    // Build redirect back to dashboard
-    const destination = `/dashboard`
+    // Direct to user-specific dashboard to avoid extra redirect step
+    const destination = `/${data.session.user.id}/dashboard`
     const redirectUrl = new URL(destination, request.url)
 
     // Build response with explicit Set-Cookie headers from the cookie store
