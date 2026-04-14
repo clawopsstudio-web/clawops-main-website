@@ -1,8 +1,6 @@
-import CallbackClient from './CallbackClient'
+'use client'
 
-// Prevent this page from being cached by anything (Cloudflare, Vercel, browsers)
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+import CallbackClient from './CallbackClient'
 
 export default function CallbackPage() {
   return <CallbackClient />

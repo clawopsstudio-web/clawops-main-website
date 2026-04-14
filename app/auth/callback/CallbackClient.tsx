@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
 
-// Fresh client — NO detectSessionInUrl since we handle the code manually
 function makeClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -24,40 +23,59 @@ export default function CallbackClient() {
   useEffect(() => {
     async function handleCallback() {
       try {
-        const params = new URLSearchParams(window.location.search)
+        // Supabase puts the auth code in the URL FRAGMENT (#code=...), NOT in query string (?)
+        // Example: /auth/callback#code=xxx&...  — fragment never sent to server
+        const fullUrl = window.location.href
+        const hash = window.location.hash  // e.g. "#code=abc123&..."
+        const search = window.location.search // e.g. "?error=..."
+
+        log(`1. hash: ${hash.substring(0, 60) || '(empty)'} `)
+        log(`2. search: ${search || '(empty)'}`)
+
+        // Check for OAuth errors in query string first
+        const params = new URLSearchParams(search)
         const errorParam = params.get('error')
-        const code = params.get('code')
-        const next = params.get('next')
-
-        log(`1. URL: ${window.location.href.slice(0, 80)}`)
-        log(`2. code=${!!code}, error=${errorParam}`)
-
         if (errorParam) {
-          log(`3. OAuth error: ${errorParam} — go to login`)
+          log(`3. OAuth error: ${errorParam} → login`)
           window.location.href = `/auth/login?error=${errorParam}`
           return
         }
 
+        // Parse code from FRAGMENT (not query string!)
+        // Supabase format: #code=xxx&...  or #access_token=xxx&...
+        let code: string | null = null
+        if (hash) {
+          const hashParams = new URLSearchParams(hash.substring(1)) // strip the '#'
+          code = hashParams.get('code')
+          log(`3. Code from hash: ${code ? code.substring(0, 15) + '...' : 'none'}`)
+        }
+
+        // Also check query string (for non-hash OAuth flows)
         if (!code) {
-          log('3. No code in URL — redirecting to login')
+          code = params.get('code')
+          log(`4. Code from search: ${code ? code.substring(0, 15) + '...' : 'none'}`)
+        }
+
+        if (!code) {
+          log('5. No code found in hash or search → login')
           window.location.href = '/auth/login?error=no_code'
           return
         }
 
-        log('4. Exchanging code for session')
+        log('6. Exchanging code for session')
         const supabase = makeClient()
         const { data, error } = await supabase.auth.exchangeCodeForSession(code)
-        log(`5. session=${!!data.session}, error=${error?.message ?? 'none'}`)
+        log(`7. session=${!!data.session}, error=${error?.message ?? 'none'}`)
 
         if (error || !data.session) {
           setStatus('error')
-          log(`6. Exchange FAILED: ${error?.message}`)
+          log(`8. Exchange FAILED: ${error?.message}`)
           return
         }
 
         const { access_token, refresh_token } = data.session
         const userId = data.session.user.id
-        log(`7. User ID: ${userId}`)
+        log(`9. User ID: ${userId}`)
 
         // Set cookies so middleware can read them
         const domain = '.app.clawops.studio'
@@ -66,16 +84,10 @@ export default function CallbackClient() {
         setCookie('sb-access-token', access_token, 3600)
         setCookie('sb-refresh-token', refresh_token, 604800)
         setCookie('sb-user-id', userId, 604800)
-        log(`8. Cookies set on ${domain}`)
+        log(`10. Cookies set on ${domain}`)
 
-        // Also persist in localStorage for the SDK
-        localStorage.setItem('sb-access-token', access_token)
-        localStorage.setItem('sb-refresh-token', refresh_token)
-        localStorage.setItem('sb-user-id', userId)
-        log('9. localStorage set')
-
-        const dest = next || `/${userId}/dashboard`
-        log(`10. Redirecting to ${dest}`)
+        const dest = params.get('next') || `/${userId}/dashboard`
+        log(`11. Redirecting to ${dest}`)
         window.location.href = dest
       } catch (err: any) {
         log(`ERROR: ${err.message}`)
