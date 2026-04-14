@@ -63,9 +63,13 @@ function SettingsContent() {
   const searchParams = useSearchParams()
   const urlTab = searchParams.get('tab')
   const [activeTab, setActiveTab] = useState(urlTab || 'profile');
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     if (urlTab) setActiveTab(urlTab)
+    // Read sb-user-id cookie for back navigation
+    const match = document.cookie.match(/sb-user-id=([^;]+)/)
+    if (match) setUserId(match[1])
   }, [urlTab])
   const [uploading, setUploading] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -100,6 +104,17 @@ function SettingsContent() {
             </button>
           ))}
         </nav>
+        {/* Back to Overview */}
+        {userId && (
+          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+            <a
+              href={`/dashboard/${userId}`}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-white/40 hover:text-white hover:bg-white/5 transition-all"
+            >
+              ← Overview
+            </a>
+          </div>
+        )}
       </aside>
 
       {/* Content */}

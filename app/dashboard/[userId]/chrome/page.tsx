@@ -17,52 +17,35 @@ export default async function ChromePage({ params }: Props) {
 
   return (
     <DashboardShell>
-      <div className="h-full flex flex-col">
-        {/* Header */}
-        <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-[rgba(255,255,255,0.06)]">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center text-lg" style={{ background: 'rgba(0,212,255,0.15)' }}>
-              🌐
-            </div>
-            <div>
-              <h1 className="text-sm font-semibold text-white">Chrome Browser</h1>
-              <p className="text-[10px] text-white/40">Browser automation & VNC</p>
-            </div>
-          </div>
-          <a
-            href={`/api/proxy/${userId}/chrome/vnc.html`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-white/40 hover:text-white/70 transition-colors"
-          >
-            Open in new tab ↗
-          </a>
+      <div className="h-full flex flex-col items-center justify-center p-8">
+        {/* Service Icon */}
+        <div
+          className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-6"
+          style={{ background: 'rgba(0,212,255,0.15)' }}
+        >
+          🌐
         </div>
-        {/* iFrame */}
-        <div className="flex-1 relative">
-          <iframe
-            src={`/api/proxy/${userId}/chrome/vnc.html`}
-            className="w-full h-full border-0"
-            title="Chrome Browser"
-            allow="clipboard-read; clipboard-write"
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
-          />
-          {/* Loading overlay */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none" id="loading">
-            <div className="flex flex-col items-center gap-3">
-              <div className="w-8 h-8 border-2 border-[#00D4FF]/30 border-t-[#00D4FF] rounded-full animate-spin" />
-              <p className="text-xs text-white/40">Loading Chrome VNC...</p>
-            </div>
-          </div>
-          <script dangerouslySetInnerHTML={{ __html: `
-            window.addEventListener('load', function() {
-              setTimeout(function() {
-                var loading = document.getElementById('loading');
-                if (loading) loading.style.display = 'none';
-              }, 4000);
-            });
-          ` }} />
-        </div>
+
+        {/* Service Name */}
+        <h1 className="text-2xl font-bold text-white mb-2">Chrome Browser</h1>
+        <p className="text-white/50 text-sm mb-8 text-center max-w-md">
+          Browser automation & VNC. Control Chrome headless browser for web scraping, testing, and automation.
+        </p>
+
+        {/* Open Button */}
+        <a
+          href={`/api/proxy/${userId}/chrome/`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-6 py-3 rounded-xl text-sm font-semibold text-white transition-all hover:scale-105 mb-4"
+          style={{ background: 'linear-gradient(135deg, #00D4FF, #0099cc)', boxShadow: '0 0 20px rgba(0,212,255,0.3)' }}
+        >
+          Open Chrome VNC in new tab ↗
+        </a>
+
+        <p className="text-white/30 text-xs">
+          Opens in a new tab · noVNC browser interface
+        </p>
       </div>
     </DashboardShell>
   );
