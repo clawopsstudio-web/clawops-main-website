@@ -30,7 +30,7 @@ export default async function N8nPage({ params }: Props) {
             </div>
           </div>
           <a
-            href={`/api/proxy/${userId}/n8n/`}
+            href={`/api/proxy/${userId}/n8n`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs text-white/40 hover:text-white/70 transition-colors"
@@ -41,7 +41,7 @@ export default async function N8nPage({ params }: Props) {
         {/* iFrame */}
         <div className="flex-1 relative">
           <iframe
-            src={`/api/proxy/${userId}/n8n/`}
+            src={`/api/proxy/${userId}/n8n`}
             className="w-full h-full border-0"
             title="n8n Workflows"
             allow="cross-origin-isolated"

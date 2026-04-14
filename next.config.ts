@@ -4,9 +4,9 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
-  // trailingSlash disabled — we handle all redirects explicitly
-  // Enabling it causes 308 redirects that break the OAuth callback chain
-  // because Cloudflare/Vercel cache the trailing-slash redirect
+  // Enable trailing slashes so /api/proxy/{userId}/n8n/ doesn't redirect to no-slash
+  // The OAuth callback is a route handler (not a page), so it's unaffected
+  trailingSlash: true,
 };
 
 export default nextConfig;
