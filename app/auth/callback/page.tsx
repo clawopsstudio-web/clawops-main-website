@@ -3,98 +3,71 @@
 import { useEffect, useState } from 'react'
 
 export default function CallbackPage() {
-  const [status, setStatus] = useState('Completing sign-in...')
-  const [error, setError] = useState('')
+  const [debug, setDebug] = useState('Starting...\n')
 
   useEffect(() => {
     async function handleCallback() {
+      const log = (msg: string) => {
+        console.log('[Callback]', msg)
+        setDebug(prev => prev + msg + '\n')
+      }
+
       try {
-        // Import supabase dynamically (browser only)
+        log('1. Importing supabase client')
         const { supabase } = await import('@/lib/supabase/client')
 
-        // Supabase client auto-initializes and processes URL params.
-        // detectSessionInUrl: true → reads code from URL, exchanges for session,
-        // stores in localStorage. We just need to wait for that to complete.
-        await supabase.auth.initialize()
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+        log('2. Calling getSession()')
+        const { data: { session }, error } = await supabase.auth.getSession()
+        log(`3. getSession result: session=${!!session}, error=${error?.message ?? 'none'}`)
 
-        if (sessionError) {
-          console.error('[Callback] Session error:', sessionError.message)
-          setError(sessionError.message)
-          setStatus('Authentication failed.')
-          setTimeout(() => {
-            window.location.href = `/auth/login?error=callback_error`
-          }, 2000)
-          return
-        }
+        if (session) {
+          log(`4. Session found: user=${session.user.id}`)
+          log(`   access_token length=${session.access_token.length}`)
 
-        if (!session) {
-          // Session not found — might be a PKCE flow where code needs explicit exchange
-          // Try exchanging any code in URL explicitly
+          log('5. Posting to /api/auth/session')
+          const res = await fetch('/api/auth/session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              accessToken: session.access_token,
+              refreshToken: session.refresh_token,
+              userId: session.user.id,
+              expiresIn: session.expires_in,
+            }),
+          })
+          log(`6. POST status: ${res.status}`)
+
+          if (res.ok) {
+            log('7. Success! Redirecting to dashboard')
+            window.location.href = `/${session.user.id}/dashboard`
+          } else {
+            const text = await res.text()
+            log(`7. POST failed: ${text}`)
+            window.location.href = '/auth/login?error=api_failed'
+          }
+        } else {
+          log('4. No session - check URL params')
+          log(`   URL: ${window.location.href.substring(0, 100)}...`)
+          log(`   Hash: ${window.location.hash.substring(0, 100)}`)
+          log(`   Search: ${window.location.search.substring(0, 100)}`)
+
+          // Check if there's a code in the URL
           const params = new URLSearchParams(window.location.search)
-          const code = params.get('code')
-          if (code) {
-            const { data: exchangeData, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
-            if (exchangeError || !exchangeData.session) {
-              console.error('[Callback] Exchange failed:', exchangeError?.message)
-              setError('Code exchange failed')
-              window.location.href = '/auth/login?error=exchange_failed'
+          if (params.has('code')) {
+            log('   Code found in URL - trying explicit exchange')
+            const { data: ex, error: exErr } = await supabase.auth.exchangeCodeForSession(params.get('code')!)
+            log(`   Exchange: session=${!!ex.session} error=${exErr?.message}`)
+            if (ex.session) {
+              window.location.href = `/${ex.session.user.id}/dashboard`
               return
             }
-            // Session established from code exchange
-            const userId = exchangeData.session.user.id
-            await syncSessionToServer(exchangeData.session.access_token, exchangeData.session.refresh_token, userId, exchangeData.session.expires_in)
-            return
           }
 
-          console.error('[Callback] No session and no code in URL')
-          setError('No session found')
           window.location.href = '/auth/login?error=no_session'
-          return
         }
-
-        // Session found — sync to server cookies and redirect
-        const userId = session.user.id
-        await syncSessionToServer(session.access_token, session.refresh_token, userId, session.expires_in)
       } catch (err: any) {
-        console.error('[Callback] Unexpected error:', err)
-        setError(err.message || 'Unknown error')
-        setStatus('Error occurred.')
-        setTimeout(() => {
-          window.location.href = '/auth/login?error=unexpected'
-        }, 2000)
-      }
-    }
-
-    async function syncSessionToServer(accessToken: string, refreshToken: string | undefined, userId: string, expiresIn: number | undefined) {
-      try {
-        const apiUrl = `${window.location.origin}/api/auth/session`
-        const res = await fetch(apiUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include', // Important: include cookies in this request
-          body: JSON.stringify({
-            accessToken,
-            refreshToken: refreshToken ?? '',
-            userId,
-            expiresIn: expiresIn ?? 3600,
-          }),
-        })
-
-        if (!res.ok) {
-          console.error('[Callback] Failed to sync session to server, status:', res.status)
-          setError('Failed to create server session')
-          window.location.href = '/auth/login?error=sync_failed'
-          return
-        }
-
-        console.log('[Callback] Session synced to server, redirecting to dashboard')
-        setStatus('Authenticated! Redirecting...')
-        window.location.href = `/${userId}/dashboard`
-      } catch (err) {
-        console.error('[Callback] Fetch failed:', err)
-        setError('Network error')
-        window.location.href = '/auth/login?error=network_error'
+        log(`ERROR: ${err.message}`)
+        window.location.href = '/auth/login?error=unexpected'
       }
     }
 
@@ -102,13 +75,13 @@ export default function CallbackPage() {
   }, [])
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#04040c]">
-      <div className="text-center max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-[#04040c] p-8">
+      <div className="max-w-lg w-full">
         <div className="w-8 h-8 border-2 border-[#00D4FF]/30 border-t-[#00D4FF] rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-white/60 text-sm mb-2">{status}</p>
-        {error && (
-          <p className="text-red-400 text-xs mt-2">{error}</p>
-        )}
+        <p className="text-white/60 text-sm text-center mb-4">Completing sign-in...</p>
+        <pre className="text-xs text-green-400/70 bg-black/30 rounded-lg p-4 overflow-auto max-h-64 whitespace-pre-wrap">
+          {debug}
+        </pre>
       </div>
     </div>
   )
