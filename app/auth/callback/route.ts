@@ -1,4 +1,3 @@
-import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 
 const APP_URL = 'https://app.clawops.studio'
@@ -9,76 +8,119 @@ export async function GET(request: NextRequest) {
   const error = searchParams.get('error')
   const next = searchParams.get('next')
 
-  console.log('[Auth Callback]', {
-    hasCode: !!code,
-    codePrefix: code?.substring(0, 10),
-    error,
-    next,
-  })
-
-  // Handle OAuth errors from Supabase
-  if (error) {
-    console.log('[Auth Callback] OAuth error:', error)
-    return NextResponse.redirect(new URL(`/auth/login?error=${error}`, APP_URL))
+  // PKCE flow: code comes in query string — exchange server-side
+  if (code) {
+    // Dynamically import to keep this route lightweight
+    const { createClient } = await import('@supabase/supabase-js')
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+    const { data, error: authError } = await supabase.auth.exchangeCodeForSession(code)
+    if (authError || !data.session) {
+      return NextResponse.redirect(new URL('/auth/login?error=session_error', APP_URL))
+    }
+    const dest = next || `/${data.session.user.id}/dashboard`
+    const response = NextResponse.redirect(new URL(dest, APP_URL), 302)
+    setCookies(response, data.session.access_token, data.session.refresh_token, data.session.user.id)
+    return response
   }
 
-  // Must have a code
-  if (!code) {
-    console.log('[Auth Callback] No code in URL — redirect to login')
-    return NextResponse.redirect(new URL('/auth/login?error=no_code', APP_URL))
+  // Implicit flow (token in URL fragment): return HTML with inline JS.
+  // The fragment is only visible to client-side JS — server never sees it.
+  // The JS: reads token from hash, sets cookies + localStorage, redirects to dashboard.
+  const html = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Signing in...</title>
+</head>
+<body style="font-family:system-ui,sans-serif;background:#04040c;color:white;display:flex;align-items:center;justify-content:center;height:100vh;margin:0">
+  <div style="text-align:center">
+    <div style="width:40px;height:40px;border:3px solid rgba(0,212,255,0.3);border-top-color:#00D4FF;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px"></div>
+    <p style="color:rgba(255,255,255,0.6)">Completing sign-in...</p>
+  </div>
+  <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+    
+    const hash = window.location.hash
+    const hashParams = new URLSearchParams(hash.substring(1))
+    const accessToken = hashParams.get('access_token')
+    const refreshToken = hashParams.get('refresh_token')
+    const queryError = new URLSearchParams(window.location.search).get('error')
+
+    if (!accessToken) {
+      // No token in fragment — redirect to login with error
+      window.location.href = '/auth/login' + (queryError ? '?error=' + queryError : '?error=no_code')
+      throw new Error('no_token')
+    }
+
+    // Decode JWT to get userId (sub claim)
+    let userId = null
+    try {
+      const parts = accessToken.split('.')
+      const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')))
+      userId = payload.sub
+    } catch (e) {}
+
+    if (!userId) {
+      window.location.href = '/auth/login?error=token_parse_error'
+      throw new Error('bad_token')
+    }
+
+    // Set cookies (for Next.js middleware)
+    const cookie = (name, val, maxAge) =>
+      document.cookie = name + '=' + val + '; Path=/; Max-Age=' + maxAge + '; Domain=.app.clawops.studio; SameSite=Lax; Secure'
+    cookie('sb-access-token', accessToken, 3600)
+    cookie('sb-refresh-token', refreshToken || accessToken, 604800)
+    cookie('sb-user-id', userId, 604800)
+
+    // Tell Supabase SDK about the session so it persists to localStorage
+    try {
+      const supabase = createClient(
+        '${process.env.NEXT_PUBLIC_SUPABASE_URL}',
+        '${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}',
+        { auth: { persistSession: true, autoRefreshToken: true } }
+      )
+      await supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken || accessToken
+      })
+    } catch (e) {
+      console.error('Supabase setSession failed:', e)
+    }
+
+    // Clean fragment from URL, redirect to dashboard
+    window.history.replaceState(null, '', window.location.pathname + window.location.search)
+    window.location.href = '/' + userId + '/dashboard'
+  <\/script>
+</body>
+</html>`
+
+  return new NextResponse(html, {
+    headers: {
+      'Content-Type': 'text/html',
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+    },
+  })
+}
+
+function setCookies(
+  response: NextResponse,
+  access_token: string,
+  refresh_token: string,
+  userId: string
+) {
+  const opts = {
+    path: '/',
+    domain: '.app.clawops.studio',
+    sameSite: 'lax' as const,
+    secure: true,
+    httpOnly: false,
   }
-
-  // Exchange the code for a session
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
-
-  const { data, error: authError } = await supabase.auth.exchangeCodeForSession(code)
-
-  if (authError || !data.session) {
-    console.error('[Auth Callback] Code exchange failed:', authError?.message)
-    return NextResponse.redirect(new URL('/auth/login?error=session_error', APP_URL))
-  }
-
-  const { access_token, refresh_token } = data.session
-  const userId = data.session.user.id
-
-  console.log('[Auth Callback] Session created for user:', userId)
-
-  // Determine redirect destination
-  const dest = next || `/${userId}/dashboard`
-  const redirectUrl = new URL(dest, APP_URL)
-
-  // Create the redirect response
-  const response = NextResponse.redirect(redirectUrl, 302)
-
-  // Set auth cookies on the response so middleware can read them
-  response.cookies.set('sb-access-token', access_token, {
-    path: '/',
-    maxAge: 3600,
-    domain: '.app.clawops.studio',
-    sameSite: 'lax',
-    secure: true,
-    httpOnly: false,
-  })
-  response.cookies.set('sb-refresh-token', refresh_token, {
-    path: '/',
-    maxAge: 604800,
-    domain: '.app.clawops.studio',
-    sameSite: 'lax',
-    secure: true,
-    httpOnly: false,
-  })
-  response.cookies.set('sb-user-id', userId, {
-    path: '/',
-    maxAge: 604800,
-    domain: '.app.clawops.studio',
-    sameSite: 'lax',
-    secure: true,
-    httpOnly: false,
-  })
-
-  console.log('[Auth Callback] Redirecting to:', redirectUrl.toString())
-  return response
+  response.cookies.set('sb-access-token', access_token, { ...opts, maxAge: 3600 })
+  response.cookies.set('sb-refresh-token', refresh_token, { ...opts, maxAge: 604800 })
+  response.cookies.set('sb-user-id', userId, { ...opts, maxAge: 604800 })
 }
