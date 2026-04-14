@@ -1,18 +1,21 @@
 import { NextResponse } from 'next/server'
 import { createServerClient, parseCookieHeader, serializeCookieHeader } from '@supabase/ssr'
 
+interface ParsedCookie {
+  name: string
+  value: string
+}
+
 export async function GET(request: Request) {
   const url = new URL(request.url)
   const code = url.searchParams.get('code')
-  const next = url.searchParams.get('next') || `/${request.headers.get('x-user-id') || ''}/dashboard`
 
   // Single cookie store for entire handler — this is the critical fix
   // Calling cookies() twice creates TWO separate stores; client writes to one, session reads from the other
   const cookieStore = await import('next/headers').then(m => m.cookies())
 
-  // Build request headers from actual incoming request for cookie reading
-  const requestHeaders = new Headers(request.headers)
-  const cookieHeader = requestHeaders.get('cookie') || ''
+  // Read raw cookie header from the actual incoming request
+  const cookieHeader = request.headers.get('cookie') || ''
 
   // Create server client using the SAME cookieStore instance throughout
   const supabase = createServerClient(
@@ -20,15 +23,15 @@ export async function GET(request: Request) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return parseCookieHeader(cookieHeader)
+        getAll(): ParsedCookie[] {
+          const parsed = parseCookieHeader(cookieHeader)
+          return parsed.map(c => ({ name: c.name, value: c.value ?? '' }))
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => {
             try {
               cookieStore.set(name, value, {
                 ...options,
-                // Explicit domain so cookies persist on app.clawops.studio
                 domain: '.app.clawops.studio',
                 secure: true,
                 sameSite: 'lax',
