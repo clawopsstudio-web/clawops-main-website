@@ -15,6 +15,7 @@ interface NavItem {
   href: string;
   icon: React.ReactNode;
   highlight?: boolean;
+  external?: boolean;
 }
 
 interface NavGroup {
@@ -94,8 +95,9 @@ const NAV_ITEMS: NavGroup[] = [
     group: 'System',
     items: [
       {
-        label: 'Mission Control',
-        href: '/dashboard/mission-control',
+        label: 'Ops Panel',
+        href: '/ops/',
+        external: true,
         highlight: true,
         icon: (
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -167,19 +169,50 @@ export default function Sidebar() {
             <div className="space-y-0.5">
               {group.items.map((item) => {
                 const isActive = pathname === item.href;
+                const classes = cn(
+                  'flex items-center gap-3 px-2 py-2 rounded-lg',
+                  'transition-colors duration-150',
+                  'group relative',
+                  isActive
+                    ? 'bg-[#00D4FF]/10 text-[#00D4FF]'
+                    : 'text-white/50 hover:text-white hover:bg-white/[0.04]',
+                  sidebarCollapsed && 'justify-center'
+                );
+
+                if (item.external) {
+                  return (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cn(
+                        classes,
+                        item.highlight && !isActive && 'text-[#FF6B35]'
+                      )}
+                      title={sidebarCollapsed ? item.label : undefined}
+                    >
+                      <span className={cn('flex-shrink-0', item.highlight && 'text-[#FF6B35]')}>
+                        {item.icon}
+                      </span>
+                      {!sidebarCollapsed && (
+                        <span className="text-sm font-medium">{item.label}</span>
+                      )}
+                      {!sidebarCollapsed && (
+                        <span className="ml-auto text-white/30 text-xs">↗</span>
+                      )}
+                      {item.highlight && sidebarCollapsed && (
+                        <span className="absolute top-0 right-0 w-1.5 h-1.5 rounded-full bg-[#FF6B35]" />
+                      )}
+                    </a>
+                  );
+                }
+
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={cn(
-                      'flex items-center gap-3 px-2 py-2 rounded-lg',
-                      'transition-colors duration-150',
-                      'group relative',
-                      isActive
-                        ? 'bg-[#00D4FF]/10 text-[#00D4FF]'
-                        : 'text-white/50 hover:text-white hover:bg-white/[0.04]',
-                      sidebarCollapsed && 'justify-center'
-                    )}
+                    className={classes}
                     title={sidebarCollapsed ? item.label : undefined}
                   >
                     {isActive && (

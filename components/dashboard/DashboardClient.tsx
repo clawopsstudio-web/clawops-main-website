@@ -83,7 +83,7 @@ export default function DashboardClient({ data }: { data: DashboardData }) {
     { label: 'n8n Workflows',  href: data.userId ? `/dashboard/${data.userId}/n8n` : '#', color: '#6600FF', desc: 'Automation', icon: '⚙️', internal: false },
     { label: 'Chrome Browser', href: data.userId ? `/dashboard/${data.userId}/chrome` : '#', color: '#00D4FF', desc: 'Browser', icon: '🌐', internal: false },
     { label: 'MetaClaw',      href: data.userId ? `/dashboard/${data.userId}/metaclaw` : '#', color: '#10b981', desc: 'AI Workspace', icon: '🤖', internal: false },
-    { label: 'Mission Control',href: '/dashboard/mission-control', color: '#FF6B35', desc: 'System health', icon: '🚀', internal: true },
+    { label: 'Ops Panel', href: '/ops/', color: '#FF6B35', desc: 'Health, logs, config, services', icon: '🚀', internal: false },
     { label: 'Skills & Plugins', href: '/dashboard/skills-library', color: '#10b981', desc: '5400+ skills & plugins', icon: '🧠', internal: true },
     { label: 'Guides',         href: '/guides',                  color: '#4285F4', desc: 'Step-by-step docs', icon: '📚', internal: true },
   ]
@@ -528,17 +528,17 @@ export default function DashboardClient({ data }: { data: DashboardData }) {
               >
                 <div className="border-b border-[rgba(255,255,255,0.06)] px-5 py-4 flex items-center justify-between">
                   <h2 className="text-sm font-semibold text-white">VPS Instances</h2>
-                  <Link href="/dashboard/mission-control" className="text-xs text-[#00D4FF] hover:underline">
+                  <a href="/ops/" target="_blank" rel="noopener noreferrer" className="text-xs text-[#00D4FF] hover:underline">
                     Manage →
-                  </Link>
+                  </a>
                 </div>
                 <div className="p-5">
                   {instances.length === 0 ? (
                     <div className="text-center py-4">
                       <p className="text-sm text-[rgba(255,255,255,0.25)] mb-3">No instances tracked yet.</p>
-                      <Link href="/dashboard/mission-control" className="text-xs text-[#00D4FF] hover:underline">
-                        Add your first instance →
-                      </Link>
+                      <a href="/ops/" target="_blank" rel="noopener noreferrer" className="text-xs text-[#00D4FF] hover:underline">
+                        Open Ops Panel →
+                      </a>
                     </div>
                   ) : (
                     <div className="space-y-2">
