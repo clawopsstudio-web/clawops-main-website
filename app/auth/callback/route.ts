@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     if (authError || !data.session) {
       return NextResponse.redirect(new URL('/auth/login?error=session_error', APP_URL))
     }
-    const dest = next || `/${data.session.user.id}/dashboard`
+    const dest = next || `/dashboard/${data.session.user.id}`
     const response = NextResponse.redirect(new URL(dest, APP_URL), 302)
     setCookies(response, data.session.access_token, data.session.refresh_token, data.session.user.id)
     return response
@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Navigate to dashboard (all cookies already set synchronously)
-    window.location.href = '/' + userId + '/dashboard'
+    window.location.href = '/dashboard/' + userId
   <\/script>
 </body>
 </html>`

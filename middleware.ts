@@ -58,8 +58,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // ---- URL NORMALIZATION: /{userId}/dashboard → /dashboard/{userId} ----
-  // Nginx rewrite not working (regex not matching), so handle it in Next.js
-  // This catches URLs like /5dffe281-b8eb-459d-9110-1f5cee5df80f/dashboard
+  // This catches old-style URLs like /5dffe281-b8eb-459d-9110-1f5cee5df80f/dashboard
   // and redirects to /dashboard/5dffe281-b8eb-459d-9110-1f5cee5df80f
   const userDashMatch = pathname.match(/^\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\/dashboard(\?.*)?$/i)
   if (userDashMatch) {
@@ -69,7 +68,18 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(newUrl)
   }
 
-  // /{userId}/dashboard routes — protect with auth (after normalization)
+  // ---- SERVICE PAGES: /{userId}/n8n, /{userId}/chrome, /{userId}/metaclaw → /dashboard/{userId}/... ----
+  // Also normalize old-style service URLs to the new /dashboard/{userId}/... pattern
+  const oldServiceMatch = pathname.match(/^\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\/(n8n|chrome|metaclaw)(.*)$/i)
+  if (oldServiceMatch) {
+    const userId = oldServiceMatch[1]
+    const service = oldServiceMatch[2]
+    const rest = oldServiceMatch[3] || ''
+    const newUrl = new URL(`/dashboard/${userId}/${service}${rest}`, request.url)
+    return NextResponse.redirect(newUrl)
+  }
+
+  // ---- PROTECT /dashboard/{userId}/... routes ----
   if (pathname.startsWith('/dashboard/')) {
     if (!accessToken) {
       const loginUrl = new URL('/auth/login', request.url)
@@ -86,5 +96,6 @@ export const config = {
     '/auth/callback/:path*',
     '/dashboard/:path*',
     '/:uuid/dashboard/:path*',
+    '/:uuid/:service(n8n|chrome|metaclaw|gateway)/:path*',
   ],
 }

@@ -63,11 +63,7 @@ const STATUS_BADGES: Record<string, string> = {
   running:     'bg-green-500/15 text-green-400 border-green-500/30',
 }
 
-const INTEGRATIONS = [
-  { name: 'GoHighLevel', icon: '📊', color: '#FF6B35', desc: 'CRM, contacts, pipelines, SMS', badge: 'CRM' },
-  { name: 'n8n', icon: '⚙️', color: '#EA4B71', desc: 'Workflow automation & webhooks', badge: 'Automation' },
-  { name: 'Google Workspace', icon: '📁', color: '#4285F4', desc: 'Gmail, Drive, Docs, Sheets', badge: 'Productivity' },
-]
+
 
 const MODEL_OPTIONS = [
   { name: 'Claude Opus 4.6', provider: 'Anthropic', color: '#FF6B35' },
@@ -77,13 +73,19 @@ const MODEL_OPTIONS = [
 ]
 
 export default function DashboardClient({ data }: { data: DashboardData }) {
+  const INTEGRATIONS = [
+    { name: 'n8n', icon: '⚙️', color: '#EA4B71', desc: 'Workflow automation & webhooks', href: data.userId ? `/dashboard/${data.userId}/n8n` : '#', badge: 'Automation' },
+    { name: 'Chrome Browser', icon: '🌐', color: '#00D4FF', desc: 'Browser automation & VNC', href: data.userId ? `/dashboard/${data.userId}/chrome` : '#', badge: 'Browser' },
+    { name: 'MetaClaw', icon: '🤖', color: '#10b981', desc: 'AI agent workspace', href: data.userId ? `/dashboard/${data.userId}/metaclaw` : '#', badge: 'AI Workspace' },
+  ]
+
   const quickLinks = [
+    { label: 'n8n Workflows',  href: data.userId ? `/dashboard/${data.userId}/n8n` : '#', color: '#6600FF', desc: 'Automation', icon: '⚙️', internal: false },
+    { label: 'Chrome Browser', href: data.userId ? `/dashboard/${data.userId}/chrome` : '#', color: '#00D4FF', desc: 'Browser', icon: '🌐', internal: false },
+    { label: 'MetaClaw',      href: data.userId ? `/dashboard/${data.userId}/metaclaw` : '#', color: '#10b981', desc: 'AI Workspace', icon: '🤖', internal: false },
+    { label: 'Mission Control',href: '/dashboard/mission-control', color: '#FF6B35', desc: 'System health', icon: '🚀', internal: true },
     { label: 'Skills & Plugins', href: '/dashboard/skills-library', color: '#10b981', desc: '5400+ skills & plugins', icon: '🧠', internal: true },
     { label: 'Guides',         href: '/guides',                  color: '#4285F4', desc: 'Step-by-step docs', icon: '📚', internal: true },
-    { label: 'Quick Start',    href: '/quick-start',             color: '#FFB800', desc: '5-min setup', icon: '⚡', internal: true },
-    { label: 'Mission Control',href: '/dashboard/mission-control', color: '#FF6B35', desc: 'System health', icon: '🚀', internal: true },
-    { label: 'n8n Workflows',  href: data.userId ? `/${data.userId}/n8n/` : '#', color: '#6600FF', desc: 'Automation', icon: '⚙️', internal: false },
-    { label: 'Chrome VNC',    href: data.userId ? `/${data.userId}/chrome/` : '#', color: '#00D4FF', desc: 'Browser', icon: '🌐', internal: false },
   ]
 
   const [tasks, setTasks] = useState<Task[]>(data.tasks)
@@ -170,31 +172,31 @@ export default function DashboardClient({ data }: { data: DashboardData }) {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: i * 0.07 }}
                 >
-                  <Link href="/dashboard/settings?tab=integrations">
-                    <div className="group relative overflow-hidden rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] p-5 hover:border-[rgba(255,255,255,0.15)] transition-all hover:-translate-y-0.5 cursor-pointer">
-                      <div
-                        className="pointer-events-none absolute inset-0 opacity-20"
-                        style={{ background: `radial-gradient(circle at 100% 0%, ${int.color}30, transparent 60%)` }}
-                      />
-                      <div className="relative z-10">
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-3">
-                            <span className="text-2xl">{int.icon}</span>
-                            <div>
-                              <p className="text-sm font-semibold text-white group-hover:text-cyan-400 transition-colors">{int.name}</p>
-                              <p className="text-xs text-[rgba(255,255,255,0.4)]">{int.desc}</p>
-                            </div>
+                  <Link href={int.href || '/dashboard/settings?tab=integrations'}>
+                  <div className="group relative overflow-hidden rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] p-5 hover:border-[rgba(255,255,255,0.15)] transition-all hover:-translate-y-0.5 cursor-pointer">
+                    <div
+                      className="pointer-events-none absolute inset-0 opacity-20"
+                      style={{ background: `radial-gradient(circle at 100% 0%, ${int.color}30, transparent 60%)` }}
+                    />
+                    <div className="relative z-10">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">{int.icon}</span>
+                          <div>
+                            <p className="text-sm font-semibold text-white group-hover:text-cyan-400 transition-colors">{int.name}</p>
+                            <p className="text-xs text-[rgba(255,255,255,0.4)]">{int.desc}</p>
                           </div>
-                          <span className="text-[9px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 font-medium border border-red-500/30">
-                            Not Connected
-                          </span>
                         </div>
-                        <p className="text-xs text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                          Click to connect →
-                        </p>
+                        <span className="text-[9px] px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 font-medium border border-green-500/30">
+                          Connected
+                        </span>
                       </div>
+                      <p className="text-xs text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                        Click to open →
+                      </p>
                     </div>
-                  </Link>
+                  </div>
+                </Link>
                 </motion.div>
               ))}
             </div>
