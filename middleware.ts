@@ -57,12 +57,25 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/auth/login', request.url))
   }
 
-  // /{userId}/dashboard routes — protect with auth
-  const dashboardMatch = pathname.match(/^\/[0-9a-f-]{36}\/dashboard/)
-  if (dashboardMatch && !accessToken) {
-    const loginUrl = new URL('/auth/login', request.url)
-    loginUrl.searchParams.set('redirectTo', pathname)
-    return NextResponse.redirect(loginUrl)
+  // ---- URL NORMALIZATION: /{userId}/dashboard → /dashboard/{userId} ----
+  // Nginx rewrite not working (regex not matching), so handle it in Next.js
+  // This catches URLs like /5dffe281-b8eb-459d-9110-1f5cee5df80f/dashboard
+  // and redirects to /dashboard/5dffe281-b8eb-459d-9110-1f5cee5df80f
+  const userDashMatch = pathname.match(/^\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\/dashboard(\?.*)?$/i)
+  if (userDashMatch) {
+    const userId = userDashMatch[1]
+    const queryString = userDashMatch[2] || ''
+    const newUrl = new URL(`/dashboard/${userId}${queryString}`, request.url)
+    return NextResponse.redirect(newUrl)
+  }
+
+  // /{userId}/dashboard routes — protect with auth (after normalization)
+  if (pathname.startsWith('/dashboard/')) {
+    if (!accessToken) {
+      const loginUrl = new URL('/auth/login', request.url)
+      loginUrl.searchParams.set('redirectTo', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
   }
 
   return response
