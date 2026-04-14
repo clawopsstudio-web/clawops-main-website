@@ -1,11 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { createServerClient, parseCookieHeader } from '@supabase/ssr'
-
-interface CookieHeader {
-  name: string
-  value: string
-}
+import { createServerClient } from '@supabase/ssr'
 
 interface SetCookie {
   name: string
@@ -15,6 +10,17 @@ interface SetCookie {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  // ---- NO-CACHE HEADERS FOR AUTH ROUTES ----
+  // Auth callback must NEVER be cached — it processes dynamic OAuth codes
+  if (pathname === '/auth/callback' || pathname.startsWith('/auth/callback/')) {
+    const response = NextResponse.next()
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+    response.headers.set('Pragma', 'no-cache')
+    response.headers.set('Expires', '0')
+    response.headers.set('Surrogate-Control', 'no-store')
+    return response
+  }
 
   // Static files and API routes pass through
   if (
@@ -28,42 +34,24 @@ export async function middleware(request: NextRequest) {
   // Build a response we can mutate (add Set-Cookie headers)
   let response = NextResponse.next()
 
-  // Build cookie interface from Next.js request/response
-  const cookieStore = {
-    getAll(): CookieHeader[] {
-      return parseCookieHeader(request.cookies.toString()).map(c => ({
-        name: c.name,
-        value: c.value ?? '',
-      }))
-    },
-    setAll(cookiesToSet: SetCookie[]) {
-      cookiesToSet.forEach(({ name, value, options }) => {
-        response.cookies.set(name, value, {
-          domain: '.app.clawops.studio',
-          secure: true,
-          sameSite: 'lax',
-          httpOnly: true,
-          path: '/',
-          ...options,
-        })
-      })
-    },
-  }
+  // Parse cookies manually (no external dependency needed for simple cookie read)
+  const cookieHeader = request.cookies.toString()
+  const cookies: Record<string, string> = {}
+  cookieHeader.split(';').forEach(cookie => {
+    const [name, ...valueParts] = cookie.trim().split('=')
+    if (name) {
+      cookies[name] = valueParts.join('=')
+    }
+  })
 
-  // Create Supabase client with this cookie store
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: cookieStore }
-  )
-
-  const { data: { session } } = await supabase.auth.getSession()
+  const accessToken = cookies['sb-access-token']
+  const refreshToken = cookies['sb-refresh-token']
 
   // /dashboard without userId → redirect to /{userId}/dashboard
   if (pathname === '/dashboard' || pathname === '/dashboard/') {
-    if (session) {
+    if (accessToken) {
       return NextResponse.redirect(
-        new URL(`/${session.user.id}/dashboard`, request.url)
+        new URL(`/${cookies['sb-user-id']}/dashboard`, request.url)
       )
     }
     return NextResponse.redirect(new URL('/auth/login', request.url))
@@ -71,7 +59,7 @@ export async function middleware(request: NextRequest) {
 
   // /{userId}/dashboard routes — protect with auth
   const dashboardMatch = pathname.match(/^\/[0-9a-f-]{36}\/dashboard/)
-  if (dashboardMatch && !session) {
+  if (dashboardMatch && !accessToken) {
     const loginUrl = new URL('/auth/login', request.url)
     loginUrl.searchParams.set('redirectTo', pathname)
     return NextResponse.redirect(loginUrl)
@@ -82,6 +70,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    '/auth/callback/:path*',
     '/dashboard/:path*',
     '/:uuid/dashboard/:path*',
   ],
