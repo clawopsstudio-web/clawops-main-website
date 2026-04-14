@@ -1,6 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { createClient } from '@supabase/supabase-js'
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 export default function CallbackClient() {
   const [debug, setDebug] = useState<string>('Starting...\n')
@@ -14,58 +18,43 @@ export default function CallbackClient() {
   useEffect(() => {
     async function handleCallback() {
       try {
-        log('1. Importing supabase client')
-        const { supabase } = await import('@/lib/supabase/client')
-
-        // First try: Supabase SDK may have already stored session from URL hash or cookie
-        log('2. Calling getSession()')
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-        log(`3. getSession: session=${!!session}, error=${sessionError?.message ?? 'none'}`)
-
-        if (session) {
-          log(`4. Session found in browser: user=${session.user.id}`)
-          log('5. Redirecting to dashboard')
-          window.location.href = `/${session.user.id}/dashboard`
-          return
-        }
-
-        // Second try: URL has ?code= from PKCE flow — exchange it
         const params = new URLSearchParams(window.location.search)
         const code = params.get('code')
 
-        if (code) {
-          log(`4. URL has code=${code.slice(0, 10)}... — exchanging for session`)
-          const { data: ex, error: exErr } = await supabase.auth.exchangeCodeForSession(code)
-          log(`5. Exchange: session=${!!ex.session} error=${exErr?.message ?? 'none'}`)
+        log(`1. URL params: code=${code ? code.slice(0,10) + '...' : 'none'}`)
 
-          if (exErr || !ex.session) {
-            setStatus('error')
-            setDebug(prev => prev + `Exchange failed: ${exErr?.message}\n`)
-            return
-          }
-
-          // Persist session in browser storage so server components can read it
-          log('6. Persisting session via setSession()')
-          const { error: setErr } = await supabase.auth.setSession({
-            access_token: ex.session.access_token,
-            refresh_token: ex.session.refresh_token,
-          })
-          log(`7. setSession: error=${setErr?.message ?? 'none'}`)
-
-          if (setErr) {
-            setStatus('error')
-            setDebug(prev => prev + `setSession failed: ${setErr.message}\n`)
-            return
-          }
-
-          log(`8. Redirecting to /${ex.session.user.id}/dashboard`)
-          window.location.href = `/${ex.session.user.id}/dashboard`
+        if (!code) {
+          log('2. No code in URL — redirecting to login')
+          window.location.href = '/auth/login?error=no_code'
           return
         }
 
-        // No code, no session — redirect to login
-        log('4. No code in URL, no session found — redirecting to login')
-        window.location.href = '/auth/login?error=no_code'
+        log('3. Exchanging code for session')
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: false, // IMPORTANT: disable to prevent re-processing
+          },
+        })
+
+        const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+        log(`4. Exchange result: session=${!!data.session}, error=${error?.message ?? 'none'}`)
+
+        if (error || !data.session) {
+          setStatus('error')
+          setDebug(prev => prev + `Exchange failed: ${error?.message}\n`)
+          return
+        }
+
+        const userId = data.session.user.id
+        log(`5. User ID: ${userId}`)
+        log(`6. Redirecting to /${userId}/dashboard`)
+
+        // Small delay to let SDK persist session to storage
+        await new Promise(r => setTimeout(r, 500))
+
+        window.location.href = `/${userId}/dashboard`
       } catch (err: any) {
         log(`ERROR: ${err.message}`)
         setStatus('error')
@@ -83,15 +72,13 @@ export default function CallbackClient() {
             <span className="text-red-400 text-xl">✕</span>
           </div>
           <h2 className="text-xl font-bold text-white mb-2">Authentication Failed</h2>
-          <p className="text-white/50 text-sm mb-6">Something went wrong during sign-in. Please try again.</p>
+          <p className="text-white/50 text-sm mb-6">Something went wrong during sign-in.</p>
           <pre className="text-xs text-red-400/70 bg-black/30 rounded-lg p-4 text-left overflow-auto max-h-40 whitespace-pre-wrap mb-6">
             {debug}
           </pre>
-          <a
-            href="/auth/login"
+          <a href="/auth/login"
             className="inline-block px-6 py-3 rounded-xl text-sm font-semibold text-white"
-            style={{ background: 'linear-gradient(135deg, #00D4FF, #6600FF)' }}
-          >
+            style={{ background: 'linear-gradient(135deg, #00D4FF, #6600FF)' }}>
             Back to Login
           </a>
         </div>
