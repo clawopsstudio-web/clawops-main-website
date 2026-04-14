@@ -70,8 +70,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Set cookies (for Next.js middleware)
+    // No Domain= attribute = current origin only. No leading dot needed.
     const cookie = (name, val, maxAge) =>
-      document.cookie = name + '=' + val + '; Path=/; Max-Age=' + maxAge + '; Domain=.app.clawops.studio; SameSite=Lax; Secure'
+      document.cookie = name + '=' + val + '; Path=/; Max-Age=' + maxAge + '; SameSite=Lax; Secure'
     cookie('sb-access-token', accessToken, 3600)
     cookie('sb-refresh-token', refreshToken || accessToken, 604800)
     cookie('sb-user-id', userId, 604800)
@@ -91,8 +92,7 @@ export async function GET(request: NextRequest) {
       console.error('Supabase setSession failed:', e)
     }
 
-    // Clean fragment from URL, redirect to dashboard
-    window.history.replaceState(null, '', window.location.pathname + window.location.search)
+    // Navigate to dashboard (all cookies already set synchronously)
     window.location.href = '/' + userId + '/dashboard'
   <\/script>
 </body>
@@ -115,7 +115,6 @@ function setCookies(
 ) {
   const opts = {
     path: '/',
-    domain: '.app.clawops.studio',
     sameSite: 'lax' as const,
     secure: true,
     httpOnly: false,
