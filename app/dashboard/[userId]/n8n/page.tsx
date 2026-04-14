@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import DashboardShell from '@/components/dashboard/DashboardShell';
+import Link from 'next/link';
 
 interface Props {
   params: Promise<{ userId: string }>;
@@ -32,19 +33,25 @@ export default async function N8nPage({ params }: Props) {
           Workflow automation & webhooks. Build, run, and manage your automations.
         </p>
 
+        {/* Service Status */}
+        <div className="flex items-center gap-2 mb-6 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/30">
+          <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
+          <span className="text-sm text-green-400">Running on port 5678</span>
+        </div>
+
         {/* Open Button */}
         <a
-          href={`/api/proxy/${userId}/n8n/`}
+          href="/n8n/"
           target="_blank"
           rel="noopener noreferrer"
           className="px-6 py-3 rounded-xl text-sm font-semibold text-white transition-all hover:scale-105 mb-4"
           style={{ background: 'linear-gradient(135deg, #EA4B71, #ff6b8a)', boxShadow: '0 0 20px rgba(234,75,113,0.3)' }}
         >
-          Open n8n in new tab ↗
+          Open n8n ↗
         </a>
 
-        <p className="text-white/30 text-xs">
-          Opens in a new tab · Requires n8n to be running on your server
+        <p className="text-white/30 text-xs text-center">
+          Opens n8n in a new tab · n8n is running on your VPS at port 5678
         </p>
       </div>
     </DashboardShell>

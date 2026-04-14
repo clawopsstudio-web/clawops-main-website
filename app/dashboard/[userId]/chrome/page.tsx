@@ -34,7 +34,7 @@ export default async function ChromePage({ params }: Props) {
 
         {/* Open Button */}
         <a
-          href={`/api/proxy/${userId}/chrome/`}
+          href="/chrome/"
           target="_blank"
           rel="noopener noreferrer"
           className="px-6 py-3 rounded-xl text-sm font-semibold text-white transition-all hover:scale-105 mb-4"
