@@ -32,37 +32,21 @@ function LoginContent() {
     setLoadingGoogle(true)
     setError('')
 
-    try {
-      // Use skipBrowserRedirect so we can capture the PKCE verifier before redirecting
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: 'https://app.clawops.studio/auth/callback',
-          skipBrowserRedirect: true,
-        },
-      })
+    // Let the SDK handle the redirect naturally.
+    // PKCE verifier is stored in localStorage by the SDK before redirect.
+    // Callback page reads from localStorage via getSession().
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: 'https://app.clawops.studio/auth/callback',
+      },
+    })
 
-      if (error || !data.url) {
-        setError(error ? error.message : 'Failed to initiate OAuth')
-        setLoadingGoogle(false)
-        return
-      }
-
-      // Store the PKCE code_verifier in a cookie so our callback route can access it.
-      // The SDK stores it in localStorage as 'sb-pkce-code-verifier'.
-      const verifier = localStorage.getItem('sb-pkce-code-verifier')
-      if (verifier) {
-        const encoded = encodeURIComponent(verifier)
-        document.cookie = `sb-pkce-code-verifier=${encoded}; Path=/; Max-Age=600; SameSite=Lax; Secure`
-        document.cookie = `sb-pkce-code-verifier=${encoded}; Path=/; Max-Age=600; SameSite=Lax; Secure; domain=.clawops.studio`
-      }
-
-      // Now redirect to Google
-      window.location.href = data.url
-    } catch (err: any) {
-      setError(err.message || 'OAuth failed')
+    if (error) {
+      setError(error.message)
       setLoadingGoogle(false)
     }
+    // If no error, the browser has already redirected to Google
   }
 
   return (
@@ -166,7 +150,7 @@ function LoginContent() {
               <path fill="#FBBC05" d="M5.27698177,14.2678769 C5.03832634,13.556323 4.90909091,12.7937589 4.90909091,12 C4.90909091,11.2182781 5.03443647,10.4668121 5.26629829,9.76452941 L1.23999023,6.65002441 C0.43658717,8.26043162 0,10.0753848 0,12 C0,13.9195484 0.444780743,15.7 0.41 L5.27698177,14.2678769 Z"/>
             </svg>
           )}
-          {loadingGoogle ? 'Connecting...' : 'Sign in with Google'}
+          {loadingGoogle ? 'Redirecting...' : 'Sign in with Google'}
         </button>
 
         <p className="text-center text-sm text-[rgba(255,255,255,0.45)] mt-6">
@@ -195,4 +179,3 @@ export default function LoginPage() {
     </div>
   )
 }
-/* Auth fix deployed: Fri Apr 10 23:39:49 CEST 2026 */

@@ -20,6 +20,9 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     // CRITICAL: Use PKCE flow for OAuth. Without this, the OAuth code exchange
     // fails silently (flowType defaults to 'implicit' which is broken with Google OAuth).
     // PKCE ensures the code_verifier is stored and used during the callback exchange.
-    flowType: 'pkce',
+    // 'implicit' puts access_token in URL fragment — simpler, works reliably
+    // with custom redirectTo URLs. 'pkce' requires server-side code exchange which
+    // needs the code_verifier that the SDK doesn't expose reliably.
+    flowType: 'implicit',
   },
 })
