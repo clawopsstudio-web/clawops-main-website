@@ -4,9 +4,10 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
-  // Enable trailing slashes so /api/proxy/{userId}/n8n/ doesn't redirect to no-slash
-  // The OAuth callback is a route handler (not a page), so it's unaffected
-  trailingSlash: true,
+  // trailingSlash is DISABLED — our proxy routes depend on consistent slash handling.
+  // With true: Next.js redirects /n8n to /n8n/ which breaks auth_request subrequest routing.
+  // The proxy regex handles both /n8n and /n8n/ via (?<n8nrest>.*) which captures empty string too.
+  trailingSlash: false,
 };
 
 export default nextConfig;

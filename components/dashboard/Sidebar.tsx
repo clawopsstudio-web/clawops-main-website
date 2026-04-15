@@ -100,7 +100,7 @@ const NAV_ITEMS: NavGroup[] = [
     items: [
       {
         label: 'Ops Panel',
-        href: '/ops/',
+        href: '/ops',
         external: true,
         highlight: true,
         icon: (

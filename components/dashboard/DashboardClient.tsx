@@ -153,8 +153,8 @@ export default function DashboardClient({ data }: { data: DashboardData }) {
   }
 
   return (
-    <div>
-      <main className="flex-1 overflow-y-auto">
+    <>
+      {/* No <main> here — DashboardShell already provides the scrollable <main> wrapper */}
         {/* Header */}
         <div className="border-b border-[rgba(255,255,255,0.06)] bg-[rgba(4,4,12,0.8)] backdrop-blur-xl px-8 py-6">
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
@@ -535,7 +535,6 @@ export default function DashboardClient({ data }: { data: DashboardData }) {
             </div>
           </div>
         </div>
-      </main>
-    </div>
+    </>
   )
 }

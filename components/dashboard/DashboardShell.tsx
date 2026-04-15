@@ -25,8 +25,8 @@ function extractUserId(pathname: string): string | null {
 }
 
 const STATIC_NAV_ITEMS = [
-  { href: '/dashboard/mission-control', label: 'Mission Control', icon: Gauge, badge: 'NEW', section: 'main' },
   { href: '/dashboard/settings', label: 'Settings', icon: Settings, section: 'main' },
+  { href: 'https://app.clawops.studio/ops', label: 'Ops Panel', icon: Gauge, external: true, badge: 'LIVE', section: 'main' },
   { href: '/dashboard/skills-library', label: 'Skills & Plugins', icon: Puzzle, section: 'tools' },
   { href: '/dashboard/mcp-library', label: 'MCP Servers', icon: Server, section: 'tools' },
   { href: '/guides', label: 'Guides', icon: BookOpen, external: true, section: 'tools' },
