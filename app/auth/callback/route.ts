@@ -8,27 +8,39 @@ export async function GET(request: NextRequest) {
   const error = searchParams.get('error')
   const next = searchParams.get('next')
 
+  console.error('[auth/callback] code=' + (code ? 'PRESENT(' + code.substring(0, 20) + '...)' : 'MISSING') + ' error=' + error)
+
   // PKCE flow: code comes in query string — exchange server-side
   if (code) {
-    // Dynamically import to keep this route lightweight
-    const { createClient } = await import('@supabase/supabase-js')
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
-    const { data, error: authError } = await supabase.auth.exchangeCodeForSession(code)
-    if (authError || !data.session) {
-      return NextResponse.redirect(new URL('/auth/login?error=session_error', APP_URL))
+    try {
+      const { createClient } = await import('@supabase/supabase-js')
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      )
+      const { data, error: authError } = await supabase.auth.exchangeCodeForSession(code)
+      
+      console.error('[auth/callback] exchange result: error=' + (authError?.message || 'none') + ' session=' + (data.session ? 'PRESENT' : 'MISSING'))
+      if (data.session) {
+        console.error('[auth/callback] token present: ' + (data.session.access_token ? 'YES' : 'NO') + ' userId=' + data.session.user.id)
+      }
+      
+      if (authError || !data.session) {
+        return NextResponse.redirect(new URL('/auth/login?error=session_error', APP_URL))
+      }
+      const dest = next || `/dashboard/${data.session.user.id}`
+      const response = NextResponse.redirect(new URL(dest, APP_URL), 302)
+      setCookies(response, data.session.access_token, data.session.refresh_token, data.session.user.id)
+      console.error('[auth/callback] redirecting to ' + dest + ' with cookies set')
+      return response
+    } catch (e: any) {
+      console.error('[auth/callback] exception: ' + e.message)
+      return NextResponse.redirect(new URL('/auth/login?error=exception', APP_URL))
     }
-    const dest = next || `/dashboard/${data.session.user.id}`
-    const response = NextResponse.redirect(new URL(dest, APP_URL), 302)
-    setCookies(response, data.session.access_token, data.session.refresh_token, data.session.user.id)
-    return response
   }
 
   // Implicit flow (token in URL fragment): return HTML with inline JS.
   // The fragment is only visible to client-side JS — server never sees it.
-  // The JS: reads token from hash, sets cookies + localStorage, redirects to dashboard.
   const html = `<!DOCTYPE html>
 <html>
 <head>
@@ -51,16 +63,14 @@ export async function GET(request: NextRequest) {
     const queryError = new URLSearchParams(window.location.search).get('error')
 
     if (!accessToken) {
-      // No token in fragment — redirect to login with error
       window.location.href = '/auth/login' + (queryError ? '?error=' + queryError : '?error=no_code')
       throw new Error('no_token')
     }
 
-    // Decode JWT to get userId (sub claim)
     let userId = null
     try {
       const parts = accessToken.split('.')
-      const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')))
+      const payload = JSON.parse(atob(parts[1].replace(/-g, '+').replace(/_/g, '/')))
       userId = payload.sub
     } catch (e) {}
 
@@ -69,30 +79,12 @@ export async function GET(request: NextRequest) {
       throw new Error('bad_token')
     }
 
-    // Set cookies (for Next.js middleware)
-    // No Domain= attribute = current origin only. No leading dot needed.
     const cookie = (name, val, maxAge) =>
       document.cookie = name + '=' + val + '; Path=/; Max-Age=' + maxAge + '; SameSite=Lax; Secure'
     cookie('sb-access-token', accessToken, 3600)
     cookie('sb-refresh-token', refreshToken || accessToken, 604800)
     cookie('sb-user-id', userId, 604800)
 
-    // Tell Supabase SDK about the session so it persists to localStorage
-    try {
-      const supabase = createClient(
-        '${process.env.NEXT_PUBLIC_SUPABASE_URL}',
-        '${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}',
-        { auth: { persistSession: true, autoRefreshToken: true } }
-      )
-      await supabase.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken || accessToken
-      })
-    } catch (e) {
-      console.error('Supabase setSession failed:', e)
-    }
-
-    // Navigate to dashboard (all cookies already set synchronously)
     window.location.href = '/dashboard/' + userId
   <\/script>
 </body>
