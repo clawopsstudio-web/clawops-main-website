@@ -1,30 +1,14 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 
 function setCookie(name: string, value: string, maxAgeSecs: number) {
   const encoded = encodeURIComponent(value)
-  const attrs = `Path=/; Max-Age=${maxAgeSecs}; SameSite=Lax; Secure`
-  document.cookie = `${name}=${encoded}; ${attrs}`
-  document.cookie = `${name}=${encoded}; ${attrs}; domain=.clawops.studio`
-}
-
-function parseFragment(): { access_token?: string; refresh_token?: string; expires_in?: number; state?: string } {
-  const hash = window.location.hash
-  if (!hash || hash === '#') return {}
-  const params = new URLSearchParams(hash.substring(1))
-  return {
-    access_token: params.get('access_token') || undefined,
-    refresh_token: params.get('refresh_token') || undefined,
-    expires_in: Number(params.get('expires_in')) || undefined,
-    state: params.get('state') || undefined,
-  }
+  document.cookie = `${name}=${encoded}; Path=/; Max-Age=${maxAgeSecs}; SameSite=Lax; Secure; domain=.clawops.studio`
 }
 
 export default function CallbackClient() {
-  const searchParams = useSearchParams()
   const didRun = useRef(false)
   const [status, setStatus] = useState('Signing you in...')
   const [error, setError] = useState<string | null>(null)
@@ -33,66 +17,61 @@ export default function CallbackClient() {
     if (didRun.current) return
     didRun.current = true
 
-    const oauthError = searchParams.get('error')
-    if (oauthError) {
-      setError('OAuth error: ' + oauthError)
-      return
-    }
+    handleCallback()
 
-    doAuth()
-    async function doAuth() {
-      // ---- IMPLICIT FLOW: token in URL fragment ----
-      const fragment = parseFragment()
-      if (fragment.access_token) {
-        const payload = JSON.parse(
-          atob(fragment.access_token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))
-        )
-        const userId = payload.sub
-        if (userId) {
-          setCookie('sb-access-token', fragment.access_token, fragment.expires_in || 3600)
-          if (fragment.refresh_token) {
-            setCookie('sb-refresh-token', fragment.refresh_token, 604800)
-          }
-          setCookie('sb-user-id', userId, 604800)
-          // Clear the fragment from URL for cleanliness
-          window.history.replaceState(null, '', window.location.pathname + window.location.search)
-          window.location.href = '/dashboard/' + userId
-          return
-        }
+    async function handleCallback() {
+      // Check for OAuth errors first
+      const url = new URL(window.location.href)
+      const errorParam = url.searchParams.get('error')
+      if (errorParam) {
+        const desc = url.searchParams.get('error_description') || errorParam
+        setError('OAuth error: ' + desc)
+        return
       }
 
-      // ---- SDK FALLBACK: try getSession (auto-handles URL detection) ----
-      try {
-        const { data, error: sessionErr } = await supabase.auth.getSession()
-        if (!sessionErr && data.session) {
-          const s = data.session
-          setCookie('sb-access-token', s.access_token, 3600)
-          setCookie('sb-refresh-token', s.refresh_token, 604800)
-          setCookie('sb-user-id', s.user.id, 604800)
-          window.location.href = '/dashboard/' + s.user.id
-          return
-        }
+      // The SDK's PKCE flow handles code exchange automatically during _initialize().
+      // By the time React mounts and this effect runs, the session should already be saved.
+      // We wait a small amount for the SDK to finish async initialization.
+      setStatus('Verifying session...')
 
-        // ---- LAST RESORT: getUser + refresh ----
-        const { data: userData, error: userErr } = await supabase.auth.getUser()
-        if (!userErr && userData.user) {
-          const { data: refresh } = await supabase.auth.refreshSession()
-          if (refresh.session) {
-            setCookie('sb-access-token', refresh.session.access_token, 3600)
+      await sleep(200)
+      const { data, error: err } = await supabase.auth.getSession()
+
+      if (!err && data.session) {
+        const s = data.session
+        setCookie('sb-access-token', s.access_token, 3600)
+        if (s.refresh_token) setCookie('sb-refresh-token', s.refresh_token, 604800)
+        setCookie('sb-user-id', s.user.id, 604800)
+        // Clean URL of auth params
+        url.searchParams.delete('code')
+        window.history.replaceState(null, '', url.pathname)
+        window.location.href = '/dashboard/' + s.user.id
+        return
+      }
+
+      // Last resort: getUser + refresh
+      setStatus('Refreshing session...')
+      const { data: userData, error: userErr } = await supabase.auth.getUser()
+      if (!userErr && userData.user) {
+        const { data: refresh } = await supabase.auth.refreshSession()
+        if (refresh.session) {
+          setCookie('sb-access-token', refresh.session.access_token, 3600)
+          if (refresh.session.refresh_token) {
             setCookie('sb-refresh-token', refresh.session.refresh_token, 604800)
           }
-          setCookie('sb-user-id', userData.user.id, 604800)
-          window.location.href = '/dashboard/' + userData.user.id
-          return
         }
-
-        const msg = sessionErr?.message || userErr?.message || 'No session received'
-        setError('Sign-in incomplete: ' + msg)
-      } catch (e: any) {
-        setError('Callback error: ' + (e.message || 'Unknown'))
+        setCookie('sb-user-id', userData.user.id, 604800)
+        url.searchParams.delete('code')
+        window.history.replaceState(null, '', url.pathname)
+        window.location.href = '/dashboard/' + userData.user.id
+        return
       }
+
+      const msg = err?.message || userErr?.message || 'Session exchange failed'
+      console.error('[callback] All auth methods failed:', msg)
+      setError('Sign-in incomplete: ' + msg)
     }
-  }, [searchParams])
+  }, [])
 
   if (error) {
     return (
@@ -104,9 +83,15 @@ export default function CallbackClient() {
         <div style={{ textAlign: 'center', maxWidth: 480 }}>
           <div style={{ fontSize: 48, marginBottom: 16 }}>⚠️</div>
           <h2 style={{ color: '#ff4d4d', marginBottom: 8, fontSize: 20 }}>Sign-in failed</h2>
-          <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: 8, fontSize: 14 }}>{error}</p>
+          <p style={{
+            color: 'rgba(255,255,255,0.7)', marginBottom: 16, fontSize: 14,
+            fontFamily: 'monospace', textAlign: 'left',
+            background: 'rgba(255,0,0,0.05)', padding: 12, borderRadius: 8
+          }}>
+            {error}
+          </p>
           <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12, marginTop: 16 }}>
-            Redirecting to login in 4 seconds...
+            Redirecting to login...
           </p>
           <button
             onClick={() => { window.location.href = '/auth/login' }}
@@ -143,3 +128,8 @@ export default function CallbackClient() {
     </div>
   )
 }
+
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+</parameter>
