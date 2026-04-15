@@ -1,131 +1,167 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useEffect, useRef } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 
-function setCookie(name: string, value: string, maxAge: number) {
-  document.cookie = name + '=' + encodeURIComponent(value) +
-    '; Path=/; Max-Age=' + maxAge +
-    '; SameSite=Lax; Secure'
+function setCookie(name: string, value: string, maxAgeSecs: number) {
+  const encoded = encodeURIComponent(value)
+  const cookieStr = `${name}=${encoded}; Path=/; Max-Age=${maxAgeSecs}; SameSite=Lax; Secure`
+  document.cookie = cookieStr
+  // Also set for the root domain so subdomains can read it
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    const domain = window.location.hostname
+    const rootDomain = domain.split('.').slice(-2).join('.')
+    document.cookie = `${name}=${encoded}; Path=/; Max-Age=${maxAgeSecs}; SameSite=Lax; Secure; domain=${rootDomain}`
+  }
 }
 
 export default function CallbackClient() {
-  const router = useRouter()
   const searchParams = useSearchParams()
-  const [status, setStatus] = useState('Exchanging auth code...')
-  const [error, setError] = useState<string | null>(null)
+  const didRun = useRef(false)
 
   useEffect(() => {
-    const code = searchParams.get('code')
-    const next = searchParams.get('next') || '/dashboard'
-    const oauthError = searchParams.get('error')
+    if (didRun.current) return
+    didRun.current = true
 
-    if (oauthError) {
-      setError('OAuth error: ' + oauthError)
+    const code = searchParams.get('code')
+    const errorParam = searchParams.get('error')
+    const next = searchParams.get('next') || getDashboardUrl()
+
+    if (errorParam) {
+      showError('OAuth error: ' + errorParam)
       return
     }
 
     if (!code) {
-      // No code — maybe it's an implicit/hybrid flow (token in fragment)
-      const hash = window.location.hash
-      const hashParams = new URLSearchParams(hash.substring(1))
-      const accessToken = hashParams.get('access_token')
-      if (accessToken) {
-        // Implicit flow: extract userId from JWT, set cookies, go to dashboard
-        try {
-          const parts = accessToken.split('.')
-          const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/')
-          const padded = base64 + '=='.slice(0, (4 - base64.length % 4) % 4)
-          const payload = JSON.parse(atob(padded))
-          const userId = payload.sub
-          if (userId) {
-            setCookie('sb-access-token', accessToken, 3600)
-            setCookie('sb-refresh-token', hashParams.get('refresh_token') || accessToken, 604800)
-            setCookie('sb-user-id', userId, 604800)
-            setStatus('Signing in...')
-            window.location.href = '/dashboard/' + userId
-            return
-          }
-        } catch {
-          setError('Could not parse access token')
-          return
-        }
-      }
-      setError('No authorization code received')
+      showError('No authorization code received. Please try signing in again.')
       return
     }
 
-    // PKCE flow: exchange the code server-side via our API route
-    // But actually, Supabase SDK already exchanged it client-side before this page loaded.
-    // The SDK stored session in localStorage. We need to:
-    // 1. Get the session from localStorage (via SDK)
-    // 2. Set cookies from that session
-    // 3. Redirect to dashboard
-    const exchangeAndRedirect = async () => {
+    // Narrowed: TypeScript loses narrowing inside async closures, so assign to a new const
+    const authCode: string = code
+
+    doCallback()
+    async function doCallback() {
       try {
-        // The Supabase SDK may have already handled the code exchange.
-        // Check if there's a session in localStorage.
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+        // Try to get existing session (SDK may have already exchanged the code)
+        const { data: sessionData, error: sessionErr } = await supabase.auth.getSession()
 
-        if (sessionError || !session) {
-          // Try to get the user (this refreshes the session too)
-          const { data: { user }, error: userError } = await supabase.auth.getUser()
-          if (userError || !user) {
-            setError('No session found. Please sign in again.')
-            setTimeout(() => window.location.href = '/auth/login', 2000)
-            return
-          }
-
-          // Build a session-like object from the user
-          const { data: refreshData } = await supabase.auth.refreshSession()
-          const activeSession = refreshData.session || session
-          if (!activeSession) {
-            setError('Could not restore session. Please sign in again.')
-            setTimeout(() => window.location.href = '/auth/login', 2000)
-            return
-          }
-
-          // Set JWT cookies and redirect
-          setCookie('sb-access-token', activeSession.access_token, 3600)
-          setCookie('sb-refresh-token', activeSession.refresh_token, 604800)
-          setCookie('sb-user-id', user.id, 604800)
-          setStatus('Signing in...')
-          window.location.href = '/dashboard/' + user.id
+        if (!sessionErr && sessionData?.session) {
+          const session = sessionData.session
+          setCookie('sb-access-token', session.access_token, 3600)
+          setCookie('sb-refresh-token', session.refresh_token, 604800)
+          setCookie('sb-user-id', session.user.id, 604800)
+          redirectTo(getDashboardUrl(session.user.id))
           return
         }
 
-        // Session found in localStorage! Set cookies and redirect.
-        setCookie('sb-access-token', session.access_token, 3600)
-        setCookie('sb-refresh-token', session.refresh_token, 604800)
-        setCookie('sb-user-id', session.user.id, 604800)
-        setStatus('Signing in...')
-        window.location.href = '/dashboard/' + session.user.id
+        // Try getUser as fallback (refreshes session if expired)
+        const { data: userData, error: userErr } = await supabase.auth.getUser()
+
+        if (!userErr && userData?.user) {
+          const user = userData.user
+          // Get or refresh session
+          const { data: refreshData } = await supabase.auth.refreshSession()
+          const session = refreshData?.session
+          if (session) {
+            setCookie('sb-access-token', session.access_token, 3600)
+            setCookie('sb-refresh-token', session.refresh_token, 604800)
+          }
+          setCookie('sb-user-id', user.id, 604800)
+          redirectTo(getDashboardUrl(user.id))
+          return
+        }
+
+        // Exchange code directly via Supabase Auth API (bypasses SDK localStorage)
+        const PKCE_VERIFIER_COOKIE = 'sb-pkce-code-verifier'
+        const verifier = readCookie(PKCE_VERIFIER_COOKIE)
+
+        if (verifier) {
+          const result = await exchangeCodeDirectly(authCode, verifier)
+          if (result) {
+            setCookiesAndRedirect(result)
+            return
+          }
+        }
+
+        // Last resort: try exchanging without explicit verifier
+        // (SDK might have stored it in localStorage under a different key)
+        showError('Session exchange failed. Please clear your browser cookies and try again.')
+        setTimeout(() => redirectTo('/auth/login'), 3000)
       } catch (e: any) {
-        setError('Exchange failed: ' + e.message)
-        setTimeout(() => window.location.href = '/auth/login', 2000)
+        showError('Callback failed: ' + (e.message || 'Unknown error'))
       }
     }
+  }, [searchParams])
 
-    exchangeAndRedirect()
-  }, [searchParams, router])
+  function getDashboardUrl(userId?: string): string {
+    if (userId) return '/dashboard/' + userId
+    return '/dashboard'
+  }
 
-  if (error) {
-    return (
-      <div style={{
-        minHeight: '100vh', background: '#04040c', color: 'white',
-        display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'system-ui'
-      }}>
-        <div style={{ textAlign: 'center', maxWidth: 400, padding: 40 }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>⚠️</div>
-          <h2 style={{ color: '#ff4d4d', marginBottom: 8 }}>Sign-in failed</h2>
-          <p style={{ color: 'rgba(255,255,255,0.6)' }}>{error}</p>
-          <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, marginTop: 16 }}>
-            Redirecting to login...
-          </p>
-        </div>
-      </div>
-    )
+  function redirectTo(url: string) {
+    window.location.href = url
+  }
+
+  function showError(msg: string) {
+    const el = document.getElementById('cb-error')
+    const spinner = document.getElementById('cb-spinner')
+    const status = document.getElementById('cb-status')
+    if (spinner) spinner.style.display = 'none'
+    if (status) status.style.display = 'none'
+    if (el) {
+      el.textContent = msg
+      el.style.display = 'block'
+    }
+  }
+
+  async function exchangeCodeDirectly(code: string, codeVerifier: string | null) {
+    if (!codeVerifier) return null
+    const SUPABASE_URL = 'https://dyzkfmdjusdyjmytgeah.supabase.co'
+    const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR5emtmbWRqdXNkeWpteXRnZWFoIiwicm9sZSI6ImFub255bW91cyIsImlhdCI6MTc3NjI1OTkyNn0.KQ7-0FfDcLrGcPdMNcPQqVz9gbmr7Wmj6U_8zE2pJ8A'
+
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=pkc`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: ANON_KEY,
+        Authorization: `Bearer ${ANON_KEY}`,
+      },
+      body: JSON.stringify({
+        grant_type: 'pkce',
+        code,
+        code_verifier: codeVerifier,
+        redirect_uri: 'https://app.clawops.studio/auth/callback',
+      }),
+    })
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ msg: res.statusText }))
+      console.error('PKCE exchange failed:', err)
+      return null
+    }
+
+    return res.json()
+  }
+
+  function setCookiesAndRedirect(data: any) {
+    if (data.access_token) {
+      setCookie('sb-access-token', data.access_token, 3600)
+    }
+    if (data.refresh_token) {
+      setCookie('sb-refresh-token', data.refresh_token, 604800)
+    }
+    if (data.user) {
+      setCookie('sb-user-id', data.user.id, 604800)
+    } else if (data.access_token) {
+      // Decode JWT to get user ID
+      try {
+        const payload = JSON.parse(atob(data.access_token.split('.')[1]))
+        if (payload.sub) setCookie('sb-user-id', payload.sub, 604800)
+      } catch {}
+    }
+    redirectTo(getDashboardUrl(data.user?.id))
   }
 
   return (
@@ -134,7 +170,7 @@ export default function CallbackClient() {
       display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'system-ui'
     }}>
       <div style={{ textAlign: 'center' }}>
-        <div style={{
+        <div id="cb-spinner" style={{
           width: 48, height: 48, borderRadius: 12,
           background: 'rgba(0, 212, 255, 0.1)',
           border: '2px solid rgba(0, 212, 255, 0.3)',
@@ -142,9 +178,21 @@ export default function CallbackClient() {
           animation: 'spin 1s linear infinite',
           margin: '0 auto 24px',
         }} />
-        <p style={{ color: 'rgba(255,255,255,0.6)' }}>{status}</p>
+        <p id="cb-status" style={{ color: 'rgba(255,255,255,0.6)' }}>
+          Signing you in...
+        </p>
+        <div id="cb-error" style={{
+          display: 'none', color: '#ff4d4d', maxWidth: 400,
+          textAlign: 'center', marginTop: 16, fontSize: 14
+        }} />
       </div>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   )
+}
+
+function readCookie(name: string): string | null {
+  if (typeof document === 'undefined') return null
+  const match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '=([^;]*)'))
+  return match ? decodeURIComponent(match[1]) : null
 }

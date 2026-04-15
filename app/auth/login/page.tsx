@@ -31,20 +31,34 @@ function LoginContent() {
   const handleGoogleSignIn = async () => {
     setLoadingGoogle(true)
     setError('')
-    
+
     try {
-      // Always redirect to app.clawops.studio for auth — this is where Supabase expects the callback
-      const { error } = await supabase.auth.signInWithOAuth({
+      // Use skipBrowserRedirect so we can capture the PKCE verifier before redirecting
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: 'https://app.clawops.studio/auth/callback',
+          skipBrowserRedirect: true,
         },
       })
-      
-      if (error) {
-        setError(error.message)
+
+      if (error || !data.url) {
+        setError(error ? error.message : 'Failed to initiate OAuth')
         setLoadingGoogle(false)
+        return
       }
+
+      // Store the PKCE code_verifier in a cookie so our callback route can access it.
+      // The SDK stores it in localStorage as 'sb-pkce-code-verifier'.
+      const verifier = localStorage.getItem('sb-pkce-code-verifier')
+      if (verifier) {
+        const encoded = encodeURIComponent(verifier)
+        document.cookie = `sb-pkce-code-verifier=${encoded}; Path=/; Max-Age=600; SameSite=Lax; Secure`
+        document.cookie = `sb-pkce-code-verifier=${encoded}; Path=/; Max-Age=600; SameSite=Lax; Secure; domain=.clawops.studio`
+      }
+
+      // Now redirect to Google
+      window.location.href = data.url
     } catch (err: any) {
       setError(err.message || 'OAuth failed')
       setLoadingGoogle(false)
