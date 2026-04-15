@@ -36,7 +36,6 @@ const STATIC_NAV_ITEMS = [
 const SERVICE_LABELS: Record<string, { label: string; icon: React.ElementType }> = {
   n8n: { label: 'n8n Workflows', icon: Workflow },
   chrome: { label: 'Chrome Browser', icon: Globe },
-  metaclaw: { label: 'MetaClaw', icon: Bot },
 };
 
 interface NavItemDef {

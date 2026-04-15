@@ -104,7 +104,6 @@ export default function DashboardClient({ data }: { data: DashboardData }) {
   const INTEGRATIONS = [
     { name: 'n8n', icon: '⚙️', color: '#EA4B71', desc: 'Workflow automation & webhooks', href: data.userId ? `/dashboard/${data.userId}/n8n` : '#', badge: 'Automation' },
     { name: 'Chrome Browser', icon: '🌐', color: '#00D4FF', desc: 'Visual browser + CDP automation', href: data.userId ? `/dashboard/${data.userId}/chrome` : '#', badge: 'Browser' },
-    { name: 'Gateway', icon: '🤖', color: '#10b981', desc: 'OpenClaw Control UI & agents', href: data.userId ? `/dashboard/${data.userId}/metaclaw` : '#', badge: 'AI Gateway' },
   ]
 
   const quickLinks = [
