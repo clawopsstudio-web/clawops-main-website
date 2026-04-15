@@ -1,8 +1,8 @@
 'use client';
 
 // ============================================================================
-// ClawOps Studio — Dashboard Sidebar
-// Phase 1 MVP
+// ClawOps Studio — Dashboard Sidebar v2
+// Architecture: AI Team + Services + System + Account
 // ============================================================================
 
 import Link from 'next/link';
@@ -16,6 +16,7 @@ interface NavItem {
   icon: React.ReactNode;
   highlight?: boolean;
   external?: boolean;
+  badge?: string;
 }
 
 interface NavGroup {
@@ -23,12 +24,24 @@ interface NavGroup {
   items: NavItem[];
 }
 
+// Agent roster — mirrors the OpenClaw gateway config
+const AGENTS = [
+  { name: 'Henry', role: 'Co-Founder & Chief AI Officer', color: '#00D4FF', topic: null },
+  { name: 'Ryan', role: 'Sales Pipeline', color: '#22c55e', topic: 25 },
+  { name: 'Arjun', role: 'Market Research', color: '#f59e0b', topic: 26 },
+  { name: 'Dev', role: 'Core Build & Coding', color: '#a855f7', topic: 27 },
+  { name: 'Dave', role: 'DevOps & Backend', color: '#ef4444', topic: 29 },
+  { name: 'Kyle', role: 'Frontend & Web', color: '#3b82f6', topic: 30 },
+  { name: 'Tyler', role: 'Marketing & SEO', color: '#ec4899', topic: 31 },
+  { name: 'Hermes', role: 'Customer Support', color: '#10b981', topic: null },
+];
+
 const NAV_ITEMS: NavGroup[] = [
   {
-    group: 'Workspace',
+    group: 'AI Team',
     items: [
       {
-        label: 'Home',
+        label: 'Dashboard',
         href: '/dashboard',
         icon: (
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -36,29 +49,27 @@ const NAV_ITEMS: NavGroup[] = [
             <polyline points="9 22 9 12 15 12 15 22"/>
           </svg>
         ),
+        highlight: true,
       },
-      {
-        label: 'Chat',
-        href: '/dashboard/chat',
+      ...AGENTS.filter(a => a.name !== 'Henry').slice(0, 4).map(a => ({
+        label: a.name,
+        href: '/dashboard',
         icon: (
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
           </svg>
         ),
-      },
+        badge: a.role,
+      })),
+    ],
+  },
+  {
+    group: 'Services',
+    items: [
       {
-        label: 'Tasks',
-        href: '/dashboard/tasks',
-        icon: (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="9 11 12 14 22 4"/>
-            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
-          </svg>
-        ),
-      },
-      {
-        label: 'Workflows',
-        href: '/dashboard/workflows',
+        label: 'n8n',
+        href: '/dashboard',
         icon: (
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="16 3 21 3 21 8"/>
@@ -70,22 +81,15 @@ const NAV_ITEMS: NavGroup[] = [
         ),
       },
       {
-        label: 'Integrations',
-        href: '/dashboard/integrations',
-        icon: (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
-          </svg>
-        ),
-      },
-      {
-        label: 'History',
-        href: '/dashboard/history',
+        label: 'Chrome Browser',
+        href: '/dashboard',
         icon: (
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10"/>
-            <polyline points="12 6 12 12 16 14"/>
+            <circle cx="12" cy="12" r="4"/>
+            <line x1="21.17" y1="8" x2="12" y2="8"/>
+            <line x1="3.95" y1="6.06" x2="8.54" y2="14"/>
+            <line x1="10.88" y1="21.94" x2="15.46" y2="14"/>
           </svg>
         ),
       },
@@ -105,6 +109,17 @@ const NAV_ITEMS: NavGroup[] = [
             <line x1="8" y1="21" x2="16" y2="21"/>
             <line x1="12" y1="17" x2="12" y2="21"/>
             <path d="M6 8h.01M9 8h.01"/>
+          </svg>
+        ),
+      },
+      {
+        label: 'Mission Control',
+        href: '/dashboard/mission-control',
+        icon: (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
           </svg>
         ),
       },
@@ -168,7 +183,7 @@ export default function Sidebar() {
             {sidebarCollapsed && <div className="h-3" />}
             <div className="space-y-0.5">
               {group.items.map((item) => {
-                const isActive = pathname === item.href;
+                const isActive = pathname === item.href || (item.href === '/dashboard' && pathname.startsWith('/dashboard') && pathname !== '/dashboard/mission-control' && pathname !== '/dashboard/settings');
                 const classes = cn(
                   'flex items-center gap-3 px-2 py-2 rounded-lg',
                   'transition-colors duration-150',
@@ -182,7 +197,7 @@ export default function Sidebar() {
                 if (item.external) {
                   return (
                     <a
-                      key={item.href}
+                      key={item.label}
                       href={item.href}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -210,7 +225,7 @@ export default function Sidebar() {
 
                 return (
                   <Link
-                    key={item.href}
+                    key={item.label}
                     href={item.href}
                     className={classes}
                     title={sidebarCollapsed ? item.label : undefined}
@@ -218,14 +233,19 @@ export default function Sidebar() {
                     {isActive && (
                       <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-[#00D4FF] rounded-r-full" />
                     )}
-                    <span className={cn('flex-shrink-0', isActive && 'text-[#00D4FF]')}>
+                    <span className={cn('flex-shrink-0', isActive && 'text-[#00D4FF]', item.highlight && !isActive && 'text-[#FF6B35]')}>
                       {item.icon}
                     </span>
                     {!sidebarCollapsed && (
-                      <span className="text-sm font-medium">{item.label}</span>
+                      <div className="flex-1 min-w-0">
+                        <span className="text-sm font-medium">{item.label}</span>
+                        {item.badge && (
+                          <span className="ml-1 text-[10px] text-white/30">{item.badge}</span>
+                        )}
+                      </div>
                     )}
                     {item.highlight && !sidebarCollapsed && (
-                      <span className="ml-auto text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#00D4FF]/10 text-[#00D4FF] border border-[#00D4FF]/20">
+                      <span className="ml-auto text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#FF6B35]/10 text-[#FF6B35] border border-[#FF6B35]/20">
                         LIVE
                       </span>
                     )}
@@ -239,7 +259,6 @@ export default function Sidebar() {
 
       {/* User / Collapse */}
       <div className="border-t border-white/[0.06] p-2 space-y-0.5 flex-shrink-0">
-        {/* Collapse toggle */}
         <button
           onClick={toggleSidebar}
           className="w-full flex items-center gap-3 px-2 py-2 rounded-lg text-white/30 hover:text-white/60 hover:bg-white/[0.04] transition-colors"
@@ -258,7 +277,6 @@ export default function Sidebar() {
           {!sidebarCollapsed && <span className="text-sm">Collapse</span>}
         </button>
 
-        {/* User */}
         {user && (
           <div className={cn(
             'flex items-center gap-3 px-2 py-2 rounded-lg',
