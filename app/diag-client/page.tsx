@@ -48,7 +48,7 @@ export default function DiagClient() {
 
   async function testServices() {
     setTesting(true);
-    const results = [];
+    const results: string[] = [];
     for (const svc of ['n8n', 'chrome', 'gateway']) {
       try {
         const r = await fetch(`/${svc}`, { cache: 'no-store' });

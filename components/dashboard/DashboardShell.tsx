@@ -16,6 +16,8 @@ import {
   Globe,
   Workflow,
   Bot,
+  MessageSquare,
+  Link2,
 } from 'lucide-react';
 
 // Extract userId from URL like /dashboard/{userId}/...
@@ -33,9 +35,12 @@ const STATIC_NAV_ITEMS = [
   { href: '/quick-start', label: 'Quick Start', icon: ZapIcon, external: true, section: 'tools' },
 ];
 
-const SERVICE_LABELS: Record<string, { label: string; icon: React.ElementType }> = {
-  n8n: { label: 'n8n Workflows', icon: Workflow },
-  chrome: { label: 'Chrome Browser', icon: Globe },
+const SERVICE_LABELS: Record<string, { label: string; icon: React.ElementType; section: string }> = {
+  n8n: { label: 'n8n Workflows', icon: Workflow, section: 'services' },
+  chrome: { label: 'Agent Browser', icon: Globe, section: 'services' },
+  metaclaw: { label: 'MetaClaw', icon: Bot, section: 'services' },
+  aiChat: { label: 'AI Team Chat', icon: MessageSquare, section: 'ai' },
+  integrations: { label: 'Integrations', icon: Link2, section: 'ai' },
 };
 
 interface NavItemDef {
@@ -80,6 +85,47 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   const mainItems = allItems.filter((i) => i.section === 'main');
   const toolsItems = allItems.filter((i) => i.section === 'tools');
   const serviceItems = allItems.filter((i) => i.section === 'services');
+  const aiItems = allItems.filter((i) => i.section === 'ai');
+
+  const renderNavSection = (title: string, items: NavItemDef[]) => {
+    if (items.length === 0) return null;
+    return (
+      <>
+        <div className="my-3 mx-3 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }} />
+        {title && <p className="px-3 text-[10px] font-semibold text-white/20 uppercase tracking-wider mb-1">{title}</p>}
+        {items.map((item) => {
+          const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              target={item.external ? '_blank' : undefined}
+              rel={item.external ? 'noopener noreferrer' : undefined}
+              className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm mb-0.5 transition-all ${
+                isActive
+                  ? 'bg-cyan-500/10 text-cyan-400 font-medium'
+                  : 'text-white/50 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <item.icon className="w-4 h-4" />
+                {item.label}
+              </div>
+              <div className="flex items-center gap-1">
+                {item.badge && (
+                  <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 font-medium">
+                    {item.badge}
+                  </span>
+                )}
+                {item.external && <ExternalLink className="w-3 h-3 opacity-30" />}
+                {!item.external && isActive && <ChevronRight className="w-3 h-3 opacity-50" />}
+              </div>
+            </Link>
+          );
+        })}
+      </>
+    );
+  };
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -131,70 +177,9 @@ export default function DashboardShell({ children }: { children: React.ReactNode
             );
           })}
 
-          {/* Service Links */}
-          {serviceItems.length > 0 && (
-            <>
-              <div className="my-3 mx-3 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }} />
-              <p className="px-3 text-[10px] font-semibold text-white/20 uppercase tracking-wider mb-1">
-                Apps
-              </p>
-              {serviceItems.map((item) => {
-                const isActive = pathname.startsWith(item.href);
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm mb-0.5 transition-all ${
-                      isActive
-                        ? 'bg-cyan-500/10 text-cyan-400 font-medium'
-                        : 'text-white/50 hover:text-white hover:bg-white/5'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <item.icon className="w-4 h-4" />
-                      {item.label}
-                    </div>
-                    {isActive && <ChevronRight className="w-3 h-3 opacity-50" />}
-                  </Link>
-                );
-              })}
-            </>
-          )}
-
-          {/* Tools section */}
-          {toolsItems.length > 0 && (
-            <>
-              <div className="my-3 mx-3 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }} />
-              <p className="px-3 text-[10px] font-semibold text-white/20 uppercase tracking-wider mb-1">
-                Tools
-              </p>
-              {toolsItems.map((item) => {
-                const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    target={item.external ? '_blank' : undefined}
-                    rel={item.external ? 'noopener noreferrer' : undefined}
-                    className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm mb-0.5 transition-all ${
-                      isActive
-                        ? 'bg-cyan-500/10 text-cyan-400 font-medium'
-                        : 'text-white/50 hover:text-white hover:bg-white/5'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <item.icon className="w-4 h-4" />
-                      {item.label}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      {item.external && <ExternalLink className="w-3 h-3 opacity-30" />}
-                      {!item.external && isActive && <ChevronRight className="w-3 h-3 opacity-50" />}
-                    </div>
-                  </Link>
-                );
-              })}
-            </>
-          )}
+          {renderNavSection('AI & Integrations', aiItems)}
+          {renderNavSection('Apps', serviceItems)}
+          {renderNavSection('Tools', toolsItems)}
         </nav>
 
         {/* Bottom */}

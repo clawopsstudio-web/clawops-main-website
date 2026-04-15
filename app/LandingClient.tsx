@@ -5,7 +5,7 @@ import Features from '@/components/sections/Features'
 import HowItWorks from '@/components/sections/HowItWorks'
 import UseCases from '@/components/sections/UseCases'
 import Integrations from '@/components/sections/Integrations'
-import Pricing from '@/components/sections/Pricing'
+import AmpereStylePricing from '@/app/pricing/AmpereStylePricing'
 import CTA from '@/components/sections/CTA'
 import FAQ from '@/components/sections/FAQ'
 import SocialProof from '@/components/sections/SocialProof'
@@ -27,7 +27,7 @@ export default function LandingPage() {
       <MissionControl />
       <Deployment />
       <Integrations />
-      <Pricing />
+      <AmpereStylePricing />
       <FAQ />
       <CTA />
     </main>

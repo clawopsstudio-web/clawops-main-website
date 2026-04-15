@@ -17,5 +17,9 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
+    // CRITICAL: Use PKCE flow for OAuth. Without this, the OAuth code exchange
+    // fails silently (flowType defaults to 'implicit' which is broken with Google OAuth).
+    // PKCE ensures the code_verifier is stored and used during the callback exchange.
+    flowType: 'pkce',
   },
 })

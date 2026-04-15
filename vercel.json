@@ -1,24 +1,51 @@
 {
   "framework": "nextjs",
-  "regions": ["fra1"],
+  "regions": [
+    "fra1"
+  ],
   "headers": [
     {
       "source": "/auth/callback",
       "headers": [
-        { "key": "x-vercel-disable-bots", "value": "true" },
-        { "key": "Cache-Control", "value": "no-store, must-revalidate" }
+        {
+          "key": "x-vercel-disable-bots",
+          "value": "true"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store, must-revalidate"
+        }
       ]
     },
     {
       "source": "/auth/login",
       "headers": [
-        { "key": "x-vercel-disable-bots", "value": "true" }
+        {
+          "key": "x-vercel-disable-bots",
+          "value": "true"
+        }
       ]
     },
     {
       "source": "/auth/signup",
       "headers": [
-        { "key": "x-vercel-disable-bots", "value": "true" }
+        {
+          "key": "x-vercel-disable-bots",
+          "value": "true"
+        }
+      ]
+    },
+    {
+      "source": "/auth/sso",
+      "headers": [
+        {
+          "key": "x-vercel-disable-bots",
+          "value": "true"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store, must-revalidate"
+        }
       ]
     }
   ]

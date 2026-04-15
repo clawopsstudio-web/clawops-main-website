@@ -1,6 +1,20 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
+
+/**
+ * Pages that should NOT use Lenis smooth scroll.
+ * Lenis adds `overflow: hidden` to <html> which breaks mobile + dashboard overflow.
+ */
+const LENIS_BLACKLIST = [
+  '/auth/login',
+  '/auth/signup',
+  '/auth/callback',
+  '/dashboard',
+  '/ops',
+  '/diag',
+];
 
 export default function SmoothScroll({
   children,
@@ -8,9 +22,15 @@ export default function SmoothScroll({
   children: React.ReactNode;
 }) {
   const lenisRef = useRef<unknown>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
-    // Dynamically import Lenis to avoid SSR issues
+    const shouldLenis = !LENIS_BLACKLIST.some((path) =>
+      pathname.startsWith(path)
+    );
+
+    if (!shouldLenis) return;
+
     const initLenis = async () => {
       try {
         const Lenis = (await import("lenis")).default;
@@ -47,7 +67,7 @@ export default function SmoothScroll({
     return () => {
       cleanup.then((fn) => fn && fn());
     };
-  }, []);
+  }, [pathname]);
 
   return <>{children}</>;
 }

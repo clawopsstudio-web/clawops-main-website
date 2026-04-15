@@ -1,8 +1,8 @@
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 
-export default function DiagPage() {
-  const cookieStore = cookies();
+export default async function DiagPage() {
+  const cookieStore = await cookies();
   const sbToken = cookieStore.get('sb-access-token');
   const sbRefresh = cookieStore.get('sb-refresh-token');
   const sbUserId = cookieStore.get('sb-user-id');

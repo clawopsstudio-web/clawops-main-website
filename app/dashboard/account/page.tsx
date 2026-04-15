@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase/client'
-import { User, LogOut, Shield, Key, Trash2, ExternalLink } from 'lucide-react'
+import { User, Shield, Key, ExternalLink } from 'lucide-react'
 
 export default function AccountPage() {
   const [user, setUser] = useState<any>(null)
@@ -54,11 +54,6 @@ export default function AccountPage() {
     setSaving(false)
     setMessage(error ? `Error: ${error.message}` : '✅ Profile saved!')
     setTimeout(() => setMessage(''), 3000)
-  }
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    window.location.href = '/auth/login'
   }
 
   if (loading) {
@@ -192,26 +187,6 @@ export default function AccountPage() {
           </p>
         </div>
 
-        {/* Danger Zone */}
-        <div className="rounded-xl border border-red-500/10 bg-red-500/5 p-6">
-          <h2 className="text-sm font-semibold text-red-400 mb-4 flex items-center gap-2">
-            <Trash2 className="w-4 h-4" />
-            Danger Zone
-          </h2>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-white">Sign Out</p>
-              <p className="text-xs text-white/30">Log out of your account on this device</p>
-            </div>
-            <button
-              onClick={handleSignOut}
-              className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm text-red-400 hover:bg-red-500/20 transition-colors"
-            >
-              <LogOut className="w-4 h-4" />
-              Sign Out
-            </button>
-          </div>
-        </div>
       </div>
     </main>
   )

@@ -46,7 +46,8 @@ export async function middleware(request: NextRequest) {
   const host = request.headers.get('host') || ''
 
   // ---- NO-CACHE HEADERS FOR AUTH ROUTES ----
-  if (pathname === '/auth/callback' || pathname.startsWith('/auth/callback/')) {
+  if (pathname === '/auth/callback' || pathname.startsWith('/auth/callback/') ||
+      pathname === '/auth/sso' || pathname.startsWith('/auth/sso/')) {
     const response = NextResponse.next()
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
     response.headers.set('Pragma', 'no-cache')
@@ -55,7 +56,7 @@ export async function middleware(request: NextRequest) {
     return response
   }
 
-  // Static files and API routes pass through (including Next.js static assets)
+  // Static files and Next.js internals — pass through immediately
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
@@ -64,70 +65,22 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Parse all cookies from the request
+  // ---- SERVICE ROUTES (/n8n, /chrome, /gateway) ----
+  // These are handled EXCLUSIVELY by nginx → auth-proxy (port 4001).
+  // Next.js middleware MUST NOT proxy these — return NextResponse.next()
+  // and let nginx's proxy_pass take over.
+  if (
+    pathname === '/n8n' || pathname === '/n8n/' ||
+    pathname === '/chrome' || pathname === '/chrome/' ||
+    pathname === '/gateway' || pathname === '/gateway/'
+  ) {
+    return NextResponse.next()
+  }
+
+  // Parse cookies (used below for dashboard routes)
   const cookieString = request.cookies.toString()
   const cookies = parseCookies(cookieString)
   const accessToken = cookies['sb-access-token']
-
-  // ---- SERVICE ROUTES: /n8n, /chrome, /gateway ----
-  // Validate Supabase JWT locally. If valid: proxy to service. If invalid: redirect to login.
-  if (pathname === '/n8n' || pathname === '/n8n/' ||
-      pathname === '/chrome' || pathname === '/chrome/' ||
-      pathname === '/gateway' || pathname === '/gateway/') {
-
-    if (!accessToken) {
-      const loginUrl = new URL('/auth/login', `https://${host}`)
-      loginUrl.searchParams.set('redirectTo', pathname)
-      return NextResponse.redirect(loginUrl)
-    }
-
-    const user = validateSupabaseJWT(accessToken)
-    if (!user) {
-      const loginUrl = new URL('/auth/login', `https://${host}`)
-      loginUrl.searchParams.set('redirectTo', pathname)
-      return NextResponse.redirect(loginUrl)
-    }
-
-    // Valid JWT — determine target service
-    const targetPort = pathname.startsWith('/chrome') ? 5800 :
-                       pathname.startsWith('/gateway') ? 18789 : 5678
-
-    const url = new URL(request.url)
-    const servicePath = url.pathname === '/' ? '' : url.pathname
-
-    // Rewrite the URL to proxy to the service
-    const newUrl = new URL(`http://127.0.0.1:${targetPort}${servicePath}`)
-    newUrl.search = url.search
-
-    const response = await fetch(newUrl.toString(), {
-      method: request.method,
-      headers: {
-        ...Object.fromEntries(request.headers.entries()),
-        'X-Auth-User-Id': user.userId,
-        'X-Auth-User-Email': user.email || '',
-        'X-Forwarded-Host': host,
-        'Cookie': cookieString,
-      },
-      body: request.method !== 'GET' && request.method !== 'HEAD' ? request.body : undefined,
-      redirect: 'manual',
-      signal: undefined,
-    } as RequestInit)
-
-    const headers = new Headers(response.headers)
-    headers.set('X-Auth-User-Id', user.userId)
-    headers.set('X-Auth-User-Email', user.email || '')
-
-    return new Response(response.body, {
-      status: response.status,
-      statusText: response.statusText,
-      headers,
-    })
-  }
-
-  // Build a response we can mutate (add Set-Cookie headers)
-  let response = NextResponse.next()
-
-  const refreshToken = cookies['sb-refresh-token']
 
   // /dashboard without userId → redirect to /{userId}/dashboard
   if (pathname === '/dashboard' || pathname === '/dashboard/') {
@@ -176,12 +129,14 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  return response
+  return NextResponse.next()
 }
 
 export const config = {
   matcher: [
     '/auth/callback/:path*',
+    '/auth/sso/:path*',
+    '/auth/sso',
     '/dashboard/:path*',
     '/:uuid/dashboard/:path*',
     '/:uuid/:service(n8n|chrome|metaclaw|gateway)/:path*',
