@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
 
 const APP_URL = 'https://app.clawops.studio'
 
@@ -8,110 +10,86 @@ export async function GET(request: NextRequest) {
   const error = searchParams.get('error')
   const next = searchParams.get('next')
 
-  console.error('[auth/callback] code=' + (code ? 'PRESENT(' + code.substring(0, 20) + '...)' : 'MISSING') + ' error=' + error)
-
-  // PKCE flow: code comes in query string — exchange server-side
-  if (code) {
-    try {
-      const { createClient } = await import('@supabase/supabase-js')
-      const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      )
-      const { data, error: authError } = await supabase.auth.exchangeCodeForSession(code)
-      
-      console.error('[auth/callback] exchange result: error=' + (authError?.message || 'none') + ' session=' + (data.session ? 'PRESENT' : 'MISSING'))
-      if (data.session) {
-        console.error('[auth/callback] token present: ' + (data.session.access_token ? 'YES' : 'NO') + ' userId=' + data.session.user.id)
-      }
-      
-      if (authError || !data.session) {
-        return NextResponse.redirect(new URL('/auth/login?error=session_error', APP_URL))
-      }
-      const dest = next || `/dashboard/${data.session.user.id}`
-      const response = NextResponse.redirect(new URL(dest, APP_URL), 302)
-      setCookies(response, data.session.access_token, data.session.refresh_token, data.session.user.id)
-      console.error('[auth/callback] redirecting to ' + dest + ' with cookies set')
-      return response
-    } catch (e: any) {
-      console.error('[auth/callback] exception: ' + e.message)
-      return NextResponse.redirect(new URL('/auth/login?error=exception', APP_URL))
-    }
+  if (error) {
+    return NextResponse.redirect(new URL(`/auth/login?error=${encodeURIComponent(error)}`, APP_URL))
   }
 
-  // Implicit flow (token in URL fragment): return HTML with inline JS.
-  // The fragment is only visible to client-side JS — server never sees it.
-  const html = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8"/>
-  <title>Signing in...</title>
-</head>
+  if (!code) {
+    // No code — check if there's a token in the fragment (handled client-side)
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"/><title>Signing in...</title></head>
 <body style="font-family:system-ui,sans-serif;background:#04040c;color:white;display:flex;align-items:center;justify-content:center;height:100vh;margin:0">
-  <div style="text-align:center">
-    <div style="width:40px;height:40px;border:3px solid rgba(0,212,255,0.3);border-top-color:#00D4FF;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px"></div>
-    <p style="color:rgba(255,255,255,0.6)">Completing sign-in...</p>
-  </div>
-  <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
-    
-    const hash = window.location.hash
-    const hashParams = new URLSearchParams(hash.substring(1))
-    const accessToken = hashParams.get('access_token')
-    const refreshToken = hashParams.get('refresh_token')
-    const queryError = new URLSearchParams(window.location.search).get('error')
-
-    if (!accessToken) {
-      window.location.href = '/auth/login' + (queryError ? '?error=' + queryError : '?error=no_code')
-      throw new Error('no_token')
-    }
-
-    let userId = null
-    try {
-      const parts = accessToken.split('.')
-      const payload = JSON.parse(atob(parts[1].replace(/-g, '+').replace(/_/g, '/')))
-      userId = payload.sub
-    } catch (e) {}
-
-    if (!userId) {
-      window.location.href = '/auth/login?error=token_parse_error'
-      throw new Error('bad_token')
-    }
-
-    const cookie = (name, val, maxAge) =>
-      document.cookie = name + '=' + val + '; Path=/; Max-Age=' + maxAge + '; SameSite=Lax; Secure'
-    cookie('sb-access-token', accessToken, 3600)
-    cookie('sb-refresh-token', refreshToken || accessToken, 604800)
-    cookie('sb-user-id', userId, 604800)
-
-    window.location.href = '/dashboard/' + userId
-  <\/script>
-</body>
-</html>`
-
-  return new NextResponse(html, {
-    headers: {
-      'Content-Type': 'text/html',
-      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-      'Pragma': 'no-cache',
-    },
-  })
-}
-
-function setCookies(
-  response: NextResponse,
-  access_token: string,
-  refresh_token: string,
-  userId: string
-) {
-  const opts = {
-    path: '/',
-    sameSite: 'lax' as const,
-    secure: true,
-    httpOnly: false,
+<div style="text-align:center"><div style="width:40px;height:40px;border:3px solid rgba(0,212,255,0.3);border-top-color:#00D4FF;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px"></div><p style="color:rgba(255,255,255,0.6)">Completing sign-in...</p></div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+const hash = window.location.hash, params = new URLSearchParams(hash.substring(1))
+const token = params.get('access_token'), refresh = params.get('refresh_token')
+if (!token) { window.location.href='/auth/login?error=no_token'; throw new Error('no_token') }
+let userId = null
+try { const p = JSON.parse(atob(token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))); userId = p.sub } catch(e) {}
+if (!userId) { window.location.href='/auth/login?error=bad_token'; throw new Error('bad_token') }
+const ck = (n,v,a) => document.cookie = n+'='+v+'; Path=/; Max-Age='+a+'; SameSite=Lax; Secure'
+ck('sb-access-token', token, 3600)
+ck('sb-refresh-token', refresh||token, 604800)
+ck('sb-user-id', userId, 604800)
+const supabase = createClient('${process.env.NEXT_PUBLIC_SUPABASE_URL}','${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}',{auth:{persistSession:true}})
+await supabase.auth.setSession({access_token:token, refresh_token:refresh||token})
+window.location.href='/dashboard/'+userId
+<\/script></body></html>`
+    return new NextResponse(html, {
+      headers: {
+        'Content-Type': 'text/html',
+        'Cache-Control': 'no-store',
+      },
+    })
   }
-  response.cookies.set('sb-access-token', access_token, { ...opts, maxAge: 3600 })
-  response.cookies.set('sb-refresh-token', refresh_token, { ...opts, maxAge: 604800 })
-  response.cookies.set('sb-user-id', userId, { ...opts, maxAge: 604800 })
+
+  // PKCE: exchange code for session using @supabase/ssr pattern
+  const cookieStore = await cookies()
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll()
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, {
+                path: '/',
+                maxAge: name === 'sb-access-token' ? 3600 : 604800,
+                sameSite: 'lax',
+                secure: true,
+                httpOnly: false,
+                ...options,
+              })
+            })
+          } catch {
+            // Ignore errors from multiple set attempts
+          }
+        },
+      },
+    }
+  )
+
+  const { data, error: authError } = await supabase.auth.exchangeCodeForSession(code)
+
+  if (authError || !data.session) {
+    console.error('[auth/callback] PKCE exchange error:', authError?.message || 'no session')
+    return NextResponse.redirect(new URL('/auth/login?error=session_error', APP_URL))
+  }
+
+  const userId = data.session.user.id
+  const dest = next || `/dashboard/${userId}`
+
+  // @supabase/ssr has set the session cookies via our adapter.
+  // Create the redirect response — Next.js will include the Set-Cookie headers
+  // from our cookieStore in the response.
+  const response = NextResponse.redirect(new URL(dest, APP_URL), 302)
+
+  console.log('[auth/callback] PKCE success →', dest)
+  return response
 }
