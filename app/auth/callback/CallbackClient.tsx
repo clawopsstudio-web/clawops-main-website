@@ -131,7 +131,6 @@ export default function CallbackClient() {
     </div>
   )
 }
-</parameter>
-</function_call>
-</tool_call>
-</anthropic:tool_call>
+
+
+
