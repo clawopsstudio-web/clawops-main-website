@@ -12,8 +12,9 @@ export async function GET(request: NextRequest) {
 
   console.log('Callback hit:', { hasCode: !!code, hasError: !!error, error })
 
+  // Check for OAuth errors (including bad_oauth_state from Supabase)
   if (error) {
-    console.log('OAuth error from provider:', error)
+    console.error('OAuth error from provider:', error, url.searchParams.get('error_description'))
     return NextResponse.redirect(new URL('/auth/login?error=' + encodeURIComponent(error), request.url))
   }
 

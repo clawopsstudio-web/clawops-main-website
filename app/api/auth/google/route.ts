@@ -6,7 +6,7 @@ import { NextResponse } from 'next/server'
 
 function generateCodeVerifier(): string {
   const array = new Uint8Array(32)
-  for (let i = 0; i < 32; i++) array[i] = Math.floor(Math.random() * 256)
+  crypto.getRandomValues(array)
   return btoa(String.fromCharCode.apply(null, Array.from(array)))
     .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
 }
@@ -19,6 +19,16 @@ async function generateCodeChallenge(verifier: string): Promise<string> {
     .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
 }
 
+function generateState(): string {
+  // Supabase validates state as UUID v4 — must be proper UUID format
+  const bytes = new Uint8Array(16)
+  crypto.getRandomValues(bytes)
+  bytes[6] = (bytes[6] & 0x0f) | 0x40  // UUID version 4
+  bytes[8] = (bytes[8] & 0x3f) | 0x80  // UUID variant
+  const hex = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('')
+  return hex.slice(0,8) + '-' + hex.slice(8,12) + '-' + hex.slice(12,16) + '-' + hex.slice(16,20) + '-' + hex.slice(20)
+}
+
 export async function GET() {
   const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://dyzkfmdjusdyjmytgeah.supabase.co'
   // IMPORTANT: This must match the URL Supabase redirects to AFTER it processes Google's callback
@@ -26,7 +36,7 @@ export async function GET() {
   const REDIRECT_TO = encodeURIComponent('https://app.clawops.studio/api/auth/callback')
   const CODE_VERIFIER = generateCodeVerifier()
   const CODE_CHALLENGE = await generateCodeChallenge(CODE_VERIFIER)
-  const STATE = Math.random().toString(36).substring(2) + Date.now().toString(36)
+  const STATE = generateState()
 
   const authorizeUrl = SUPABASE_URL + '/auth/v1/authorize?' + [
     'provider=google',
