@@ -32,21 +32,10 @@ function LoginContent() {
     setLoadingGoogle(true)
     setError('')
 
-    // Let the SDK handle the redirect naturally.
-    // PKCE verifier is stored in localStorage by the SDK before redirect.
-    // Callback page reads from localStorage via getSession().
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: 'https://app.clawops.studio/auth/callback',
-      },
-    })
-
-    if (error) {
-      setError(error.message)
-      setLoadingGoogle(false)
-    }
-    // If no error, the browser has already redirected to Google
+    // Use our server-side proxy to initiate OAuth.
+    // Browser -> our Vercel server -> Supabase/Google (browser only talks to our domain)
+    // This bypasses the need for the browser to reach Supabase directly.
+    window.location.href = '/api/auth/google'
   }
 
   return (

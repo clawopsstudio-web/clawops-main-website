@@ -16,10 +16,8 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
-    // PKCE flow is REQUIRED: Supabase server forces authorization code flow.
-    // The SDK generates a code_verifier (stored in localStorage) and code_challenge.
-    // On callback, SDK exchanges the auth code + verifier for tokens automatically.
-    flowType: 'pkce',
+    // Keep implicit flow — was working before
+    // PKCE requires server-side code exchange which adds complexity
+    flowType: 'implicit',
   },
 })
-</parameter>
