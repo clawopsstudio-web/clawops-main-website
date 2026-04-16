@@ -8,6 +8,10 @@ function setCookie(name: string, value: string, maxAgeSecs: number) {
   document.cookie = `${name}=${encoded}; Path=/; Max-Age=${maxAgeSecs}; SameSite=Lax; Secure; domain=.clawops.studio`
 }
 
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 export default function CallbackClient() {
   const didRun = useRef(false)
   const [status, setStatus] = useState('Signing you in...')
@@ -20,8 +24,9 @@ export default function CallbackClient() {
     handleCallback()
 
     async function handleCallback() {
-      // Check for OAuth errors first
       const url = new URL(window.location.href)
+
+      // ---- Check for OAuth errors ----
       const errorParam = url.searchParams.get('error')
       if (errorParam) {
         const desc = url.searchParams.get('error_description') || errorParam
@@ -29,12 +34,12 @@ export default function CallbackClient() {
         return
       }
 
-      // The SDK's PKCE flow handles code exchange automatically during _initialize().
-      // By the time React mounts and this effect runs, the session should already be saved.
-      // We wait a small amount for the SDK to finish async initialization.
+      // PKCE flow: SDK handles code exchange automatically during module init.
+      // Wait a moment for the SDK's async initialization to complete.
       setStatus('Verifying session...')
+      await sleep(300)
 
-      await sleep(200)
+      // ---- Try getSession (SDK auto-processes PKCE callback) ----
       const { data, error: err } = await supabase.auth.getSession()
 
       if (!err && data.session) {
@@ -42,14 +47,13 @@ export default function CallbackClient() {
         setCookie('sb-access-token', s.access_token, 3600)
         if (s.refresh_token) setCookie('sb-refresh-token', s.refresh_token, 604800)
         setCookie('sb-user-id', s.user.id, 604800)
-        // Clean URL of auth params
         url.searchParams.delete('code')
         window.history.replaceState(null, '', url.pathname)
         window.location.href = '/dashboard/' + s.user.id
         return
       }
 
-      // Last resort: getUser + refresh
+      // ---- Fallback: getUser + refreshSession ----
       setStatus('Refreshing session...')
       const { data: userData, error: userErr } = await supabase.auth.getUser()
       if (!userErr && userData.user) {
@@ -67,8 +71,7 @@ export default function CallbackClient() {
         return
       }
 
-      const msg = err?.message || userErr?.message || 'Session exchange failed'
-      console.error('[callback] All auth methods failed:', msg)
+      const msg = err?.message || userErr?.message || 'No session found'
       setError('Sign-in incomplete: ' + msg)
     }
   }, [])
@@ -128,3 +131,7 @@ export default function CallbackClient() {
     </div>
   )
 }
+</parameter>
+</function_call>
+</tool_call>
+</anthropic:tool_call>
