@@ -10,11 +10,15 @@ export async function GET(request: NextRequest) {
   const error = url.searchParams.get('error')
   const state = url.searchParams.get('state')
 
+  console.log('Callback hit:', { hasCode: !!code, hasError: !!error, error })
+
   if (error) {
+    console.log('OAuth error from provider:', error)
     return NextResponse.redirect(new URL('/auth/login?error=' + encodeURIComponent(error), request.url))
   }
 
   if (!code) {
+    console.log('No code in callback URL')
     return NextResponse.redirect(new URL('/auth/login?error=no_code', request.url))
   }
 
@@ -23,12 +27,14 @@ export async function GET(request: NextRequest) {
   const verifier = cookieStore.get('pkce_verifier')?.value
   const savedState = cookieStore.get('oauth_state')?.value
 
+  console.log('Cookie pkce_verifier:', !!verifier, 'length:', verifier?.length)
+  console.log('Cookie domain check - request to:', request.url)
+
   if (!verifier) {
     console.error('No PKCE verifier found in cookies')
     return NextResponse.redirect(new URL('/auth/login?error=no_verifier', request.url))
   }
 
-  // Validate state if present
   if (state && savedState && state !== savedState) {
     console.error('OAuth state mismatch')
     return NextResponse.redirect(new URL('/auth/login?error=state_mismatch', request.url))
@@ -36,6 +42,7 @@ export async function GET(request: NextRequest) {
 
   try {
     // Exchange auth code for session tokens using PKCE
+    // NOTE: Supabase token endpoint expects 'code' NOT 'auth_code'
     const tokenRes = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=pkce', {
       method: 'POST',
       headers: {
@@ -43,16 +50,25 @@ export async function GET(request: NextRequest) {
         'apikey': SUPABASE_ANON_KEY,
         'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
       },
-      body: JSON.stringify({ auth_code: code, code_verifier: verifier }),
+      body: JSON.stringify({ code: code, code_verifier: verifier }),
     })
 
+    const responseText = await tokenRes.text()
+    console.log('Token response status:', tokenRes.status)
+
     if (!tokenRes.ok) {
-      const errText = await tokenRes.text()
-      console.error('Token exchange failed:', errText)
+      console.error('Token exchange failed:', responseText)
       return NextResponse.redirect(new URL('/auth/login?error=token_failed', request.url))
     }
 
-    const session = await tokenRes.json()
+    let session
+    try {
+      session = JSON.parse(responseText)
+    } catch {
+      console.error('Invalid JSON from token endpoint:', responseText.substring(0, 200))
+      return NextResponse.redirect(new URL('/auth/login?error=invalid_token_response', request.url))
+    }
+
     if (!session.access_token || !session.user) {
       console.error('No session in token response:', JSON.stringify(session).substring(0, 200))
       return NextResponse.redirect(new URL('/auth/login?error=no_session', request.url))
@@ -63,26 +79,23 @@ export async function GET(request: NextRequest) {
     const refreshToken = session.refresh_token || ''
     const expiresIn = session.expires_in || 3600
 
-    // Clear PKCE cookies
-    const clearCookieOpts = { path: '/', sameSite: 'lax' as const, secure: true, domain: '.clawops.studio', maxAge: 0 }
+    console.log('Token exchange success! User ID:', userId)
 
     const redirectUrl = '/dashboard/' + userId
     const response = NextResponse.redirect(new URL(redirectUrl, request.url), 302)
 
+    // Set session cookies
     response.cookies.set('sb-access-token', accessToken, {
-      maxAge: expiresIn, path: '/', sameSite: 'lax', secure: true, domain: '.clawops.studio',
+      maxAge: expiresIn, path: '/', sameSite: 'lax', secure: true,
     })
     if (refreshToken) {
       response.cookies.set('sb-refresh-token', refreshToken, {
-        maxAge: 604800, path: '/', sameSite: 'lax', secure: true, domain: '.clawops.studio',
+        maxAge: 604800, path: '/', sameSite: 'lax', secure: true,
       })
     }
     response.cookies.set('sb-user-id', userId, {
-      maxAge: 604800, path: '/', sameSite: 'lax', secure: true, domain: '.clawops.studio',
+      maxAge: 604800, path: '/', sameSite: 'lax', secure: true,
     })
-    // Clear PKCE cookies
-    response.cookies.set('pkce_verifier', '', { ...clearCookieOpts })
-    response.cookies.set('oauth_state', '', { ...clearCookieOpts })
 
     return response
   } catch (e) {

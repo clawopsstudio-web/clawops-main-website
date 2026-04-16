@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server'
 
 // PKCE OAuth flow: browser -> our server -> Supabase -> Google
 // We handle PKCE generation server-side, browser only talks to our domain + Google
+// Browser NEVER directly reaches Supabase (only Supabase's OAuth server via Google redirect)
 
 function generateCodeVerifier(): string {
   const array = new Uint8Array(32)
-  // Use Math.random for simplicity (not cryptographically random on server, but this is for OAuth state only)
   for (let i = 0; i < 32; i++) array[i] = Math.floor(Math.random() * 256)
   return btoa(String.fromCharCode.apply(null, Array.from(array)))
     .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
@@ -21,6 +21,8 @@ async function generateCodeChallenge(verifier: string): Promise<string> {
 
 export async function GET() {
   const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://dyzkfmdjusdyjmytgeah.supabase.co'
+  // IMPORTANT: This must match the URL Supabase redirects to AFTER it processes Google's callback
+  // We want Supabase to redirect to our /api/auth/callback route
   const REDIRECT_TO = encodeURIComponent('https://app.clawops.studio/api/auth/callback')
   const CODE_VERIFIER = generateCodeVerifier()
   const CODE_CHALLENGE = await generateCodeChallenge(CODE_VERIFIER)
@@ -34,15 +36,17 @@ export async function GET() {
     'state=' + STATE,
   ].join('&')
 
+  console.log('Initiating PKCE OAuth flow')
+  console.log('Redirect to:', REDIRECT_TO)
+
   const response = NextResponse.redirect(authorizeUrl, 302)
-  // Store code_verifier in a short-lived cookie
+  // Store code_verifier in a short-lived cookie (no explicit domain = current host only)
   response.cookies.set('pkce_verifier', CODE_VERIFIER, {
-    maxAge: 600, // 10 minutes
+    maxAge: 600,
     path: '/api/auth/callback',
     httpOnly: true,
     sameSite: 'lax',
     secure: true,
-    domain: '.clawops.studio',
   })
   response.cookies.set('oauth_state', STATE, {
     maxAge: 600,
@@ -50,7 +54,6 @@ export async function GET() {
     httpOnly: true,
     sameSite: 'lax',
     secure: true,
-    domain: '.clawops.studio',
   })
   return response
 }
