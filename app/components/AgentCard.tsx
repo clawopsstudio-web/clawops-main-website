@@ -28,7 +28,7 @@ const AGENTS = [
     role: 'Marketing Agent',
     department: 'Marketing',
     departmentColor: '#6600FF',
-    tagline: 'Posts daily. You don't have to.',
+    tagline: "Posts daily. You don't have to.",
     personality: 'Drafting LinkedIn posts between espresso shots.',
     experience: [
       'Researches your audience and competitors',

@@ -1,14 +1,17 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+}
 
 // Register or update a VPS instance for a user
 export async function POST(request: Request) {
   try {
+    const supabase = getSupabaseClient()
     const { tunnel_url, vps_name, vps_ip, specs } = await request.json()
 
     if (!tunnel_url || !vps_name) {
@@ -18,7 +21,6 @@ export async function POST(request: Request) {
       )
     }
 
-    // Get user from auth header
     const authHeader = request.headers.get('authorization')
     if (!authHeader) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -31,7 +33,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // Upsert VPS instance (tunnel_url is unique per installation)
     const { data, error } = await supabase
       .from('vps_instances')
       .upsert({
@@ -49,12 +50,9 @@ export async function POST(request: Request) {
       .single()
 
     if (error) {
-      // Table might not exist yet — fall back to profiles
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .update({
-          updated_at: new Date().toISOString(),
-        })
+        .update({ updated_at: new Date().toISOString() })
         .eq('id', user.id)
         .select('id')
         .single()
@@ -83,9 +81,9 @@ export async function POST(request: Request) {
   }
 }
 
-// Get all VPS instances for the authenticated user
 export async function GET(request: Request) {
   try {
+    const supabase = getSupabaseClient()
     const authHeader = request.headers.get('authorization')
     if (!authHeader) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

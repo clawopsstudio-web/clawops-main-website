@@ -2,8 +2,6 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import catalogData from '@/data/skills-catalog.json'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 // GET: List user's installed skills
 export async function GET(request: Request) {
@@ -14,7 +12,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'user_id is required' }, { status: 400 })
   }
 
-  const supabase = createClient(supabaseUrl, supabaseAnonKey)
+  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
 
   const { data: userSkills, error } = await supabase
     .from('user_skills')

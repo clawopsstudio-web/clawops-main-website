@@ -1,15 +1,17 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-// Heartbeat is a server-to-server call from the VPS — use service role key to bypass RLS
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+function getSupabaseAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+}
 
 // Heartbeat — VPS calls this every minute to update its status
 export async function POST(request: Request) {
   try {
+    const supabase = getSupabaseAdmin()
     const { tunnel_url, status, openclaw_version, agent_count, specs } = await request.json()
 
     if (!tunnel_url) {
@@ -32,7 +34,6 @@ export async function POST(request: Request) {
 
     if (error || !data) {
       console.error('[heartbeat] error:', error)
-      // Return 200 so the VPS keeps retrying even if this VPS isn't in the DB yet
       return NextResponse.json({ ok: false, error: error?.message }, { status: 200 })
     }
 
