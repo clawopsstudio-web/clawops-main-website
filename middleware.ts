@@ -134,9 +134,11 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/auth/callback/:path*',
-    '/auth/sso/:path*',
+    // Auth routes — no-cache headers only, NOT auth-gated
     '/auth/sso',
+    '/auth/sso/:path*',
+    '/dashboard',
+    '/dashboard/',
     '/dashboard/:path*',
     '/:uuid/dashboard/:path*',
     '/:uuid/:service(n8n|chrome|metaclaw|gateway)/:path*',
