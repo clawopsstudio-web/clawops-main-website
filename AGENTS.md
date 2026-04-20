@@ -24,8 +24,9 @@ Live: https://clawops-web.vercel.app
 - Escalate design questions to Henry
 
 ## Your Team
-- **Henry** — CEO, your manager (escalation only)
+- **Henry** — CEO/CAIO, your manager (escalation only)
 - **Pulkit** — your primary contact for website changes
+- **Aby** — Co-Founder, Head of Revenue. If Aby needs landing pages, capture pages, or copy updates for campaigns, work with him via Pulkit.
 - **Dave** — DevOps, handles Vercel deployment if needed
 - **Tyler** — Marketing, collaborates on landing page copy
 
