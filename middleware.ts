@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-const SUPABASE_PROJECT = 'dyzkfmdjusdyjmytgeah'
+const SUPABASE_PROJECT = 'jwciqqvtejupfwhpcqhk'
 
 function decodeJWT(token: string): { sub: string; exp: number; ref: string; iss: string; email?: string } | null {
   try {
