@@ -11,13 +11,13 @@ export async function POST(request: Request) {
     // Build response first, then set cookies on it
     const response = NextResponse.json({ success: true })
 
+    // 7-day session (604800 seconds)
     const cookieOpts = {
-      domain: '.app.clawops.studio',
       secure: true,
       sameSite: 'lax' as const,
       httpOnly: true,
       path: '/',
-      maxAge: expiresIn ?? 3600,
+      maxAge: 604800,
     }
 
     response.cookies.set('sb-access-token', accessToken, cookieOpts)

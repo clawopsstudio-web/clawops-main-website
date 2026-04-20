@@ -1,91 +1,160 @@
-import Navbar from "@/components/ui/Navbar";
-import Footer from "@/components/sections/Footer";
+# Terms of Service — ClawOps Studio
 
-export default function TermsPage() {
-  return (
-    <>
-      <Navbar />
-      <main className="min-h-screen bg-[#04040c] pt-32 pb-20">
-        <div className="mx-auto max-w-3xl px-6">
-          <h1 className="text-3xl font-bold text-white mb-2">Terms of Service</h1>
-          <p className="text-sm text-[rgba(255,255,255,0.4)] mb-8">Last updated: April 8, 2026</p>
+**Last Updated:** 2026-04-20
 
-          <div className="space-y-8 text-sm leading-7 text-[rgba(255,255,255,0.6)]">
-            <section>
-              <h2 className="text-lg font-semibold text-white mb-3">1. Acceptance of Terms</h2>
-              <p>By accessing or using ClawOps Studio (&ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;) services, you agree to be bound by these Terms of Service. If you do not agree, do not use our services.</p>
-            </section>
+---
 
-            <section>
-              <h2 className="text-lg font-semibold text-white mb-3">2. Services Description</h2>
-              <p>ClawOps provides AI worker deployment services, including preconfigured automation agents, managed infrastructure, and integration tools. Services are provided on a subscription basis as described at <a href="/pricing" className="text-[#00D4FF] hover:underline">/pricing</a>.</p>
-            </section>
+## 1. ACCEPTANCE OF TERMS
 
-            <section>
-              <h2 className="text-lg font-semibold text-white mb-3">3. Subscriptions and Billing</h2>
-              <ul className="list-disc pl-5 space-y-2">
-                <li>Subscriptions auto-renew monthly or annually unless cancelled.</li>
-                <li>Cancellations take effect at the end of the current billing period.</li>
-                <li>Refunds are evaluated case-by-case within 7 days of charge.</li>
-                <li>Plan upgrades take effect immediately; downgrades take effect at next billing cycle.</li>
-              </ul>
-            </section>
+By accessing or using ClawOps Studio ("Service"), you ("User," "you," or "your") agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, do not access or use the Service.
 
-            <section>
-              <h2 className="text-lg font-semibold text-white mb-3">4. Acceptable Use</h2>
-              <p>You agree not to use our services for:</p>
-              <ul className="list-disc pl-5 space-y-2 mt-2">
-                <li>Illegal activities or fraud</li>
-                <li>Spam, harassment, or mass unsolicited communications</li>
-                <li>Activities that infringe on third-party intellectual property</li>
-                <li>Attempting to compromise, exploit, or reverse-engineer our infrastructure</li>
-              </ul>
-            </section>
+ClawOps Studio ("we," "us," or "our") reserves the right to modify these Terms at any time. Continued use of the Service constitutes acceptance of modified Terms.
 
-            <section>
-              <h2 className="text-lg font-semibold text-white mb-3">5. Data and Privacy</h2>
-              <p>Your use of our services is also governed by our <a href="/legal/privacy" className="text-[#00D4FF] hover:underline">Privacy Policy</a>. You retain ownership of all data you submit. We process your data solely to deliver our services.</p>
-            </section>
+---
 
-            <section>
-              <h2 className="text-lg font-semibold text-white mb-3">6. Uptime and Availability</h2>
-              <p>Pro and Agency plans include a 99.9% uptime SLA. If uptime falls below this threshold in any calendar month, affected customers will receive a prorated service credit. SLA credits are the sole remedy for uptime failures.</p>
-            </section>
+## 2. DESCRIPTION OF SERVICE
 
-            <section>
-              <h2 className="text-lg font-semibold text-white mb-3">7. Third-Party Services</h2>
-              <p>Our services integrate with third-party platforms (Telegram, WhatsApp, Supabase, Contabo, Anthropic, OpenAI, etc.). We are not responsible for the availability, accuracy, or policies of third-party services.</p>
-            </section>
+ClawOps Studio provides an AI agent platform ("Agentic OS") enabling users to deploy, configure, and manage AI agents ("Agents") that perform tasks including but not limited to: sales outreach, marketing automation, research, customer support, and business operations.
 
-            <section>
-              <h2 className="text-lg font-semibold text-white mb-3">8. Limitation of Liability</h2>
-              <p>To the maximum extent permitted by law, ClawOps Studio shall not be liable for indirect, incidental, special, consequential, or punitive damages, including lost profits, data loss, or business interruption arising from use of our services.</p>
-            </section>
+The Service includes:
+- Access to AI agents (Ryan, Tyler, Arjun, Scout, Closer, Helena, Marcus, Maya, Scheduler, and others)
+- Integration with third-party tools via API connections
+- Mission scheduling and automation capabilities
+- Dashboard and reporting tools
 
-            <section>
-              <h2 className="text-lg font-semibold text-white mb-3">9. Intellectual Property</h2>
-              <p>ClawOps Studio and its original content, features, and design are proprietary. You may not copy, reproduce, or redistribute our proprietary technology without written consent.</p>
-            </section>
+---
 
-            <section>
-              <h2 className="text-lg font-semibold text-white mb-3">10. Termination</h2>
-              <p>We may suspend or terminate services at our discretion for violations of these terms. You may cancel your subscription at any time via your dashboard or by emailing hello@clawops.studio.</p>
-            </section>
+## 3. ELIGIBILITY
 
-            <section>
-              <h2 className="text-lg font-semibold text-white mb-3">11. Changes to Terms</h2>
-              <p>We may update these terms periodically. Continued use after changes constitutes acceptance of the new terms. Material changes will be communicated via email.</p>
-            </section>
+You must be at least 18 years old and have the legal capacity to enter into contracts. By using the Service, you represent and warrant that you meet these requirements.
 
-            <section>
-              <h2 className="text-lg font-semibold text-white mb-3">12. Contact</h2>
-              <p>Questions about these terms? Email <a href="mailto:hello@clawops.studio" className="text-[#00D4FF] hover:underline">hello@clawops.studio</a></p>
-            </section>
-          </div>
-        </div>
-      </main>
-      <Footer />
-    </>
-  );
-}
-export const dynamic = 'force-dynamic';
+---
+
+## 4. ACCOUNT REGISTRATION
+
+4.1. You must provide accurate, current, and complete information during registration.
+4.2. You are responsible for maintaining the confidentiality of your account credentials.
+4.3. You agree to notify us immediately of any unauthorized access.
+4.4. One account per person or business entity.
+
+---
+
+## 5. ACCEPTABLE USE
+
+You agree NOT to use the Service to:
+- Violate any applicable law or regulation
+- Infringe intellectual property rights
+- Send spam, phishing, or unsolicited communications
+- Generate harmful, offensive, or illegal content
+- Circumvent security measures
+- Resell the Service without authorization
+- Use the Service for fraudulent purposes
+- Violate the rights of third parties
+
+We reserve the right to suspend or terminate accounts violating these Terms.
+
+---
+
+## 6. PAYMENT AND BILLING
+
+6.1. Fees are billed monthly in advance.
+6.2. All fees are non-refundable except as required by law.
+6.3. You authorize automatic billing on your selected billing cycle.
+6.4. We reserve the right to change pricing with 30 days notice.
+6.5. Failed payments may result in service suspension.
+
+---
+
+## 7. AI AGENT BEHAVIOR
+
+7.1. AI agents act on your behalf based on your configured missions and instructions.
+7.2. You are responsible for reviewing and approving agent outputs.
+7.3. You are responsible for ensuring agent actions comply with applicable laws.
+7.4. We are not responsible for actions taken by AI agents operating per your configuration.
+7.5. AI agents may generate content that is inaccurate — review all outputs before use.
+
+---
+
+## 8. THIRD-PARTY INTEGRATIONS
+
+8.1. The Service connects to third-party tools (Gmail, Notion, HubSpot, etc.) via API connections you authorize.
+8.2. You authorize these integrations at your own risk.
+8.3. Third-party services are governed by their own terms and privacy policies.
+8.4. We are not responsible for third-party service availability or errors.
+
+---
+
+## 9. INTELLECTUAL PROPERTY
+
+9.1. ClawOps Studio and its design, trademarks, and content are our property.
+9.2. You retain ownership of content you provide to the Service.
+9.3. Agent configurations and mission templates you create are your property.
+9.4. We may use anonymized, aggregated data for Service improvement.
+
+---
+
+## 10. CONFIDENTIALITY
+
+10.1. We maintain confidentiality of your business data processed by our Service.
+10.2. Your data is processed in accordance with our Privacy Policy.
+10.3. We implement industry-standard security measures.
+
+---
+
+## 11. DISCLAIMER OF WARRANTIES
+
+THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED. WE DO NOT GUARANTEE:
+- Uninterrupted or error-free operation
+- Specific results from agent actions
+- Accuracy of AI-generated content
+- Third-party service availability
+
+---
+
+## 12. LIMITATION OF LIABILITY
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, CLAWOPS STUDIO SHALL NOT BE LIABLE FOR:
+- Indirect, incidental, special, or consequential damages
+- Loss of profits, data, or business opportunities
+- Actions taken by AI agents per your configuration
+- Third-party service failures
+- Damages exceeding fees paid in the prior 12 months
+
+---
+
+## 13. INDEMNIFICATION
+
+You agree to indemnify and hold harmless ClawOps Studio from claims arising from:
+- Your use of the Service
+- Violation of these Terms
+- Your agent configurations
+- Misuse of third-party integrations
+
+---
+
+## 14. TERMINATION
+
+14.1. You may terminate your account at any time via dashboard or by contacting support.
+14.2. We may terminate accounts violating these Terms with notice.
+14.3. Upon termination, access to the Service ceases immediately.
+14.4. Data deletion: see our Privacy Policy for retention timelines.
+
+---
+
+## 15. GOVERNING LAW
+
+These Terms are governed by applicable laws. Disputes shall be resolved through binding arbitration.
+
+---
+
+## 16. CONTACT
+
+For questions about these Terms, contact:
+- Email: legal@clawops.studio
+- Address: ClawOps Studio
+
+---
+
+## 17. CHANGES TO TERMS
+
+We update these Terms periodically. Material changes will be communicated via email or dashboard notification. Continued use constitutes acceptance.

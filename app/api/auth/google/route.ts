@@ -1,69 +1,74 @@
 import { NextResponse } from 'next/server'
 
-// PKCE OAuth flow: browser -> our server -> Supabase -> Google
-// We handle PKCE generation server-side, browser only talks to our domain + Google
-// Browser NEVER directly reaches Supabase (only Supabase's OAuth server via Google redirect)
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://dyzkfmdjusdyjmytgeah.supabase.co'
+const ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+const APP_URL = 'https://app.clawops.studio'
+const CLIENT_ID = '537927390913-jlnn289abd2kant0eg3kvu30677usfh7.apps.googleusercontent.com'
 
-function generateCodeVerifier(): string {
-  const array = new Uint8Array(32)
+// PKCE helpers
+function base64urlEncode(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer)
+  let str = ''
+  for (const b of bytes) str += String.fromCharCode(b)
+  return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+}
+
+function generateRandomString(length: number): string {
+  const array = new Uint8Array(length)
   crypto.getRandomValues(array)
-  return btoa(String.fromCharCode.apply(null, Array.from(array)))
-    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+  return base64urlEncode(array.buffer as ArrayBuffer)
 }
 
 async function generateCodeChallenge(verifier: string): Promise<string> {
   const encoder = new TextEncoder()
   const data = encoder.encode(verifier)
   const digest = await crypto.subtle.digest('SHA-256', data)
-  return btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(digest))))
-    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+  return base64urlEncode(digest as ArrayBuffer)
 }
 
-function generateState(): string {
-  // Supabase validates state as UUID v4 — must be proper UUID format
-  const bytes = new Uint8Array(16)
-  crypto.getRandomValues(bytes)
-  bytes[6] = (bytes[6] & 0x0f) | 0x40  // UUID version 4
-  bytes[8] = (bytes[8] & 0x3f) | 0x80  // UUID variant
-  const hex = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('')
-  return hex.slice(0,8) + '-' + hex.slice(8,12) + '-' + hex.slice(12,16) + '-' + hex.slice(16,20) + '-' + hex.slice(20)
-}
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const error = searchParams.get('error')
 
-export async function GET() {
-  const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://dyzkfmdjusdyjmytgeah.supabase.co'
-  // IMPORTANT: This must match the URL Supabase redirects to AFTER it processes Google's callback
-  // We want Supabase to redirect to our /api/auth/callback route
-  const REDIRECT_TO = encodeURIComponent('https://app.clawops.studio/api/auth/callback')
-  const CODE_VERIFIER = generateCodeVerifier()
-  const CODE_CHALLENGE = await generateCodeChallenge(CODE_VERIFIER)
-  const STATE = generateState()
+  if (error) {
+    return NextResponse.redirect(
+      `${APP_URL}/auth/login?error=${encodeURIComponent(error)}`
+    )
+  }
 
-  const authorizeUrl = SUPABASE_URL + '/auth/v1/authorize?' + [
-    'provider=google',
-    'redirect_to=' + REDIRECT_TO,
-    'code_challenge=' + CODE_CHALLENGE,
-    'code_challenge_method=S256',
-    'state=' + STATE,
-  ].join('&')
+  // Generate PKCE + state
+  const state = generateRandomString(32)
+  const codeVerifier = generateRandomString(64)
+  const codeChallenge = await generateCodeChallenge(codeVerifier)
 
-  console.log('Initiating PKCE OAuth flow')
-  console.log('Redirect to:', REDIRECT_TO)
+  // Build Supabase OAuth URL
+  const oauthUrl = new URL(`${SUPABASE_URL}/auth/v1/authorize`)
+  oauthUrl.searchParams.set('provider', 'google')
+  oauthUrl.searchParams.set('client_id', CLIENT_ID)
+  oauthUrl.searchParams.set('redirect_to', `${APP_URL}/api/auth/callback`)
+  oauthUrl.searchParams.set('response_type', 'code')
+  oauthUrl.searchParams.set('code_challenge', codeChallenge)
+  oauthUrl.searchParams.set('code_challenge_method', 'S256')
+  oauthUrl.searchParams.set('state', state)
 
-  const response = NextResponse.redirect(authorizeUrl, 302)
-  // Store code_verifier in a short-lived cookie (no explicit domain = current host only)
-  response.cookies.set('pkce_verifier', CODE_VERIFIER, {
-    maxAge: 600,
-    path: '/api/auth/callback',
+  // Redirect to Supabase
+  const response = NextResponse.redirect(oauthUrl.toString())
+
+  // Store verifier + state in HttpOnly cookies (not accessible to JS)
+  response.cookies.set('pkce_verifier', codeVerifier, {
     httpOnly: true,
-    sameSite: 'lax',
     secure: true,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 300, // 5 minutes
   })
-  response.cookies.set('oauth_state', STATE, {
-    maxAge: 600,
-    path: '/api/auth/callback',
+  response.cookies.set('oauth_state', state, {
     httpOnly: true,
-    sameSite: 'lax',
     secure: true,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 300,
   })
+
   return response
 }

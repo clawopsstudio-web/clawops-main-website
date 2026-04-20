@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   Zap,
@@ -18,6 +18,7 @@ import {
   Bot,
   MessageSquare,
   Link2,
+  LogOut,
 } from 'lucide-react';
 
 // Extract userId from URL like /dashboard/{userId}/...
@@ -54,8 +55,17 @@ interface NavItemDef {
   serviceKey?: string;
 }
 
+async function handleLogout() {
+  try {
+    await fetch('/api/auth/logout', { method: 'POST' })
+  } finally {
+    window.location.href = '/auth/login'
+  }
+}
+
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const userId = extractUserId(pathname);
 
   // Build full nav list — inject userId into service links
@@ -183,7 +193,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
         </nav>
 
         {/* Bottom */}
-        <div className="px-2 py-3 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+        <div className="px-2 py-3 border-t space-y-1" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
           <Link
             href="/"
             className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-white/30 hover:text-white/50 hover:bg-white/5 transition-all"
@@ -191,6 +201,13 @@ export default function DashboardShell({ children }: { children: React.ReactNode
             <ChevronRight className="w-4 h-4 rotate-180" />
             Back to Site
           </Link>
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-white/30 hover:text-red-400 hover:bg-red-500/5 transition-all"
+          >
+            <LogOut className="w-4 h-4" />
+            Sign Out
+          </button>
         </div>
       </aside>
 
