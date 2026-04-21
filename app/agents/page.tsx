@@ -28,13 +28,13 @@ export default function AgentsPage() {
           THE AGENTIC OS
         </p>
         <h1
-          className="text-5xl md:text-6xl font-black text-white mb-4 leading-none"
-          style={{ fontFamily: 'var(--font-cabinet)', letterSpacing: '-0.02em' }}
+          className="text-5xl md:text-7xl font-black text-white mb-5 leading-none tracking-tight"
+          style={{ fontFamily: 'var(--font-cabinet, sans-serif)', letterSpacing: '-0.03em' }}
         >
           YOUR AGENTS
         </h1>
-        <p className="text-white/50 text-lg max-w-xl mx-auto">
-          Pick your team. They start immediately.
+        <p className="text-white/40 text-base max-w-md mx-auto">
+          Pick your team. Deploy in minutes.
         </p>
       </div>
 
