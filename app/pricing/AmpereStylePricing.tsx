@@ -4,20 +4,18 @@ import { useRouter } from 'next/navigation'
 
 const PLANS = [
   {
-    name: 'Starter',
+    name: 'Personal',
     price: 49,
-    description: 'Your first AI worker. Perfect for solopreneurs and side projects.',
+    description: 'Your first AI agent. Everything included.',
     highlight: false,
     features: [
-      '2 vCPU, 4GB RAM, 50GB SSD NVMe',
-      '1 AI Agent Workspace',
-      'Gemma 4 2B (local, free)',
-      'Chrome Browser Automation',
-      'Playwright Integration',
-      'Telegram Integration',
-      '5 Automations/month',
-      'Email Support',
-      '30-day Chat History'
+      '1 AI Agent',
+      'Gmail, Notion, Slack',
+      '500+ app integrations',
+      'Headless browser automation',
+      '5 automations/month',
+      'Community support',
+      '30-day history'
     ],
     savings: '$2,400/year',
     painPoints: [
@@ -27,50 +25,64 @@ const PLANS = [
     ]
   },
   {
-    name: 'Pro',
-    price: 99,
-    description: 'Full AI team. For growing businesses that need more.',
-    highlight: true,
+    name: 'Team',
+    price: 149,
+    description: 'Full AI team. For growing businesses.',
+    highlight: false,
     features: [
-      '4 vCPU, 8GB RAM, 100GB SSD NVMe',
-      '3 AI Agent Workspaces',
-      'Gemma 4 2B + 7B (upgradeable)',
-      'Chrome + WhatsApp Integration',
-      'Automations (unlimited)',
-      'Web Scraping',
-      'Task Automation',
-      'Priority Support (4h)',
-      '60-day Chat History'
+      '5 AI Agents',
+      'All integrations included',
+      'Headless browser + CLIAnything',
+      'Unlimited automations',
+      'Priority support (4h)',
+      '60-day history'
     ],
     savings: '$36,000/year',
     painPoints: [
-      '5+ employees worth of work for one monthly fee',
+      '5 employees worth of work for one monthly fee',
       'Respond 24/7 - never miss a lead or opportunity',
-      'All tools included - no more $200/month subscriptions'
+      'All tools included - no $200/month subscriptions'
     ]
   },
   {
     name: 'Business',
-    price: 149,
-    description: 'Unlimited scale. For agencies and serious operations.',
-    highlight: false,
+    price: 299,
+    description: 'Claude API key included. For agencies and serious ops.',
+    highlight: true,
     features: [
-      '6 vCPU, 12GB RAM, 200GB SSD NVMe',
-      'Unlimited AI Agent Workspaces',
-      'Any local model (custom)',
-      'All messaging platforms',
-      'All pre-configured tools',
-      'API Access',
-      'Dedicated Support (1h)',
-      'Go High Level Integration',
-      'Custom Workflows',
-      'Slack + Discord Integration'
+      '20 AI Agents',
+      'Claude API key included',
+      'All integrations',
+      'White-label ready',
+      'Dedicated support (1h)',
+      'Custom domains',
+      '90-day history'
     ],
     savings: '$54,000/year',
     painPoints: [
       'Scale to unlimited clients with one subscription',
       'Multi-agent capability for your team',
-      'Your own VPS infrastructure with dedicated resources'
+      'Claude API key included - no setup needed'
+    ]
+  },
+  {
+    name: 'Enterprise',
+    price: 349,
+    description: 'Same as Business, 20x agent capacity.',
+    highlight: false,
+    features: [
+      'Unlimited AI Agents',
+      'Everything in Business',
+      'Unlimited automations',
+      'Custom SLA',
+      'Dedicated account manager',
+      'On-premise option'
+    ],
+    savings: '$100,000+/year',
+    painPoints: [
+      '20x agent capacity vs Business',
+      'Everything Business has, plus unlimited',
+      'Custom enterprise needs? Talk to us.'
     ]
   }
 ]

@@ -44,10 +44,10 @@ export default function Navigation() {
             Sign in
           </a>
           <a
-            href="/auth/signup"
+            href="/start?plan=personal"
             className="px-4 py-2 bg-[#e8ff47] text-[#0a0a0a] font-semibold text-sm rounded-xl hover:bg-[#e8ff47]/90 transition-colors"
           >
-            Start free →
+            Start for $49 →
           </a>
 
           {/* Mobile menu button */}

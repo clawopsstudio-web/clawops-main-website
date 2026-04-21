@@ -261,7 +261,7 @@ export default function HeroNew() {
                 transition={{ duration: 0.6 }}
                 className="inline-flex items-center gap-2 mx-auto md:mx-0 bg-[rgba(0,212,255,0.08)] border border-[rgba(0,212,255,0.2)] text-[#e8ff47] px-4 py-1.5 rounded-full text-xs font-medium mb-8">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
-                Autonomous AI agents. Working while you sleep.
+                AGENTIC OS — EARLY ACCESS
               </motion.div>
 
               <motion.h1
@@ -273,8 +273,8 @@ export default function HeroNew() {
               >
                 <span className="text-white">The Agentic OS.</span>
                 <br />
-                <span className="bg-gradient-to-r from-[#e8ff47] via-[#9966FF] to-[#e8ff47] bg-clip-text text-transparent">
-                  Pick your AI workforce.
+                <span className="bg-gradient-to-r from-[#e8ff47] to-[#d4eb3a] bg-clip-text text-transparent">
+                  Your AI workforce runs on.
                 </span>
               </motion.h1>
 
@@ -284,9 +284,9 @@ export default function HeroNew() {
                 style={{ y: subtextY }}
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="text-lg md:text-xl text-[rgba(255,255,255,0.5)] mb-10 max-w-xl leading-relaxed">
-                Pick your AI agents.{" "}
-                <span className="text-white">Sales, marketing, research, support — starting at $29/mo.</span>
-                {" "}They work 24/7 while you handle the decisions.
+                Deploy a team of AI agents that handle
+                sales, marketing, research, and ops —
+                autonomously, 24/7. No code. No hiring.
               </motion.p>
 
               <motion.div
@@ -295,14 +295,14 @@ export default function HeroNew() {
                 style={{ y: ctaY }}
                 transition={{ duration: 0.6, delay: 0.3 }}
                 className="flex flex-wrap gap-4 mb-12">
-                <Link href="/roles"
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-[#e8ff47] to-[#e8ff47] hover:opacity-90 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(0,212,255,0.3)] active:scale-[0.98] text-white font-semibold px-8 py-4 rounded-xl transition-all text-base">
-                  Browse agents
+                <Link href="/start?plan=personal"
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-[#e8ff47] to-[#d4eb3a] hover:opacity-90 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(0,212,255,0.3)] active:scale-[0.98] text-white font-semibold px-8 py-4 rounded-xl transition-all text-base">
+                  Start for $49
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m-7-7l7 7-7-7" />
                   </svg>
                 </Link>
-                <Link href="/how-it-works"
+                <Link href="#how-it-works"
                   className="inline-flex items-center gap-2 bg-[rgba(255,255,255,0.06)] hover:bg-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] active:scale-[0.98] border border-[rgba(255,255,255,0.1)] text-white font-medium px-8 py-4 rounded-xl transition-all text-base">
                   See how it works
                 </Link>

@@ -90,7 +90,7 @@ export default function Navbar() {
               Log In
             </Link>
             <Link
-              href="/auth/signup"
+              href="/start?plan=personal"
               className="rounded-lg px-4 py-2 text-sm font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgba(0,212,255,0.35)]"
               style={{
                 background: "linear-gradient(135deg, #e8ff47, #e8ff47)",
