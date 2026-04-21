@@ -1,13 +1,27 @@
 import AgentCards from '../components/AgentCard'
+import Navigation from '../components/Navigation'
+import Footer from '../../components/sections/Footer'
 
 export const metadata = {
   title: 'AI Agents — ClawOps Studio',
   description: 'Browse and recruit AI agents for your team. Sales, Marketing, Research, Support, Finance, Engineering — each built to work autonomously.',
+  openGraph: {
+    title: 'AI Agents — ClawOps Studio',
+    description: 'Browse and recruit AI agents for your team. Sales, Marketing, Research, Support, Finance, Engineering — each built to work autonomously.',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'AI Agents — ClawOps Studio',
+    description: 'Browse and recruit AI agents for your team.',
+  },
 }
 
 export default function AgentsPage() {
   return (
-    <main className="min-h-screen bg-[#0a0a0a]">
+    <>
+      <Navigation />
+      <main className="pt-16">
       {/* Header */}
       <div className="pt-32 pb-16 px-6 text-center">
         <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(232,255,71,0.6)] mb-4">
@@ -28,6 +42,8 @@ export default function AgentsPage() {
       <div className="pb-24 px-6 max-w-7xl mx-auto">
         <AgentCards />
       </div>
-    </main>
+      </main>
+      <Footer />
+    </>
   )
 }

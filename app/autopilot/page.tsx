@@ -1,11 +1,23 @@
+import Navigation from '../components/Navigation'
+import Footer from '../../components/sections/Footer'
+
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Autopilot — ClawOps Studio',
   description: 'Set the goal. Go to sleep. Your AI team executes while you rest.',
+  openGraph: {
+    title: 'Autopilot — ClawOps Studio',
+    description: 'Set the goal. Go to sleep. Your AI team executes while you rest.',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Autopilot — ClawOps Studio',
+    description: 'Set the goal. Go to sleep. Your AI team executes while you rest.',
+  },
 }
-
 const FEATURES = [
   {
     title: 'Define the mission',
@@ -83,6 +95,8 @@ const MISSIONS = [
 
 export default function AutopilotPage() {
   return (
+      <>
+      <Navigation />
     <main className="min-h-screen bg-[#0a0a0a] text-white">
       {/* Hero */}
       <div className="relative pt-32 pb-24 px-6 text-center overflow-hidden">
@@ -212,5 +226,7 @@ export default function AutopilotPage() {
         </div>
       </div>
     </main>
+      <Footer />
+      </>
   )
 }
