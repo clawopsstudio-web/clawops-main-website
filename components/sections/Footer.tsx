@@ -1,16 +1,14 @@
 "use client";
 
 const productLinks = [
-  { label: "The OS", href: "/#capabilities" },
-  { label: "How It Works", href: "/how-it-works" },
-  { label: "Use Cases", href: "/use-cases" },
-  { label: "Integrations", href: "/integrations" },
+  { label: "Agents", href: "/agents" },
+  { label: "Autopilot", href: "/autopilot" },
   { label: "Pricing", href: "/pricing" },
 ];
 
 const companyLinks = [
-  { label: "About", href: "/company" },
-  { label: "Contact", href: "/company#contact" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export default function Footer() {
@@ -40,7 +38,7 @@ export default function Footer() {
               The Agentic OS for your business. Deploy AI agent teams that work 24/7 — with 5,400+ skills &amp; plugins included.
             </p>
             <p className="text-[rgba(255,255,255,0.2)] text-[10px] font-mono mt-3">
-              Powered by ClawOps's multi-agent runtime
+              ClawOps — The Agentic OS
             </p>
             <div className="flex items-center gap-3 mt-6">
               {["Twitter/X", "LinkedIn"].map((label) => (
@@ -86,9 +84,9 @@ export default function Footer() {
             <h4 className="text-white font-semibold text-sm mb-4">Legal</h4>
             <ul className="space-y-3">
               {[
-                { label: "Privacy Policy", href: "/legal/privacy" },
-                { label: "Terms of Service", href: "/legal/terms" },
-                { label: "Cookie Policy", href: "/legal/cookie" },
+                { label: "Privacy Policy", href: "/privacy-policy" },
+                { label: "Terms of Service", href: "/terms-of-service" },
+                { label: "Cookie Policy", href: "/cookie-policy" },
               ].map((item) => (
                 <li key={item.label}>
                   <a href={item.href} className="text-[rgba(255,255,255,0.4)] hover:text-white text-sm transition-colors">
