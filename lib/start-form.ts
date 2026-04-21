@@ -1,8 +1,12 @@
 // Types for the /start onboarding form
 
 export interface StartFormData {
+  // Meta
+  _step?: number
+
   // Step 1: Profile
   full_name: string
+  email: string
   business_name: string
   website_url: string
   industry: string
@@ -25,7 +29,9 @@ export interface StartFormData {
 }
 
 export const defaultFormData: StartFormData = {
+  _step: 1,
   full_name: '',
+  email: '',
   business_name: '',
   website_url: '',
   industry: '',

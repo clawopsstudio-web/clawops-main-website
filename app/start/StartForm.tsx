@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useUser } from '@clerk/nextjs'
 import { AnimatePresence, motion } from 'framer-motion'
 import StepIndicator from '@/components/onboarding/start/StepIndicator'
 import Step1Profile from '@/components/onboarding/start/Step1Profile'
@@ -11,21 +12,88 @@ import Step4Identity from '@/components/onboarding/start/Step4Identity'
 import Step5Confirm from '@/components/onboarding/start/Step5Confirm'
 import { StartFormData, defaultFormData, STEPS } from '@/lib/start-form'
 
+// Persist form data across sign-in redirect
+const STORAGE_KEY = 'clawops_start_form_data'
+const STEP_KEY = 'clawops_start_step'
+
+function saveFormData(data: StartFormData) {
+  if (typeof window !== 'undefined') {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+    sessionStorage.setItem(STEP_KEY, String(data._step || 1))
+  }
+}
+
+function loadFormData(): StartFormData | null {
+  if (typeof window !== 'undefined') {
+    try {
+      const saved = sessionStorage.getItem(STORAGE_KEY)
+      if (saved) return JSON.parse(saved)
+    } catch { /* ignore */ }
+  }
+  return null
+}
+
+function clearFormData() {
+  if (typeof window !== 'undefined') {
+    sessionStorage.removeItem(STORAGE_KEY)
+    sessionStorage.removeItem(STEP_KEY)
+  }
+}
+
 export default function StartForm() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const { user, isSignedIn, isLoaded } = useUser()
+
   const [step, setStep] = useState(1)
   const [data, setData] = useState<StartFormData>(defaultFormData)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
-  const router = useRouter()
+
+  // Restore form data + step from session storage on mount
+  useEffect(() => {
+    const saved = loadFormData()
+    if (saved) {
+      setData(prev => ({ ...prev, ...saved }))
+      setStep(saved._step || 1)
+    }
+    // Check if returning from sign-in with step=4 param
+    const returnedStep = searchParams.get('step')
+    if (returnedStep === '4' && isSignedIn) {
+      setStep(4)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Save form data + step to session storage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ ...data, _step: step }))
+    }
+  }, [data, step])
+
+  // Pre-fill user info when signed in
+  useEffect(() => {
+    if (isSignedIn && user) {
+      setData(prev => ({
+        ...prev,
+        full_name: prev.full_name || user.fullName || user.firstName || '',
+        email: prev.email || (user.primaryEmailAddress?.emailAddress ?? ''),
+      }))
+    }
+  }, [isSignedIn, user])
 
   const updateData = (updates: Partial<StartFormData>) => {
-    setData(prev => ({ ...prev, ...updates }))
+    setData(prev => {
+      const next = { ...prev, ...updates }
+      saveFormData({ ...next, _step: step })
+      return next
+    })
   }
 
   const canProceed = () => {
     if (step === 1) return data.full_name && data.business_name && data.industry && data.business_description
     if (step === 2) return data.goals.length > 0
-    if (step === 3) return true // tools optional
+    if (step === 3) return true
     if (step === 4) return data.agent_name && data.plan
     return true
   }
@@ -36,6 +104,15 @@ export default function StartForm() {
       return
     }
     setError('')
+
+    if (step === 3) {
+      if (!isSignedIn) {
+        // Redirect to sign-in, which will return to /start?step=4
+        router.push('/auth/login?redirect_url=/start?step=4')
+        return
+      }
+    }
+
     setStep(s => Math.min(s + 1, 5))
   }
 
@@ -45,20 +122,21 @@ export default function StartForm() {
   }
 
   const handleSubmit = async () => {
+    if (!isSignedIn) {
+      router.push('/auth/login?redirect_url=/start?step=5')
+      return
+    }
     setIsSubmitting(true)
     setError('')
     try {
       const res = await fetch('/api/start/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, user_id: user?.id }),
       })
       const result = await res.json()
-      if (!res.ok) {
-        throw new Error(result.error || 'Submission failed')
-      }
-      // TODO: Replace with Stripe redirect
-      // router.push(`/start/success?id=${result.id}`)
+      if (!res.ok) throw new Error(result.error || 'Submission failed')
+      clearFormData()
       router.push(`/start/success?id=${result.id}`)
     } catch (err: any) {
       setError(err.message || 'Something went wrong. Please try again.')
@@ -76,7 +154,21 @@ export default function StartForm() {
           <a href="/" className="text-lg font-bold tracking-tight">
             Claw<span className="text-[#e8ff47]">Ops</span>
           </a>
-          <span className="text-xs text-[#666]">Step {step} of {STEPS.length}</span>
+          <div className="flex items-center gap-3">
+            {isSignedIn ? (
+              <span className="text-xs text-[#666]">
+                {user?.primaryEmailAddress?.emailAddress}
+              </span>
+            ) : (
+              <button
+                onClick={() => router.push('/auth/login')}
+                className="text-xs text-[#e8ff47] hover:underline"
+              >
+                Sign in
+              </button>
+            )}
+            <span className="text-xs text-[#666]">Step {step} of {STEPS.length}</span>
+          </div>
         </div>
       </div>
 
@@ -139,7 +231,9 @@ export default function StartForm() {
                 disabled={!canProceed()}
                 className="bg-[#e8ff47] hover:bg-[#d4eb3a] disabled:opacity-40 disabled:cursor-not-allowed text-black font-bold px-8 py-3 rounded-xl transition-colors"
               >
-                {step === 4 ? 'Review →' : 'Continue →'}
+                {step === 3
+                  ? isSignedIn ? 'Continue →' : 'Sign in to continue →'
+                  : step === 4 ? 'Review →' : 'Continue →'}
               </button>
             </div>
           )}

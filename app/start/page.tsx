@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import StartForm from './StartForm'
 
 export const metadata: Metadata = {
@@ -7,5 +8,13 @@ export const metadata: Metadata = {
 }
 
 export default function StartPage() {
-  return <StartForm />
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+        <div className="text-[#666] text-sm">Loading...</div>
+      </div>
+    }>
+      <StartForm />
+    </Suspense>
+  )
 }

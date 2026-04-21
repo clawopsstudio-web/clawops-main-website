@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
       agent_name,
       agent_tone,
       plan,
+      user_id,
     } = body
 
     // Basic validation
@@ -45,6 +46,7 @@ export async function POST(req: NextRequest) {
         website_url: website_url || null,
         industry,
         business_description: business_description || null,
+        user_id: user_id || null,
         goals: goals || [],
         tools_crm: tools_crm || [],
         tools_email: tools_email || [],
