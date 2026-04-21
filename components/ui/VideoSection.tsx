@@ -8,7 +8,7 @@ export default function VideoSection() {
   const [playing, setPlaying] = useState(false)
 
   return (
-    <section className="relative py-16 md:py-24 px-6 lg:px-12" style={{ background: 'linear-gradient(180deg, #04040c 0%, #08081a 50%, #0a0a1a 100%)' }}>
+    <section className="relative py-16 md:py-24 px-6 lg:px-12" style={{ background: 'linear-gradient(180deg, #0a0a0a 0%, #08081a 50%, #0a0a1a 100%)' }}>
       {/* Subtle glow behind video */}
       <div className="absolute inset-0 pointer-events-none" style={{
         background: 'radial-gradient(ellipse 60% 40% at 50% 50%, rgba(0,212,255,0.04) 0%, transparent 70%)',
@@ -69,7 +69,7 @@ export default function VideoSection() {
 
                   {/* Play button circle */}
                   <div className="relative w-20 h-20 rounded-full bg-[rgba(0,212,255,0.15)] border border-[rgba(0,212,255,0.3)] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <div className="w-14 h-14 rounded-full bg-[#00D4FF] flex items-center justify-center shadow-lg shadow-[#00D4FF]/30">
+                    <div className="w-14 h-14 rounded-full bg-[#e8ff47] flex items-center justify-center shadow-lg shadow-[#e8ff47]/30">
                       <svg className="w-5 h-5 text-[#06060f] ml-0.5" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M8 5v14l11-7z"/>
                       </svg>
@@ -78,7 +78,7 @@ export default function VideoSection() {
                 </button>
 
                 {/* Badge */}
-                <div className="absolute bottom-4 left-4 bg-[rgba(0,212,255,0.1)] border border-[rgba(0,212,255,0.25)] text-[#00D4FF] text-xs px-3 py-1 rounded-full backdrop-blur-sm font-medium">
+                <div className="absolute bottom-4 left-4 bg-[rgba(0,212,255,0.1)] border border-[rgba(0,212,255,0.25)] text-[#e8ff47] text-xs px-3 py-1 rounded-full backdrop-blur-sm font-medium">
                   12-second demo
                 </div>
               </>

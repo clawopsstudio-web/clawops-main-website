@@ -148,7 +148,7 @@ export default function AIDepartments() {
     <section
       ref={sectionRef}
       id="ai-departments"
-      className="relative overflow-hidden bg-[#04040c] px-6 pt-16 pb-20 md:pt-20 md:pb-28"
+      className="relative overflow-hidden bg-[#0a0a0a] px-6 pt-16 pb-20 md:pt-20 md:pb-28"
     >
       {/* Top gradient divider */}
       <div
@@ -191,10 +191,10 @@ export default function AIDepartments() {
                 initial={{ opacity: 0, y: 32 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.55, delay: index * 0.12, ease: "easeOut" }}
-                className="group rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[#00D4FF]"
+                className="group rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[#e8ff47]"
               >
                 <div className="mb-6 flex items-start justify-between gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[rgba(0,212,255,0.2)] bg-[rgba(0,212,255,0.08)] text-[#00D4FF]">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[rgba(0,212,255,0.2)] bg-[rgba(0,212,255,0.08)] text-[#e8ff47]">
                     <Icon className="h-6 w-6" />
                   </div>
                   <span className="rounded-full bg-[rgba(0,212,255,0.12)] px-2 py-1 text-xs font-medium tracking-[0.08em] text-[#8cecff]">
@@ -217,7 +217,7 @@ export default function AIDepartments() {
                       key={bullet}
                       className="flex items-start gap-3 text-sm leading-6 text-[rgba(255,255,255,0.5)]"
                     >
-                      <span className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#00D4FF]" />
+                      <span className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#e8ff47]" />
                       <span>{bullet}</span>
                     </li>
                   ))}

@@ -144,7 +144,7 @@ function InstallModal({ skill, onClose }: { skill: Skill; onClose: () => void })
               {hasConfig && (
                 <button
                   onClick={() => setStep('config')}
-                  className="w-full bg-[#00D4FF] hover:bg-[#00b8e6] text-black font-semibold py-2.5 rounded-lg transition-colors"
+                  className="w-full bg-[#e8ff47] hover:bg-[#d4eb3a] text-black font-semibold py-2.5 rounded-lg transition-colors"
                 >
                   Configure →
                 </button>
@@ -173,7 +173,7 @@ function InstallModal({ skill, onClose }: { skill: Skill; onClose: () => void })
                       value={configValues[field.name] || ''}
                       onChange={e => setConfigValues(v => ({ ...v, [field.name]: e.target.value }))}
                       placeholder={`Enter ${field.label.toLowerCase()}`}
-                      className="w-full bg-[#0f0f1a] border border-[#2d2d44] rounded-lg px-3 py-2 text-sm text-gray-200 focus:border-[#00D4FF] focus:outline-none"
+                      className="w-full bg-[#0f0f1a] border border-[#2d2d44] rounded-lg px-3 py-2 text-sm text-gray-200 focus:border-[#e8ff47] focus:outline-none"
                     />
                   ) : (
                     <input
@@ -181,7 +181,7 @@ function InstallModal({ skill, onClose }: { skill: Skill; onClose: () => void })
                       value={configValues[field.name] || ''}
                       onChange={e => setConfigValues(v => ({ ...v, [field.name]: e.target.value }))}
                       placeholder={`Enter ${field.label.toLowerCase()}`}
-                      className="w-full bg-[#0f0f1a] border border-[#2d2d44] rounded-lg px-3 py-2 text-sm text-gray-200 focus:border-[#00D4FF] focus:outline-none"
+                      className="w-full bg-[#0f0f1a] border border-[#2d2d44] rounded-lg px-3 py-2 text-sm text-gray-200 focus:border-[#e8ff47] focus:outline-none"
                     />
                   )}
                 </div>
@@ -218,7 +218,7 @@ function InstallModal({ skill, onClose }: { skill: Skill; onClose: () => void })
               </p>
               <button
                 onClick={onClose}
-                className="bg-[#00D4FF] hover:bg-[#00b8e6] text-black font-semibold px-8 py-2.5 rounded-lg transition-colors"
+                className="bg-[#e8ff47] hover:bg-[#d4eb3a] text-black font-semibold px-8 py-2.5 rounded-lg transition-colors"
               >
                 Done
               </button>
@@ -244,7 +244,7 @@ function SkillCard({ skill, isInstalled, onInstall }: {
     <div className={`rounded-xl border transition-all hover:scale-[1.01] ${
       isInstalled
         ? 'bg-[#0a1a0f] border-emerald-500/40'
-        : 'bg-[#1a1a2e] border-[#2d2d44] hover:border-[#00D4FF]/50'
+        : 'bg-[#1a1a2e] border-[#2d2d44] hover:border-[#e8ff47]/50'
     }`}>
       {/* Top row */}
       <div className="p-5">
@@ -255,7 +255,7 @@ function SkillCard({ skill, isInstalled, onInstall }: {
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold text-white">{skill.name}</h3>
                 {skill.featured && (
-                  <span className="text-[10px] bg-[#00D4FF]/20 text-[#00D4FF] px-1.5 py-0.5 rounded font-medium">
+                  <span className="text-[10px] bg-[#e8ff47]/20 text-[#e8ff47] px-1.5 py-0.5 rounded font-medium">
                     Featured
                   </span>
                 )}
@@ -285,7 +285,7 @@ function SkillCard({ skill, isInstalled, onInstall }: {
 
         {/* Tools */}
         <div className="bg-[#0f0f1a] rounded-lg p-2.5 mb-4">
-          <p className="text-[10px] text-[#00D4FF] mb-1.5 uppercase tracking-wider">Capabilities</p>
+          <p className="text-[10px] text-[#e8ff47] mb-1.5 uppercase tracking-wider">Capabilities</p>
           <div className="flex flex-wrap gap-1">
             {skill.tools.slice(0, 4).map(t => (
               <span key={t} className="text-[10px] text-gray-400 bg-[#1a1a2e] px-1.5 py-0.5 rounded">
@@ -308,7 +308,7 @@ function SkillCard({ skill, isInstalled, onInstall }: {
         ) : (
           <button
             onClick={() => onInstall(skill)}
-            className="w-full bg-[#2d2d44] hover:bg-[#00D4FF] hover:text-black text-gray-300 font-medium py-2.5 rounded-lg transition-colors text-sm"
+            className="w-full bg-[#2d2d44] hover:bg-[#e8ff47] hover:text-black text-gray-300 font-medium py-2.5 rounded-lg transition-colors text-sm"
           >
             Install Skill
           </button>
@@ -391,7 +391,7 @@ export default function SkillsLibrary() {
             onClick={() => setActiveTab(tab.key as any)}
             className={`px-5 py-2 rounded-lg text-sm font-medium transition-colors ${
               activeTab === tab.key
-                ? 'bg-[#00D4FF] text-black'
+                ? 'bg-[#e8ff47] text-black'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
@@ -412,7 +412,7 @@ export default function SkillsLibrary() {
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Search skills..."
-                className="w-full bg-[#1a1a2e] border border-[#2d2d44] rounded-lg pl-9 pr-4 py-2.5 text-sm text-gray-200 placeholder-gray-600 focus:border-[#00D4FF] focus:outline-none"
+                className="w-full bg-[#1a1a2e] border border-[#2d2d44] rounded-lg pl-9 pr-4 py-2.5 text-sm text-gray-200 placeholder-gray-600 focus:border-[#e8ff47] focus:outline-none"
               />
             </div>
 
@@ -420,7 +420,7 @@ export default function SkillsLibrary() {
             <select
               value={filterCategory}
               onChange={e => setFilterCategory(e.target.value)}
-              className="bg-[#1a1a2e] border border-[#2d2d44] rounded-lg px-3 py-2.5 text-sm text-gray-300 focus:border-[#00D4FF] focus:outline-none cursor-pointer"
+              className="bg-[#1a1a2e] border border-[#2d2d44] rounded-lg px-3 py-2.5 text-sm text-gray-300 focus:border-[#e8ff47] focus:outline-none cursor-pointer"
             >
               <option value="all">All Categories</option>
               {categories.map(c => (
@@ -432,7 +432,7 @@ export default function SkillsLibrary() {
             <select
               value={filterPlatform}
               onChange={e => setFilterPlatform(e.target.value)}
-              className="bg-[#1a1a2e] border border-[#2d2d44] rounded-lg px-3 py-2.5 text-sm text-gray-300 focus:border-[#00D4FF] focus:outline-none cursor-pointer"
+              className="bg-[#1a1a2e] border border-[#2d2d44] rounded-lg px-3 py-2.5 text-sm text-gray-300 focus:border-[#e8ff47] focus:outline-none cursor-pointer"
             >
               <option value="all">All Platforms</option>
               {allPlatforms.map(p => <option key={p} value={p}>{p}</option>)}
@@ -452,7 +452,7 @@ export default function SkillsLibrary() {
               <p className="text-gray-400">No skills match your filters.</p>
               <button
                 onClick={() => { setSearch(''); setFilterCategory('all'); setFilterPlatform('all') }}
-                className="mt-3 text-[#00D4FF] text-sm hover:underline"
+                className="mt-3 text-[#e8ff47] text-sm hover:underline"
               >
                 Clear filters
               </button>
@@ -506,7 +506,7 @@ export default function SkillsLibrary() {
               <p className="text-gray-600 text-sm">Browse the library and install skills to get started.</p>
               <button
                 onClick={() => setActiveTab('browse')}
-                className="mt-4 bg-[#00D4FF] text-black font-medium px-6 py-2.5 rounded-lg hover:bg-[#00b8e6] transition-colors"
+                className="mt-4 bg-[#e8ff47] text-black font-medium px-6 py-2.5 rounded-lg hover:bg-[#d4eb3a] transition-colors"
               >
                 Browse Skills
               </button>

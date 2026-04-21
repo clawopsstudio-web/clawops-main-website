@@ -7,7 +7,7 @@ export const metadata = {
 
 export default function RolesPage() {
   return (
-    <main className="min-h-screen bg-[#04040c]">
+    <main className="min-h-screen bg-[#0a0a0a]">
       {/* Header */}
       <div className="pt-32 pb-16 px-6 text-center">
         <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(255,255,255,0.4)] mb-4">

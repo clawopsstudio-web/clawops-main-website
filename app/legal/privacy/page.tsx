@@ -6,7 +6,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-[#04040c] py-16 px-6">
+    <div className="min-h-screen bg-[#0a0a0a] py-16 px-6">
       <div className="max-w-3xl mx-auto">
         <h1 className="text-4xl font-bold text-white mb-2">Privacy Policy</h1>
         <p className="text-white/40 text-sm mb-8">ClawOps Studio &mdash; Last Updated: 2026-04-20</p>

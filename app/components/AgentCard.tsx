@@ -8,7 +8,7 @@ const AGENTS = [
     name: 'Ryan',
     role: 'Sales Rep',
     department: 'Sales',
-    departmentColor: '#00D4FF',
+    departmentColor: '#e8ff47',
     tagline: 'Books meetings you never could.',
     personality: 'Cold-calling at 7am before the coffee kicks in.',
     experience: [
@@ -27,7 +27,7 @@ const AGENTS = [
     name: 'Tyler',
     role: 'Marketing Agent',
     department: 'Marketing',
-    departmentColor: '#6600FF',
+    departmentColor: '#e8ff47',
     tagline: "Posts daily. You don't have to.",
     personality: 'Drafting LinkedIn posts between espresso shots.',
     experience: [
@@ -140,7 +140,7 @@ export default function AgentCards() {
             onClick={() => setActiveTab(dept)}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
               activeTab === dept 
-                ? 'bg-[#00D4FF] text-[#04040c]' 
+                ? 'bg-[#e8ff47] text-[#0a0a0a]' 
                 : 'bg-white/5 text-white/60 hover:bg-white/10'
             }`}
           >
@@ -221,7 +221,7 @@ function AgentCard({ agent, onRecruit }: { agent: typeof AGENTS[0]; onRecruit: (
         whileHover={{ opacity: 1 }}
         className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm"
       >
-        <span className="px-6 py-3 bg-[#00D4FF] text-[#04040c] font-semibold rounded-xl">
+        <span className="px-6 py-3 bg-[#e8ff47] text-[#0a0a0a] font-semibold rounded-xl">
           RECRUIT
         </span>
       </motion.button>
@@ -277,7 +277,7 @@ function AgentSheet({ agent, onClose }: { agent: typeof AGENTS[0]; onClose: () =
             <ol className="space-y-3">
               {agent.experience.map((step, i) => (
                 <li key={i} className="flex items-start gap-3">
-                  <span className="w-6 h-6 rounded-full bg-[#00D4FF]/20 text-[#00D4FF] text-xs flex items-center justify-center shrink-0 mt-0.5">
+                  <span className="w-6 h-6 rounded-full bg-[#e8ff47]/20 text-[#e8ff47] text-xs flex items-center justify-center shrink-0 mt-0.5">
                     {i + 1}
                   </span>
                   <span className="text-white/80">{step}</span>
@@ -292,7 +292,7 @@ function AgentSheet({ agent, onClose }: { agent: typeof AGENTS[0]; onClose: () =
             <ul className="space-y-2">
               {agent.problems.map((p, i) => (
                 <li key={i} className="flex items-center gap-2 text-white/70">
-                  <span className="w-1.5 h-1.5 bg-[#00D4FF] rounded-full" />
+                  <span className="w-1.5 h-1.5 bg-[#e8ff47] rounded-full" />
                   {p}
                 </li>
               ))}
@@ -322,14 +322,14 @@ function AgentSheet({ agent, onClose }: { agent: typeof AGENTS[0]; onClose: () =
             <button className="flex-1 py-3 bg-white/10 text-white rounded-xl hover:bg-white/15 transition-colors">
               Available now
             </button>
-            <button className="flex-1 py-3 bg-[#00D4FF] text-[#04040c] font-semibold rounded-xl hover:bg-[#00D4FF]/90 transition-colors">
+            <button className="flex-1 py-3 bg-[#e8ff47] text-[#0a0a0a] font-semibold rounded-xl hover:bg-[#e8ff47]/90 transition-colors">
               Recruit
             </button>
           </div>
 
           {/* Onboarding */}
-          <div className="p-4 rounded-xl bg-[#00D4FF]/5 border border-[#00D4FF]/20">
-            <h4 className="text-sm font-semibold text-[#00D4FF] mb-3">How onboarding works</h4>
+          <div className="p-4 rounded-xl bg-[#e8ff47]/5 border border-[#e8ff47]/20">
+            <h4 className="text-sm font-semibold text-[#e8ff47] mb-3">How onboarding works</h4>
             <div className="grid grid-cols-3 gap-4 text-center">
               {[
                 { step: '1', label: 'Connect channel' },
@@ -337,7 +337,7 @@ function AgentSheet({ agent, onClose }: { agent: typeof AGENTS[0]; onClose: () =
                 { step: '3', label: 'Starts working' },
               ].map(s => (
                 <div key={s.step}>
-                  <div className="w-8 h-8 rounded-full bg-[#00D4FF] text-[#04040c] font-bold text-sm flex items-center justify-center mx-auto mb-2">
+                  <div className="w-8 h-8 rounded-full bg-[#e8ff47] text-[#0a0a0a] font-bold text-sm flex items-center justify-center mx-auto mb-2">
                     {s.step}
                   </div>
                   <p className="text-xs text-white/50">{s.label}</p>

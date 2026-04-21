@@ -92,7 +92,7 @@ export default function RootLayout({
             dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
           />
         </head>
-        <body className="bg-[#04040c] text-white antialiased overflow-x-hidden">
+        <body className="bg-[#0a0a0a] text-white antialiased overflow-x-hidden">
           <GlobalStarField />
           <SmoothScroll>
             <AuthProvider>{children}</AuthProvider>

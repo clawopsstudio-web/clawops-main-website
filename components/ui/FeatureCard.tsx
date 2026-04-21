@@ -56,7 +56,7 @@ export default function FeatureCard({ icon, title, description, delay = 0 }: Fea
         {/* Glow on hover */}
         <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
           style={{
-            background: "radial-gradient(ellipse at 50% 0%, rgba(0, 212, 255, 0.08) 0%, transparent 70%)",
+            background: "radial-gradient(ellipse at 50% 0%, rgba(232, 255, 71, 0.08) 0%, transparent 70%)",
           }}
         />
 

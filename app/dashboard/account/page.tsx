@@ -58,8 +58,8 @@ export default function AccountPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#04040c] flex items-center justify-center">
-        <div className="w-5 h-5 rounded-full border-2 border-[#00D4FF] border-t-transparent animate-spin" />
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+        <div className="w-5 h-5 rounded-full border-2 border-[#e8ff47] border-t-transparent animate-spin" />
       </div>
     )
   }
@@ -80,7 +80,7 @@ export default function AccountPage() {
         {/* Avatar & Email */}
         <div className="rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] p-6">
           <h2 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-            <User className="w-4 h-4 text-[#00D4FF]" />
+            <User className="w-4 h-4 text-[#e8ff47]" />
             Profile
           </h2>
 
@@ -88,7 +88,7 @@ export default function AccountPage() {
             {avatarUrl ? (
               <img src={avatarUrl} alt="Avatar" className="w-16 h-16 rounded-full" />
             ) : (
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#00D4FF] to-[#6600FF] flex items-center justify-center text-xl font-bold text-white">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#e8ff47] to-[#e8ff47] flex items-center justify-center text-xl font-bold text-white">
                 {initials}
               </div>
             )}
@@ -106,7 +106,7 @@ export default function AccountPage() {
                 type="text"
                 value={form.full_name}
                 onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))}
-                className="w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.05)] px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-[#00D4FF]/50 transition-colors"
+                className="w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.05)] px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-[#e8ff47]/50 transition-colors"
                 placeholder="Your full name"
               />
             </div>
@@ -116,7 +116,7 @@ export default function AccountPage() {
                 type="text"
                 value={form.company}
                 onChange={e => setForm(f => ({ ...f, company: e.target.value }))}
-                className="w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.05)] px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-[#00D4FF]/50 transition-colors"
+                className="w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.05)] px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-[#e8ff47]/50 transition-colors"
                 placeholder="Your company name"
               />
             </div>
@@ -131,7 +131,7 @@ export default function AccountPage() {
               onClick={handleSave}
               disabled={saving}
               className="rounded-lg px-5 py-2 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 disabled:opacity-50"
-              style={{ background: 'linear-gradient(135deg, #00D4FF, #6600FF)' }}
+              style={{ background: 'linear-gradient(135deg, #e8ff47, #e8ff47)' }}
             >
               {saving ? 'Saving...' : 'Save Profile'}
             </button>
@@ -141,7 +141,7 @@ export default function AccountPage() {
         {/* Account Info */}
         <div className="rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] p-6">
           <h2 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-            <Shield className="w-4 h-4 text-[#00D4FF]" />
+            <Shield className="w-4 h-4 text-[#e8ff47]" />
             Account Info
           </h2>
           <div className="space-y-3">
@@ -171,14 +171,14 @@ export default function AccountPage() {
         {/* VPS Connection */}
         <div className="rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] p-6">
           <h2 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-            <Key className="w-4 h-4 text-[#00D4FF]" />
+            <Key className="w-4 h-4 text-[#e8ff47]" />
             VPS Connection
           </h2>
           <p className="text-sm text-white/40 mb-3">
             Your VPS is connected via Cloudflare Tunnel. The tunnel URL is:
           </p>
           <div className="rounded-lg bg-black/30 px-4 py-3 border border-[rgba(255,255,255,0.06)]">
-            <code className="text-xs text-[#00D4FF] break-all">
+            <code className="text-xs text-[#e8ff47] break-all">
               https://episode-curves-challenges-griffin.trycloudflare.com
             </code>
           </div>

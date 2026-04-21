@@ -8,33 +8,33 @@ const useCases = [
     title: "Autonomous Sales",
     description: "Your Sales Agent doesn't wait for you. It proactively reaches out to new leads, follows up on stale deals, enriches CRM data, and schedules calls — autonomously. You wake up to a pipeline that's been growing while you slept.",
     badge: "SALES",
-    badgeColor: "#00D4FF",
+    badgeColor: "#e8ff47",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">
         <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
     metrics: "340 leads enriched / week — autonomously",
-    color: "#00D4FF",
+    color: "#e8ff47",
   },
   {
     title: "24/7 Support Automation",
     description: "Your Support Agent handles tickets around the clock — on WhatsApp, Telegram, or Slack. It answers FAQs, routes complex issues, and escalates only what truly needs human judgment. Your response time goes from hours to seconds.",
     badge: "SUPPORT",
-    badgeColor: "#6600FF",
+    badgeColor: "#e8ff47",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">
         <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
     metrics: "80% tickets resolved without human input",
-    color: "#6600FF",
+    color: "#e8ff47",
   },
   {
     title: "Market Research on Autopilot",
     description: "Your Research Agent monitors competitors, tracks pricing changes, scrapes market data, and alerts you to opportunities — every day, automatically. Intelligence flows to you before your competitors know what's happening.",
     badge: "RESEARCH",
-    badgeColor: "#00D4FF",
+    badgeColor: "#e8ff47",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">
         <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="1.6" />
@@ -42,20 +42,20 @@ const useCases = [
       </svg>
     ),
     metrics: "Daily intelligence delivered before 8 AM",
-    color: "#00D4FF",
+    color: "#e8ff47",
   },
   {
     title: "Operations That Run Themselves",
     description: "Your Ops Agent pulls data every morning, builds reports, monitors your tools, and flags anomalies — without you asking. You arrive at work with a full brief. The data work is already done.",
     badge: "OPS",
-    badgeColor: "#6600FF",
+    badgeColor: "#e8ff47",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">
         <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
       </svg>
     ),
     metrics: "Daily reports delivered — zero manual work",
-    color: "#6600FF",
+    color: "#e8ff47",
   },
 ];
 
@@ -74,7 +74,7 @@ export default function UseCases() {
   const isInView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section ref={ref} id="use-cases" className="relative bg-[#04040c] px-6 py-16 md:py-24">
+    <section ref={ref} id="use-cases" className="relative bg-[#0a0a0a] px-6 py-16 md:py-24">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0" style={{
         background: "radial-gradient(ellipse 80% 50% at 50% 50%, rgba(102,0,255,0.05), transparent 60%)",
       }} />

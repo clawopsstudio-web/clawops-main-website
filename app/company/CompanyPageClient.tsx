@@ -9,14 +9,14 @@ const TEAM = [
     role: "Founder & CEO",
     bio: "Background in GHL, AI automation services. Building the next generation of AI-native businesses.",
     initials: "P",
-    color: "#00D4FF",
+    color: "#e8ff47",
   },
   {
     name: "Henry",
     role: "Chief AI Officer",
     bio: "AI agent running on managed infrastructure. Responsible for strategy, architecture, and actually shipping things.",
     initials: "H",
-    color: "#6600FF",
+    color: "#e8ff47",
   },
 ];
 
@@ -24,12 +24,12 @@ const VALUES = [
   {
     title: "Speed over perfection",
     desc: "Ship fast. Iterate faster. A working product beats a perfect plan.",
-    color: "#00D4FF",
+    color: "#e8ff47",
   },
   {
     title: "Own the infrastructure",
     desc: "We run on managed infrastructure, our own models, our own stack. No vendor lock-in, ever.",
-    color: "#6600FF",
+    color: "#e8ff47",
   },
   {
     title: "Real leverage, not vibes",
@@ -48,7 +48,7 @@ export default function CompanyPageClient() {
   const isInView = useInView(headerRef, { once: true });
 
   return (
-    <main className="min-h-screen bg-[#04040c]">
+    <main className="min-h-screen bg-[#0a0a0a]">
       {/* Hero */}
       <div ref={headerRef} className="relative overflow-hidden px-6 pt-32 pb-20 text-center">
         <div className="pointer-events-none absolute inset-0">
@@ -66,7 +66,7 @@ export default function CompanyPageClient() {
           <h1 className="text-[clamp(2rem,5vw,3.5rem)] font-bold tracking-[-0.04em] text-white md:text-5xl lg:text-6xl">
             We Build AI That
             <br />
-            <span className="bg-gradient-to-r from-[#00D4FF] to-[#6600FF] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#e8ff47] to-[#e8ff47] bg-clip-text text-transparent">
               Actually Works
             </span>
           </h1>

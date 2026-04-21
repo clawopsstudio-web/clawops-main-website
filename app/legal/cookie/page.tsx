@@ -5,7 +5,7 @@ export default function CookiePage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-[#04040c] pt-32 pb-20">
+      <main className="min-h-screen bg-[#0a0a0a] pt-32 pb-20">
         <div className="mx-auto max-w-3xl px-6">
           <h1 className="text-3xl font-bold text-white mb-2">Cookie Policy</h1>
           <p className="text-sm text-[rgba(255,255,255,0.4)] mb-8">Last updated: April 8, 2026</p>
@@ -41,10 +41,10 @@ export default function CookiePage() {
               <h2 className="text-lg font-semibold text-white mb-3">Managing Cookies</h2>
               <p>You can manage or delete cookies through your browser settings. Note that disabling essential cookies will prevent you from logging into your account.</p>
               <ul className="list-disc pl-5 space-y-2 mt-2">
-                <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer" className="text-[#00D4FF] hover:underline">Chrome</a></li>
-                <li><a href="https://support.mozilla.org/en-US/kb/cookies-information-websites-store-on-your-computer" target="_blank" rel="noopener noreferrer" className="text-[#00D4FF] hover:underline">Firefox</a></li>
-                <li><a href="https://support.apple.com/guide/safari/sfri11471/mac" target="_blank" rel="noopener noreferrer" className="text-[#00D4FF] hover:underline">Safari</a></li>
-                <li><a href="https://support.microsoft.com/en-us/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener noreferrer" className="text-[#00D4FF] hover:underline">Edge</a></li>
+                <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer" className="text-[#e8ff47] hover:underline">Chrome</a></li>
+                <li><a href="https://support.mozilla.org/en-US/kb/cookies-information-websites-store-on-your-computer" target="_blank" rel="noopener noreferrer" className="text-[#e8ff47] hover:underline">Firefox</a></li>
+                <li><a href="https://support.apple.com/guide/safari/sfri11471/mac" target="_blank" rel="noopener noreferrer" className="text-[#e8ff47] hover:underline">Safari</a></li>
+                <li><a href="https://support.microsoft.com/en-us/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener noreferrer" className="text-[#e8ff47] hover:underline">Edge</a></li>
               </ul>
             </section>
 
@@ -65,7 +65,7 @@ export default function CookiePage() {
 
             <section>
               <h2 className="text-lg font-semibold text-white mb-3">Contact</h2>
-              <p>Questions? Email <a href="mailto:privacy@clawops.studio" className="text-[#00D4FF] hover:underline">privacy@clawops.studio</a></p>
+              <p>Questions? Email <a href="mailto:privacy@clawops.studio" className="text-[#e8ff47] hover:underline">privacy@clawops.studio</a></p>
             </section>
           </div>
         </div>

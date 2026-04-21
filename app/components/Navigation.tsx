@@ -15,12 +15,12 @@ export default function Navigation() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#04040c]/80 backdrop-blur-md border-b border-white/10">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-white/10">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
         <a href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-[#00D4FF] flex items-center justify-center">
-            <span className="text-[#04040c] font-bold text-sm">CO</span>
+          <div className="w-8 h-8 rounded-lg bg-[#e8ff47] flex items-center justify-center">
+            <span className="text-[#0a0a0a] font-bold text-sm">CO</span>
           </div>
           <span className="text-white font-bold text-lg">ClawOps</span>
         </a>
@@ -45,7 +45,7 @@ export default function Navigation() {
           </a>
           <a
             href="/auth/signup"
-            className="px-4 py-2 bg-[#00D4FF] text-[#04040c] font-semibold text-sm rounded-xl hover:bg-[#00D4FF]/90 transition-colors"
+            className="px-4 py-2 bg-[#e8ff47] text-[#0a0a0a] font-semibold text-sm rounded-xl hover:bg-[#e8ff47]/90 transition-colors"
           >
             Start free →
           </a>
@@ -67,7 +67,7 @@ export default function Navigation() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-white/10 bg-[#04040c]/95 px-6 pb-4 space-y-3"
+            className="md:hidden border-t border-white/10 bg-[#0a0a0a]/95 px-6 pb-4 space-y-3"
           >
             {NAV_LINKS.map(link => (
               <a

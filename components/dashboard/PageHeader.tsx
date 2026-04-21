@@ -20,7 +20,7 @@ export default function PageHeader({
   description,
   actions,
   badge,
-  badgeColor = 'bg-[#00D4FF]/10 text-[#00D4FF] border-[#00D4FF]/20',
+  badgeColor = 'bg-[#e8ff47]/10 text-[#e8ff47] border-[#e8ff47]/20',
 }: PageHeaderProps) {
   return (
     <div className="flex items-start justify-between gap-4 mb-6">

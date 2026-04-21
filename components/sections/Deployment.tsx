@@ -56,7 +56,7 @@ export default function Deployment() {
     <section
       ref={ref}
       id="deployment"
-      className="relative overflow-hidden bg-[#04040c] px-6 py-16 md:py-20"
+      className="relative overflow-hidden bg-[#0a0a0a] px-6 py-16 md:py-20"
     >
       {/* Top gradient divider */}
       <div
@@ -127,7 +127,7 @@ export default function Deployment() {
         >
           {/* Header */}
           <div className="flex items-center justify-center gap-3 mb-6">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(0,212,255,0.1)] border border-[rgba(0,212,255,0.2)] text-[#00D4FF]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(0,212,255,0.1)] border border-[rgba(0,212,255,0.2)] text-[#e8ff47]">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="h-5 w-5" aria-hidden="true">
                 <rect x="3" y="4" width="18" height="16" rx="2"/>
                 <path d="M3 9h18"/>

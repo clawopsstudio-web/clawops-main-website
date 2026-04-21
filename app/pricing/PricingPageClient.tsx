@@ -11,7 +11,7 @@ const PLANS = [
     originalPrice: 79,
     tagline: "Your first AI worker. Everything included.",
     highlight: false,
-    color: "#00D4FF",
+    color: "#e8ff47",
     specs: {
       vcpus: "2 vCPU",
       ram: "4 GB",
@@ -43,7 +43,7 @@ const PLANS = [
     originalPrice: 149,
     tagline: "Full AI team. Real leverage.",
     highlight: true,
-    color: "#6600FF",
+    color: "#e8ff47",
     specs: {
       vcpus: "4 vCPU",
       ram: "8 GB",
@@ -77,7 +77,7 @@ const PLANS = [
     originalPrice: 249,
     tagline: "Unlimited scale. White-label ready.",
     highlight: false,
-    color: "#00D4FF",
+    color: "#e8ff47",
     specs: {
       vcpus: "6 vCPU",
       ram: "12 GB",
@@ -163,7 +163,7 @@ export default function PricingPageClient() {
   const inView = useInView(ref, { once: true });
 
   return (
-    <div className="min-h-screen bg-[#04040c] text-white">
+    <div className="min-h-screen bg-[#0a0a0a] text-white">
       {/* Hero */}
       <div className="relative py-24 px-6 text-center overflow-hidden">
         <div className="absolute inset-0 opacity-30">
@@ -171,12 +171,12 @@ export default function PricingPageClient() {
         </div>
         <div className="relative z-10 max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[rgba(0,212,255,0.2)] bg-[rgba(0,212,255,0.06)] mb-6">
-            <span className="text-xs font-mono text-[#00D4FF]">Simple, transparent pricing</span>
+            <span className="text-xs font-mono text-[#e8ff47]">Simple, transparent pricing</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             The cost of not automating
             <br />
-            <span className="bg-gradient-to-r from-[#00D4FF] to-[#6600FF] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#e8ff47] to-[#e8ff47] bg-clip-text text-transparent">
               is higher than this.
             </span>
           </h1>
@@ -189,12 +189,12 @@ export default function PricingPageClient() {
             <span className={`text-sm ${!annual ? "text-white" : "text-white/40"}`}>Monthly</span>
             <button
               onClick={() => setAnnual(!annual)}
-              className={`relative w-14 h-7 rounded-full transition-colors ${annual ? "bg-[#6600FF]" : "bg-white/10"}`}
+              className={`relative w-14 h-7 rounded-full transition-colors ${annual ? "bg-[#e8ff47]" : "bg-white/10"}`}
             >
               <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-transform ${annual ? "translate-x-8" : "translate-x-1"}`} />
             </button>
             <span className={`text-sm ${annual ? "text-white" : "text-white/40"}`}>
-              Annual <span className="text-[#00D4FF] text-xs font-bold">(-40%)</span>
+              Annual <span className="text-[#e8ff47] text-xs font-bold">(-40%)</span>
             </span>
           </div>
         </div>
@@ -211,12 +211,12 @@ export default function PricingPageClient() {
               transition={{ delay: i * 0.1 }}
               className={`relative rounded-2xl border overflow-hidden ${
                 plan.highlight
-                  ? "border-[#6600FF] bg-[rgba(102,0,255,0.06)]"
+                  ? "border-[#e8ff47] bg-[rgba(102,0,255,0.06)]"
                   : "border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)]"
               }`}
             >
               {plan.highlight && (
-                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-[#6600FF] to-[#00D4FF]" />
+                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-[#e8ff47] to-[#e8ff47]" />
               )}
 
               <div className="p-6">
@@ -227,7 +227,7 @@ export default function PricingPageClient() {
                     <p className="text-sm text-white/50 mt-1">{plan.tagline}</p>
                   </div>
                   {plan.highlight && (
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#6600FF] text-white">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#e8ff47] text-white">
                       POPULAR
                     </span>
                   )}
@@ -252,7 +252,7 @@ export default function PricingPageClient() {
                   <div className="grid grid-cols-2 gap-2">
                     {Object.entries(plan.specs).map(([key, value]) => (
                       <div key={key} className="flex items-center gap-2">
-                        <span className="text-[#00D4FF] text-xs">{value}</span>
+                        <span className="text-[#e8ff47] text-xs">{value}</span>
                         <span className="text-white/30 text-[10px] capitalize">{key}</span>
                       </div>
                     ))}
@@ -293,7 +293,7 @@ export default function PricingPageClient() {
                 <button
                   className={`w-full py-3 rounded-xl font-semibold text-sm transition-all hover:-translate-y-0.5 ${
                     plan.highlight
-                      ? "bg-gradient-to-r from-[#6600FF] to-[#00D4FF] text-white shadow-lg shadow-purple-500/20"
+                      ? "bg-gradient-to-r from-[#e8ff47] to-[#e8ff47] text-white shadow-lg shadow-purple-500/20"
                       : "border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] text-white/80"
                   }`}
                 >
@@ -314,14 +314,14 @@ export default function PricingPageClient() {
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 className="font-semibold mb-2 text-[#00D4FF]">AI Agents</h3>
+              <h3 className="font-semibold mb-2 text-[#e8ff47]">AI Agents</h3>
               <p className="text-sm text-white/50">
                 Handles complex reasoning, multi-step tasks, web browsing, code execution, and conversations.
                 Your AI brain — understands context, makes decisions, adapts.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold mb-2 text-[#6600FF]">Automations</h3>
+              <h3 className="font-semibold mb-2 text-[#e8ff47]">Automations</h3>
               <p className="text-sm text-white/50">
                 Handles repetitive, high-volume tasks — syncing data, sending emails, updating spreadsheets,
                 triggering webhooks. Zero AI tokens wasted on boring work.
@@ -343,7 +343,7 @@ export default function PricingPageClient() {
               <tr className="border-b border-[rgba(255,255,255,0.06)]">
                 <th className="text-left p-4 text-white/40 text-sm font-medium">Feature</th>
                 <th className="text-center p-4 text-sm font-medium">Starter</th>
-                <th className="text-center p-4 text-sm font-medium text-[#6600FF]">Pro</th>
+                <th className="text-center p-4 text-sm font-medium text-[#e8ff47]">Pro</th>
                 <th className="text-center p-4 text-sm font-medium">Business</th>
               </tr>
             </thead>
@@ -408,7 +408,7 @@ export default function PricingPageClient() {
           <a
             href="mailto:hello@clawops.studio"
             className="inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-0.5"
-            style={{ background: "linear-gradient(135deg, #00D4FF, #6600FF)" }}
+            style={{ background: "linear-gradient(135deg, #e8ff47, #e8ff47)" }}
           >
             Book a Free Strategy Call
           </a>

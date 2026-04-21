@@ -142,7 +142,7 @@ export default function InstancesPage() {
           <button
             onClick={() => setAddMode(!addMode)}
             className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-white transition-all hover:-translate-y-0.5"
-            style={{ background: 'linear-gradient(135deg, #00D4FF, #6600FF)' }}
+            style={{ background: 'linear-gradient(135deg, #e8ff47, #e8ff47)' }}
           >
             <Plus className="w-4 h-4" />
             Add Instance
@@ -156,7 +156,7 @@ export default function InstancesPage() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="rounded-xl border border-[#00D4FF]/20 bg-[rgba(0,212,255,0.05)] p-6 mb-6"
+            className="rounded-xl border border-[#e8ff47]/20 bg-[rgba(0,212,255,0.05)] p-6 mb-6"
           >
             <h3 className="text-sm font-semibold text-white mb-4">Add New VPS Instance</h3>
             <div className="space-y-3 max-w-xl">
@@ -167,7 +167,7 @@ export default function InstancesPage() {
                   value={newName}
                   onChange={e => setNewName(e.target.value)}
                   placeholder="e.g. Production VPS — Mumbai"
-                  className="w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.05)] px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-[#00D4FF]/50 transition-colors"
+                  className="w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.05)] px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-[#e8ff47]/50 transition-colors"
                 />
               </div>
               <div>
@@ -177,7 +177,7 @@ export default function InstancesPage() {
                   value={newUrl}
                   onChange={e => setNewUrl(e.target.value)}
                   placeholder="https://your-vps.trycloudflare.com"
-                  className="w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.05)] px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-[#00D4FF]/50 transition-colors font-mono"
+                  className="w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.05)] px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-[#e8ff47]/50 transition-colors font-mono"
                 />
               </div>
               {message && <p className="text-xs text-yellow-400">{message}</p>}
@@ -186,7 +186,7 @@ export default function InstancesPage() {
                   onClick={handleAddInstance}
                   disabled={adding || !newUrl.trim()}
                   className="rounded-lg px-5 py-2 text-sm font-semibold text-white disabled:opacity-50 transition-all hover:-translate-y-0.5"
-                  style={{ background: 'linear-gradient(135deg, #00D4FF, #6600FF)' }}
+                  style={{ background: 'linear-gradient(135deg, #e8ff47, #e8ff47)' }}
                 >
                   {adding ? 'Checking...' : 'Add Instance'}
                 </button>
@@ -208,7 +208,7 @@ export default function InstancesPage() {
         {/* Instances List */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="w-8 h-8 rounded-full border-2 border-[#00D4FF] border-t-transparent animate-spin" />
+            <div className="w-8 h-8 rounded-full border-2 border-[#e8ff47] border-t-transparent animate-spin" />
           </div>
         ) : instances.length === 0 ? (
           <motion.div
@@ -224,7 +224,7 @@ export default function InstancesPage() {
             <button
               onClick={() => setAddMode(true)}
               className="inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5"
-              style={{ background: 'linear-gradient(135deg, #00D4FF, #6600FF)' }}
+              style={{ background: 'linear-gradient(135deg, #e8ff47, #e8ff47)' }}
             >
               <Plus className="w-4 h-4" />
               Add Your First Instance

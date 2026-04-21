@@ -83,7 +83,7 @@ function FAQRow({ item, isOpen, onToggle }: { item: FAQItem; isOpen: boolean; on
         aria-expanded={isOpen}
       >
         <span className="text-base font-medium text-white/80">{item.question}</span>
-        <span className={`flex-shrink-0 rounded-full p-1.5 transition-colors ${isOpen ? "bg-[rgba(0,212,255,0.15)] text-[#00D4FF]" : "bg-[rgba(255,255,255,0.06)] text-[rgba(255,255,255,0.4)]"}`}>
+        <span className={`flex-shrink-0 rounded-full p-1.5 transition-colors ${isOpen ? "bg-[rgba(0,212,255,0.15)] text-[#e8ff47]" : "bg-[rgba(255,255,255,0.06)] text-[rgba(255,255,255,0.4)]"}`}>
           {isOpen ? <MinusIcon /> : <PlusIcon />}
         </span>
       </button>
@@ -115,7 +115,7 @@ export default function FAQ() {
     <section
       ref={ref}
       id="faq"
-      className="relative overflow-hidden bg-[#04040c] px-6 py-20 md:py-28"
+      className="relative overflow-hidden bg-[#0a0a0a] px-6 py-20 md:py-28"
     >
       {/* Top gradient divider */}
       <div
@@ -175,7 +175,7 @@ export default function FAQ() {
             Still have questions?{" "}
             <a
               href="#cta"
-              className="text-[#00D4FF] underline underline-offset-2 hover:text-[#33DDFF] transition-colors"
+              className="text-[#e8ff47] underline underline-offset-2 hover:text-[#33DDFF] transition-colors"
             >
               Book a free strategy call
             </a>{" "}

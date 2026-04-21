@@ -94,7 +94,7 @@ export default function SSOPage() {
   if (error) {
     return (
       <div style={{
-        minHeight: '100vh', background: '#04040c', color: 'white',
+        minHeight: '100vh', background: '#0a0a0a', color: 'white',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontFamily: 'system-ui, sans-serif', padding: 20,
       }}>
@@ -112,7 +112,7 @@ export default function SSOPage() {
 
   return (
     <div style={{
-      minHeight: '100vh', background: '#04040c', color: 'white',
+      minHeight: '100vh', background: '#0a0a0a', color: 'white',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontFamily: 'system-ui, sans-serif',
     }}>
@@ -120,7 +120,7 @@ export default function SSOPage() {
         <div style={{
           width: 48, height: 48, borderRadius: '50%',
           border: '3px solid rgba(0,212,255,0.2)',
-          borderTopColor: '#00D4FF',
+          borderTopColor: '#e8ff47',
           animation: 'spin 0.8s linear infinite',
           margin: '0 auto 20px',
         }} />

@@ -13,7 +13,7 @@ export default function CTA() {
     <section
       ref={ref}
       id="cta"
-      className="relative overflow-hidden bg-[#04040c] px-6 py-16 md:py-24"
+      className="relative overflow-hidden bg-[#0a0a0a] px-6 py-16 md:py-24"
     >
       {/* Background */}
       <div className="absolute inset-0 pointer-events-none">
@@ -44,7 +44,7 @@ export default function CTA() {
             <span
               className="italic"
               style={{
-                WebkitTextStroke: "1px #00D4FF",
+                WebkitTextStroke: "1px #e8ff47",
                 color: "transparent",
               }}
             >
@@ -63,9 +63,9 @@ export default function CTA() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="#cta"
-              className="group relative px-8 py-4 rounded-xl font-bold text-[#04040c] text-sm tracking-wide transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(0,212,255,0.3)]"
+              className="group relative px-8 py-4 rounded-xl font-bold text-[#0a0a0a] text-sm tracking-wide transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(0,212,255,0.3)]"
               style={{
-                background: "linear-gradient(135deg, #00D4FF, #6600FF)",
+                background: "linear-gradient(135deg, #e8ff47, #e8ff47)",
               }}
             >
               Book a Demo — Free for 14 Days
@@ -73,7 +73,7 @@ export default function CTA() {
             </a>
             <a
               href="#pricing"
-              className="px-8 py-4 rounded-xl font-semibold text-sm border border-[rgba(255,255,255,0.16)] text-white/80 hover:border-[#00D4FF]/50 hover:text-white hover:bg-[rgba(0,212,255,0.04)] transition-all duration-300"
+              className="px-8 py-4 rounded-xl font-semibold text-sm border border-[rgba(255,255,255,0.16)] text-white/80 hover:border-[#e8ff47]/50 hover:text-white hover:bg-[rgba(0,212,255,0.04)] transition-all duration-300"
             >
               See Pricing
             </a>

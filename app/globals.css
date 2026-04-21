@@ -1,19 +1,21 @@
+@import url('https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&f[]=satoshi@400,500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #04040c;
-  --color-surface: rgba(255, 255, 255, 0.03);
-  --color-surface-hover: rgba(255, 255, 255, 0.06);
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-border-bright: #00D4FF;
-  --color-accent: #00D4FF;
-  --color-accent-dim: rgba(0, 212, 255, 0.12);
-  --color-violet: #6600FF;
-  --color-muted: rgba(255, 255, 255, 0.5);
-  --color-muted-light: rgba(255, 255, 255, 0.35);
+  --color-bg: #0a0a0a;
+  --color-surface: #111111;
+  --color-surface-2: #1a1a1a;
+  --color-border: oklch(1 0 0 / 0.07);
+  --color-border-bright: #e8ff47;
+  --color-accent: #e8ff47;
+  --color-accent-dim: rgba(232, 255, 71, 0.12);
+  --color-accent-hover: #d4eb3a;
+  --color-muted: #666666;
+  --color-text: #f0f0f0;
   --color-green: #00FF88;
-  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-sans: 'Satoshi', system-ui, sans-serif;
+  --font-display: 'Cabinet Grotesk', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
 
@@ -23,12 +25,12 @@
 
 html {
   scroll-behavior: smooth;
-  background-color: #04040c;
+  background-color: #0a0a0a;
 }
 
 body {
   font-family: var(--font-sans);
-  background-color: #04040c;
+  background-color: #0a0a0a;
   color: white;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -59,7 +61,7 @@ html.lenis body {
 
 /* Selection */
 ::selection {
-  background-color: rgba(0, 212, 255, 0.25);
+  background-color: rgba(232, 255, 71, 0.25);
   color: white;
 }
 
@@ -69,16 +71,16 @@ html.lenis body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #04040c;
+  background: #0a0a0a;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 212, 255, 0.3);
+  background: rgba(232, 255, 71, 0.3);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 212, 255, 0.5);
+  background: rgba(232, 255, 71, 0.5);
 }
 
 /* Badge shimmer sweep — premium glass-like light drift */
@@ -96,13 +98,13 @@ html.lenis body {
 }
 
 .glass-hover:hover {
-  border-color: rgba(0, 212, 255, 0.4);
+  border-color: rgba(232, 255, 71, 0.4);
   background: rgba(255, 255, 255, 0.05);
 }
 
 /* Gradient text utility */
 .gradient-text {
-  background: linear-gradient(135deg, #00D4FF, #6600FF);
+  background: linear-gradient(135deg, #e8ff47, #e8ff47);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -119,7 +121,7 @@ html.lenis body {
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(135deg, #00D4FF, #6600FF);
+  background: linear-gradient(135deg, #e8ff47, #e8ff47);
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -130,15 +132,15 @@ html.lenis body {
 
 /* Glow effects */
 .glow-blue {
-  box-shadow: 0 0 30px rgba(0, 212, 255, 0.15), 0 0 60px rgba(0, 212, 255, 0.05);
+  box-shadow: 0 0 30px rgba(232, 255, 71, 0.15), 0 0 60px rgba(232, 255, 71, 0.05);
 }
 
 .glow-blue-sm {
-  box-shadow: 0 0 12px rgba(0, 212, 255, 0.25);
+  box-shadow: 0 0 12px rgba(232, 255, 71, 0.25);
 }
 
 .glow-violet {
-  box-shadow: 0 0 30px rgba(102, 0, 255, 0.2);
+  box-shadow: 0 0 30px rgba(232, 255, 71, 0.2);
 }
 
 /* Grid background pattern */
@@ -180,7 +182,7 @@ html.lenis body {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(0, 212, 255, 0.06) 50%,
+    rgba(232, 255, 71, 0.06) 50%,
     transparent 100%
   );
   background-size: 200% 100%;
@@ -341,7 +343,7 @@ section {
 
 /* Focus states */
 *:focus-visible {
-  outline: 2px solid rgba(0, 212, 255, 0.5);
+  outline: 2px solid rgba(232, 255, 71, 0.5);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -361,13 +363,13 @@ section {
 }
 
 .btn-primary {
-  background: #00D4FF;
-  color: #04040c;
+  background: #e8ff47;
+  color: #0a0a0a;
 }
 
 .btn-primary:hover {
   background: #33DDFF;
-  box-shadow: 0 0 24px rgba(0, 212, 255, 0.4);
+  box-shadow: 0 0 24px rgba(232, 255, 71, 0.4);
   transform: translateY(-1px);
 }
 
@@ -378,9 +380,9 @@ section {
 }
 
 .btn-ghost:hover {
-  border-color: rgba(0, 212, 255, 0.6);
-  color: #00D4FF;
-  background: rgba(0, 212, 255, 0.06);
+  border-color: rgba(232, 255, 71, 0.6);
+  color: #e8ff47;
+  background: rgba(232, 255, 71, 0.06);
 }
 
 /* Pre-label style */

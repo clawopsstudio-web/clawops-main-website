@@ -3,8 +3,8 @@
 import { motion } from 'framer-motion'
 
 const PLANS = [
-  { name: 'Starter', price: '$49/mo', color: '#00D4FF', current: false },
-  { name: 'Pro', price: '$149/mo', color: '#6600FF', current: true },
+  { name: 'Starter', price: '$49/mo', color: '#e8ff47', current: false },
+  { name: 'Pro', price: '$149/mo', color: '#e8ff47', current: true },
   { name: 'Agency', price: '$399/mo', color: '#00FF88', current: false },
 ]
 
@@ -58,8 +58,8 @@ export default function BillingPage() {
           </div>
           <div className="p-5 space-y-4">
             {[
-              { label: 'Tasks used', value: '234', max: '500', color: '#00D4FF', pct: 46 },
-              { label: 'API calls', value: '12,450', max: 'Unlimited', color: '#6600FF', pct: 20 },
+              { label: 'Tasks used', value: '234', max: '500', color: '#e8ff47', pct: 46 },
+              { label: 'API calls', value: '12,450', max: 'Unlimited', color: '#e8ff47', pct: 20 },
               { label: 'Storage', value: '18 GB', max: '60 GB', color: '#00FF88', pct: 30 },
             ].map((metric) => (
               <div key={metric.label}>
@@ -94,7 +94,7 @@ export default function BillingPage() {
                 <div className="flex items-center gap-3">
                   <div className="h-2.5 w-2.5 rounded-full" style={{ background: plan.color, boxShadow: `0 0 6px ${plan.color}` }} />
                   <span className="text-sm font-medium text-white">{plan.name}</span>
-                  {plan.current && <span className="text-[10px] font-mono text-[#00D4FF]">CURRENT</span>}
+                  {plan.current && <span className="text-[10px] font-mono text-[#e8ff47]">CURRENT</span>}
                 </div>
                 <span className="text-sm text-[rgba(255,255,255,0.5)]">{plan.price}</span>
               </div>

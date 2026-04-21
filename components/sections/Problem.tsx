@@ -9,7 +9,7 @@ const problems = [
     title: "You're Renting Hardware That Costs Twice.",
     description:
       "Every month you pay cloud providers to run AI models — and then pay again every time your agents make API calls. It's renting an apartment and paying per light switch. You're locked into two recurring costs for the same thing.",
-    color: "#00D4FF",
+    color: "#e8ff47",
     stat: "Cloud AI costs 10-30x more than running local models",
   },
   {
@@ -17,7 +17,7 @@ const problems = [
     title: "Your Data Goes Through Someone Else's Servers.",
     description:
       "Every prompt, every client conversation, every business insight — routed through third-party AI APIs. Your data is their training fuel. Their downtime is your downtime. Their price hike is your problem.",
-    color: "#6600FF",
+    color: "#e8ff47",
     stat: "Third-party AI APIs = third-party data access",
   },
   {
@@ -25,7 +25,7 @@ const problems = [
     title: "Your AI Stack Has No Operating System.",
     description:
       "You have a model, a prompt library, a few scripts, and a Slack channel. That's not a stack — that's glue. Every new agent, every new tool, every new integration adds another fragile API connection. One update breaks everything.",
-    color: "#00D4FF",
+    color: "#e8ff47",
     stat: "Average business has 14 disconnected AI tools",
   },
 ];
@@ -53,7 +53,7 @@ export default function Problem() {
   const isInView = useInView(sectionRef, { once: true, amount: 0.15 });
 
   return (
-    <section ref={sectionRef} id="problem" className="relative bg-[#04040c] px-6 py-16 md:py-24">
+    <section ref={sectionRef} id="problem" className="relative bg-[#0a0a0a] px-6 py-16 md:py-24">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-80" style={{
         background: "radial-gradient(circle at 50% 10%, rgba(102,0,255,0.1), transparent 32%), radial-gradient(circle at 50% 90%, rgba(0,212,255,0.06), transparent 28%)",
       }} />

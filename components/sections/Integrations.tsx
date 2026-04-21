@@ -7,32 +7,32 @@ import Link from "next/link";
 const integrationCategories = [
   {
     label: "Messaging",
-    color: "#00D4FF",
+    color: "#e8ff47",
     items: ["Telegram", "WhatsApp", "Discord", "Slack", "Microsoft Teams"],
   },
   {
     label: "Browser & Web",
-    color: "#6600FF",
+    color: "#e8ff47",
     items: ["Virtual Chrome", "Authenticated Sessions", "Web Scraping", "Form Filling", "Multi-Tab Automation"],
   },
   {
     label: "Marketing & Sales",
-    color: "#00D4FF",
+    color: "#e8ff47",
     items: ["Go High Level", "HubSpot", "Pipedrive", "Salesforce", "Calendly"],
   },
   {
     label: "Productivity",
-    color: "#6600FF",
+    color: "#e8ff47",
     items: ["Google Workspace", "Notion", "Airtable", "Trello", "Linear"],
   },
   {
     label: "Automation",
-    color: "#00D4FF",
+    color: "#e8ff47",
     items: ["Gmail", "Notion", "Slack", "HubSpot", "GHL"],
   },
   {
     label: "Research & Data",
-    color: "#6600FF",
+    color: "#e8ff47",
     items: ["Web Scraping", "Web Search", "PDF Processing", "Data Extraction", "Monitoring"],
   },
 ];
@@ -58,7 +58,7 @@ export default function Integrations() {
     <section
       ref={ref}
       id="integrations"
-      className="relative bg-[#04040c] px-6 py-16 md:py-24"
+      className="relative bg-[#0a0a0a] px-6 py-16 md:py-24"
     >
       <div
         aria-hidden="true"
@@ -127,7 +127,7 @@ export default function Integrations() {
           <p className="text-sm text-[rgba(255,255,255,0.3)]">
             Don&apos;t see your tool? Our MCP protocol connects to any REST API.
           </p>
-          <Link href="/dashboard" className="mt-2 inline-block text-sm font-medium text-[#00D4FF] hover:text-white hover:bg-white/5 px-3 py-1.5 rounded-lg transition-all">
+          <Link href="/dashboard" className="mt-2 inline-block text-sm font-medium text-[#e8ff47] hover:text-white hover:bg-white/5 px-3 py-1.5 rounded-lg transition-all">
             Request an integration &rarr;
           </Link>
         </motion.div>

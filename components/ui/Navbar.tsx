@@ -55,7 +55,7 @@ export default function Navbar() {
             <div
               className="flex h-8 w-8 items-center justify-center rounded-lg transition-transform hover:scale-105"
               style={{
-                background: "linear-gradient(135deg, #00D4FF, #6600FF)",
+                background: "linear-gradient(135deg, #e8ff47, #e8ff47)",
                 boxShadow: "0 0 16px rgba(0,212,255,0.4)",
               }}
             >
@@ -93,7 +93,7 @@ export default function Navbar() {
               href="/auth/signup"
               className="rounded-lg px-4 py-2 text-sm font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgba(0,212,255,0.35)]"
               style={{
-                background: "linear-gradient(135deg, #00D4FF, #6600FF)",
+                background: "linear-gradient(135deg, #e8ff47, #e8ff47)",
                 boxShadow: "0 0 20px rgba(0,212,255,0.25)",
               }}
             >
@@ -140,7 +140,7 @@ export default function Navbar() {
                   onClick={() => setIsOpen(false)}
                   className="block rounded-xl py-3 text-center text-sm font-semibold text-white transition-all hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(0,212,255,0.3)]"
                   style={{
-                    background: "linear-gradient(135deg, #00D4FF, #6600FF)",
+                    background: "linear-gradient(135deg, #e8ff47, #e8ff47)",
                   }}
                 >
                   Get Started Free

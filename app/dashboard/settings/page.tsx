@@ -281,7 +281,7 @@ function ProfileTab({ uploading, setUploading, saved, setSaved }: { uploading: b
         disabled={saved}
         className="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold text-white transition-all hover:scale-105"
         style={{
-          background: saved ? '#22c55e' : 'linear-gradient(135deg, #00D4FF, #6600FF)',
+          background: saved ? '#22c55e' : 'linear-gradient(135deg, #e8ff47, #e8ff47)',
           boxShadow: saved ? 'none' : '0 0 20px rgba(0,212,255,0.25)',
         }}
       >
@@ -987,7 +987,7 @@ function ApiTab() {
         </div>
       </div>
 
-      <button className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-all hover:scale-105" style={{ background: 'linear-gradient(135deg, #00D4FF, #6600FF)', boxShadow: '0 0 20px rgba(0,212,255,0.25)' }}>
+      <button className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-all hover:scale-105" style={{ background: 'linear-gradient(135deg, #e8ff47, #e8ff47)', boxShadow: '0 0 20px rgba(0,212,255,0.25)' }}>
         <Zap className="w-4 h-4" />
         Generate New Key
       </button>

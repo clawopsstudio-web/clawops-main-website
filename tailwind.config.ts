@@ -9,10 +9,10 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        dark: "#050510",
+        dark: "#0a0a0a",
         navy: "#0B1120",
-        accent: "#00D4FF",
-        "accent-dark": "#0099CC",
+        accent: "#e8ff47",
+        "accent-dark": "#d4eb3a",
       },
       fontFamily: {
         sans: ["var(--font-inter)"],

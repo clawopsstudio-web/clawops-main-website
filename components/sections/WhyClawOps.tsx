@@ -59,7 +59,7 @@ export default function WhyClawOps() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section ref={ref} className="bg-[#04040c] py-20 px-6">
+    <section ref={ref} className="bg-[#0a0a0a] py-20 px-6">
       <div className="mx-auto max-w-5xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -90,7 +90,7 @@ export default function WhyClawOps() {
                 <th className="text-center py-4 px-6 font-semibold text-[rgba(255,255,255,0.4)] uppercase tracking-wider text-xs w-1/3">
                   DIY / Building It Yourself
                 </th>
-                <th className="text-center py-4 pl-6 font-semibold text-[#00D4FF] uppercase tracking-wider text-xs w-1/3">
+                <th className="text-center py-4 pl-6 font-semibold text-[#e8ff47] uppercase tracking-wider text-xs w-1/3">
                   ClawOps
                 </th>
               </tr>
@@ -111,10 +111,10 @@ export default function WhyClawOps() {
                     {row.diy}
                   </td>
                   <td className="py-4 pl-6 text-center">
-                    <span className="inline-flex items-center gap-1.5 text-[#00D4FF] font-medium text-sm">
+                    <span className="inline-flex items-center gap-1.5 text-[#e8ff47] font-medium text-sm">
                       <svg viewBox="0 0 12 12" fill="none" className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true">
                         <circle cx="6" cy="6" r="6" fill="rgba(0,212,255,0.15)" />
-                        <path d="M3.5 6l1.8 1.8L8.5 4.5" stroke="#00D4FF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M3.5 6l1.8 1.8L8.5 4.5" stroke="#e8ff47" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                       {row.clawops}
                     </span>

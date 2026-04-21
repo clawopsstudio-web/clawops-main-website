@@ -25,7 +25,7 @@ export default function FinalCTA() {
               background: "radial-gradient(circle, rgba(0,212,255,0.3) 0%, transparent 70%)",
             }} />
             <div className="absolute inset-3 rounded-full" style={{
-              background: "linear-gradient(135deg, #00D4FF, #6600FF)",
+              background: "linear-gradient(135deg, #e8ff47, #e8ff47)",
               boxShadow: "0 0 30px rgba(0,212,255,0.4), 0 0 60px rgba(102,0,255,0.2)",
             }} />
           </div>
@@ -35,7 +35,7 @@ export default function FinalCTA() {
             The AI OS
             <br />
             <span style={{
-              background: "linear-gradient(135deg, #00D4FF, #6600FF)",
+              background: "linear-gradient(135deg, #e8ff47, #e8ff47)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
             }}>
@@ -51,7 +51,7 @@ export default function FinalCTA() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a href="/dashboard"
               className="group relative px-8 py-4 rounded-xl font-semibold text-white overflow-hidden transition-all hover:scale-[1.03] hover:shadow-[0_0_35px_rgba(0,212,255,0.35)]"
-              style={{ background: "linear-gradient(135deg, #00D4FF, #6600FF)", boxShadow: "0 0 30px rgba(0,212,255,0.25)" }}>
+              style={{ background: "linear-gradient(135deg, #e8ff47, #e8ff47)", boxShadow: "0 0 30px rgba(0,212,255,0.25)" }}>
               <span className="relative z-10 flex items-center gap-2">
                 Install the AI OS — Free
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"

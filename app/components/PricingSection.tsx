@@ -130,7 +130,7 @@ export default function PricingSection() {
   const [annual, setAnnual] = useState(false);
 
   return (
-    <section className="py-24 bg-[#04040c]">
+    <section className="py-24 bg-[#0a0a0a]">
       <div className="max-w-6xl mx-auto px-6">
         {/* Header */}
         <div className="text-center mb-16">
@@ -162,12 +162,12 @@ export default function PricingSection() {
               whileHover={{ y: -4 }}
               className={`relative p-6 rounded-2xl border ${
                 plan.popular 
-                  ? 'bg-gradient-to-b from-[#00D4FF]/10 to-transparent border-[#00D4FF]/30' 
+                  ? 'bg-gradient-to-b from-[#e8ff47]/10 to-transparent border-[#e8ff47]/30' 
                   : 'bg-white/5 border-white/10'
               }`}
             >
               {plan.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-[#00D4FF] text-[#04040c] text-xs font-semibold rounded-full">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-[#e8ff47] text-[#0a0a0a] text-xs font-semibold rounded-full">
                   {plan.tag}
                 </div>
               )}
@@ -187,7 +187,7 @@ export default function PricingSection() {
               <ul className="space-y-3 mb-8">
                 {plan.features.map((f, i) => (
                   <li key={i} className="flex items-start gap-2 text-sm text-white/70">
-                    <Check className="w-4 h-4 text-[#00D4FF] shrink-0 mt-0.5" />
+                    <Check className="w-4 h-4 text-[#e8ff47] shrink-0 mt-0.5" />
                     {f}
                   </li>
                 ))}
@@ -195,7 +195,7 @@ export default function PricingSection() {
 
               <button className={`w-full py-3 rounded-xl font-semibold transition-colors ${
                 plan.popular
-                  ? 'bg-[#00D4FF] text-[#04040c] hover:bg-[#00D4FF]/90'
+                  ? 'bg-[#e8ff47] text-[#0a0a0a] hover:bg-[#e8ff47]/90'
                   : 'bg-white/10 text-white hover:bg-white/15'
               }`}>
                 {plan.cta} →
@@ -223,7 +223,7 @@ export default function PricingSection() {
                 <ul className="space-y-2">
                   {addon.features.map((f, i) => (
                     <li key={i} className="flex items-start gap-2 text-sm text-white/60">
-                      <Check className="w-4 h-4 text-[#00D4FF] shrink-0 mt-0.5" />
+                      <Check className="w-4 h-4 text-[#e8ff47] shrink-0 mt-0.5" />
                       {f}
                     </li>
                   ))}

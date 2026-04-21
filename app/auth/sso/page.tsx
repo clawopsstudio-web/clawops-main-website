@@ -5,7 +5,7 @@ export default function SSOPage() {
   return (
     <Suspense fallback={
       <div style={{
-        minHeight: '100vh', background: '#04040c', color: 'white',
+        minHeight: '100vh', background: '#0a0a0a', color: 'white',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontFamily: 'system-ui, sans-serif',
       }}>

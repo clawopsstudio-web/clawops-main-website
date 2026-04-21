@@ -27,7 +27,7 @@ const AGENTS: Agent[] = [
     name: 'Henry',
     role: 'Chief AI Officer · Co-Founder',
     icon: <Sparkles size={16} />,
-    color: '#00D4FF',
+    color: '#e8ff47',
     description: 'Your AI co-founder. Strategic thinking, product decisions, and big-picture planning.',
   },
   {

@@ -26,7 +26,7 @@ interface NavGroup {
 
 // Agent roster — mirrors the OpenClaw gateway config
 const AGENTS = [
-  { name: 'Henry', role: 'Co-Founder & Chief AI Officer', color: '#00D4FF', topic: null },
+  { name: 'Henry', role: 'Co-Founder & Chief AI Officer', color: '#e8ff47', topic: null },
   { name: 'Ryan', role: 'Sales Pipeline', color: '#22c55e', topic: 25 },
   { name: 'Arjun', role: 'Market Research', color: '#f59e0b', topic: 26 },
   { name: 'Dev', role: 'Core Build & Coding', color: '#a855f7', topic: 27 },
@@ -151,15 +151,15 @@ export default function Sidebar() {
     <aside
       className={cn(
         'fixed left-0 top-0 h-full z-40 flex flex-col',
-        'bg-[#04040c]/90 border-r border-white/[0.06]',
+        'bg-[#0a0a0a]/90 border-r border-white/[0.06]',
         'transition-all duration-300 ease-out',
         sidebarCollapsed ? 'w-[68px]' : 'w-[240px]'
       )}
     >
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 h-16 border-b border-white/[0.06] flex-shrink-0">
-        <div className="w-8 h-8 rounded-lg bg-[#00D4FF]/10 border border-[#00D4FF]/30 flex items-center justify-center flex-shrink-0">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" strokeWidth="2.5">
+        <div className="w-8 h-8 rounded-lg bg-[#e8ff47]/10 border border-[#e8ff47]/30 flex items-center justify-center flex-shrink-0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8ff47" strokeWidth="2.5">
             <path d="M12 2L2 7l10 5 10-5-10-5z"/>
             <path d="M2 17l10 5 10-5"/>
             <path d="M2 12l10 5 10-5"/>
@@ -189,7 +189,7 @@ export default function Sidebar() {
                   'transition-colors duration-150',
                   'group relative',
                   isActive
-                    ? 'bg-[#00D4FF]/10 text-[#00D4FF]'
+                    ? 'bg-[#e8ff47]/10 text-[#e8ff47]'
                     : 'text-white/50 hover:text-white hover:bg-white/[0.04]',
                   sidebarCollapsed && 'justify-center'
                 );
@@ -231,9 +231,9 @@ export default function Sidebar() {
                     title={sidebarCollapsed ? item.label : undefined}
                   >
                     {isActive && (
-                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-[#00D4FF] rounded-r-full" />
+                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-[#e8ff47] rounded-r-full" />
                     )}
-                    <span className={cn('flex-shrink-0', isActive && 'text-[#00D4FF]', item.highlight && !isActive && 'text-[#FF6B35]')}>
+                    <span className={cn('flex-shrink-0', isActive && 'text-[#e8ff47]', item.highlight && !isActive && 'text-[#FF6B35]')}>
                       {item.icon}
                     </span>
                     {!sidebarCollapsed && (
@@ -283,7 +283,7 @@ export default function Sidebar() {
             'hover:bg-white/[0.04] transition-colors cursor-pointer',
             sidebarCollapsed && 'justify-center'
           )}>
-            <div className="w-7 h-7 rounded-full bg-[#00D4FF]/15 border border-[#00D4FF]/25 flex items-center justify-center flex-shrink-0 text-[10px] font-bold text-[#00D4FF]">
+            <div className="w-7 h-7 rounded-full bg-[#e8ff47]/15 border border-[#e8ff47]/25 flex items-center justify-center flex-shrink-0 text-[10px] font-bold text-[#e8ff47]">
               {getInitials(user.fullName || user.email)}
             </div>
             {!sidebarCollapsed && (

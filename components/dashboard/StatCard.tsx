@@ -23,8 +23,8 @@ interface StatCardProps {
 
 const colorMap = {
   cyan: {
-    icon: 'bg-[#00D4FF]/10 text-[#00D4FF] border-[#00D4FF]/15',
-    value: 'text-[#00D4FF]',
+    icon: 'bg-[#e8ff47]/10 text-[#e8ff47] border-[#e8ff47]/15',
+    value: 'text-[#e8ff47]',
   },
   green: {
     icon: 'bg-green-400/10 text-green-400 border-green-400/15',

@@ -5,15 +5,15 @@ export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background */}
-      <div className="absolute inset-0 bg-[#04040c]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#00D4FF]/10 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-[#0a0a0a]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#e8ff47]/10 via-transparent to-transparent" />
       
       {/* Floating particles */}
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(20)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 bg-[#00D4FF]/30 rounded-full"
+            className="absolute w-1 h-1 bg-[#e8ff47]/30 rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -37,7 +37,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#00D4FF]/20 bg-[#00D4FF]/5 text-sm text-[#00D4FF] mb-8"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#e8ff47]/20 bg-[#e8ff47]/5 text-sm text-[#e8ff47] mb-8"
         >
           <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
           9 agents working right now
@@ -51,7 +51,7 @@ export default function HeroSection() {
           className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight"
         >
           They don't wait for you.{' '}
-          <span className="text-[#00D4FF]">They work while you sleep.</span>
+          <span className="text-[#e8ff47]">They work while you sleep.</span>
         </motion.h1>
 
         {/* Subheadline */}
@@ -73,7 +73,7 @@ export default function HeroSection() {
           transition={{ delay: 0.8 }}
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
-          <button className="px-8 py-4 bg-[#00D4FF] text-[#04040c] font-semibold rounded-xl hover:bg-[#00D4FF]/90 transition-colors">
+          <button className="px-8 py-4 bg-[#e8ff47] text-[#0a0a0a] font-semibold rounded-xl hover:bg-[#e8ff47]/90 transition-colors">
             Deploy your team →
           </button>
           <button className="px-8 py-4 border border-white/20 text-white rounded-xl hover:bg-white/5 transition-colors">
@@ -89,8 +89,8 @@ export default function HeroSection() {
           className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-3 text-left"
         >
           {[
-            { agent: 'Ryan', action: 'sent 47 cold emails', time: '2m ago', color: '#00D4FF' },
-            { agent: 'Tyler', action: 'posted week 3 content', time: '8m ago', color: '#6600FF' },
+            { agent: 'Ryan', action: 'sent 47 cold emails', time: '2m ago', color: '#e8ff47' },
+            { agent: 'Tyler', action: 'posted week 3 content', time: '8m ago', color: '#e8ff47' },
             { agent: 'Arjun', action: 'scraped competitor prices', time: '15m ago', color: '#10b981' },
           ].map((item, i) => (
             <motion.div

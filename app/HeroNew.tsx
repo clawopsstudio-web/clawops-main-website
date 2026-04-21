@@ -17,30 +17,30 @@ function FloatingShapes({ bgOrb1Y, bgOrb1X, bgOrb2Y, bgOrb2X, bgRingScale, bgRin
 
   // 24 animated particles scattered across the hero
   const particles = [
-    { x: 8, y: 15, size: 3, delay: 0, color: '#00D4FF' },
-    { x: 22, y: 25, size: 2, delay: 0.3, color: '#6600FF' },
-    { x: 35, y: 10, size: 3, delay: 0.6, color: '#00D4FF' },
+    { x: 8, y: 15, size: 3, delay: 0, color: '#e8ff47' },
+    { x: 22, y: 25, size: 2, delay: 0.3, color: '#e8ff47' },
+    { x: 35, y: 10, size: 3, delay: 0.6, color: '#e8ff47' },
     { x: 48, y: 35, size: 2, delay: 0.9, color: '#a78bff' },
-    { x: 60, y: 20, size: 3, delay: 1.2, color: '#6600FF' },
-    { x: 72, y: 40, size: 2, delay: 0.2, color: '#00D4FF' },
+    { x: 60, y: 20, size: 3, delay: 1.2, color: '#e8ff47' },
+    { x: 72, y: 40, size: 2, delay: 0.2, color: '#e8ff47' },
     { x: 85, y: 15, size: 3, delay: 0.5, color: '#a78bff' },
-    { x: 92, y: 30, size: 2, delay: 0.8, color: '#00D4FF' },
-    { x: 15, y: 55, size: 3, delay: 1.1, color: '#6600FF' },
-    { x: 30, y: 70, size: 2, delay: 1.4, color: '#00D4FF' },
+    { x: 92, y: 30, size: 2, delay: 0.8, color: '#e8ff47' },
+    { x: 15, y: 55, size: 3, delay: 1.1, color: '#e8ff47' },
+    { x: 30, y: 70, size: 2, delay: 1.4, color: '#e8ff47' },
     { x: 45, y: 60, size: 3, delay: 0.1, color: '#a78bff' },
-    { x: 58, y: 75, size: 2, delay: 0.4, color: '#6600FF' },
-    { x: 70, y: 55, size: 3, delay: 0.7, color: '#00D4FF' },
+    { x: 58, y: 75, size: 2, delay: 0.4, color: '#e8ff47' },
+    { x: 70, y: 55, size: 3, delay: 0.7, color: '#e8ff47' },
     { x: 82, y: 68, size: 2, delay: 1.0, color: '#a78bff' },
-    { x: 95, y: 50, size: 3, delay: 1.3, color: '#00D4FF' },
-    { x: 5, y: 80, size: 2, delay: 0.2, color: '#6600FF' },
+    { x: 95, y: 50, size: 3, delay: 1.3, color: '#e8ff47' },
+    { x: 5, y: 80, size: 2, delay: 0.2, color: '#e8ff47' },
     { x: 20, y: 88, size: 3, delay: 0.5, color: '#a78bff' },
-    { x: 38, y: 82, size: 2, delay: 0.8, color: '#00D4FF' },
-    { x: 55, y: 90, size: 3, delay: 1.1, color: '#6600FF' },
-    { x: 67, y: 85, size: 2, delay: 1.4, color: '#00D4FF' },
+    { x: 38, y: 82, size: 2, delay: 0.8, color: '#e8ff47' },
+    { x: 55, y: 90, size: 3, delay: 1.1, color: '#e8ff47' },
+    { x: 67, y: 85, size: 2, delay: 1.4, color: '#e8ff47' },
     { x: 78, y: 92, size: 3, delay: 0.3, color: '#a78bff' },
-    { x: 88, y: 78, size: 2, delay: 0.6, color: '#6600FF' },
-    { x: 96, y: 85, size: 3, delay: 0.9, color: '#00D4FF' },
-    { x: 50, y: 45, size: 4, delay: 0, color: '#00D4FF' },
+    { x: 88, y: 78, size: 2, delay: 0.6, color: '#e8ff47' },
+    { x: 96, y: 85, size: 3, delay: 0.9, color: '#e8ff47' },
+    { x: 50, y: 45, size: 4, delay: 0, color: '#e8ff47' },
   ]
 
   // Constellation lines connecting nearby particles
@@ -83,9 +83,9 @@ function FloatingShapes({ bgOrb1Y, bgOrb1X, bgOrb2Y, bgOrb2X, bgRingScale, bgRin
       <motion.div style={{ rotate: ringRotate, scale: bgRingScale, opacity: bgRingOpacity }}
         className="absolute top-[10%] right-[5%] w-64 h-64 md:w-80 md:h-80">
         <svg viewBox="0 0 256 256" className="w-full h-full opacity-25">
-          <circle cx="128" cy="128" r="110" fill="none" stroke="#00D4FF" strokeWidth="1" strokeDasharray="6 8" />
-          <circle cx="128" cy="128" r="88" fill="none" stroke="#6600FF" strokeWidth="0.75" strokeDasharray="3 12" />
-          <circle cx="128" cy="128" r="65" fill="none" stroke="#00D4FF" strokeWidth="0.5" strokeDasharray="2 6" />
+          <circle cx="128" cy="128" r="110" fill="none" stroke="#e8ff47" strokeWidth="1" strokeDasharray="6 8" />
+          <circle cx="128" cy="128" r="88" fill="none" stroke="#e8ff47" strokeWidth="0.75" strokeDasharray="3 12" />
+          <circle cx="128" cy="128" r="65" fill="none" stroke="#e8ff47" strokeWidth="0.5" strokeDasharray="2 6" />
         </svg>
       </motion.div>
       {/* Second ring set — bottom left, counter-rotating */}
@@ -93,7 +93,7 @@ function FloatingShapes({ bgOrb1Y, bgOrb1X, bgOrb2Y, bgOrb2X, bgRingScale, bgRin
         className="absolute bottom-[20%] left-[2%] w-48 h-48 opacity-20">
         <svg viewBox="0 0 256 256" className="w-full h-full">
           <circle cx="128" cy="128" r="110" fill="none" stroke="#a78bff" strokeWidth="1" strokeDasharray="8 10" />
-          <circle cx="128" cy="128" r="75" fill="none" stroke="#6600FF" strokeWidth="0.75" strokeDasharray="4 14" />
+          <circle cx="128" cy="128" r="75" fill="none" stroke="#e8ff47" strokeWidth="0.75" strokeDasharray="4 14" />
         </svg>
       </motion.div>
 
@@ -122,7 +122,7 @@ function FloatingShapes({ bgOrb1Y, bgOrb1X, bgOrb2Y, bgOrb2X, bgRingScale, bgRin
           {lines.map((l, i) => (
             <motion.line key={i}
               x1={`${l.x1}%`} y1={`${l.y1}%`} x2={`${l.x2}%`} y2={`${l.y2}%`}
-              stroke="#00D4FF" strokeWidth="0.5" opacity="0.15"
+              stroke="#e8ff47" strokeWidth="0.5" opacity="0.15"
               animate={{ opacity: [0.08, 0.2, 0.08] }}
               transition={{ duration: 4 + i * 0.3, repeat: Infinity, delay: i * 0.4 }}
             />
@@ -137,7 +137,7 @@ function FloatingShapes({ bgOrb1Y, bgOrb1X, bgOrb2Y, bgOrb2X, bgRingScale, bgRin
       <motion.div
         animate={{ y: ['-10%', '110%'], opacity: [0, 0.06, 0] }}
         transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-        className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#00D4FF] to-transparent"
+        className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#e8ff47] to-transparent"
       />
     </div>
   )
@@ -157,7 +157,7 @@ function PerspectiveGrid() {
         transform: 'perspective(400px) rotateX(65deg)',
         transformOrigin: 'bottom center',
       }} />
-      <div className="absolute bottom-0 left-0 right-0 h-32" style={{ background: 'linear-gradient(to top, #04040c 0%, transparent 100%)' }} />
+      <div className="absolute bottom-0 left-0 right-0 h-32" style={{ background: 'linear-gradient(to top, #0a0a0a 0%, transparent 100%)' }} />
     </motion.div>
   )
 }
@@ -202,7 +202,7 @@ function FloatingCards() {
           style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.6), 0 0 30px rgba(0,212,255,0.03)' }}>
           <div className="text-xs text-[rgba(255,255,255,0.4)] mb-2">Powered by</div>
           <div className="flex items-center gap-2">
-            <div className="text-lg font-bold text-[#00D4FF]">ClawOps</div>
+            <div className="text-lg font-bold text-[#e8ff47]">ClawOps</div>
           </div>
           
         </div>
@@ -259,7 +259,7 @@ export default function HeroNew() {
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                 style={{ y: badgeY }}
                 transition={{ duration: 0.6 }}
-                className="inline-flex items-center gap-2 mx-auto md:mx-0 bg-[rgba(0,212,255,0.08)] border border-[rgba(0,212,255,0.2)] text-[#00D4FF] px-4 py-1.5 rounded-full text-xs font-medium mb-8">
+                className="inline-flex items-center gap-2 mx-auto md:mx-0 bg-[rgba(0,212,255,0.08)] border border-[rgba(0,212,255,0.2)] text-[#e8ff47] px-4 py-1.5 rounded-full text-xs font-medium mb-8">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
                 Autonomous AI agents. Working while you sleep.
               </motion.div>
@@ -273,7 +273,7 @@ export default function HeroNew() {
               >
                 <span className="text-white">The Agentic OS.</span>
                 <br />
-                <span className="bg-gradient-to-r from-[#00D4FF] via-[#9966FF] to-[#00D4FF] bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-[#e8ff47] via-[#9966FF] to-[#e8ff47] bg-clip-text text-transparent">
                   Pick your AI workforce.
                 </span>
               </motion.h1>
@@ -296,7 +296,7 @@ export default function HeroNew() {
                 transition={{ duration: 0.6, delay: 0.3 }}
                 className="flex flex-wrap gap-4 mb-12">
                 <Link href="/roles"
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-[#00D4FF] to-[#6600FF] hover:opacity-90 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(0,212,255,0.3)] active:scale-[0.98] text-white font-semibold px-8 py-4 rounded-xl transition-all text-base">
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-[#e8ff47] to-[#e8ff47] hover:opacity-90 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(0,212,255,0.3)] active:scale-[0.98] text-white font-semibold px-8 py-4 rounded-xl transition-all text-base">
                   Browse agents
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />

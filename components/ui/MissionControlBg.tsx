@@ -11,9 +11,9 @@ interface Props {
 }
 
 const PHASE_ACCENTS: Record<number, string> = {
-  0: "#00D4FF",
-  1: "#00D4FF",
-  2: "#6600FF",
+  0: "#e8ff47",
+  1: "#e8ff47",
+  2: "#e8ff47",
   3: "#00FF88",
 };
 
@@ -46,12 +46,12 @@ export default function MissionControlBg({ phase, scrollProgress }: Props) {
 
   const draw = useCallback((ctx: CanvasRenderingContext2D, w: number, h: number, t: number) => {
     const scrollV = scrollOffsetRef.current;
-    const accent = PHASE_ACCENTS[phase] ?? "#00D4FF";
+    const accent = PHASE_ACCENTS[phase] ?? "#e8ff47";
 
     ctx.clearRect(0, 0, w, h);
 
     /* ── Layer 0: Deep space background ───────────────────────────── */
-    ctx.fillStyle = "#04040c";
+    ctx.fillStyle = "#0a0a0a";
     ctx.fillRect(0, 0, w, h);
 
     /* ── Layer 1: Dot grid ───────────────────────────────────────── */
@@ -248,8 +248,8 @@ export default function MissionControlBg({ phase, scrollProgress }: Props) {
     ctx.fillRect(0, 0, w, h);
 
     /* ── Layer 6: Phase-reactive accent overlay ────────────────────── */
-    const phaseAccents2: Record<number, string> = { 0: "#00D4FF", 1: "#6600FF", 2: "#6600FF", 3: "#00FF88" };
-    const a2 = phaseAccents2[phase] ?? "#00D4FF";
+    const phaseAccents2: Record<number, string> = { 0: "#e8ff47", 1: "#e8ff47", 2: "#e8ff47", 3: "#00FF88" };
+    const a2 = phaseAccents2[phase] ?? "#e8ff47";
     const overlayGrd = ctx.createRadialGradient(w * 0.8, h * 0.2, 0, w * 0.8, h * 0.2, w * 0.3);
     overlayGrd.addColorStop(0, `${a2}06`);
     overlayGrd.addColorStop(1, "transparent");

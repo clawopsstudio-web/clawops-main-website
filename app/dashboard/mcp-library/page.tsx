@@ -119,7 +119,7 @@ export default function MCPLibrary() {
         <button
           onClick={() => setActiveTab('servers')}
           className={`px-5 py-2 rounded-lg text-sm font-medium transition-colors ${
-            activeTab === 'servers' ? 'bg-[#00D4FF] text-black' : 'text-gray-400 hover:text-white'
+            activeTab === 'servers' ? 'bg-[#e8ff47] text-black' : 'text-gray-400 hover:text-white'
           }`}
         >
           Servers ({servers.length})
@@ -127,7 +127,7 @@ export default function MCPLibrary() {
         <button
           onClick={() => setActiveTab('add')}
           className={`px-5 py-2 rounded-lg text-sm font-medium transition-colors ${
-            activeTab === 'add' ? 'bg-[#00D4FF] text-black' : 'text-gray-400 hover:text-white'
+            activeTab === 'add' ? 'bg-[#e8ff47] text-black' : 'text-gray-400 hover:text-white'
           }`}
         >
           + Add Server
@@ -149,7 +149,7 @@ export default function MCPLibrary() {
                 value={addName}
                 onChange={e => setAddName(e.target.value)}
                 placeholder="e.g. notion, github, slack"
-                className="w-full bg-[#0f0f1a] border border-[#2d2d44] rounded-lg px-3 py-2.5 text-sm text-gray-200 placeholder-gray-600 focus:border-[#00D4FF] focus:outline-none"
+                className="w-full bg-[#0f0f1a] border border-[#2d2d44] rounded-lg px-3 py-2.5 text-sm text-gray-200 placeholder-gray-600 focus:border-[#e8ff47] focus:outline-none"
               />
             </div>
             <div>
@@ -159,13 +159,13 @@ export default function MCPLibrary() {
                 value={addUrl}
                 onChange={e => setAddUrl(e.target.value)}
                 placeholder="https://your-server.com/mcp or /n8n/mcp/{id}"
-                className="w-full bg-[#0f0f1a] border border-[#2d2d44] rounded-lg px-3 py-2.5 text-sm text-gray-200 placeholder-gray-600 focus:border-[#00D4FF] focus:outline-none"
+                className="w-full bg-[#0f0f1a] border border-[#2d2d44] rounded-lg px-3 py-2.5 text-sm text-gray-200 placeholder-gray-600 focus:border-[#e8ff47] focus:outline-none"
               />
             </div>
             {addError && <p className="text-red-400 text-sm">❌ {addError}</p>}
             <button
               onClick={handleAddServer}
-              className="w-full bg-[#00D4FF] hover:bg-[#00b8e6] text-black font-semibold py-2.5 rounded-lg transition-colors"
+              className="w-full bg-[#e8ff47] hover:bg-[#d4eb3a] text-black font-semibold py-2.5 rounded-lg transition-colors"
             >
               Add Server
             </button>
@@ -194,7 +194,7 @@ export default function MCPLibrary() {
               <p className="text-gray-600 text-sm mb-6">Add an MCP server to connect your AI agents to external tools.</p>
               <button
                 onClick={() => setActiveTab('add')}
-                className="bg-[#00D4FF] text-black font-medium px-6 py-2.5 rounded-lg hover:bg-[#00b8e6] transition-colors"
+                className="bg-[#e8ff47] text-black font-medium px-6 py-2.5 rounded-lg hover:bg-[#d4eb3a] transition-colors"
               >
                 + Add Your First Server
               </button>
@@ -204,7 +204,7 @@ export default function MCPLibrary() {
               {servers.map(server => (
                 <div
                   key={server.name}
-                  className="bg-[#1a1a2e] border border-[#2d2d44] rounded-xl p-5 hover:border-[#00D4FF]/50 transition-colors cursor-pointer"
+                  className="bg-[#1a1a2e] border border-[#2d2d44] rounded-xl p-5 hover:border-[#e8ff47]/50 transition-colors cursor-pointer"
                   onClick={() => loadTools(server)}
                 >
                   <div className="flex items-start justify-between mb-3">
@@ -228,7 +228,7 @@ export default function MCPLibrary() {
                     <span className="text-xs text-gray-400">
                       {server.tools > 0 ? `${server.tools} tools` : 'Click to load tools'}
                     </span>
-                    <span className="text-[#00D4FF] text-sm">View →</span>
+                    <span className="text-[#e8ff47] text-sm">View →</span>
                   </div>
                 </div>
               ))}
@@ -286,7 +286,7 @@ export default function MCPLibrary() {
                       {tool.inputSchema?.properties && (
                         <div className="mt-2 flex flex-wrap gap-1">
                           {Object.keys(tool.inputSchema.properties).map(param => (
-                            <span key={param} className="text-[10px] bg-[#1a1a2e] text-[#00D4FF] px-1.5 py-0.5 rounded">
+                            <span key={param} className="text-[10px] bg-[#1a1a2e] text-[#e8ff47] px-1.5 py-0.5 rounded">
                               {param}
                             </span>
                           ))}

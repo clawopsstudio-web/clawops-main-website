@@ -22,7 +22,7 @@ export default async function DiagPage() {
 
   return (
     <div style={{ padding: '40px', fontFamily: 'monospace', background: '#0a0a0a', color: '#0f0', minHeight: '100vh', margin: 0 }}>
-      <h1 style={{ color: '#00D4FF' }}>🔍 Cookie Diagnostic</h1>
+      <h1 style={{ color: '#e8ff47' }}>🔍 Cookie Diagnostic</h1>
       
       <table style={{ borderCollapse: 'collapse', marginBottom: '30px' }}>
         <tr><td style={{ padding: '8px', border: '1px solid #333' }}><b>Cookie</b></td><td style={{ padding: '8px', border: '1px solid #333' }}><b>Value</b></td></tr>
@@ -33,7 +33,7 @@ export default async function DiagPage() {
 
       {tokenPayload && (
         <div style={{ marginBottom: '30px' }}>
-          <h2 style={{ color: '#00D4FF' }}>JWT Payload</h2>
+          <h2 style={{ color: '#e8ff47' }}>JWT Payload</h2>
           <table style={{ borderCollapse: 'collapse' }}>
             <tr><td style={{ padding: '6px', border: '1px solid #333' }}>sub (userId)</td><td style={{ padding: '6px', border: '1px solid #333' }}>{tokenPayload.sub}</td></tr>
             <tr><td style={{ padding: '6px', border: '1px solid #333' }}>email</td><td style={{ padding: '6px', border: '1px solid #333' }}>{tokenPayload.email}</td></tr>
@@ -46,16 +46,16 @@ export default async function DiagPage() {
       )}
 
       <div style={{ marginBottom: '30px' }}>
-        <h2 style={{ color: '#00D4FF' }}>Test Links</h2>
+        <h2 style={{ color: '#e8ff47' }}>Test Links</h2>
         <p>Status: <b style={{ color: sbToken && tokenValid ? '#0f0' : '#f55' }}>
           {sbToken && tokenValid ? '✅ JWT Valid — service links should work' : '❌ JWT Missing or Expired — fix login first'}
         </b></p>
         <br />
-        <a href="#" style={{ color: '#00D4FF', marginRight: '20px' }}>Automation ↗</a>
-        <a href="/chrome" style={{ color: '#00D4FF', marginRight: '20px' }}>Chrome ↗</a>
-        <a href="/gateway" style={{ color: '#00D4FF', marginRight: '20px' }}>Gateway ↗</a>
+        <a href="#" style={{ color: '#e8ff47', marginRight: '20px' }}>Automation ↗</a>
+        <a href="/chrome" style={{ color: '#e8ff47', marginRight: '20px' }}>Chrome ↗</a>
+        <a href="/gateway" style={{ color: '#e8ff47', marginRight: '20px' }}>Gateway ↗</a>
         <br /><br />
-        <a href="/dashboard" style={{ color: '#00D4FF' }}>← Dashboard</a>
+        <a href="/dashboard" style={{ color: '#e8ff47' }}>← Dashboard</a>
       </div>
     </div>
   );

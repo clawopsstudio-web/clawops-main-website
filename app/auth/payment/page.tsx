@@ -6,8 +6,8 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 
 const PLANS: Record<string, { name: string; price: number; color: string; features: string[] }> = {
-  starter: { name: 'Starter', price: 49, color: '#00D4FF', features: ['2 vCPU, 4GB RAM', '1 AI Agent Workspace', 'Gemma 4 (local)', '500+ Integrations'] },
-  pro: { name: 'Pro', price: 99, color: '#6600FF', features: ['4 vCPU, 8GB RAM', '3 AI Agent Workspaces', 'Gemma 4 2B + 7B', 'Unlimited automations'] },
+  starter: { name: 'Starter', price: 49, color: '#e8ff47', features: ['2 vCPU, 4GB RAM', '1 AI Agent Workspace', 'Gemma 4 (local)', '500+ Integrations'] },
+  pro: { name: 'Pro', price: 99, color: '#e8ff47', features: ['4 vCPU, 8GB RAM', '3 AI Agent Workspaces', 'Gemma 4 2B + 7B', 'Unlimited automations'] },
   business: { name: 'Business', price: 149, color: '#10b981', features: ['6 vCPU, 12GB RAM', 'Unlimited AI Workspaces', 'Any local model', 'White-label capability'] },
 }
 
@@ -36,7 +36,7 @@ function PaymentContent() {
       {/* Logo */}
       <div className="text-center mb-8">
         <Link href="/" className="inline-flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: 'linear-gradient(135deg, #00D4FF, #6600FF)' }}>
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: 'linear-gradient(135deg, #e8ff47, #e8ff47)' }}>
             <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4 text-white">
               <path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor" opacity="0.9"/>
               <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -140,7 +140,7 @@ function PaymentContent() {
 
 export default function PaymentPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#04040c] text-white px-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a] text-white px-4">
       <div className="pointer-events-none fixed inset-0 -z-10" style={{
         background: 'radial-gradient(circle at 50% 0%, rgba(0,212,255,0.06) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(102,0,255,0.06) 0%, transparent 50%)',
       }} />

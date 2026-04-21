@@ -79,12 +79,12 @@ export default function AmpereStylePricing() {
   const router = useRouter()
 
   return (
-    <div className="container mx-auto px-4 py-16 bg-[#04040c]">
+    <div className="container mx-auto px-4 py-16 bg-[#0a0a0a]">
       {/* Header */}
       <div className="text-center mb-16">
         <h1 className="text-4xl md:text-6xl font-bold mb-4">
           The AI Agent Platform<br />
-          <span className="bg-gradient-to-r from-[#00D4FF] to-[#6600FF] bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-[#e8ff47] to-[#e8ff47] bg-clip-text text-transparent">
             Your Team Has Been Waiting For
           </span>
         </h1>
@@ -96,11 +96,11 @@ export default function AmpereStylePricing() {
       {/* Value Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
         <div className="bg-[#1a1a2e] rounded-2xl p-8 border border-[#2d2d44]">
-          <div className="text-3xl font-bold text-[#00D4FF] mb-2">$3,000/mo</div>
+          <div className="text-3xl font-bold text-[#e8ff47] mb-2">$3,000/mo</div>
           <p className="text-gray-400">What you save vs hiring humans</p>
         </div>
         <div className="bg-[#1a1a2e] rounded-2xl p-8 border border-[#2d2d44]">
-          <div className="text-3xl font-bold text-[#6600FF] mb-2">$35,000/yr</div>
+          <div className="text-3xl font-bold text-[#e8ff47] mb-2">$35,000/yr</div>
           <p className="text-gray-400">Total savings over 12 months</p>
         </div>
         <div className="bg-[#1a1a2e] rounded-2xl p-8 border border-[#2d2d44]">
@@ -119,7 +119,7 @@ export default function AmpereStylePricing() {
               <ul className="space-y-2">
                 {plan.painPoints.map((point, index) => (
                   <li key={index} className="flex items-start gap-2 text-gray-300">
-                    <span className="text-[#00D4FF] mt-1">→</span>
+                    <span className="text-[#e8ff47] mt-1">→</span>
                     <span>{point}</span>
                   </li>
                 ))}
@@ -136,12 +136,12 @@ export default function AmpereStylePricing() {
             key={plan.name}
             className={`rounded-2xl overflow-hidden transition-all duration-300 ${
               plan.highlight
-                ? 'bg-[#1a1a2e] border-2 border-[#6600FF] shadow-2xl'
+                ? 'bg-[#1a1a2e] border-2 border-[#e8ff47] shadow-2xl'
                 : 'bg-[#1a1a2e] border border-[#2d2d44]'
             }`}
           >
             {plan.highlight && (
-              <div className="bg-gradient-to-r from-[#00D4FF] to-[#6600FF] text-white text-sm font-semibold py-2 text-center">
+              <div className="bg-gradient-to-r from-[#e8ff47] to-[#e8ff47] text-white text-sm font-semibold py-2 text-center">
                 MOST POPULAR
               </div>
             )}
@@ -163,7 +163,7 @@ export default function AmpereStylePricing() {
               <ul className="space-y-3 mb-8">
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex items-start gap-3 text-gray-300">
-                    <span className="text-[#00D4FF] mt-1">✓</span>
+                    <span className="text-[#e8ff47] mt-1">✓</span>
                     <span className="text-sm">{feature}</span>
                   </li>
                 ))}
@@ -173,7 +173,7 @@ export default function AmpereStylePricing() {
                 onClick={() => router.push(`/auth/signup?plan=${plan.name.toLowerCase()}`)}
                 className={`w-full py-3 rounded-lg font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] ${
                   plan.highlight
-                    ? 'bg-gradient-to-r from-[#00D4FF] to-[#6600FF] text-white hover:opacity-90 hover:shadow-[0_0_25px_rgba(0,212,255,0.3)]'
+                    ? 'bg-gradient-to-r from-[#e8ff47] to-[#e8ff47] text-white hover:opacity-90 hover:shadow-[0_0_25px_rgba(0,212,255,0.3)]'
                     : 'bg-[#2d2d44] text-white hover:bg-[#3d3d54]'
                 }`}
               >

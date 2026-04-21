@@ -68,7 +68,7 @@ function CountUpNumber({
 
   return (
     <div className="text-center">
-      <div className="bg-[linear-gradient(135deg,#00D4FF,#6600FF)] bg-clip-text text-[40px] font-semibold tracking-[-0.05em] text-transparent md:text-[48px]">
+      <div className="bg-[linear-gradient(135deg,#e8ff47,#e8ff47)] bg-clip-text text-[40px] font-semibold tracking-[-0.05em] text-transparent md:text-[48px]">
         {prefix}
         {formatted}
         {suffix}
@@ -88,7 +88,7 @@ export default function MissionControl() {
     <section
       ref={sectionRef}
       id="mission-control"
-      className="relative overflow-hidden bg-[#04040c] px-6 pt-16 pb-20 md:pt-20 md:pb-28"
+      className="relative overflow-hidden bg-[#0a0a0a] px-6 pt-16 pb-20 md:pt-20 md:pb-28"
     >
       {/* Top gradient divider */}
       <div
@@ -148,7 +148,7 @@ export default function MissionControl() {
           <div className="relative bg-[rgba(3,3,10,0.84)]">
             {agentRows.map((row, index) => {
               const isActive = row.status === "Active";
-              const statusColor = isActive ? "#00FF88" : "#00D4FF";
+              const statusColor = isActive ? "#00FF88" : "#e8ff47";
 
               return (
                 <motion.div

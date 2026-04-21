@@ -6,7 +6,7 @@ import { useRef } from "react";
 const capabilities = [
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e8ff47" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="2" width="20" height="8" rx="2"/>
         <rect x="2" y="14" width="20" height="8" rx="2"/>
         <line x1="6" y1="6" x2="6.01" y2="6"/>
@@ -17,11 +17,11 @@ const capabilities = [
     title: "Managed Infrastructure",
     description: "Your agents run on optimized infrastructure — no cloud rental markup, no per-call API fees. We handle the setup, you own the workforce.",
     highlight: "Predictable cost. Unlimited agent hours.",
-    color: "#00D4FF",
+    color: "#e8ff47",
   },
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6600FF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e8ff47" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="3"/>
         <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
       </svg>
@@ -30,11 +30,11 @@ const capabilities = [
     title: "Local Models",
     description: "Gemma 4 2B, Qwen, DeepSeek — running on managed infrastructure. No data leaves your server. No per-call API bills.",
     highlight: "Private by architecture. Zero per-call costs.",
-    color: "#6600FF",
+    color: "#e8ff47",
   },
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e8ff47" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="3" width="7" height="7" rx="1"/>
         <rect x="14" y="3" width="7" height="7" rx="1"/>
         <rect x="3" y="14" width="7" height="7" rx="1"/>
@@ -46,11 +46,11 @@ const capabilities = [
     title: "Multi-Agent Runtime",
     description: "Run unlimited agents simultaneously. Sales, Support, Research, Ops — each as an independent process. They share context and collaborate.",
     highlight: "5,400+ skills. One runtime.",
-    color: "#00D4FF",
+    color: "#e8ff47",
   },
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6600FF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e8ff47" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 2L2 7l10 5 10-5-10-5z"/>
         <path d="M2 17l10 5 10-5"/>
         <path d="M2 12l10 5 10-5"/>
@@ -60,11 +60,11 @@ const capabilities = [
     title: "5,400+ Skills & Plugins",
     description: "Skills and plugins for GHL, Notion, Gmail, and 500+ other tools. Install an agent skill in one click — like an app store for your AI workforce.",
     highlight: "Skills for every vertical. One-click install.",
-    color: "#6600FF",
+    color: "#e8ff47",
   },
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e8ff47" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
       </svg>
     ),
@@ -72,11 +72,11 @@ const capabilities = [
     title: "Edge Execution",
     description: "Agents run on managed infrastructure, close to your data. No round-trip to cloud APIs. Real-time automation with zero latency.",
     highlight: "Local execution. Zero network latency.",
-    color: "#00D4FF",
+    color: "#e8ff47",
   },
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6600FF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e8ff47" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
       </svg>
     ),
@@ -84,7 +84,7 @@ const capabilities = [
     title: "Data Sovereignty",
     description: "Your client data, your prompts, your business intelligence — all stays on managed infrastructure. Not training data for someone else's model. Not subject to their API outages.",
     highlight: "Your data. Your server. Your control.",
-    color: "#6600FF",
+    color: "#e8ff47",
   },
 ];
 
@@ -111,7 +111,7 @@ export default function Capabilities() {
   const isInView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section ref={ref} id="capabilities" className="relative bg-[#04040c] px-6 py-16 md:py-24">
+    <section ref={ref} id="capabilities" className="relative bg-[#0a0a0a] px-6 py-16 md:py-24">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0" style={{
         background: "radial-gradient(ellipse 80% 50% at 50% 50%, rgba(0,212,255,0.04), transparent 70%)",
       }} />
@@ -172,7 +172,7 @@ export default function Capabilities() {
         >
           {trustItems.map((item) => (
             <div key={item} className="flex items-center gap-2">
-              <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4 text-[#00D4FF]" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4 text-[#e8ff47]" aria-hidden="true">
                 <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               <span className="text-xs md:text-sm text-[rgba(255,255,255,0.35)]">{item}</span>

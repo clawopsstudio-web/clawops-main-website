@@ -63,14 +63,14 @@ export default function DiagClient() {
 
   return (
     <div style={{ padding: '40px', fontFamily: 'monospace', background: '#0a0a0a', color: '#0f0', minHeight: '100vh' }}>
-      <h1 style={{ color: '#00D4FF' }}>🔍 Client-Side Diagnostic</h1>
+      <h1 style={{ color: '#e8ff47' }}>🔍 Client-Side Diagnostic</h1>
       <div dangerouslySetInnerHTML={{ __html: result }} />
       <button onClick={testServices} disabled={testing}
-        style={{ padding: '12px 24px', background: '#00D4FF', color: '#000', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '16px', marginTop: '20px' }}>
+        style={{ padding: '12px 24px', background: '#e8ff47', color: '#000', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '16px', marginTop: '20px' }}>
         {testing ? 'Testing...' : 'Test Service Access'}
       </button>
       <br /><br />
-      <a href="/dashboard" style={{ color: '#00D4FF' }}>← Dashboard</a>
+      <a href="/dashboard" style={{ color: '#e8ff47' }}>← Dashboard</a>
     </div>
   );
 }

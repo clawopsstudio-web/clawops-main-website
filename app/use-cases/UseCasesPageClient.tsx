@@ -16,7 +16,7 @@ const PERSONAS = [
     subtitle: "1-person business",
     description: "You wear every hat. Support, sales, ops, content — all you. We give you an AI team that handles the repeatable work so you can focus on the work only you can do.",
     workers: ["Support Worker", "Research Worker", "Content Worker"],
-    color: "#00D4FF",
+    color: "#e8ff47",
     metrics: ["Save 20+ hrs/week", "Handle 10x more inquiries", "Never miss a lead"],
     quote: "\"I went from drowning in tickets to having a team that handles everything while I sleep.\"",
   },
@@ -33,7 +33,7 @@ const PERSONAS = [
     subtitle: "Marketing & service agencies",
     description: "Scale your delivery without scaling headcount. Deploy AI workers that handle client research, content creation, reporting, and outreach — while you focus on strategy and relationships.",
     workers: ["Research Worker", "Content Worker", "Ops Worker"],
-    color: "#6600FF",
+    color: "#e8ff47",
     metrics: ["Serve 3x more clients", "Cut delivery time 60%", "White-label for clients"],
     quote: "\"We now deliver full-service content operations for 12 clients with a team of 4 humans + AI.\"",
   },
@@ -78,7 +78,7 @@ const USE_CASE_CARDS = [
     title: "24/7 Customer Support",
     description: "Support workers answer FAQs, route tickets, and escalate complex issues. Your customers get responses in seconds, not hours.",
     badge: "Support",
-    badgeColor: "#00D4FF",
+    badgeColor: "#e8ff47",
     metrics: "80% auto-resolution",
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -90,7 +90,7 @@ const USE_CASE_CARDS = [
     title: "Lead Research & Prospecting",
     description: "Research workers find qualified prospects, pull tech stacks, find decision-makers, and build outreach lists — automatically every morning.",
     badge: "Sales",
-    badgeColor: "#6600FF",
+    badgeColor: "#e8ff47",
     metrics: "340 qualified leads/week",
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -102,7 +102,7 @@ const USE_CASE_CARDS = [
     title: "Automated Content Pipeline",
     description: "Content workers research topics, draft posts, schedule them, and track performance — without you touching it. 14 pieces a week is the baseline.",
     badge: "Content",
-    badgeColor: "#00D4FF",
+    badgeColor: "#e8ff47",
     metrics: "14 pieces/week baseline",
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -114,7 +114,7 @@ const USE_CASE_CARDS = [
     title: "Daily Client Reporting",
     description: "Ops workers pull data from all your tools every morning, build the report, and deliver it to your inbox — before you're out of bed.",
     badge: "Ops",
-    badgeColor: "#6600FF",
+    badgeColor: "#e8ff47",
     metrics: "Zero manual data entry",
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -126,7 +126,7 @@ const USE_CASE_CARDS = [
     title: "Market Intelligence",
     description: "Research workers monitor competitors, track pricing changes, and surface market signals — delivering a daily briefing straight to Telegram.",
     badge: "Research",
-    badgeColor: "#00D4FF",
+    badgeColor: "#e8ff47",
     metrics: "Daily market briefings",
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -138,7 +138,7 @@ const USE_CASE_CARDS = [
     title: "Workflow Automation",
     description: "Ops workers manage approvals, sync data across tools, handle routing, and keep your processes running without you in the loop.",
     badge: "Automation",
-    badgeColor: "#6600FF",
+    badgeColor: "#e8ff47",
     metrics: "Removes bottlenecks",
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -153,7 +153,7 @@ export default function UseCasesPageClient() {
   const isInView = useInView(headerRef, { once: true });
 
   return (
-    <main className="min-h-screen bg-[#04040c]">
+    <main className="min-h-screen bg-[#0a0a0a]">
       {/* Hero */}
       <div ref={headerRef} className="relative overflow-hidden px-6 pt-32 pb-20 text-center">
         <div className="pointer-events-none absolute inset-0">
@@ -170,7 +170,7 @@ export default function UseCasesPageClient() {
           <p className="pre-label mb-4">USE CASES</p>
           <h1 className="text-[clamp(2rem,5vw,3.5rem)] font-bold tracking-[-0.04em] text-white md:text-5xl lg:text-6xl">
             Built for
-            <span className="bg-gradient-to-r from-[#00D4FF] to-[#6600FF] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#e8ff47] to-[#e8ff47] bg-clip-text text-transparent">
               {" "}Real Business Work
             </span>
           </h1>
@@ -349,7 +349,7 @@ export default function UseCasesPageClient() {
           </p>
           <a
             href="/pricing"
-            className="mt-8 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#00D4FF] to-[#6600FF] px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-[rgba(0,212,255,0.2)] transition-all hover:-translate-y-0.5 hover:shadow-xl"
+            className="mt-8 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#e8ff47] to-[#e8ff47] px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-[rgba(0,212,255,0.2)] transition-all hover:-translate-y-0.5 hover:shadow-xl"
           >
             View Pricing
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

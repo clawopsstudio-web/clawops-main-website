@@ -358,7 +358,7 @@ export default function IntegrationsPage() {
               className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
               style={{
                 background: activeCategory === cat.id ? 'rgba(0,212,255,0.2)' : 'rgba(255,255,255,0.05)',
-                color: activeCategory === cat.id ? '#00D4FF' : 'rgba(255,255,255,0.5)',
+                color: activeCategory === cat.id ? '#e8ff47' : 'rgba(255,255,255,0.5)',
                 border: activeCategory === cat.id ? '1px solid rgba(0,212,255,0.3)' : '1px solid rgba(255,255,255,0.08)',
               }}
             >
@@ -396,7 +396,7 @@ export default function IntegrationsPage() {
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {hasConfig && (
-                      <span className="flex items-center gap-1 px-2 py-1 rounded-full text-xs" style={{ background: 'rgba(0,212,255,0.15)', color: '#00D4FF' }}>
+                      <span className="flex items-center gap-1 px-2 py-1 rounded-full text-xs" style={{ background: 'rgba(0,212,255,0.15)', color: '#e8ff47' }}>
                         <Check size={10} /> Connected
                       </span>
                     )}
@@ -439,7 +439,7 @@ export default function IntegrationsPage() {
                     disabled={isSaving}
                     className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold text-white transition-all disabled:opacity-50"
                     style={{
-                      background: 'linear-gradient(135deg, #00D4FF, #6600FF)',
+                      background: 'linear-gradient(135deg, #e8ff47, #e8ff47)',
                       boxShadow: '0 0 15px rgba(0,212,255,0.2)',
                     }}
                   >

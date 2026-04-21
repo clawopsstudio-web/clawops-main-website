@@ -63,7 +63,7 @@ interface DashboardData {
 
 // Agent roster — matches OpenClaw gateway config (agents.list in openclaw.json)
 const AGENT_TEAM = [
-  { name: 'Henry', role: 'Co-Founder & Chief AI Officer', color: '#00D4FF', topic: 'Telegram DM', model: 'gemini-3.1-flash-lite' },
+  { name: 'Henry', role: 'Co-Founder & Chief AI Officer', color: '#e8ff47', topic: 'Telegram DM', model: 'gemini-3.1-flash-lite' },
   { name: 'Ryan', role: 'Sales Pipeline', color: '#22c55e', topic: 'Telegram #25', model: 'gpt-5.4' },
   { name: 'Arjun', role: 'Market Research', color: '#f59e0b', topic: 'Telegram #26', model: 'gpt-5.4' },
   { name: 'Dev', role: 'Core Build & Coding', color: '#a855f7', topic: 'Telegram #27', model: 'gpt-5.4' },
@@ -77,11 +77,11 @@ const AGENT_TEAM = [
 const MODEL_OPTIONS = [
   { name: 'Claude Opus 4.6', provider: 'CodeMax Pro', color: '#FF6B35', context: '180K' },
   { name: 'Claude Sonnet 4.6', provider: 'CodeMax Pro', color: '#FF6B35', context: '180K' },
-  { name: 'gemini-3.1-flash-lite', provider: 'Google AI', color: '#00D4FF', context: '128K' },
+  { name: 'gemini-3.1-flash-lite', provider: 'Google AI', color: '#e8ff47', context: '128K' },
   { name: 'GPT-5.4', provider: 'OpenAI Codex', color: '#10b981', context: '128K' },
   { name: 'minimax-m2.7', provider: 'NVIDIA', color: '#76B900', context: '16K' },
   { name: 'DeepSeek V3.2', provider: 'NVIDIA', color: '#FF4B4B', context: '16K' },
-  { name: 'GLM-4.7-flash', provider: 'OpenRouter', color: '#6600FF', context: '128K' },
+  { name: 'GLM-4.7-flash', provider: 'OpenRouter', color: '#e8ff47', context: '128K' },
   { name: 'Qwen3 Coder', provider: 'OpenRouter', color: '#EC4899', context: '32K' },
 ]
 
@@ -103,15 +103,15 @@ export default function DashboardClient({ data }: { data: DashboardData }) {
 
   const INTEGRATIONS = [
     { name: 'n8n', icon: '⚙️', color: '#EA4B71', desc: 'Workflow automation & webhooks', href: data.userId ? `/dashboard/${data.userId}/n8n` : '#', badge: 'Automation' },
-    { name: 'Chrome Browser', icon: '🌐', color: '#00D4FF', desc: 'Visual browser + CDP automation', href: data.userId ? `/dashboard/${data.userId}/chrome` : '#', badge: 'Browser' },
+    { name: 'Chrome Browser', icon: '🌐', color: '#e8ff47', desc: 'Visual browser + CDP automation', href: data.userId ? `/dashboard/${data.userId}/chrome` : '#', badge: 'Browser' },
   ]
 
   const quickLinks = [
     { label: 'n8n', href: data.userId ? `/dashboard/${data.userId}/n8n` : '#', color: '#EA4B71', desc: 'Workflows', icon: '⚙️' },
-    { label: 'Chrome Browser', href: data.userId ? `/dashboard/${data.userId}/chrome` : '#', color: '#00D4FF', desc: 'Browser VNC', icon: '🌐' },
+    { label: 'Chrome Browser', href: data.userId ? `/dashboard/${data.userId}/chrome` : '#', color: '#e8ff47', desc: 'Browser VNC', icon: '🌐' },
     { label: 'Ops Panel', href: '/ops/', color: '#FF6B35', desc: 'Health, logs, config', icon: '🚀', external: true },
     { label: 'Mission Control', href: '/dashboard/mission-control', color: '#10b981', desc: 'Gateway management', icon: '🎯' },
-    { label: 'Skills Library', href: '/dashboard/skills-library', color: '#6600FF', desc: '5400+ skills', icon: '🧠' },
+    { label: 'Skills Library', href: '/dashboard/skills-library', color: '#e8ff47', desc: '5400+ skills', icon: '🧠' },
     { label: 'Guides', href: '/guides', color: '#4285F4', desc: 'Step-by-step docs', icon: '📚' },
   ]
 
@@ -250,7 +250,7 @@ export default function DashboardClient({ data }: { data: DashboardData }) {
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: 'AI Agents', value: data.openclaw?.activeAgents ?? data.activeAgents, icon: '🤖', color: '#00D4FF', sub: `of ${data.openclaw?.totalAgents ?? 8} total` },
+              { label: 'AI Agents', value: data.openclaw?.activeAgents ?? data.activeAgents, icon: '🤖', color: '#e8ff47', sub: `of ${data.openclaw?.totalAgents ?? 8} total` },
               { label: 'Pending Tasks', value: pendingTasks, icon: '📋', color: '#FFB800', sub: '' },
               { label: 'Completed', value: data.completedTasks, icon: '✅', color: '#00FF88', sub: '' },
               { label: 'Skills Installed', value: 0, icon: '🧠', color: '#10b981', sub: '' },
@@ -328,7 +328,7 @@ export default function DashboardClient({ data }: { data: DashboardData }) {
                 <div className="grid grid-cols-3 gap-3 mb-3">
                   <div className="rounded-lg bg-white/3 px-3 py-2 text-center">
                     <p className="text-xs text-white/40 mb-0.5">CPU</p>
-                    <p className="text-sm font-semibold" style={{ color: (data.openclaw.system.cpuUsage || 0) > 80 ? '#ef4444' : '#00D4FF' }}>
+                    <p className="text-sm font-semibold" style={{ color: (data.openclaw.system.cpuUsage || 0) > 80 ? '#ef4444' : '#e8ff47' }}>
                       {data.openclaw.system.cpuUsage?.toFixed(1) || '—'}%
                     </p>
                   </div>
@@ -359,7 +359,7 @@ export default function DashboardClient({ data }: { data: DashboardData }) {
                           <div className="flex items-center gap-3 text-[10px] text-white/30">
                             <span>{agent.sessionCount} sessions</span>
                             {agent.model && agent.model !== 'default' && (
-                              <span className="px-1.5 py-0.5 rounded bg-[#00D4FF]/10 text-[#00D4FF]/70">{agent.model}</span>
+                              <span className="px-1.5 py-0.5 rounded bg-[#e8ff47]/10 text-[#e8ff47]/70">{agent.model}</span>
                             )}
                           </div>
                         </div>
@@ -406,7 +406,7 @@ export default function DashboardClient({ data }: { data: DashboardData }) {
                     </select>
                     <button onClick={addTask} disabled={addingTask || !newTaskTitle.trim()}
                       className="rounded-lg px-4 py-2 text-sm font-medium text-white transition-all hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed"
-                      style={{ background: 'linear-gradient(135deg, #00D4FF, #6600FF)' }}>
+                      style={{ background: 'linear-gradient(135deg, #e8ff47, #e8ff47)' }}>
                       {addingTask ? '...' : 'Add'}
                     </button>
                   </div>
@@ -469,7 +469,7 @@ export default function DashboardClient({ data }: { data: DashboardData }) {
                   <p className="text-xs text-[rgba(255,255,255,0.4)] mb-3">Install pre-built AI skills for GHL, n8n, Google Workspace, and more.</p>
                   <Link href="/dashboard/skills-library"
                     className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold text-white transition-all hover:-translate-y-0.5"
-                    style={{ background: 'linear-gradient(135deg, #6600FF, #00D4FF)', boxShadow: '0 0 20px rgba(102,0,255,0.25)' }}>
+                    style={{ background: 'linear-gradient(135deg, #e8ff47, #e8ff47)', boxShadow: '0 0 20px rgba(102,0,255,0.25)' }}>
                     Browse Skills →
                   </Link>
                 </div>
@@ -508,13 +508,13 @@ export default function DashboardClient({ data }: { data: DashboardData }) {
               >
                 <div className="border-b border-[rgba(255,255,255,0.06)] px-5 py-4 flex items-center justify-between">
                   <h2 className="text-sm font-semibold text-white">VPS Instances</h2>
-                  <a href="/ops/" target="_blank" rel="noopener noreferrer" className="text-xs text-[#00D4FF] hover:underline">Manage →</a>
+                  <a href="/ops/" target="_blank" rel="noopener noreferrer" className="text-xs text-[#e8ff47] hover:underline">Manage →</a>
                 </div>
                 <div className="p-5">
                   {instances.length === 0 ? (
                     <div className="text-center py-4">
                       <p className="text-sm text-[rgba(255,255,255,0.25)] mb-3">No instances tracked yet.</p>
-                      <a href="/ops/" target="_blank" rel="noopener noreferrer" className="text-xs text-[#00D4FF] hover:underline">Open Ops Panel →</a>
+                      <a href="/ops/" target="_blank" rel="noopener noreferrer" className="text-xs text-[#e8ff47] hover:underline">Open Ops Panel →</a>
                     </div>
                   ) : (
                     <div className="space-y-2">

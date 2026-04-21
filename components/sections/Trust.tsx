@@ -9,17 +9,17 @@ const proofCards = [
   {
     title: "Deploy in 48 Hours",
     body: "Most teams are live within 48 hours — no months-long implementations, no IT department required.",
-    accent: "#00D4FF",
+    accent: "#e8ff47",
   },
   {
     title: "Your Data Stays Yours",
     body: "Enterprise-grade security, private deployments, and full data ownership — because your client data is your competitive moat.",
-    accent: "#6600FF",
+    accent: "#e8ff47",
   },
   {
     title: "Works in Every Timezone",
     body: "AI agents handle leads, support, and follow-ups while you sleep — so your business never misses an opportunity.",
-    accent: "#00D4FF",
+    accent: "#e8ff47",
   },
 ];
 
@@ -33,7 +33,7 @@ export default function Trust() {
     <section
       ref={sectionRef}
       id="trust"
-      className="relative overflow-hidden bg-[#04040c] px-6 pt-16 pb-20 md:pt-20 md:pb-28"
+      className="relative overflow-hidden bg-[#0a0a0a] px-6 pt-16 pb-20 md:pt-20 md:pb-28"
     >
       {/* Top gradient divider */}
       <div

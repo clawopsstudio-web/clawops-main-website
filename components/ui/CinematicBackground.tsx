@@ -63,9 +63,9 @@ export default function CinematicBackground({ phase = 0, scrollProgress }: Props
   const stars = useMemo(() => generateStars(70), []);
 
   const phaseColors: Record<number, { primary: string; secondary: string; accent: string }> = {
-    0: { primary: "rgba(0,212,255,0.07)", secondary: "rgba(102,0,255,0.04)", accent: "#00D4FF" },
-    1: { primary: "rgba(0,212,255,0.09)", secondary: "rgba(0,212,255,0.05)", accent: "#00D4FF" },
-    2: { primary: "rgba(102,0,255,0.09)", secondary: "rgba(0,212,255,0.04)", accent: "#6600FF" },
+    0: { primary: "rgba(0,212,255,0.07)", secondary: "rgba(102,0,255,0.04)", accent: "#e8ff47" },
+    1: { primary: "rgba(0,212,255,0.09)", secondary: "rgba(0,212,255,0.05)", accent: "#e8ff47" },
+    2: { primary: "rgba(102,0,255,0.09)", secondary: "rgba(0,212,255,0.04)", accent: "#e8ff47" },
     3: { primary: "rgba(0,255,136,0.06)", secondary: "rgba(0,212,255,0.04)", accent: "#00FF88" },
   };
 
@@ -91,7 +91,7 @@ export default function CinematicBackground({ phase = 0, scrollProgress }: Props
       className="pointer-events-none absolute inset-0 overflow-hidden"
     >
       {/* Layer 0: Base */}
-      <div className="absolute inset-0" style={{ background: "#04040c" }} />
+      <div className="absolute inset-0" style={{ background: "#0a0a0a" }} />
 
       {/* Layer 1: Dot grid */}
       <div className="absolute inset-0 dot-grid opacity-40" />
@@ -174,7 +174,7 @@ export default function CinematicBackground({ phase = 0, scrollProgress }: Props
         className="absolute bottom-0 left-0 right-0"
         style={{
           height: "180px",
-          background: "linear-gradient(to bottom, transparent, #04040c)",
+          background: "linear-gradient(to bottom, transparent, #0a0a0a)",
         }}
       />
     </div>

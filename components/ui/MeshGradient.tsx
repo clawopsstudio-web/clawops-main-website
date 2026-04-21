@@ -36,7 +36,7 @@ export default function MeshGradient() {
         blob1X, blob1Y, 0,
         blob1X, blob1Y, canvas.width * 0.5
       );
-      gradient1.addColorStop(0, "rgba(0, 212, 255, 0.12)");
+      gradient1.addColorStop(0, "rgba(232, 255, 71, 0.12)");
       gradient1.addColorStop(0.4, "rgba(0, 100, 200, 0.05)");
       gradient1.addColorStop(1, "transparent");
       ctx.fillStyle = gradient1;

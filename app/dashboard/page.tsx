@@ -31,7 +31,7 @@ export default function DashboardPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#04040c',
+      background: '#0a0a0a',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -43,14 +43,14 @@ export default function DashboardPage() {
           <>
             <div style={{
               width: 48, height: 48, borderRadius: 12,
-              background: 'rgba(0, 212, 255, 0.1)',
-              border: '1px solid rgba(0, 212, 255, 0.3)',
+              background: 'rgba(232, 255, 71, 0.1)',
+              border: '1px solid rgba(232, 255, 71, 0.3)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               margin: '0 auto 24px',
             }}>
               <div style={{
                 width: 24, height: 24, borderRadius: '50%',
-                border: '2px solid #00D4FF',
+                border: '2px solid #e8ff47',
                 borderTopColor: 'transparent',
                 animation: 'spin 1s linear infinite',
               }} />
@@ -64,14 +64,14 @@ export default function DashboardPage() {
           <>
             <div style={{
               width: 48, height: 48, borderRadius: 12,
-              background: 'rgba(0, 212, 255, 0.1)',
-              border: '1px solid rgba(0, 212, 255, 0.3)',
+              background: 'rgba(232, 255, 71, 0.1)',
+              border: '1px solid rgba(232, 255, 71, 0.3)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               margin: '0 auto 24px',
             }}>
               <div style={{
                 width: 24, height: 24, borderRadius: '50%',
-                border: '2px solid #00D4FF',
+                border: '2px solid #e8ff47',
                 borderTopColor: 'transparent',
                 animation: 'spin 1s linear infinite',
               }} />
@@ -99,8 +99,8 @@ export default function DashboardPage() {
             <button
               onClick={() => window.location.href = 'https://app.clawops.studio/auth/login'}
               style={{
-                background: '#00D4FF',
-                color: '#04040c',
+                background: '#e8ff47',
+                color: '#0a0a0a',
                 border: 'none',
                 borderRadius: 8,
                 padding: '10px 24px',

@@ -86,14 +86,14 @@ export default function CallbackClient() {
 
   return (
     <div style={{
-      minHeight: '100vh', background: '#04040c', color: 'white',
+      minHeight: '100vh', background: '#0a0a0a', color: 'white',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontFamily: 'system-ui', padding: 20,
     }}>
       <div style={{ textAlign: 'center', maxWidth: 500 }}>
         <div style={{
           width: 48, height: 48, border: '3px solid rgba(255,255,255,0.1)',
-          borderTopColor: '#00D4FF', borderRadius: '50%',
+          borderTopColor: '#e8ff47', borderRadius: '50%',
           animation: 'spin 0.8s linear infinite', margin: '0 auto 20px',
         }} />
         <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: 16, fontWeight: 500 }}>{status}</p>

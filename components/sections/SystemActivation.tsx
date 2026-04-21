@@ -64,7 +64,7 @@ function PanelIcon({ id }: { id: string }) {
 
 function AgentNode({ className = "" }: { className?: string }) {
   return (
-    <div className={`sa-agent-node flex h-12 w-12 items-center justify-center rounded-full border border-[rgba(0,212,255,0.4)] bg-[rgba(0,212,255,0.12)] text-[#00D4FF] shadow-[0_0_30px_rgba(0,212,255,0.18)] ${className}`}>
+    <div className={`sa-agent-node flex h-12 w-12 items-center justify-center rounded-full border border-[rgba(0,212,255,0.4)] bg-[rgba(0,212,255,0.12)] text-[#e8ff47] shadow-[0_0_30px_rgba(0,212,255,0.18)] ${className}`}>
       <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
         <path d="M12 3L18.5 6.75V14.25L12 18L5.5 14.25V6.75L12 3Z" stroke="currentColor" strokeWidth="1.6" />
         <path d="M9.5 10.5H14.5M9.5 13.5H12.75" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
@@ -216,12 +216,12 @@ export default function SystemActivation() {
               aria-hidden="true"
               style={{ pointerEvents: "none" }}
             >
-              <line x1="24%" y1="30%" x2="50%" y2="50%" stroke="#00D4FF" strokeWidth="0.3" strokeDasharray="3 3" />
-              <line x1="76%" y1="26%" x2="50%" y2="50%" stroke="#00D4FF" strokeWidth="0.3" strokeDasharray="3 3" />
-              <line x1="28%" y1="73%" x2="50%" y2="50%" stroke="#00D4FF" strokeWidth="0.3" strokeDasharray="3 3" />
-              <line x1="77%" y1="69%" x2="50%" y2="50%" stroke="#00D4FF" strokeWidth="0.3" strokeDasharray="3 3" />
-              <line x1="24%" y1="30%" x2="76%" y2="26%" stroke="#00D4FF" strokeWidth="0.2" strokeDasharray="3 3" opacity="0.5" />
-              <line x1="28%" y1="73%" x2="77%" y2="69%" stroke="#00D4FF" strokeWidth="0.2" strokeDasharray="3 3" opacity="0.5" />
+              <line x1="24%" y1="30%" x2="50%" y2="50%" stroke="#e8ff47" strokeWidth="0.3" strokeDasharray="3 3" />
+              <line x1="76%" y1="26%" x2="50%" y2="50%" stroke="#e8ff47" strokeWidth="0.3" strokeDasharray="3 3" />
+              <line x1="28%" y1="73%" x2="50%" y2="50%" stroke="#e8ff47" strokeWidth="0.3" strokeDasharray="3 3" />
+              <line x1="77%" y1="69%" x2="50%" y2="50%" stroke="#e8ff47" strokeWidth="0.3" strokeDasharray="3 3" />
+              <line x1="24%" y1="30%" x2="76%" y2="26%" stroke="#e8ff47" strokeWidth="0.2" strokeDasharray="3 3" opacity="0.5" />
+              <line x1="28%" y1="73%" x2="77%" y2="69%" stroke="#e8ff47" strokeWidth="0.2" strokeDasharray="3 3" opacity="0.5" />
             </svg>
 
             {/* Chaos cluster: tool panels floating */}
@@ -286,7 +286,7 @@ export default function SystemActivation() {
                       {[40, 65, 45, 80, 60, 90, 70, 85, 55, 75, 95, 68, 78, 88, 60].map((h, i) => (
                         <div
                           key={i}
-                          className="flex-1 rounded-sm bg-gradient-to-t from-[#6600FF]/60 to-[#00D4FF]/60"
+                          className="flex-1 rounded-sm bg-gradient-to-t from-[#e8ff47]/60 to-[#e8ff47]/60"
                           style={{ height: `${h}%`, opacity: 0.7 + (i / 15) * 0.3 }}
                         />
                       ))}
@@ -295,13 +295,13 @@ export default function SystemActivation() {
                   {/* Agent count */}
                   <div className="flex flex-col items-center justify-center rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-white/40">Agents</p>
-                    <p className="mt-3 text-3xl font-bold text-[#00D4FF]">12</p>
+                    <p className="mt-3 text-3xl font-bold text-[#e8ff47]">12</p>
                     <p className="mt-1 text-xs text-white/40">online</p>
                   </div>
                   {/* Metric bars */}
                   {[
-                    { label: "Sales", pct: 82, color: "#00D4FF" },
-                    { label: "Support", pct: 76, color: "#6600FF" },
+                    { label: "Sales", pct: 82, color: "#e8ff47" },
+                    { label: "Support", pct: 76, color: "#e8ff47" },
                     { label: "Ops", pct: 91, color: "rgba(255,255,255,0.7)" },
                   ].map((m) => (
                     <div key={m.label} className="flex flex-col justify-center rounded-2xl border border-white/[0.06] bg-white/[0.03] p-3">
@@ -342,7 +342,7 @@ export default function SystemActivation() {
                   className="h-full rounded-full"
                   style={{
                     width: "4%",
-                    background: "linear-gradient(90deg, #00D4FF, #6600FF)",
+                    background: "linear-gradient(90deg, #e8ff47, #e8ff47)",
                   }}
                 />
               </div>

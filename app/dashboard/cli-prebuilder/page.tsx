@@ -85,7 +85,7 @@ export default function CLIPrebuilder() {
               required
               value={tool.name}
               onChange={(e) => setTool({ ...tool, name: e.target.value })}
-              className="w-full bg-[#0f0f1a] border border-[#2d2d44] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#00D4FF]"
+              className="w-full bg-[#0f0f1a] border border-[#2d2d44] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#e8ff47]"
               placeholder="e.g., mybiz-analytics"
             />
           </div>
@@ -98,7 +98,7 @@ export default function CLIPrebuilder() {
               required
               value={tool.description}
               onChange={(e) => setTool({ ...tool, description: e.target.value })}
-              className="w-full bg-[#0f0f1a] border border-[#2d2d44] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#00D4FF]"
+              className="w-full bg-[#0f0f1a] border border-[#2d2d44] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#e8ff47]"
               placeholder="What does this CLI tool do?"
               rows={2}
             />
@@ -112,7 +112,7 @@ export default function CLIPrebuilder() {
               required
               value={tool.commands}
               onChange={(e) => setTool({ ...tool, commands: e.target.value })}
-              className="w-full bg-[#0f0f1a] border border-[#2d2d44] rounded-lg px-4 py-2 text-white font-mono text-sm focus:outline-none focus:border-[#00D4FF]"
+              className="w-full bg-[#0f0f1a] border border-[#2d2d44] rounded-lg px-4 py-2 text-white font-mono text-sm focus:outline-none focus:border-[#e8ff47]"
               placeholder="#!/bin/bash&#10;npm start&#10;--verbose"
               rows={4}
             />
@@ -127,7 +127,7 @@ export default function CLIPrebuilder() {
               required
               value={tool.workingDir}
               onChange={(e) => setTool({ ...tool, workingDir: e.target.value })}
-              className="w-full bg-[#0f0f1a] border border-[#2d2d44] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#00D4FF]"
+              className="w-full bg-[#0f0f1a] border border-[#2d2d44] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#e8ff47]"
               placeholder="e.g., ~/mybiz"
             />
           </div>
@@ -140,7 +140,7 @@ export default function CLIPrebuilder() {
               type="text"
               value={tool.icon}
               onChange={(e) => setTool({ ...tool, icon: e.target.value })}
-              className="w-full bg-[#0f0f1a] border border-[#2d2d44] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#00D4FF]"
+              className="w-full bg-[#0f0f1a] border border-[#2d2d44] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#e8ff47]"
               placeholder="e.g., 🚀"
             />
           </div>
@@ -148,7 +148,7 @@ export default function CLIPrebuilder() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-[#00D4FF] to-[#6600FF] text-white font-semibold py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="w-full bg-gradient-to-r from-[#e8ff47] to-[#e8ff47] text-white font-semibold py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
           >
             {loading ? 'Saving...' : '✨ Save CLI Tool'}
           </button>
@@ -168,7 +168,7 @@ export default function CLIPrebuilder() {
           {tools.map((cli) => (
             <div
               key={cli.id}
-              className="bg-[#1a1a2e] rounded-xl p-6 border border-[#2d2d44] hover:border-[#00D4FF] transition-colors"
+              className="bg-[#1a1a2e] rounded-xl p-6 border border-[#2d2d44] hover:border-[#e8ff47] transition-colors"
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-2">
@@ -178,7 +178,7 @@ export default function CLIPrebuilder() {
               </div>
               <p className="text-gray-400 text-sm mb-4">{cli.description}</p>
               <div className="bg-[#0f0f1a] rounded-lg p-3 mb-4">
-                <pre className="text-xs font-mono text-[#00D4FF] whitespace-pre-wrap">
+                <pre className="text-xs font-mono text-[#e8ff47] whitespace-pre-wrap">
                   {cli.commands}
                 </pre>
               </div>

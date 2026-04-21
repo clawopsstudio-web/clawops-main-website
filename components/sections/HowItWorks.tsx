@@ -9,21 +9,21 @@ const steps = [
     title: "Install Your OS",
     description: "Point ClawOps at your infrastructure. Our installer handles the rest — kernel, models, agent runtime, and 5,400+ skills & plugins. Your AI OS boots in 30 minutes — pre-configured, not blank.",
     detail: "Powered by ClawOps's multi-agent runtime",
-    color: "#00D4FF",
+    color: "#e8ff47",
   },
   {
     number: "02",
     title: "Connect Your Apps",
     description: "Connect Gmail, Notion, Slack, and 500+ apps — like installing apps on a new phone. Each integration unlocks new agent capabilities. No API glue needed.",
     detail: "Gmail, Notion, Slack, HubSpot — like an app store",
-    color: "#6600FF",
+    color: "#e8ff47",
   },
   {
     number: "03",
     title: "Boot Your Agent Team",
     description: "Pick your vertical. Install the skills & plugins. Your agents wake up and start running — following up with leads, resolving tickets, building reports. On their own. 24/7.",
     detail: "Autonomous 24/7 operation — you only step in when needed",
-    color: "#00D4FF",
+    color: "#e8ff47",
   },
 ];
 
@@ -34,9 +34,9 @@ function DesktopConnector({ isInView }: { isInView: boolean }) {
       <svg viewBox="0 0 1200 120" className="h-[120px] w-full" preserveAspectRatio="none" aria-hidden="true">
         <defs>
           <linearGradient id={pathId} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#00D4FF" stopOpacity="0.25" />
-            <stop offset="50%" stopColor="#00D4FF" stopOpacity="0.9" />
-            <stop offset="100%" stopColor="#6600FF" stopOpacity="0.75" />
+            <stop offset="0%" stopColor="#e8ff47" stopOpacity="0.25" />
+            <stop offset="50%" stopColor="#e8ff47" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="#e8ff47" stopOpacity="0.75" />
           </linearGradient>
         </defs>
         <motion.path d="M84 60 C 220 60, 200 60, 336 60 S 520 60, 656 60 S 840 60, 976 60 S 1040 60, 1116 60"
@@ -53,7 +53,7 @@ export default function HowItWorks() {
   const isInView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section ref={ref} id="how-it-works" className="relative bg-[#04040c] px-6 py-16 md:py-24">
+    <section ref={ref} id="how-it-works" className="relative bg-[#0a0a0a] px-6 py-16 md:py-24">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0" style={{
         background: "radial-gradient(ellipse 60% 40% at 50% 100%, rgba(102,0,255,0.08), transparent 70%)",
       }} />
@@ -80,7 +80,7 @@ export default function HowItWorks() {
               initial={{ opacity: 0, y: 40 }} animate={isInView ? { opacity: 1, y: 0 } : undefined}
               transition={{ duration: 0.7, delay: 0.2 * (index + 1), ease: [0.22, 1, 0.36, 1] }}
               className="relative flex flex-col items-center text-center">
-              <div className="relative z-10 flex h-14 w-14 items-center justify-center rounded-full border-2 bg-[#04040c]"
+              <div className="relative z-10 flex h-14 w-14 items-center justify-center rounded-full border-2 bg-[#0a0a0a]"
                 style={{ borderColor: step.color, boxShadow: `0 0 24px ${step.color}33` }}>
                 <span className="font-mono text-base font-bold" style={{ color: step.color }}>{step.number}</span>
               </div>

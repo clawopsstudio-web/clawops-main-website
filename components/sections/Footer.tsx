@@ -17,7 +17,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative border-t border-[rgba(255,255,255,0.06)] bg-[#04040c]">
+    <footer className="relative border-t border-[rgba(255,255,255,0.06)] bg-[#0a0a0a]">
       <div className="max-w-6xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-12">
           <div className="md:col-span-2">
@@ -25,7 +25,7 @@ export default function Footer() {
               <div
                 className="flex h-8 w-8 items-center justify-center rounded-lg text-white"
                 style={{
-                  background: "linear-gradient(135deg, #00D4FF, #6600FF)",
+                  background: "linear-gradient(135deg, #e8ff47, #e8ff47)",
                   boxShadow: "0 0 16px rgba(0,212,255,0.4)",
                 }}
               >
@@ -34,7 +34,7 @@ export default function Footer() {
                   <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <span className="text-white font-bold text-lg group-hover:text-[#00D4FF] transition-colors">ClawOps</span>
+              <span className="text-white font-bold text-lg group-hover:text-[#e8ff47] transition-colors">ClawOps</span>
             </a>
             <p className="text-[rgba(255,255,255,0.45)] text-sm leading-relaxed max-w-xs">
               The Agentic OS for your business. Deploy AI agent teams that work 24/7 — with 5,400+ skills &amp; plugins included.

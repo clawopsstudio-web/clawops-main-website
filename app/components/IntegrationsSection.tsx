@@ -36,7 +36,7 @@ function MarqueeRow({ tools, speed = 20 }: { tools: string[]; speed?: number }) 
 
 export default function IntegrationsSection() {
   return (
-    <section className="py-24 bg-[#04040c] overflow-hidden">
+    <section className="py-24 bg-[#0a0a0a] overflow-hidden">
       <div className="max-w-6xl mx-auto px-6">
         {/* Header */}
         <motion.div

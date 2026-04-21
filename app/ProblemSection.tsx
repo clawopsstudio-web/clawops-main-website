@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 export default function ProblemSection() {
   return (
-    <section className="py-24 bg-[#04040c]">
+    <section className="py-24 bg-[#0a0a0a]">
       <div className="max-w-4xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -76,12 +76,12 @@ export default function ProblemSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
-            className="text-center p-8 rounded-2xl bg-gradient-to-r from-[#00D4FF]/10 to-[#6600FF]/10 border border-[#00D4FF]/20"
+            className="text-center p-8 rounded-2xl bg-gradient-to-r from-[#e8ff47]/10 to-[#e8ff47]/10 border border-[#e8ff47]/20"
           >
             <p className="text-xl text-white font-medium mb-2">
               We built something different.
             </p>
-            <p className="text-[#00D4FF] text-lg font-bold">
+            <p className="text-[#e8ff47] text-lg font-bold">
               One subscription. One team. Every role covered.
             </p>
           </motion.div>

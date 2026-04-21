@@ -6,7 +6,7 @@ import { motion, useInView } from "framer-motion";
 const INTEGRATIONS = [
   {
     category: "Messaging",
-    color: "#00D4FF",
+    color: "#e8ff47",
     items: [
       { name: "Telegram", desc: "Primary interface. Message your workers like a colleague.", icon: "T" },
       { name: "WhatsApp", desc: "Customer-facing support via WhatsApp Business API.", icon: "W" },
@@ -17,7 +17,7 @@ const INTEGRATIONS = [
   },
   {
     category: "Browser & Automation",
-    color: "#6600FF",
+    color: "#e8ff47",
     items: [
       { name: "Virtual Chrome", desc: "Headless browser automation. Works with any web app.", icon: "C" },
       { name: "Authenticated Sessions", desc: "Workers access web apps with your credentials securely.", icon: "A" },
@@ -28,7 +28,7 @@ const INTEGRATIONS = [
   },
   {
     category: "Data & APIs",
-    color: "#00D4FF",
+    color: "#e8ff47",
     items: [
       { name: "REST API", desc: "Full REST API to trigger workers, query status, and manage data.", icon: "R" },
       { name: "Webhooks", desc: "Trigger workers via incoming webhooks from any platform.", icon: "H" },
@@ -39,7 +39,7 @@ const INTEGRATIONS = [
   },
   {
     category: "Productivity & CRM",
-    color: "#6600FF",
+    color: "#e8ff47",
     items: [
       { name: "Google Workspace", desc: "Gmail, Drive, Sheets, and Calendar integration.", icon: "G" },
       { name: "Notion", desc: "Read/write Notion databases and pages automatically.", icon: "N" },
@@ -50,7 +50,7 @@ const INTEGRATIONS = [
   },
   {
     category: "AI & Infrastructure",
-    color: "#00D4FF",
+    color: "#e8ff47",
     items: [
       { name: "ClawOps Gateway", desc: "Central hub for managing all AI workers.", icon: "O" },
       { name: "Ollama (Local)", desc: "Run Gemma 4 2B and other models on managed infrastructure.", icon: "L" },
@@ -61,7 +61,7 @@ const INTEGRATIONS = [
   },
   {
     category: "Content & Research",
-    color: "#6600FF",
+    color: "#e8ff47",
     items: [
       { name: "Web Search", desc: "Real-time web search for market research and intel.", icon: "S" },
       { name: "PDF Processing", desc: "Read, extract, and summarize PDF documents.", icon: "P" },
@@ -77,7 +77,7 @@ export default function IntegrationsPageClient() {
   const isInView = useInView(headerRef, { once: true });
 
   return (
-    <main className="min-h-screen bg-[#04040c]">
+    <main className="min-h-screen bg-[#0a0a0a]">
       {/* Hero */}
       <div ref={headerRef} className="relative overflow-hidden px-6 pt-32 pb-20 text-center">
         <div className="pointer-events-none absolute inset-0">
@@ -94,7 +94,7 @@ export default function IntegrationsPageClient() {
           <p className="pre-label mb-4">INTEGRATIONS</p>
           <h1 className="text-[clamp(2rem,5vw,3.5rem)] font-bold tracking-[-0.04em] text-white md:text-5xl lg:text-6xl">
             Connects to
-            <span className="bg-gradient-to-r from-[#00D4FF] to-[#6600FF] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#e8ff47] to-[#e8ff47] bg-clip-text text-transparent">
               {" "}Your Entire Stack
             </span>
           </h1>
@@ -171,7 +171,7 @@ export default function IntegrationsPageClient() {
             transition={{ duration: 0.6 }}
           >
             <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-[rgba(0,212,255,0.2)] bg-[rgba(0,212,255,0.06)]">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e8ff47" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="2" y="3" width="20" height="14" rx="2"/>
                 <path d="M8 21h8M12 17v4"/>
               </svg>
@@ -214,12 +214,12 @@ export default function IntegrationsPageClient() {
               {
                 title: "Structured Tool Calls",
                 desc: "Workers call typed tools with verified inputs and outputs. No more prompt engineering fragile API calls.",
-                color: "#00D4FF",
+                color: "#e8ff47",
               },
               {
                 title: "Multi-Tool Chaining",
                 desc: "Chain multiple tools in sequence. Research → Extract → Summarize → Send — all in one worker task.",
-                color: "#6600FF",
+                color: "#e8ff47",
               },
               {
                 title: "Tool Registry",

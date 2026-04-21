@@ -17,7 +17,7 @@ const FLOW_STEPS = [
         <path d="M2 12l10 5 10-5"/>
       </svg>
     ),
-    color: "#00D4FF",
+    color: "#e8ff47",
     detail: "Card or PayPal. Cancel anytime. No setup fee.",
     detailIcon: "💳",
   },
@@ -34,7 +34,7 @@ const FLOW_STEPS = [
         <path d="M16 13H8M16 17H8M10 9H8"/>
       </svg>
     ),
-    color: "#6600FF",
+    color: "#e8ff47",
     detail: "Tools • Tasks • Worker roles • Integrations",
     detailIcon: "📋",
   },
@@ -51,7 +51,7 @@ const FLOW_STEPS = [
         <path d="M7 8l3 3-3 3M12 14h4"/>
       </svg>
     ),
-    color: "#00D4FF",
+    color: "#e8ff47",
     detail: "~15 minutes. Fully automated.",
     detailIcon: "⚡",
   },
@@ -82,7 +82,7 @@ const TECH_DETAILS = [
     ),
     title: "Secure by Default",
     desc: "Hardened infrastructure, encrypted comms, role-based access, audit logs.",
-    color: "#00D4FF",
+    color: "#e8ff47",
   },
   {
     icon: (
@@ -93,7 +93,7 @@ const TECH_DETAILS = [
     ),
     title: "48-Hour Target",
     desc: "From subscribe to live workers. Our record: 4 hours.",
-    color: "#6600FF",
+    color: "#e8ff47",
   },
   {
     icon: (
@@ -113,7 +113,7 @@ const TECH_DETAILS = [
     ),
     title: "Real Human Handoff",
     desc: "Unresolved issues escalate to your team with full context.",
-    color: "#00D4FF",
+    color: "#e8ff47",
   },
 ];
 
@@ -134,7 +134,7 @@ export default function HowItWorksClient() {
   const arrowY = useTransform(scrollYProgress, [0, 1], [0, -20]);
 
   return (
-    <main className="min-h-screen bg-[#04040c] overflow-x-hidden">
+    <main className="min-h-screen bg-[#0a0a0a] overflow-x-hidden">
       {/* Hero */}
       <div ref={headerRef} className="relative overflow-hidden px-6 pt-32 pb-20 text-center">
         <div className="pointer-events-none absolute inset-0">
@@ -152,7 +152,7 @@ export default function HowItWorksClient() {
           <h1 className="text-[clamp(2rem,5vw,3.5rem)] font-bold tracking-[-0.04em] text-white md:text-5xl lg:text-6xl">
             From Zero to AI Team
             <br />
-            <span className="bg-gradient-to-r from-[#00D4FF] to-[#6600FF] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#e8ff47] to-[#e8ff47] bg-clip-text text-transparent">
               in 48 Hours
             </span>
           </h1>
@@ -168,7 +168,7 @@ export default function HowItWorksClient() {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="mt-8 inline-flex items-center gap-3 rounded-full border border-[rgba(0,212,255,0.2)] bg-[rgba(0,212,255,0.06)] px-5 py-2.5"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8ff47" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
               <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
             </svg>
             <span className="text-sm text-white/70">Target deployment:</span>
@@ -281,13 +281,13 @@ export default function HowItWorksClient() {
           {/* Tech stack pills */}
           <div className="mb-12 flex flex-wrap justify-center gap-3">
             {[
-              { name: "Gmail", color: "#00D4FF" },
-              { name: "Notion", color: "#6600FF" },
+              { name: "Gmail", color: "#e8ff47" },
+              { name: "Notion", color: "#e8ff47" },
               { name: "Slack", color: "#00FF88" },
               { name: "HubSpot", color: "#FF6B35" },
               { name: "Go High Level", color: "#FF6B35" },
-              { name: "Telegram", color: "#00D4FF" },
-              { name: "WhatsApp", color: "#6600FF" },
+              { name: "Telegram", color: "#e8ff47" },
+              { name: "WhatsApp", color: "#e8ff47" },
               { name: "Google Workspace", color: "#00FF88" },
               { name: "Airtable", color: "#FF6B35" },
             ].map((tech) => (
@@ -358,10 +358,10 @@ export default function HowItWorksClient() {
             <div className="absolute left-[19px] top-2 bottom-2 w-px bg-gradient-to-b from-[rgba(0,212,255,0.4)] via-[rgba(102,0,255,0.3)] to-transparent" />
 
             {[
-              { time: "0 min", title: "Subscription confirmed", desc: "Payment clears. You receive an onboarding form link via email.", color: "#00D4FF" },
-              { time: "15 min", title: "Onboarding complete", desc: "You submit the form with your tools, tasks, and preferences.", color: "#00D4FF" },
-              { time: "30 min", title: "Provisioning starts", desc: "Our system provisions your VPS and configures the gateway.", color: "#6600FF" },
-              { time: "2 hrs", title: "Workers configured", desc: "AI workers are set up with your custom instructions, skills, and integrations.", color: "#6600FF" },
+              { time: "0 min", title: "Subscription confirmed", desc: "Payment clears. You receive an onboarding form link via email.", color: "#e8ff47" },
+              { time: "15 min", title: "Onboarding complete", desc: "You submit the form with your tools, tasks, and preferences.", color: "#e8ff47" },
+              { time: "30 min", title: "Provisioning starts", desc: "Our system provisions your VPS and configures the gateway.", color: "#e8ff47" },
+              { time: "2 hrs", title: "Workers configured", desc: "AI workers are set up with your custom instructions, skills, and integrations.", color: "#e8ff47" },
               { time: "4–48 hrs", title: "Testing & activation", desc: "We run validation tests, verify integrations, and hand off to you.", color: "#00FF88" },
               { time: "48 hrs", title: "AI team is live", desc: "Your workers are operational 24/7. You monitor results, they handle the work.", color: "#00FF88" },
             ].map((item, i) => (

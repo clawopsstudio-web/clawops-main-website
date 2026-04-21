@@ -27,7 +27,7 @@ const VALUES = [
 
 export default function CompanySection() {
   return (
-    <section className="py-24 bg-[#04040c]">
+    <section className="py-24 bg-[#0a0a0a]">
       <div className="max-w-5xl mx-auto px-6">
         {/* Origin Story */}
         <motion.div
@@ -58,7 +58,7 @@ export default function CompanySection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-24 p-8 rounded-2xl bg-gradient-to-r from-[#00D4FF]/10 to-[#6600FF]/10 border border-[#00D4FF]/20 text-center"
+          className="mb-24 p-8 rounded-2xl bg-gradient-to-r from-[#e8ff47]/10 to-[#e8ff47]/10 border border-[#e8ff47]/20 text-center"
         >
           <h3 className="text-xl font-bold text-white mb-3">Our Mission</h3>
           <p className="text-white/70 text-lg">
@@ -93,7 +93,7 @@ export default function CompanySection() {
           className="text-center mt-16"
         >
           <h3 className="text-3xl font-bold text-white mb-4">Start building your team.</h3>
-          <button className="px-8 py-4 bg-[#00D4FF] text-[#04040c] font-semibold rounded-xl hover:bg-[#00D4FF]/90 transition-colors">
+          <button className="px-8 py-4 bg-[#e8ff47] text-[#0a0a0a] font-semibold rounded-xl hover:bg-[#e8ff47]/90 transition-colors">
             Deploy in 5 minutes →
           </button>
         </motion.div>

@@ -13,7 +13,7 @@ const STEPS = [
       <div className="grid grid-cols-3 gap-3">
         {['Ryan', 'Tyler', 'Arjun', 'Helena', 'Marcus', 'Maya'].map(name => (
           <div key={name} className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
-            <div className="w-10 h-10 rounded-full bg-[#00D4FF]/20 mx-auto mb-2 flex items-center justify-center text-sm font-bold text-[#00D4FF]">{name[0]}</div>
+            <div className="w-10 h-10 rounded-full bg-[#e8ff47]/20 mx-auto mb-2 flex items-center justify-center text-sm font-bold text-[#e8ff47]">{name[0]}</div>
             <p className="text-white text-sm font-medium">{name}</p>
           </div>
         ))}
@@ -62,7 +62,7 @@ const STEPS = [
 
 export default function HowItWorks() {
   return (
-    <section className="py-24 bg-[#04040c]">
+    <section className="py-24 bg-[#0a0a0a]">
       <div className="max-w-4xl mx-auto px-6">
         {/* Header */}
         <motion.div
@@ -92,21 +92,21 @@ export default function HowItWorks() {
             >
               {/* Connector line */}
               {i < STEPS.length - 1 && (
-                <div className="absolute left-8 top-full w-px h-24 bg-gradient-to-b from-[#00D4FF]/50 to-transparent" />
+                <div className="absolute left-8 top-full w-px h-24 bg-gradient-to-b from-[#e8ff47]/50 to-transparent" />
               )}
 
               <div className="flex gap-12">
                 {/* Step number */}
                 <div className="shrink-0">
-                  <div className="w-16 h-16 rounded-2xl bg-[#00D4FF]/10 border border-[#00D4FF]/30 flex items-center justify-center">
-                    <span className="text-2xl font-bold text-[#00D4FF]">{step.number}</span>
+                  <div className="w-16 h-16 rounded-2xl bg-[#e8ff47]/10 border border-[#e8ff47]/30 flex items-center justify-center">
+                    <span className="text-2xl font-bold text-[#e8ff47]">{step.number}</span>
                   </div>
                 </div>
 
                 {/* Content */}
                 <div className="flex-1 pb-12">
                   <h3 className="text-2xl font-bold text-white mb-2">{step.title}</h3>
-                  <p className="text-[#00D4FF] font-medium mb-3">{step.headline}</p>
+                  <p className="text-[#e8ff47] font-medium mb-3">{step.headline}</p>
                   <p className="text-white/60 mb-6">{step.body}</p>
                   <div className="rounded-2xl bg-white/5 border border-white/10 p-6">
                     {step.visual}
@@ -124,7 +124,7 @@ export default function HowItWorks() {
           viewport={{ once: true }}
           className="text-center mt-20"
         >
-          <button className="px-8 py-4 bg-[#00D4FF] text-[#04040c] font-semibold rounded-xl hover:bg-[#00D4FF]/90 transition-colors">
+          <button className="px-8 py-4 bg-[#e8ff47] text-[#0a0a0a] font-semibold rounded-xl hover:bg-[#e8ff47]/90 transition-colors">
             Deploy your team →
           </button>
         </motion.div>

@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ACTIVITY_ITEMS = [
-  { agent: 'Ryan', action: 'sent 47 cold emails', time: '2m ago', color: '#00D4FF' },
-  { agent: 'Tyler', action: 'shipped this week\'s content', time: '8m ago', color: '#6600FF' },
+  { agent: 'Ryan', action: 'sent 47 cold emails', time: '2m ago', color: '#e8ff47' },
+  { agent: 'Tyler', action: 'shipped this week\'s content', time: '8m ago', color: '#e8ff47' },
   { agent: 'Arjun', action: 'scraped competitor prices', time: '15m ago', color: '#10b981' },
   { agent: 'Scout', action: 'qualified 23 new leads', time: '31m ago', color: '#f59e0b' },
   { agent: 'Closer', action: 'closed 2 deals today', time: '42m ago', color: '#ec4899' },
@@ -13,9 +13,9 @@ const ACTIVITY_ITEMS = [
   { agent: 'Marcus', action: 'reviewed 12 pull requests', time: '1h ago', color: '#ec4899' },
   { agent: 'Maya', action: 'sent 23 invoices', time: '2h ago', color: '#06b6d4' },
   { agent: 'Scheduler', action: 'ran 89 automations today', time: '2h ago', color: '#06b6d4' },
-  { agent: 'Tyler', action: 'posted to LinkedIn', time: '3h ago', color: '#6600FF' },
+  { agent: 'Tyler', action: 'posted to LinkedIn', time: '3h ago', color: '#e8ff47' },
   { agent: 'Arjun', action: 'found 4 competitor updates', time: '4h ago', color: '#10b981' },
-  { agent: 'Ryan', action: 'booked 3 discovery calls', time: '5h ago', color: '#00D4FF' },
+  { agent: 'Ryan', action: 'booked 3 discovery calls', time: '5h ago', color: '#e8ff47' },
 ];
 
 export default function LiveFeed() {
@@ -30,7 +30,7 @@ export default function LiveFeed() {
   }, []);
 
   return (
-    <section className="py-24 bg-[#04040c]">
+    <section className="py-24 bg-[#0a0a0a]">
       <div className="max-w-4xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -38,7 +38,7 @@ export default function LiveFeed() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#00D4FF]/20 bg-[#00D4FF]/5 text-[#00D4FF] text-sm mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#e8ff47]/20 bg-[#e8ff47]/5 text-[#e8ff47] text-sm mb-6">
             <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
             Live agent activity
           </div>
@@ -60,7 +60,7 @@ export default function LiveFeed() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
                 transition={{ delay: i * 0.05 }}
-                className="flex items-center gap-4 px-6 py-4 rounded-xl bg-white/5 border border-white/10 hover:border-[#00D4FF]/30 transition-colors"
+                className="flex items-center gap-4 px-6 py-4 rounded-xl bg-white/5 border border-white/10 hover:border-[#e8ff47]/30 transition-colors"
               >
                 <div 
                   className="w-2 h-2 rounded-full shrink-0"

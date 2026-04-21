@@ -17,7 +17,7 @@ function OsIcon() {
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <rect x="2" y="3" width="20" height="14" rx="2" />
       <path d="M8 21h8M12 17v4" />
-      <path d="M7 8l3 3 7-7" stroke="#00D4FF" />
+      <path d="M7 8l3 3 7-7" stroke="#e8ff47" />
     </svg>
   );
 }
@@ -51,13 +51,13 @@ export default function Hero() {
   return (
     <section
       ref={containerRef}
-      className="relative flex min-h-screen items-center overflow-hidden bg-[#04040c] pt-20"
+      className="relative flex min-h-screen items-center overflow-hidden bg-[#0a0a0a] pt-20"
     >
       {/* Layered background */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 grid-bg opacity-60" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(0,212,255,0.12),transparent_60%),radial-gradient(ellipse_50%_50%_at_80%_80%,rgba(102,0,255,0.1),transparent_60%)]" />
-        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#04040c] to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
       </div>
 
       {/* Floating orbs */}
@@ -76,8 +76,8 @@ export default function Hero() {
           >
             <div className="pill-breathe group inline-flex items-center gap-2.5 rounded-full border border-[rgba(0,212,255,0.25)] bg-[rgba(0,212,255,0.06)] px-4 py-1.5 pl-5">
               <span className="relative flex h-2 w-2">
-                <span className="dot-glow-pulse absolute inline-flex h-full w-full rounded-full bg-[#00D4FF] opacity-60" />
-                <span className="dot-breathe relative inline-flex h-2 w-2 rounded-full bg-[#00D4FF]" />
+                <span className="dot-glow-pulse absolute inline-flex h-full w-full rounded-full bg-[#e8ff47] opacity-60" />
+                <span className="dot-breathe relative inline-flex h-2 w-2 rounded-full bg-[#e8ff47]" />
               </span>
               <span className="font-mono text-xs font-medium tracking-wide text-[rgba(0,212,255,0.9)]">
                 <span key={verticalIdx} className="inline-block">
@@ -101,7 +101,7 @@ export default function Hero() {
           >
             The Agentic OS
             <br className="hidden md:block" />
-            <span className="bg-gradient-to-r from-[#00D4FF] to-[#6600FF] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#e8ff47] to-[#e8ff47] bg-clip-text text-transparent">
               {" "}For Your Business.
             </span>
             <br className="hidden md:block" />
@@ -131,7 +131,7 @@ export default function Hero() {
               href="#pricing"
               className="group flex items-center gap-2 rounded-xl px-7 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5"
               style={{
-                background: "linear-gradient(135deg, #00D4FF, #6600FF)",
+                background: "linear-gradient(135deg, #e8ff47, #e8ff47)",
                 boxShadow: "0 0 28px rgba(0,212,255,0.25), 0 4px 24px rgba(0,0,0,0.5)",
               }}
             >
@@ -157,9 +157,9 @@ export default function Hero() {
             className="mt-12 grid w-full max-w-lg grid-cols-1 gap-px rounded-2xl border border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.03)] p-0.5 backdrop-blur-sm sm:mt-14 sm:grid-cols-3"
           >
             {[
-              { value: "5,400+", label: "Skills & Plugins", color: "#00D4FF" },
-              { value: "< 30 min", label: "To Running Agents", color: "#6600FF" },
-              { value: "24/7", label: "Autonomous Teams", color: "#00D4FF" },
+              { value: "5,400+", label: "Skills & Plugins", color: "#e8ff47" },
+              { value: "< 30 min", label: "To Running Agents", color: "#e8ff47" },
+              { value: "24/7", label: "Autonomous Teams", color: "#e8ff47" },
             ].map((p) => (
               <div key={p.label} className="flex flex-col items-center bg-[rgba(4,4,12,0.6)] py-5 first:rounded-l-xl last:rounded-r-xl">
                 <span

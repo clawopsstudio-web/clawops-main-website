@@ -53,14 +53,14 @@ export default function DashboardSidebar() {
   const pathname = usePathname()
 
   return (
-    <div className="flex w-64 flex-shrink-0 flex-col bg-[#04040c] border-r border-[rgba(255,255,255,0.06)]">
+    <div className="flex w-64 flex-shrink-0 flex-col bg-[#0a0a0a] border-r border-[rgba(255,255,255,0.06)]">
       {/* Logo */}
       <div className="border-b border-[rgba(255,255,255,0.06)] px-5 py-5">
         <Link href="/" className="flex items-center gap-2.5 group">
           <div
             className="flex h-8 w-8 items-center justify-center rounded-lg transition-transform group-hover:scale-105"
             style={{
-              background: 'linear-gradient(135deg, #00D4FF, #6600FF)',
+              background: 'linear-gradient(135deg, #e8ff47, #e8ff47)',
               boxShadow: '0 0 12px rgba(0,212,255,0.3)',
             }}
           >
@@ -87,19 +87,19 @@ export default function DashboardSidebar() {
                   href={item.href}
                   className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
                     isActive
-                      ? 'bg-[rgba(0,212,255,0.1)] text-[#00D4FF]'
+                      ? 'bg-[rgba(0,212,255,0.1)] text-[#e8ff47]'
                       : 'text-[rgba(255,255,255,0.4)] hover:bg-[rgba(255,255,255,0.04)] hover:text-white'
                   }`}
                 >
-                  <span className={isActive ? 'text-[#00D4FF]' : 'text-[rgba(255,255,255,0.3)] group-hover:text-[rgba(255,255,255,0.6)]'}>
+                  <span className={isActive ? 'text-[#e8ff47]' : 'text-[rgba(255,255,255,0.3)] group-hover:text-[rgba(255,255,255,0.6)]'}>
                     {item.icon}
                   </span>
                   {item.label}
                   {isActive && (
                     <motion.div
                       layoutId="nav-indicator"
-                      className="ml-auto h-1.5 w-1.5 rounded-full bg-[#00D4FF]"
-                      style={{ boxShadow: '0 0 6px #00D4FF' }}
+                      className="ml-auto h-1.5 w-1.5 rounded-full bg-[#e8ff47]"
+                      style={{ boxShadow: '0 0 6px #e8ff47' }}
                     />
                   )}
                 </Link>
@@ -112,7 +112,7 @@ export default function DashboardSidebar() {
       {/* Bottom */}
       <div className="border-t border-[rgba(255,255,255,0.06)] px-3 py-4">
         <div className="flex items-center gap-2.5 rounded-lg px-3 py-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-[#00D4FF] to-[#6600FF] text-xs font-bold text-white">
+          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-[#e8ff47] to-[#e8ff47] text-xs font-bold text-white">
             P
           </div>
           <div className="min-w-0 flex-1">

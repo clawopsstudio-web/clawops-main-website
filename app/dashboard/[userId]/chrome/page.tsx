@@ -53,7 +53,7 @@ export default async function ChromePage({ params }: Props) {
           {/* Loading overlay */}
           <div className="absolute inset-0 flex items-center justify-center" id="vnc-loader" style={{ background: '#1a1a2e' }}>
             <div className="text-center">
-              <div className="w-10 h-10 rounded-xl mx-auto mb-3 animate-spin" style={{ border: '2px solid rgba(0,212,255,0.2)', borderTopColor: '#00D4FF' }} />
+              <div className="w-10 h-10 rounded-xl mx-auto mb-3 animate-spin" style={{ border: '2px solid rgba(0,212,255,0.2)', borderTopColor: '#e8ff47' }} />
               <p className="text-sm text-white/50">Loading Chrome VNC...</p>
               <p className="text-xs text-white/25 mt-1">Make sure VNC server is running on the VPS</p>
             </div>

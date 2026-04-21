@@ -34,21 +34,21 @@ const testimonials = [
     name: "Rahul M.",
     role: "Founder, Mumbai",
     initials: "RM",
-    color: "#00D4FF",
+    color: "#e8ff47",
   },
   {
     quote: "Before ClawOps: 3 support staff, 200 tickets/month, 80% manual. After: same volume, 1 person, 80% auto-resolved. The AI handles the FAQs. My team handles the edge cases. Natural division of labor.",
     name: "Sarah K.",
     role: "CEO, E-commerce Brand",
     initials: "SK",
-    color: "#6600FF",
+    color: "#e8ff47",
   },
   {
     quote: "I seriously thought '3 minute setup' was marketing fluff. It wasn't. Signed up, connected Telegram, had my first research agent pulling lead data before I finished my coffee. First time any tech product has delivered what it promised.",
     name: "James L.",
     role: "Solo Consultant, UK",
     initials: "JL",
-    color: "#00D4FF",
+    color: "#e8ff47",
   },
 ];
 
@@ -60,7 +60,7 @@ export default function SocialProof() {
     <section
       ref={ref}
       id="social-proof"
-      className="relative bg-[#04040c] px-6 py-16 md:py-24"
+      className="relative bg-[#0a0a0a] px-6 py-16 md:py-24"
     >
 
       <div className="relative z-10 mx-auto max-w-6xl">
@@ -73,7 +73,7 @@ export default function SocialProof() {
         >
           {stats.map((stat) => (
             <div key={stat.label} className="text-center">
-              <div className="text-3xl font-bold md:text-5xl" style={{ background: "linear-gradient(135deg, #00D4FF, #6600FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+              <div className="text-3xl font-bold md:text-5xl" style={{ background: "linear-gradient(135deg, #e8ff47, #e8ff47)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
                 <CountUp value={stat.value} suffix={stat.suffix} />
               </div>
               <p className="mt-1 text-xs text-[rgba(255,255,255,0.4)] md:text-sm">{stat.label}</p>

@@ -100,12 +100,12 @@ export default function QuickStartClient() {
           className="text-center mb-12"
         >
           <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium mb-4"
-            style={{ background: 'rgba(0,212,255,0.1)', color: '#00D4FF', border: '1px solid rgba(0,212,255,0.2)' }}>
+            style={{ background: 'rgba(0,212,255,0.1)', color: '#e8ff47', border: '1px solid rgba(0,212,255,0.2)' }}>
             ⚡ Quick Start
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
             Get running in{' '}
-            <span style={{ background: 'linear-gradient(135deg, #00D4FF, #6600FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            <span style={{ background: 'linear-gradient(135deg, #e8ff47, #e8ff47)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               5 minutes
             </span>
           </h1>
@@ -138,13 +138,13 @@ export default function QuickStartClient() {
                 className="w-full text-left rounded-xl p-4 transition-all duration-200"
                 style={{
                   background: activeStep === step.number - 1 ? '#1a1a2e' : 'transparent',
-                  border: `1px solid ${activeStep === step.number - 1 ? '#00D4FF' : 'transparent'}`,
+                  border: `1px solid ${activeStep === step.number - 1 ? '#e8ff47' : 'transparent'}`,
                 }}
               >
                 <div className="flex items-center gap-3">
                   <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
                     style={{
-                      background: activeStep === step.number - 1 ? 'linear-gradient(135deg, #00D4FF, #6600FF)' : '#2d2d44',
+                      background: activeStep === step.number - 1 ? 'linear-gradient(135deg, #e8ff47, #e8ff47)' : '#2d2d44',
                       color: activeStep === step.number - 1 ? 'white' : '#9ca3af',
                     }}>
                     {step.number}
@@ -163,7 +163,7 @@ export default function QuickStartClient() {
             {/* CTA */}
             <div className="mt-6 pt-4" style={{ borderTop: '1px solid #2d2d44' }}>
               <Link href="/dashboard" className="flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-white transition-all hover:scale-[1.02]"
-                style={{ background: 'linear-gradient(135deg, #00D4FF, #6600FF)', boxShadow: '0 0 20px rgba(0,212,255,0.25)' }}>
+                style={{ background: 'linear-gradient(135deg, #e8ff47, #e8ff47)', boxShadow: '0 0 20px rgba(0,212,255,0.25)' }}>
                 Go to Dashboard →
               </Link>
             </div>
@@ -184,7 +184,7 @@ export default function QuickStartClient() {
                 <div>
                   <div className="text-xs text-gray-500 mb-1">Step {STEPS[activeStep].number} of 5</div>
                   <h2 className="text-2xl font-bold text-white">{STEPS[activeStep].title}</h2>
-                  <p className="text-sm text-[#00D4FF]">{STEPS[activeStep].subtitle}</p>
+                  <p className="text-sm text-[#e8ff47]">{STEPS[activeStep].subtitle}</p>
                 </div>
               </div>
 
@@ -197,7 +197,7 @@ export default function QuickStartClient() {
                 {STEPS[activeStep].detail.map((item, i) => (
                   <div key={i} className="flex items-start gap-3">
                     <div className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold mt-0.5"
-                      style={{ background: '#0f0f1a', color: '#00D4FF', border: '1px solid #2d2d44' }}>
+                      style={{ background: '#0f0f1a', color: '#e8ff47', border: '1px solid #2d2d44' }}>
                       {i + 1}
                     </div>
                     <p className="text-sm text-gray-300 leading-relaxed">{item}</p>
@@ -209,7 +209,7 @@ export default function QuickStartClient() {
               <div className="flex items-center gap-3">
                 <Link href={STEPS[activeStep].action.href}
                   className="inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium text-white transition-all hover:scale-105"
-                  style={{ background: 'linear-gradient(135deg, #00D4FF, #6600FF)', boxShadow: '0 0 15px rgba(0,212,255,0.2)' }}>
+                  style={{ background: 'linear-gradient(135deg, #e8ff47, #e8ff47)', boxShadow: '0 0 15px rgba(0,212,255,0.2)' }}>
                   {STEPS[activeStep].action.label} →
                 </Link>
                 {activeStep < STEPS.length - 1 && (
@@ -235,7 +235,7 @@ export default function QuickStartClient() {
                   <button key={i}
                     onClick={() => setActiveStep(i)}
                     className="w-2 h-2 rounded-full transition-all"
-                    style={{ background: i === activeStep ? '#00D4FF' : '#2d2d44' }}
+                    style={{ background: i === activeStep ? '#e8ff47' : '#2d2d44' }}
                   />
                 ))}
               </div>
@@ -255,7 +255,7 @@ export default function QuickStartClient() {
           style={{ background: 'linear-gradient(135deg, rgba(0,212,255,0.06), rgba(102,0,255,0.06))', border: '1px solid rgba(0,212,255,0.12)' }}>
           <h3 className="text-xl font-semibold text-white mb-2">Need detailed help?</h3>
           <p className="text-gray-400 text-sm mb-4">Each step has a full guide with screenshots and troubleshooting tips.</p>
-          <Link href="/guides" className="inline-flex items-center gap-2 text-sm text-[#00D4FF] hover:text-[#00b8e6] transition-colors">
+          <Link href="/guides" className="inline-flex items-center gap-2 text-sm text-[#e8ff47] hover:text-[#d4eb3a] transition-colors">
             Browse all setup guides →
           </Link>
         </div>

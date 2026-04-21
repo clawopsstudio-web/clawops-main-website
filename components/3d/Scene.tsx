@@ -31,12 +31,12 @@ const EDGE_COUNT = EDGES.length;
 
 const NODE_COLORS = [
   "#ffffff",
-  "#00D4FF",
-  "#6600FF",
+  "#e8ff47",
+  "#e8ff47",
   "#00FF94",
   "#FF6B00",
-  "#00D4FF",
-  "#6600FF",
+  "#e8ff47",
+  "#e8ff47",
   "#ffffff",
 ];
 
@@ -82,7 +82,7 @@ function NetworkLines() {
   return (
     <lineSegments ref={linesRef} geometry={geometry}>
       <lineBasicMaterial
-        color="#00D4FF"
+        color="#e8ff47"
         transparent
         opacity={0.1}
         depthWrite={false}
@@ -160,7 +160,7 @@ function CentralHub() {
         <octahedronGeometry args={[0.25, 0]} />
         <meshStandardMaterial
           color="#ffffff"
-          emissive="#00D4FF"
+          emissive="#e8ff47"
           emissiveIntensity={0.65}
           roughness={0.05}
           metalness={1}
@@ -169,7 +169,7 @@ function CentralHub() {
       {/* Orbit ring — slightly more visible at hero scale */}
       <mesh ref={ringRef}>
         <torusGeometry args={[0.52, 0.012, 8, 80]} />
-        <meshBasicMaterial color="#00D4FF" transparent opacity={0.28} />
+        <meshBasicMaterial color="#e8ff47" transparent opacity={0.28} />
       </mesh>
     </group>
   );
@@ -188,8 +188,8 @@ export default function Scene() {
       style={{ background: "transparent" }}
     >
       <ambientLight intensity={0.06} />
-      <pointLight position={[4, 4, 4]} intensity={0.35} color="#00D4FF" />
-      <pointLight position={[-4, -4, -4]} intensity={0.2} color="#6600FF" />
+      <pointLight position={[4, 4, 4]} intensity={0.35} color="#e8ff47" />
+      <pointLight position={[-4, -4, -4]} intensity={0.2} color="#e8ff47" />
 
       <CentralHub />
       <NetworkLines />

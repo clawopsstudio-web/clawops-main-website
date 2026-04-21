@@ -72,7 +72,7 @@ export default function MissionControlPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
               { icon: <Bot className="w-5 h-5" />, label: 'Agents', desc: 'Manage AI agents & runs', color: '#FF6B35', href: `/gateway/?gatewayUrl=${encodeURIComponent(gatewayUrl)}#/agents` },
-              { icon: <Activity className="w-5 h-5" />, label: 'Sessions', desc: 'View active conversations', color: '#00D4FF', href: `/gateway/?gatewayUrl=${encodeURIComponent(gatewayUrl)}#/sessions` },
+              { icon: <Activity className="w-5 h-5" />, label: 'Sessions', desc: 'View active conversations', color: '#e8ff47', href: `/gateway/?gatewayUrl=${encodeURIComponent(gatewayUrl)}#/sessions` },
               { icon: <Cpu className="w-5 h-5" />, label: 'Models', desc: 'Configure AI model providers', color: '#a855f7', href: `/gateway/?gatewayUrl=${encodeURIComponent(gatewayUrl)}#/models` },
               { icon: <Radio className="w-5 h-5" />, label: 'Channels', desc: 'WhatsApp, Telegram & more', color: '#22c55e', href: `/gateway/?gatewayUrl=${encodeURIComponent(gatewayUrl)}#/channels` },
               { icon: <Zap className="w-5 h-5" />, label: 'Skills', desc: 'Install & manage agent skills', color: '#eab308', href: `/gateway/?gatewayUrl=${encodeURIComponent(gatewayUrl)}#/skills` },
