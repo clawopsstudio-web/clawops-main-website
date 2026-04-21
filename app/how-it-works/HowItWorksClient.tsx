@@ -281,15 +281,15 @@ export default function HowItWorksClient() {
           {/* Tech stack pills */}
           <div className="mb-12 flex flex-wrap justify-center gap-3">
             {[
-              { name: "OpenClaw", color: "#00D4FF" },
-              { name: "Contabo VPS", color: "#6600FF" },
-              { name: "Ollama", color: "#00FF88" },
-              { name: "n8n", color: "#FF6B35" },
-              { name: "Claude API", color: "#FF6B35" },
-              { name: "Gemma 4 2B", color: "#00D4FF" },
-              { name: "Browser Automation", color: "#6600FF" },
-              { name: "Telegram Bot API", color: "#00D4FF" },
-              { name: "Supabase", color: "#00FF88" },
+              { name: "Gmail", color: "#00D4FF" },
+              { name: "Notion", color: "#6600FF" },
+              { name: "Slack", color: "#00FF88" },
+              { name: "HubSpot", color: "#FF6B35" },
+              { name: "Go High Level", color: "#FF6B35" },
+              { name: "Telegram", color: "#00D4FF" },
+              { name: "WhatsApp", color: "#6600FF" },
+              { name: "Google Workspace", color: "#00FF88" },
+              { name: "Airtable", color: "#FF6B35" },
             ].map((tech) => (
               <motion.span
                 key={tech.name}
@@ -360,7 +360,7 @@ export default function HowItWorksClient() {
             {[
               { time: "0 min", title: "Subscription confirmed", desc: "Payment clears. You receive an onboarding form link via email.", color: "#00D4FF" },
               { time: "15 min", title: "Onboarding complete", desc: "You submit the form with your tools, tasks, and preferences.", color: "#00D4FF" },
-              { time: "30 min", title: "Provisioning starts", desc: "Our system provisions your VPS, installs OpenClaw, and configures the gateway.", color: "#6600FF" },
+              { time: "30 min", title: "Provisioning starts", desc: "Our system provisions your VPS and configures the gateway.", color: "#6600FF" },
               { time: "2 hrs", title: "Workers configured", desc: "AI workers are set up with your custom instructions, skills, and integrations.", color: "#6600FF" },
               { time: "4–48 hrs", title: "Testing & activation", desc: "We run validation tests, verify integrations, and hand off to you.", color: "#00FF88" },
               { time: "48 hrs", title: "AI team is live", desc: "Your workers are operational 24/7. You monitor results, they handle the work.", color: "#00FF88" },

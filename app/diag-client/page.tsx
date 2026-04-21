@@ -49,7 +49,7 @@ export default function DiagClient() {
   async function testServices() {
     setTesting(true);
     const results: string[] = [];
-    for (const svc of ['n8n', 'chrome', 'gateway']) {
+    for (const svc of ['automation', 'chrome', 'gateway']) {
       try {
         const r = await fetch(`/${svc}`, { cache: 'no-store' });
         results.push(`${svc}: ${r.status} ${r.headers.get('location') || ''}`);

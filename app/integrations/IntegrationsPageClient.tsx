@@ -34,7 +34,7 @@ const INTEGRATIONS = [
       { name: "Webhooks", desc: "Trigger workers via incoming webhooks from any platform.", icon: "H" },
       { name: "MCP Protocol", desc: "Model Context Protocol for deep AI-to-tool integrations.", icon: "P" },
       { name: "GraphQL", desc: "Flexible GraphQL endpoint for complex data queries.", icon: "G" },
-      { name: "Zapier / n8n", desc: "Connect to 5,000+ apps via Zapier or self-hosted n8n.", icon: "Z" },
+      { name: "500+ App Connectors", desc: "Pre-built connectors to Notion, Gmail, HubSpot, Slack, and 500+ more.", icon: "Z" },
     ],
   },
   {
@@ -52,7 +52,7 @@ const INTEGRATIONS = [
     category: "AI & Infrastructure",
     color: "#00D4FF",
     items: [
-      { name: "OpenClaw Gateway", desc: "Central hub for managing all AI workers.", icon: "O" },
+      { name: "ClawOps Gateway", desc: "Central hub for managing all AI workers.", icon: "O" },
       { name: "Ollama (Local)", desc: "Run Gemma 4 2B and other models on managed infrastructure.", icon: "L" },
       { name: "Supabase", desc: "Database, auth, and real-time subscriptions.", icon: "S" },
       { name: "Contabo VPS", desc: "Fully managed infrastructure provisioning and management.", icon: "V" },

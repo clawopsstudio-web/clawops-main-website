@@ -134,7 +134,7 @@ export default function SocialProof() {
             Trusted by teams at companies using
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-8">
-            {["Telegram", "WhatsApp", "Slack", "n8n", "GHL", "HubSpot", "Notion"].map((name) => (
+            {["Telegram", "WhatsApp", "Slack", "Gmail", "GHL", "HubSpot", "Notion"].map((name) => (
               <div key={name} className="text-sm font-medium text-[rgba(255,255,255,0.2)]">
                 {name}
               </div>

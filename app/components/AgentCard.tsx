@@ -210,7 +210,7 @@ function AgentCard({ agent, onRecruit }: { agent: typeof AGENTS[0]; onRecruit: (
         
         {/* Rating */}
         <div className="flex items-center gap-2">
-          <span className="text-[#f59e0b text-sm">★ {agent.rating}</span>
+          <span className="text-[#f59e0b] text-sm">★ {agent.rating}</span>
           <span className="text-white/30 text-sm">{agent.reviews} reviews</span>
         </div>
       </div>

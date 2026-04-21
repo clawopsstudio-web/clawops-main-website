@@ -7,7 +7,7 @@ const TEAM = [
   {
     name: "Pulkit",
     role: "Founder & CEO",
-    bio: "Background in GHL, n8n, and AI automation services. Building the next generation of AI-native businesses.",
+    bio: "Background in GHL, AI automation services. Building the next generation of AI-native businesses.",
     initials: "P",
     color: "#00D4FF",
   },

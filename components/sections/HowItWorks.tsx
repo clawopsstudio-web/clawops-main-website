@@ -8,14 +8,14 @@ const steps = [
     number: "01",
     title: "Install Your OS",
     description: "Point ClawOps at your infrastructure. Our installer handles the rest — kernel, models, agent runtime, and 5,400+ skills & plugins. Your AI OS boots in 30 minutes — pre-configured, not blank.",
-    detail: "Powered by OpenClaw's multi-agent runtime",
+    detail: "Powered by ClawOps's multi-agent runtime",
     color: "#00D4FF",
   },
   {
     number: "02",
     title: "Connect Your Apps",
-    description: "Connect GHL, n8n, Google Workspace — like installing apps on a new phone. Each integration unlocks new agent capabilities. No API glue needed.",
-    detail: "GHL, n8n, Google Workspace — like an app store",
+    description: "Connect Gmail, Notion, Slack, and 500+ apps — like installing apps on a new phone. Each integration unlocks new agent capabilities. No API glue needed.",
+    detail: "Gmail, Notion, Slack, HubSpot — like an app store",
     color: "#6600FF",
   },
   {

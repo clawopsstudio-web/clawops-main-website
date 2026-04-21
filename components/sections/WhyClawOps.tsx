@@ -25,7 +25,7 @@ const comparisonRows = [
   {
     feature: "Pre-Built Integrations",
     diy: "Build each integration from scratch",
-    clawops: "GHL, n8n, Google Workspace + 500+ ready",
+    clawops: "Gmail, Notion, Slack, HubSpot + 500+ ready",
     clawopsGood: true,
   },
   {

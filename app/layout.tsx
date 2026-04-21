@@ -11,8 +11,8 @@ export const metadata: Metadata = {
     template: "%s | ClawOps",
   },
   description:
-    "The autonomous AI OS for businesses that want to scale without hiring. Powered by OpenClaw. Sales, Support, Research, and Ops agents that run 24/7 — autonomously. Manage from Telegram, WhatsApp, or Slack. Flat monthly pricing from $49/mo.",
-  keywords: "agentic OS, autonomous AI, AI workforce, scale without hiring, business AI automation, OpenClaw business, AI agents run 24/7, ClawOps, autonomous business, AI that runs itself",
+    "The autonomous AI OS for businesses that want to scale without hiring.  Sales, Support, Research, and Ops agents that run 24/7 — autonomously. Manage from Telegram, WhatsApp, or Slack. Flat monthly pricing from $49/mo.",
+  keywords: "AI workforce, autonomous AI, agentic OS, scale without hiring, business AI automation, AI agents run 24/7, ClawOps, autonomous business, AI that runs itself",
   metadataBase: new URL('https://app.clawops.studio'),
   alternates: {
     canonical: '/',
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "ClawOps — The Agentic OS for Businesses That Scale",
     description:
-      "The autonomous AI OS for businesses. Powered by OpenClaw. Agents run your Sales, Support, and Ops 24/7 — without you prompting them. Scale without hiring.",
+      "The autonomous AI OS for businesses.  Agents run your Sales, Support, and Ops 24/7 — without you prompting them. Scale without hiring.",
     type: "website",
     locale: "en_US",
     siteName: "ClawOps",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "ClawOps — The Agentic OS for Businesses That Scale",
     description:
-      "Autonomous AI agents that run your business 24/7. Powered by OpenClaw. Scale without hiring.",
+      "Autonomous AI agents that run your business 24/7.  Scale without hiring.",
     creator: "@ClawOps",
   },
   robots: {
@@ -55,7 +55,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
   name: 'ClawOps — AI Agent Platform',
-  description: 'The Agentic OS for businesses that want to scale without hiring. Powered by OpenClaw. Autonomous agents running Sales, Support, and Ops 24/7. Flat pricing from $49/mo.',
+  description: 'The Agentic OS for businesses that want to scale without hiring.  Autonomous agents running Sales, Support, and Ops 24/7. Flat pricing from $49/mo.',
   applicationCategory: 'BusinessApplication',
   operatingSystem: 'Self-hosted (Ampere ARM)',
   offers: {

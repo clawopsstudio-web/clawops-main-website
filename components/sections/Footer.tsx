@@ -40,7 +40,7 @@ export default function Footer() {
               The Agentic OS for your business. Deploy AI agent teams that work 24/7 — with 5,400+ skills &amp; plugins included.
             </p>
             <p className="text-[rgba(255,255,255,0.2)] text-[10px] font-mono mt-3">
-              Powered by OpenClaw's multi-agent runtime
+              Powered by ClawOps's multi-agent runtime
             </p>
             <div className="flex items-center gap-3 mt-6">
               {["Twitter/X", "LinkedIn"].map((label) => (

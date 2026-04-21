@@ -169,8 +169,8 @@ export default function Deployment() {
             </div>
             <div className="rounded-xl border border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.02)] p-3 text-center">
               <div className="mb-2 text-lg">⚡</div>
-              <p className="text-xs font-semibold text-white mb-1">n8n Automation</p>
-              <p className="text-[10px] text-[rgba(255,255,255,0.38)]">Pre-built n8n workflows connect your tools without code.</p>
+              <p className="text-xs font-semibold text-white mb-1">500+ Integrations</p>
+              <p className="text-[10px] text-[rgba(255,255,255,0.38)]">Pre-built connectors to your favorite apps. One click to connect.</p>
             </div>
           </div>
         </motion.div>

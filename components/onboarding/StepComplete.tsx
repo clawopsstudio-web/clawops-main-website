@@ -40,7 +40,7 @@ const goalLabels: Record<string, string> = {
 
 const integrationIcons: Record<string, string> = {
   ghl: '🔗', hubspot: '🟠', salesforce: '☁️',
-  zapier: '⚡', n8n: '🔧', notion: '📓',
+  zapier: '⚡', airtable: '📊', notion: '📓',
   slack: '💬', gmail: '📧',
 }
 

@@ -51,7 +51,7 @@ export default async function DiagPage() {
           {sbToken && tokenValid ? '✅ JWT Valid — service links should work' : '❌ JWT Missing or Expired — fix login first'}
         </b></p>
         <br />
-        <a href="/n8n" style={{ color: '#00D4FF', marginRight: '20px' }}>n8n ↗</a>
+        <a href="#" style={{ color: '#00D4FF', marginRight: '20px' }}>Automation ↗</a>
         <a href="/chrome" style={{ color: '#00D4FF', marginRight: '20px' }}>Chrome ↗</a>
         <a href="/gateway" style={{ color: '#00D4FF', marginRight: '20px' }}>Gateway ↗</a>
         <br /><br />

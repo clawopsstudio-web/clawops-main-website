@@ -28,12 +28,12 @@ const integrationCategories = [
   {
     label: "Automation",
     color: "#00D4FF",
-    items: ["n8n", "Zapier", "Make.com", "MCP Protocol", "REST API / Webhooks"],
+    items: ["Gmail", "Notion", "Slack", "HubSpot", "GHL"],
   },
   {
     label: "Research & Data",
     color: "#6600FF",
-    items: ["Firecrawl", "Web Search", "PDF Processing", "Data Extraction", "Monitoring"],
+    items: ["Web Scraping", "Web Search", "PDF Processing", "Data Extraction", "Monitoring"],
   },
 ];
 
@@ -82,7 +82,7 @@ export default function Integrations() {
             500+ Apps. One AI OS.<br className="hidden md:block" /> Zero API Bills.
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-base md:text-lg text-[rgba(255,255,255,0.45)] leading-relaxed">
-            Connect GHL, n8n, Google Workspace, and 500+ other tools — like installing apps on your phone. Pre-built, pre-authenticated, running on managed infrastructure.
+            Connect Gmail, Notion, Slack, and 500+ other tools — like installing apps on your phone. Pre-built, pre-authenticated, running on your infrastructure.
           </p>
         </motion.div>
 

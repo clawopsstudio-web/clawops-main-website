@@ -1,31 +1,39 @@
 'use client'
 
-import Hero from '@/components/sections/Hero'
-import Features from '@/components/sections/Features'
+import HeroNew from './HeroNew'
+import AgentCards from './components/AgentCard'
+import LiveFeed from './components/LiveFeed'
 import HowItWorks from '@/components/sections/HowItWorks'
 import UseCases from '@/components/sections/UseCases'
 import Integrations from '@/components/sections/Integrations'
-import AmpereStylePricing from '@/app/pricing/AmpereStylePricing'
-import CTA from '@/components/sections/CTA'
+import AmpereStylePricing from './pricing/AmpereStylePricing'
 import FAQ from '@/components/sections/FAQ'
+import CTA from '@/components/sections/CTA'
 import SocialProof from '@/components/sections/SocialProof'
 import WhyClawOps from '@/components/sections/WhyClawOps'
-import AIDepartments from '@/components/sections/AIDepartments'
-import MissionControl from '@/components/sections/MissionControl'
-import Deployment from '@/components/sections/Deployment'
 
 export default function LandingPage() {
   return (
     <main>
-      <Hero />
+      <HeroNew />
       <SocialProof />
       <WhyClawOps />
-      <Features />
-      <AIDepartments />
+      <LiveFeed />
+      <section id="agents">
+        <div className="py-24 px-6 max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              Pick your AI team.
+            </h2>
+            <p className="text-white/50 text-lg max-w-xl mx-auto">
+              Each agent is specialized, autonomous, and connected to your tools. Recruit the ones that fit your business.
+            </p>
+          </div>
+          <AgentCards />
+        </div>
+      </section>
       <HowItWorks />
       <UseCases />
-      <MissionControl />
-      <Deployment />
       <Integrations />
       <AmpereStylePricing />
       <FAQ />

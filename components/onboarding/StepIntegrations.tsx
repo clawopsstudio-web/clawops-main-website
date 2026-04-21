@@ -13,7 +13,6 @@ const integrations = [
   { id: 'hubspot', label: 'HubSpot', icon: '🟠' },
   { id: 'salesforce', label: 'Salesforce', icon: '☁️' },
   { id: 'zapier', label: 'Zapier / Make', icon: '⚡' },
-  { id: 'n8n', label: 'n8n', icon: '🔧' },
   { id: 'notion', label: 'Notion', icon: '📓' },
   { id: 'slack', label: 'Slack', icon: '💬' },
   { id: 'gmail', label: 'Gmail / Google Workspace', icon: '📧' },

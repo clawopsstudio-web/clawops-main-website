@@ -16,6 +16,12 @@ export default clerkMiddleware(async (auth, req) => {
     pathname === '/how-it-works' ||
     pathname === '/robots.txt' ||
     pathname === '/sitemap.xml' ||
+    pathname === '/roles' ||
+    pathname.startsWith('/roles/') ||
+    pathname === '/use-cases' ||
+    pathname === '/integrations' ||
+    pathname === '/company' ||
+    pathname === '/quick-start' ||
     pathname.includes('.')
 
   const isService =

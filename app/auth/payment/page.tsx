@@ -7,7 +7,7 @@ import Link from 'next/link'
 
 const PLANS: Record<string, { name: string; price: number; color: string; features: string[] }> = {
   starter: { name: 'Starter', price: 49, color: '#00D4FF', features: ['2 vCPU, 4GB RAM', '1 AI Agent Workspace', 'Gemma 4 (local)', '500+ Integrations'] },
-  pro: { name: 'Pro', price: 99, color: '#6600FF', features: ['4 vCPU, 8GB RAM', '3 AI Agent Workspaces', 'Gemma 4 2B + 7B', 'Unlimited n8n Workflows'] },
+  pro: { name: 'Pro', price: 99, color: '#6600FF', features: ['4 vCPU, 8GB RAM', '3 AI Agent Workspaces', 'Gemma 4 2B + 7B', 'Unlimited automations'] },
   business: { name: 'Business', price: 149, color: '#10b981', features: ['6 vCPU, 12GB RAM', 'Unlimited AI Workspaces', 'Any local model', 'White-label capability'] },
 }
 

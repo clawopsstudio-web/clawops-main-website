@@ -23,7 +23,7 @@ const proofCards = [
   },
 ];
 
-const integrations = ["OpenClaw", "Supabase", "Vercel", "n8n", "Telegram", "Slack"];
+const integrations = ["Gmail", "Notion", "Slack", "HubSpot", "Telegram", "WhatsApp"];
 
 export default function Trust() {
   const sectionRef = useRef<HTMLElement>(null);

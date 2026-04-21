@@ -19,7 +19,7 @@ const PLANS = [
       uptime: "99.5%",
     },
     agents: "2 AI Agents",
-    workflows: "5 n8n Workflows",
+    workflows: "5 Automations",
     browser: "1 Browser Session",
     localModel: "Gemma 4 2B (local)",
     models: ["Claude Opus 4.6", "GPT-4.4", "MiniMax 2.5"],
@@ -27,7 +27,7 @@ const PLANS = [
       "2 AI Agents (any roles)",
       "Telegram integration",
       "Browser automation",
-      "5 n8n workflows",
+      "5 automations",
       "1 browser session",
       "Gemma 4 2B (local Ollama)",
       "All cloud models",
@@ -51,7 +51,7 @@ const PLANS = [
       uptime: "99.9%",
     },
     agents: "5 AI Agents",
-    workflows: "20 n8n Workflows",
+    workflows: "20 Automations",
     browser: "3 Browser Sessions",
     localModel: "Gemma 4 2B + 7B",
     models: ["Claude Opus 4.6", "GPT-4.4", "MiniMax 2.5", "GPT-4o", "Gemini 2.5"],
@@ -59,13 +59,13 @@ const PLANS = [
       "5 AI Agents (any roles)",
       "Telegram + WhatsApp + Slack",
       "Browser + API automation",
-      "20 n8n workflows",
+      "20 automations",
       "3 browser sessions",
       "Gemma 4 2B + 7B (local)",
       "All cloud models",
       "60-day history",
       "Priority support",
-      "Webhook + Zapier + n8n",
+      "Webhook + API + 500+ apps",
       "Custom agent instructions",
     ],
     cta: "Go Pro",
@@ -85,7 +85,7 @@ const PLANS = [
       uptime: "99.95%",
     },
     agents: "Unlimited AI Agents",
-    workflows: "Unlimited n8n",
+    workflows: "Unlimited Automations",
     browser: "5 Browser Sessions",
     localModel: "Gemma 4 2B + 7B + Custom",
     models: ["Claude Opus 4.6", "GPT-4.4", "MiniMax 2.5", "GPT-4o", "Gemini 2.5", "Any Ollama model"],
@@ -93,7 +93,7 @@ const PLANS = [
       "Unlimited AI Agents",
       "All messaging platforms",
       "Browser + API + MCP automation",
-      "Unlimited n8n workflows",
+      "Unlimited automations",
       "5 browser sessions",
       "Gemma 4 2B + 7B + Custom models",
       "All cloud models + any Ollama",
@@ -112,7 +112,7 @@ const PLANS = [
 
 const COMPARISON = [
   { feature: "AI Agents", starter: "2", pro: "5", business: "Unlimited" },
-  { feature: "n8n Workflows", starter: "5", pro: "20", business: "Unlimited" },
+  { feature: "Automations", starter: "5", pro: "20", business: "Unlimited" },
   { feature: "Browser Sessions", starter: "1", pro: "3", business: "5" },
   { feature: "Cloud Models", starter: "3", pro: "5+", business: "All + Custom" },
   { feature: "Local Model (Ollama)", starter: "Gemma 2B", pro: "Gemma 2B + 7B", business: "Any model" },
@@ -132,19 +132,19 @@ const FAQS = [
   },
   {
     q: "What's included in the plan?",
-    a: "Every plan includes managed infrastructure with the specified resources. Your OpenClaw agents run 24/7 on dedicated servers.",
+    a: "Every plan includes managed infrastructure with the specified resources. Your AI agents run 24/7 on dedicated servers.",
   },
   {
     q: "What AI models can I use?",
     a: "All plans include access to Claude Opus 4.6, GPT-4.4, and MiniMax 2.5 via API. Pro and Business also include Gemma running locally via Ollama — zero API cost.",
   },
   {
-    q: "What's n8n and why does it matter?",
-    a: "n8n is a powerful workflow automation tool. It handles repetitive, high-volume tasks (like syncing data between apps) so your AI agents only handle complex reasoning. This saves tokens and reduces costs significantly.",
+    q: "How do automations work?",
+    a: "Our built-in automation engine handles repetitive, high-volume tasks — syncing data between apps, sending emails, updating records. Your AI agents handle the complex reasoning. This saves tokens and reduces costs significantly.",
   },
   {
     q: "Can I use my own infrastructure?",
-    a: "Yes. You can connect your own Contabo VPS or use ours. Your VPS is provisioned with OpenClaw, Ollama, n8n, and all integrations pre-configured.",
+    a: "Yes. You can connect your own Contabo VPS or use ours. Your VPS is provisioned with your AI agents and all integrations pre-configured.",
   },
   {
     q: "What happens if I exceed my plan limits?",
@@ -305,31 +305,31 @@ export default function PricingPageClient() {
         </div>
       </div>
 
-      {/* Why n8n + OpenClaw */}
+      {/* AI Agents + Built-in Automations */}
       <div className="max-w-4xl mx-auto px-6 pb-20">
         <div className="rounded-2xl border border-[rgba(0,212,255,0.15)] bg-[rgba(0,212,255,0.04)] p-8">
-          <h2 className="text-2xl font-bold mb-2">Why n8n + OpenClaw together?</h2>
+          <h2 className="text-2xl font-bold mb-2">AI Agents + Built-in Automations</h2>
           <p className="text-white/50 mb-6">
-            Most AI automation tools make you choose between power and simplicity. We give you both.
+            Most AI tools make you choose between intelligence and automation. We give you both.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 className="font-semibold mb-2 text-[#00D4FF]">OpenClaw</h3>
+              <h3 className="font-semibold mb-2 text-[#00D4FF]">AI Agents</h3>
               <p className="text-sm text-white/50">
                 Handles complex reasoning, multi-step tasks, web browsing, code execution, and conversations.
                 Your AI brain — understands context, makes decisions, adapts.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold mb-2 text-[#6600FF]">n8n</h3>
+              <h3 className="font-semibold mb-2 text-[#6600FF]">Automations</h3>
               <p className="text-sm text-white/50">
-                Handles repetitive, high-volume automations — syncing data, sending emails, updating spreadsheets,
+                Handles repetitive, high-volume tasks — syncing data, sending emails, updating spreadsheets,
                 triggering webhooks. Zero AI tokens wasted on boring work.
               </p>
             </div>
           </div>
           <p className="mt-4 text-sm text-white/40">
-            <strong className="text-white">Result:</strong> Your AI team runs faster, cheaper, and smarter — because each tool does what it's best at.
+            <strong className="text-white">Result:</strong> Your AI team runs faster, cheaper, and smarter — because each part does what it&apos;s best at.
           </p>
         </div>
       </div>

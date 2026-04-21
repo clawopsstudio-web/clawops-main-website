@@ -194,7 +194,7 @@ export default function Hero() {
               Works with your stack
             </p>
             <div className="flex flex-wrap items-center justify-center gap-6">
-              {["GoHighLevel", "n8n", "Google Workspace", "Slack", "Telegram"].map((name) => (
+              {["GoHighLevel", "Notion", "Slack", "Telegram", "Gmail"].map((name) => (
                 <span key={name} className="font-mono text-xs font-medium tracking-wide text-[rgba(255,255,255,0.18)]">
                   {name}
                 </span>

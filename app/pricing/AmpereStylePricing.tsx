@@ -15,7 +15,7 @@ const PLANS = [
       'Chrome Browser Automation',
       'Playwright Integration',
       'Telegram Integration',
-      '5 n8n Workflows/month',
+      '5 Automations/month',
       'Email Support',
       '30-day Chat History'
     ],
@@ -36,8 +36,8 @@ const PLANS = [
       '3 AI Agent Workspaces',
       'Gemma 4 2B + 7B (upgradeable)',
       'Chrome + WhatsApp Integration',
-      'n8n Workflows (unlimited)',
-      'Firecrawl Web Scraping',
+      'Automations (unlimited)',
+      'Web Scraping',
       'Task Automation',
       'Priority Support (4h)',
       '60-day Chat History'

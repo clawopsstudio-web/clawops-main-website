@@ -202,9 +202,9 @@ function FloatingCards() {
           style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.6), 0 0 30px rgba(0,212,255,0.03)' }}>
           <div className="text-xs text-[rgba(255,255,255,0.4)] mb-2">Powered by</div>
           <div className="flex items-center gap-2">
-            <div className="text-lg font-bold text-[#00D4FF]">OpenClaw</div>
+            <div className="text-lg font-bold text-[#00D4FF]">ClawOps</div>
           </div>
-          <div className="text-[10px] text-[rgba(255,255,255,0.25)] mt-1">215K+ GitHub stars</div>
+          
         </div>
       </motion.div>
     </div>
@@ -261,7 +261,7 @@ export default function HeroNew() {
                 transition={{ duration: 0.6 }}
                 className="inline-flex items-center gap-2 mx-auto md:mx-0 bg-[rgba(0,212,255,0.08)] border border-[rgba(0,212,255,0.2)] text-[#00D4FF] px-4 py-1.5 rounded-full text-xs font-medium mb-8">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
-                Built on OpenClaw — The Agentic OS for Scale
+                Autonomous AI agents. Working while you sleep.
               </motion.div>
 
               <motion.h1
@@ -271,13 +271,11 @@ export default function HeroNew() {
                 transition={{ duration: 0.7, delay: 0.1 }}
                 className="text-[clamp(2.5rem,7vw,5rem)] font-black leading-[1.05] tracking-[-0.03em] mb-6"
               >
-                <span className="text-white">The Agentic OS for</span>
+                <span className="text-white">The Agentic OS.</span>
                 <br />
                 <span className="bg-gradient-to-r from-[#00D4FF] via-[#9966FF] to-[#00D4FF] bg-clip-text text-transparent">
-                  Businesses That Scale.
+                  Pick your AI workforce.
                 </span>
-                <br />
-                <span className="text-white">Without Hiring.</span>
               </motion.h1>
 
               <motion.p
@@ -286,9 +284,9 @@ export default function HeroNew() {
                 style={{ y: subtextY }}
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="text-lg md:text-xl text-[rgba(255,255,255,0.5)] mb-10 max-w-xl leading-relaxed">
-                ClawOps is the business layer on OpenClaw — giving you autonomous AI agents that{" "}
-                <span className="text-white">plan, execute, and report</span> without you managing them.
-                Your Sales Agent closes. Your Support Agent resolves. Your Ops Agent runs. You sleep.
+                Pick your AI agents.{" "}
+                <span className="text-white">Sales, marketing, research, support — starting at $29/mo.</span>
+                {" "}They work 24/7 while you handle the decisions.
               </motion.p>
 
               <motion.div
@@ -297,16 +295,16 @@ export default function HeroNew() {
                 style={{ y: ctaY }}
                 transition={{ duration: 0.6, delay: 0.3 }}
                 className="flex flex-wrap gap-4 mb-12">
-                <Link href="/auth/signup"
+                <Link href="/roles"
                   className="inline-flex items-center gap-2 bg-gradient-to-r from-[#00D4FF] to-[#6600FF] hover:opacity-90 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(0,212,255,0.3)] active:scale-[0.98] text-white font-semibold px-8 py-4 rounded-xl transition-all text-base">
-                  Run Your Business on AI — Free
+                  Browse agents
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
                 </Link>
                 <Link href="/how-it-works"
                   className="inline-flex items-center gap-2 bg-[rgba(255,255,255,0.06)] hover:bg-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] active:scale-[0.98] border border-[rgba(255,255,255,0.1)] text-white font-medium px-8 py-4 rounded-xl transition-all text-base">
-                  See How It Works
+                  See how it works
                 </Link>
               </motion.div>
 
