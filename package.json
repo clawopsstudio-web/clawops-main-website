@@ -12,6 +12,7 @@
     "@clerk/nextjs": "^7.2.3",
     "@supabase/ssr": "^0.10.0",
     "@supabase/supabase-js": "^2.101.1",
+    "@types/stripe": "^8.0.416",
     "axios": "^1.14.0",
     "clsx": "^2.1.1",
     "framer-motion": "^12.38.0",
@@ -21,6 +22,7 @@
     "next": "^16.2.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "stripe": "^22.0.2",
     "three": "^0.183.2",
     "zustand": "^5.0.12"
   },
