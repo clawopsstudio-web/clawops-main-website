@@ -1,79 +1,61 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
+import { auth, currentUser } from '@clerk/nextjs/server'
 import { createClient } from '@supabase/supabase-js'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
-
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
+    const { userId } = await auth()
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
     const { data, error } = await supabase
-      .from('onboarding_configs')
+      .from('profiles')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('id', userId)
       .single()
 
-    if (error) {
-      return NextResponse.json({ error: 'No onboarding data found' }, { status: 404 })
-    }
-
-    return NextResponse.json({ data })
+    return NextResponse.json({ profile: data, onboardingComplete: !!data?.company })
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
-
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
+    const { userId } = await auth()
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
     const body = await request.json()
+    const { company, timezone, plan } = body
 
-    // Validate required fields
-    const { name, business, tools, websiteUrl, agentName } = body
-
-    if (!name || !agentName) {
-      return NextResponse.json(
-        { error: 'Missing required fields: name and agentName' },
-        { status: 400 }
-      )
-    }
-
-    // Upsert onboarding config
     const { data, error } = await supabase
-      .from('onboarding_configs')
-      .upsert({
-        user_id: user.id,
-        name,
-        business,
-        tools,
-        website_url: websiteUrl,
-        agent_name: agentName,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+      .from('profiles')
+      .update({
+        company,
+        timezone: timezone || 'Asia/Kolkata',
+        plan: plan || 'personal',
+        updated_at: new Date().toISOString(),
       })
+      .eq('id', userId)
       .select()
       .single()
 
     if (error) throw error
 
-    return NextResponse.json({ success: true, data })
+    return NextResponse.json({ success: true, profile: data })
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }

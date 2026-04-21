@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 import GlobalStarField from "@/components/ui/GlobalStarField";
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
   description:
     "The autonomous AI OS for businesses that want to scale without hiring. Powered by OpenClaw. Sales, Support, Research, and Ops agents that run 24/7 — autonomously. Manage from Telegram, WhatsApp, or Slack. Flat monthly pricing from $49/mo.",
   keywords: "agentic OS, autonomous AI, AI workforce, scale without hiring, business AI automation, OpenClaw business, AI agents run 24/7, ClawOps, autonomous business, AI that runs itself",
-  metadataBase: new URL('https://clawops-web.vercel.app'),
+  metadataBase: new URL('https://app.clawops.studio'),
   alternates: {
     canonical: '/',
     languages: {
@@ -67,7 +68,7 @@ const jsonLd = {
   provider: {
     '@type': 'Organization',
     name: 'ClawOps Studio',
-    url: 'https://clawops-web.vercel.app',
+    url: 'https://app.clawops.studio',
   },
 };
 
@@ -77,26 +78,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
-          rel="stylesheet"
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-      </head>
-      <body className="bg-[#04040c] text-white antialiased overflow-x-hidden">
-        {/* Fixed star field persists across all pages/sections */}
-        <GlobalStarField />
-        <SmoothScroll>
-          <AuthProvider>{children}</AuthProvider>
-        </SmoothScroll>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" className="dark">
+        <head>
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+            rel="stylesheet"
+          />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          />
+        </head>
+        <body className="bg-[#04040c] text-white antialiased overflow-x-hidden">
+          <GlobalStarField />
+          <SmoothScroll>
+            <AuthProvider>{children}</AuthProvider>
+          </SmoothScroll>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

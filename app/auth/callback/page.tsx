@@ -1,18 +1,11 @@
-import { Suspense } from 'react'
-import CallbackClient from './CallbackClient'
+import { SignIn } from '@clerk/nextjs'
 
+// Clerk handles OAuth callbacks automatically at /auth-callback
+// This page is a fallback for any manual navigation
 export default function CallbackPage() {
   return (
-    <Suspense fallback={
-      <div style={{
-        minHeight: '100vh', background: '#04040c', color: 'white',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontFamily: 'system-ui'
-      }}>
-        <p style={{ color: 'rgba(255,255,255,0.6)' }}>Loading...</p>
-      </div>
-    }>
-      <CallbackClient />
-    </Suspense>
+    <div className="min-h-screen bg-[#04040c] flex items-center justify-center">
+      <div className="text-white/60">Completing sign in...</div>
+    </div>
   )
 }

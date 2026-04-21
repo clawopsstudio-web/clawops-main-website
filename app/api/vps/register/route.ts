@@ -1,42 +1,29 @@
 import { NextResponse } from 'next/server'
+import { auth } from '@clerk/nextjs/server'
 import { createClient } from '@supabase/supabase-js'
-
-function getSupabaseClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
-}
 
 // Register or update a VPS instance for a user
 export async function POST(request: Request) {
   try {
-    const supabase = getSupabaseClient()
+    // Clerk auth — user must be signed in
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
     const { tunnel_url, vps_name, vps_ip, specs } = await request.json()
 
     if (!tunnel_url || !vps_name) {
-      return NextResponse.json(
-        { error: 'tunnel_url and vps_name are required' },
-        { status: 400 }
-      )
-    }
-
-    const authHeader = request.headers.get('authorization')
-    if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const token = authHeader.replace('Bearer ', '')
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token)
-
-    if (userError || !user) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
+      return NextResponse.json({ error: 'tunnel_url and vps_name are required' }, { status: 400 })
     }
 
     const { data, error } = await supabase
       .from('vps_instances')
       .upsert({
-        user_id: user.id,
+        user_id: userId,
         name: vps_name,
         tunnel_url,
         vps_ip: vps_ip || null,
@@ -44,69 +31,42 @@ export async function POST(request: Request) {
         status: 'online',
         last_heartbeat: new Date().toISOString(),
       }, {
-        onConflict: 'tunnel_url',
+        onConflict: 'user_id,tunnel_url',
       })
       .select()
       .single()
 
-    if (error) {
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .update({ updated_at: new Date().toISOString() })
-        .eq('id', user.id)
-        .select('id')
-        .single()
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-      if (profileError) {
-        return NextResponse.json({ error: 'Database error', details: error.message }, { status: 500 })
-      }
+    return NextResponse.json({ registered: true, vps_id: data.id, vps_name, tunnel_url })
 
-      return NextResponse.json({
-        registered: true,
-        note: 'vps_instances table not created yet — run migration manually',
-        vps_name,
-        tunnel_url,
-      })
-    }
-
-    return NextResponse.json({
-      registered: true,
-      vps_id: data.id,
-      vps_name,
-      tunnel_url,
-    })
   } catch (err) {
     console.error('[vps/register] Error:', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
+// Get all VPS instances for the authenticated user
 export async function GET(request: Request) {
   try {
-    const supabase = getSupabaseClient()
-    const authHeader = request.headers.get('authorization')
-    if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const token = authHeader.replace('Bearer ', '')
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token)
-
-    if (userError || !user) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
-    }
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
 
     const { data, error } = await supabase
       .from('vps_instances')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .order('created_at', { ascending: false })
 
-    if (error) {
-      return NextResponse.json({ error: error.message, instances: [] }, { status: 200 })
-    }
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
     return NextResponse.json({ instances: data || [] })
+
   } catch (err) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }

@@ -1,35 +1,25 @@
-import { createServerClient } from '@supabase/ssr'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
+import { auth } from '@clerk/nextjs/server'
+import { createClient } from '@supabase/supabase-js'
 
+export async function POST(request: Request) {
+  const { userId } = await auth()
+  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-export async function POST(request: NextRequest) {
-  const response = NextResponse.next()
-  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
-    cookies: {
-      getAll() { return request.cookies.getAll() },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value, options }) => {
-          request.cookies.set(name, value)
-          response.cookies.set(name, value, options)
-        })
-      },
-    },
-  })
-
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
 
   const body = await request.json()
   const { action } = body
 
   if (action === 'fetch_from_contabo') {
-    // Fetch instances from Contabo API using stored credentials
-    // This endpoint is called server-side so credentials stay hidden
     try {
       const { data: contaboToken } = await supabase
         .from('user_integrations')
         .select('credentials')
-        .eq('user_id', user.id)
+        .eq('user_id', userId)
         .eq('provider', 'contabo')
         .single()
 
@@ -44,8 +34,8 @@ export async function POST(request: NextRequest) {
         body: new URLSearchParams({
           client_id: creds.client_id,
           client_secret: creds.client_secret,
-          username: creds.username,
-          password: creds.password,
+          username: creds.username || '',
+          password: creds.password || '',
           grant_type: 'password',
         }),
       })
@@ -65,12 +55,11 @@ export async function POST(request: NextRequest) {
       const raw = await instancesRes.json()
       const instances = Array.isArray(raw.data) ? raw.data : []
 
-      // Upsert each instance into vps_instances for this user
       for (const inst of instances) {
-        const { error } = await supabase
+        await supabase
           .from('vps_instances')
           .upsert({
-            user_id: user.id,
+            user_id: userId,
             instance_id: String(inst.instanceId),
             name: inst.name || inst.displayName || `vmi${inst.instanceId}`,
             ip_v4: inst.ipConfig?.v4?.ip || null,
@@ -84,8 +73,6 @@ export async function POST(request: NextRequest) {
           }, {
             onConflict: 'user_id,instance_id',
           })
-
-        if (error) console.error('Upsert error:', error.message)
       }
 
       return NextResponse.json({ synced: instances.length, instances })
@@ -96,17 +83,13 @@ export async function POST(request: NextRequest) {
   }
 
   if (action === 'register_instance') {
-    // Manually register an instance (for vmi3211554 or user entry)
     const { instance_id, name, ip_v4, product_id, region } = body
-
-    if (!instance_id) {
-      return NextResponse.json({ error: 'instance_id required' }, { status: 400 })
-    }
+    if (!instance_id) return NextResponse.json({ error: 'instance_id required' }, { status: 400 })
 
     const { data: instance, error } = await supabase
       .from('vps_instances')
       .upsert({
-        user_id: user.id,
+        user_id: userId,
         instance_id: String(instance_id),
         name: name || `vmi${instance_id}`,
         ip_v4: ip_v4 || null,

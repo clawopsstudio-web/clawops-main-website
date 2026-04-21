@@ -1,37 +1,54 @@
 import { NextResponse } from 'next/server'
+import { auth } from '@clerk/nextjs/server'
+
+export async function GET() {
+  const { userId, sessionId, getToken } = await auth()
+
+  if (!userId) {
+    return NextResponse.json({ authenticated: false, userId: null })
+  }
+
+  const clerkToken = await getToken()
+
+  return NextResponse.json({
+    authenticated: true,
+    userId,
+    sessionId,
+    // Pass Clerk token for any backend verification
+    token: clerkToken,
+  })
+}
 
 export async function POST(request: Request) {
-  try {
-    const { accessToken, refreshToken, userId, expiresIn } = await request.json()
+  const { userId } = await auth()
 
-    if (!accessToken || !userId) {
-      return NextResponse.json({ error: 'Missing token or userId' }, { status: 400 })
-    }
-
-    // Build response first, then set cookies on it
-    const response = NextResponse.json({ success: true })
-
-    // 7-day session (604800 seconds)
-    const cookieOpts = {
-      secure: true,
-      sameSite: 'lax' as const,
-      httpOnly: true,
-      path: '/',
-      maxAge: 604800,
-    }
-
-    response.cookies.set('sb-access-token', accessToken, cookieOpts)
-    response.cookies.set('sb-refresh-token', refreshToken ?? '', {
-      ...cookieOpts,
-      maxAge: 604800,
-    })
-    response.cookies.set('sb-user-id', userId, {
-      ...cookieOpts,
-      maxAge: 604800,
-    })
-
-    return response
-  } catch {
-    return NextResponse.json({ error: 'Failed to set session' }, { status: 500 })
+  if (!userId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
+
+  const body = await request.json()
+  const { action } = body
+
+  if (action === 'get-profile') {
+    // Fetch user profile from Supabase
+    const { createClient } = await import('@supabase/supabase-js')
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single()
+
+    if (error || !profile) {
+      return NextResponse.json({ profile: null })
+    }
+
+    return NextResponse.json({ profile })
+  }
+
+  return NextResponse.json({ userId })
 }

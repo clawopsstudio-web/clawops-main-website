@@ -1,49 +1,40 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
+import { auth } from '@clerk/nextjs/server'
 import { createClient } from '@supabase/supabase-js'
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
-
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const body = await request.json()
     const { name, personality, purpose, agentName } = body
 
     if (!name || !agentName) {
-      return NextResponse.json(
-        { error: 'Missing required fields: name and agentName' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'name and agentName are required' }, { status: 400 })
     }
 
-    // Create agent config
-    const { data, error } = await supabase
-      .from('agent_configs')
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
+    const { data: agent, error } = await supabase
+      .from('agent_instances')
       .insert({
-        user_id: user.id,
-        name,
+        user_id: userId,
         agent_name: agentName,
-        personality,
-        purpose,
+        agent_role: purpose || name,
         status: 'active',
-        model: 'gemma-4-2b', // Default to local Gemma
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        config: { personality, purpose, name },
       })
       .select()
       .single()
 
     if (error) throw error
 
-    return NextResponse.json({ success: true, data })
+    return NextResponse.json({ success: true, agent })
+
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }

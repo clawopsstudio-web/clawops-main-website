@@ -1,30 +1,21 @@
-import { createServerClient } from '@supabase/ssr'
 import { NextRequest, NextResponse } from 'next/server'
-
+import { auth } from '@clerk/nextjs/server'
+import { createClient } from '@supabase/supabase-js'
 
 // GET: Fetch all Contabo instances from Contabo API for the authenticated user
 export async function GET(request: NextRequest) {
-  const response = NextResponse.next()
-  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
-    cookies: {
-      getAll() { return request.cookies.getAll() },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value, options }) => {
-          request.cookies.set(name, value)
-          response.cookies.set(name, value, options)
-        })
-      },
-    },
-  })
+  const { userId } = await auth()
+  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
 
-  // Get Contabo credentials for this user
   const { data: integration } = await supabase
     .from('user_integrations')
     .select('credentials')
-    .eq('user_id', user.id)
+    .eq('user_id', userId)
     .eq('provider', 'contabo')
     .single()
 
@@ -34,15 +25,14 @@ export async function GET(request: NextRequest) {
 
   const creds = integration.credentials
 
-  // Get OAuth token from Contabo
   const tokenRes = await fetch('https://auth.contabo.com/auth/realms/contabo/protocol/openid-connect/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
       client_id: creds.client_id,
       client_secret: creds.client_secret,
-      username: creds.username,
-      password: creds.password,
+      username: creds.username || '',
+      password: creds.password || '',
       grant_type: 'password',
     }),
   })
@@ -52,7 +42,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ connected: false, error: 'Auth failed' }, { status: 401 })
   }
 
-  // Fetch instances from Contabo
   const instancesRes = await fetch('https://api.contabo.com/v1/compute/instances', {
     headers: {
       Authorization: `Bearer ${tokenData.access_token}`,
