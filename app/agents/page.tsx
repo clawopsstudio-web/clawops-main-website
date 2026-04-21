@@ -9,11 +9,13 @@ export const metadata = {
     title: 'AI Agents — ClawOps Studio',
     description: 'Browse and recruit AI agents for your team. Sales, Marketing, Research, Support, Finance, Engineering — each built to work autonomously.',
     type: 'website',
+    images: [{ url: 'https://clawops.studio/og/agents.png', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'AI Agents — ClawOps Studio',
     description: 'Browse and recruit AI agents for your team.',
+    images: ['https://clawops.studio/og/agents.png'],
   },
 }
 
