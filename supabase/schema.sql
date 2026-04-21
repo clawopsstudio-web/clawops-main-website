@@ -194,11 +194,37 @@ create table if not exists public.onboarding_submissions (
   agent_tone text,
   plan text,
   clerk_user_id text,
+
+  -- User lifecycle status
+  -- signed_up  → Clerk user created, no form submitted yet
+  -- pending_payment → Form completed, awaiting payment
+  -- paid       → Stripe payment confirmed
+  -- provisioning → VPS + agents being set up
+  -- active     → Fully provisioned, dashboard live
+  -- abandoned  → 7+ days no payment, marked by cron
   status text not null default 'pending_payment',
+
   stripe_session_id text,
+
+  -- Lifecycle timestamps
+  signed_up_at timestamptz,     -- set when Clerk user is created
+  paid_at timestamptz,         -- set when Stripe checkout.session.completed fires
+  provisioned_at timestamptz,   -- set when VPS is live and dashboard URL sent
+  abandoned_at timestamptz,      -- set by cron after 7 days no payment
+
+  -- Provisioning details (set during Phase 2)
+  composio_entity_id text,
+  vps_instance_id text,
+  dashboard_url text,
+
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+-- Cron job: mark submissions abandoned after 7 days pending_payment
+-- Run daily: update onboarding_submissions set abandoned_at = now()
+--   where status = 'pending_payment' and created_at < now() - interval '7 days';
+-- After marking abandoned, optionally email user via notification service.
 
 -- RLS: allow insert from anyone (public form), but only service role can read/update
 alter table public.onboarding_submissions enable row level security;
