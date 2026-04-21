@@ -175,3 +175,55 @@ create index if not exists idx_agent_instances_user_id on public.agent_instances
 create index if not exists idx_mission_logs_user_id on public.mission_logs(user_id);
 create index if not exists idx_mission_logs_agent_id on public.mission_logs(agent_id);
 create index if not exists idx_mission_logs_started on public.mission_logs(started_at desc);
+
+-- Onboarding submissions (public form - no auth required to submit)
+create table if not exists public.onboarding_submissions (
+  id uuid primary key default gen_random_uuid(),
+  full_name text not null,
+  business_name text not null,
+  website_url text,
+  industry text not null,
+  business_description text,
+  goals jsonb not null default '[]',
+  tools_crm jsonb not null default '[]',
+  tools_email jsonb not null default '[]',
+  tools_comms jsonb not null default '[]',
+  tools_workspace jsonb not null default '[]',
+  tools_social jsonb not null default '[]',
+  agent_name text,
+  agent_tone text,
+  plan text,
+  clerk_user_id text,
+  status text not null default 'pending_payment',
+  stripe_session_id text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+-- RLS: allow insert from anyone (public form), but only service role can read/update
+alter table public.onboarding_submissions enable row level security;
+
+-- Anyone can INSERT (public form submission)
+create policy "Anyone can submit onboarding form"
+  on public.onboarding_submissions
+  for insert
+  with check (true);
+
+-- Only service role can SELECT/UPDATE (internal use)
+create policy "Service role full access"
+  on public.onboarding_submissions
+  for all
+  using (auth.role() = 'service_role');
+
+-- Auto-update updated_at
+create or replace function public.handle_updated_at()
+returns trigger as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$ language plpgsql;
+
+create trigger onboarding_submissions_updated_at
+  before update on public.onboarding_submissions
+  for each row execute function public.handle_updated_at();
