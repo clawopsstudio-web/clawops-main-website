@@ -7,58 +7,56 @@ const MONTHLY_PLANS = [
   {
     name: 'Personal',
     price: 49,
-    description: 'Your first AI agent. Everything included.',
+    description: '4 vCPU · 8GB RAM · 75GB NVMe',
     highlight: false,
+    badge: null,
     features: [
-      '2 AI Agents',
-      'Gmail, Notion, Slack',
-      '20K tool calls / month',
-      'Headless browser automation',
+      '1 agent workspace',
+      '850+ tool integrations',
+      'Telegram + WhatsApp',
       'Community support',
-      '30-day history',
     ],
   },
   {
     name: 'Team',
     price: 149,
-    description: 'Full AI team. For growing businesses.',
+    description: '6 vCPU · 12GB RAM · 100GB NVMe',
     highlight: false,
+    badge: null,
     features: [
-      '5 AI Agents',
-      'All integrations included',
-      '200K tool calls / month',
-      'Headless browser + CLIAnything',
+      '3 agent workspaces',
+      '850+ tool integrations',
+      'All messaging platforms',
+      'Firecrawl included',
       'Priority support (4h response)',
-      '60-day history',
     ],
   },
   {
     name: 'Business',
     price: 299,
-    description: 'Claude API key included. For agencies.',
+    description: '8 vCPU · 24GB RAM · 200GB NVMe',
     highlight: true,
     badge: 'MOST POPULAR',
     features: [
-      '10 AI Agents',
+      'Unlimited workspaces',
+      '850+ tool integrations',
+      'All platforms + GHL',
+      'API access',
       'Claude API key included',
-      '1M tool calls / month',
-      'White-label ready',
-      'Dedicated support (1h response)',
-      '90-day history',
+      'Priority support (1h response)',
     ],
   },
   {
     name: 'Enterprise',
     price: 349,
-    description: 'Same as Business, 20× agent capacity.',
+    description: '12 vCPU · 48GB RAM · 250GB NVMe',
     highlight: false,
+    badge: null,
     features: [
-      '20 AI Agents',
-      'Claude API key included',
-      '1M tool calls / month',
-      'Everything in Business',
-      'Custom SLA',
-      'On-premise option',
+      'Everything in Business ×20 scale',
+      'Dedicated account manager',
+      'Custom onboarding',
+      'SLA guarantee',
     ],
   },
 ]
@@ -72,10 +70,6 @@ const ANNUAL_PLANS = [
 
 const FAQS = [
   {
-    q: 'What is a tool call?',
-    a: "Every time your agent takes an action — sending an email, reading a document, searching the web — that's one tool call. 20K tool calls covers ~400 emails/month or ~2,000 research queries.",
-  },
-  {
     q: 'Can I change plans later?',
     a: 'Yes. Upgrade or downgrade anytime from your dashboard. Changes apply immediately.',
   },
@@ -84,8 +78,12 @@ const FAQS = [
     a: 'Your agents run on your own dedicated server. Your data never touches our infrastructure unless you explicitly connect a third-party integration.',
   },
   {
-    q: 'What happens when I hit my tool call limit?',
-    a: 'Your agents pause and notify you. You can top up or upgrade — they never act without your knowledge.',
+    q: 'What does setup look like?',
+    a: 'You fill in our onboarding form, connect your tools, and your agents are live within 2 hours. No technical skills needed.',
+  },
+  {
+    q: 'What integrations are included?',
+    a: '850+ Composio integrations — Gmail, HubSpot, Notion, Slack, Airtable, Linear, and more. All included in every plan.',
   },
   {
     q: 'Do I need technical skills?',
@@ -94,11 +92,12 @@ const FAQS = [
 ]
 
 const COMPARISON_ROWS = [
-  { feature: 'AI Agents', values: ['2', '5', '10', '20'] },
-  { feature: 'Tool calls / month', values: ['20K', '200K', '1M', '1M'] },
-  { feature: 'Workspaces', values: ['1', '3', 'Unlimited', 'Unlimited'] },
-  { feature: 'Headless browser', values: ['✗', '✗', '✓', '✓'] },
+  { feature: 'Agent workspaces', values: ['1', '3', 'Unlimited', 'Unlimited'] },
+  { feature: 'CPU / RAM', values: ['4 vCPU · 8GB', '6 vCPU · 12GB', '8 vCPU · 24GB', '12 vCPU · 48GB'] },
+  { feature: 'Storage (NVMe)', values: ['75GB', '100GB', '200GB', '250GB'] },
+  { feature: 'Tool integrations', values: ['850+', '850+', '850+', '850+'] },
   { feature: 'Claude API included', values: ['✗', '✗', '✓', '✓'] },
+  { feature: 'White-label', values: ['✗', '✗', '✓', '✓'] },
 ]
 
 export default function AmpereStylePricing() {

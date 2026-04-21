@@ -1,22 +1,24 @@
 /**
  * app/api/provision/route.ts — Internal provisioning pipeline
  *
- * Triggered ONLY by Stripe webhook (checkout.session.completed)
+ * Triggered by:
+ *   - Stripe webhook: POST /api/provision (checkout.session.completed)
+ *   - MOCK_PAYMENT=true for local testing (no Stripe needed)
+ *
  * NEVER call this directly from client code.
  *
  * Strict order:
  *  1. Verify status = "paid" in Supabase
  *  2. Update status → "provisioning"
- *  3. Create Composio entity (stored as composio_entity_id)
+ *  3. Create Composio entity
  *  4. Call provisionVPS() from lib/contabo.ts
- *  5. Update Supabase with vps_instance_id, dashboard_url
+ *  5. Store vps_instance_id + dashboard_url in Supabase
  *  6. Update status → "active", provisioned_at = now()
  *  7. Alert Pulkit on Telegram
  *  8. Send welcome email to user
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import Stripe from 'stripe'
 import {
   supabaseAdmin,
   getOnboardingByUserId,
@@ -26,32 +28,34 @@ import {
 } from '@/lib/supabase-admin'
 import { provisionVPS } from '@/lib/contabo'
 
-const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY!
-const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET!
-const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN!
-const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID!
-const COMPOSIO_API_KEY = process.env.COMPOSIO_API_KEY!
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://clawops.studio'
+// ─── Env helpers (lazy — avoid build-time errors) ───────────────────────
 
-let _stripe: Stripe | null = null
-function getStripe(): Stripe {
-  if (!_stripe) {
-    if (!STRIPE_SECRET_KEY) throw new Error('STRIPE_SECRET_KEY not set')
-    _stripe = new Stripe(STRIPE_SECRET_KEY)
-  }
-  return _stripe
+function env(key: string): string {
+  const val = process.env[key]
+  if (!val) throw new Error(`Missing env var: ${key}`)
+  return val
+}
+
+function envOpt(key: string): string | undefined {
+  return process.env[key]
 }
 
 // ─── Telegram alert ──────────────────────────────────────────────────────
 
-async function alertPulkit(message: string) {
+async function alertPulkit(html: string) {
+  const botToken = envOpt('TELEGRAM_BOT_TOKEN')
+  const chatId = envOpt('TELEGRAM_CHAT_ID')
+  if (!botToken || !chatId) {
+    console.warn('[Telegram alert skipped — TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not set]')
+    return
+  }
   try {
-    await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        chat_id: TELEGRAM_CHAT_ID,
-        text: `⚡ ClawOps Alert\n\n${message}`,
+        chat_id: chatId,
+        text: html,
         parse_mode: 'HTML',
       }),
     })
@@ -60,108 +64,63 @@ async function alertPulkit(message: string) {
   }
 }
 
-// ─── Welcome email ───────────────────────────────────────────────────────
+// ─── Welcome email ─────────────────────────────────────────────────────
 
 async function sendWelcomeEmail(email: string, agentName: string, dashboardUrl: string) {
-  // TODO: Wire up Resend/SendGrid/etc. once Pulkit provides keys
-  // For now, just log it
+  // TODO: Wire up Resend/SendGrid once Pulkit provides keys
   console.log(`[welcome email] to=${email} agent=${agentName} dashboard=${dashboardUrl}`)
 }
 
-// ─── Main provision handler ─────────────────────────────────────────────
+// ─── Core provisioning logic ──────────────────────────────────────────────
 
-export async function POST(req: NextRequest) {
-  // ── 0. Verify Stripe signature ────────────────────────────────────
-  const body = await req.text()
-  const sig = req.headers.get('stripe-signature') ?? ''
+async function runProvisioning(params: {
+  clerkUserId: string
+  plan: 'personal' | 'team' | 'business' | 'enterprise'
+}): Promise<{ success: true; dashboardUrl: string }> {
+  const { clerkUserId, plan } = params
 
-  let event: Stripe.Event
-  try {
-    event = getStripe().webhooks.constructEvent(body, sig, STRIPE_WEBHOOK_SECRET)
-  } catch (err: any) {
-    console.error(`Stripe webhook signature verification failed: ${err.message}`)
-    return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
-  }
-
-  if (event.type !== 'checkout.session.completed') {
-    return NextResponse.json({ received: true })
-  }
-
-  const session = event.data.object as Stripe.Checkout.Session
-  const clerkUserId = session.metadata?.clerk_user_id ?? session.customer_email ?? ''
-  const plan = (session.metadata?.plan ?? 'personal') as 'personal' | 'team' | 'business' | 'enterprise'
-
-  console.log(`[provision] Starting for user=${clerkUserId} plan=${plan}`)
-
-  await logProvisioningEvent({
-    userId: clerkUserId,
-    action: 'webhook_received',
-    payload: { eventType: event.type, sessionId: session.id },
-  })
-
-  // ── 1. Safety: verify status = "paid" ───────────────────────────
+  // 1. Verify status = "paid"
   const row = await getOnboardingByUserId(clerkUserId)
-
-  if (!row) {
-    console.warn(`[provision] No onboarding row for user=${clerkUserId}`)
-    return NextResponse.json({ error: 'User not found' }, { status: 404 })
-  }
-
+  if (!row) throw new Error(`User not found: ${clerkUserId}`)
   if (row.status !== 'paid') {
-    console.warn(`[provision] User ${clerkUserId} status is "${row.status}", expected "paid". Aborting.`)
-    await alertPulkit(`⚠️ Provision blocked: user=${clerkUserId} status="${row.status}" (expected "paid")`)
-    return NextResponse.json({ error: 'Not paid' }, { status: 400 })
+    throw new Error(`User ${clerkUserId} status is "${row.status}", expected "paid"`)
   }
 
-  // ── 2. Safety: no duplicate VPS ───────────────────────────────────
+  // 2. Safety: no duplicate VPS
   const alreadyHasVPS = await checkUserHasVPS(clerkUserId)
   if (alreadyHasVPS) {
-    console.warn(`[provision] User ${clerkUserId} already has a VPS. Skipping.`)
-    await alertPulkit(`⚠️ Provision blocked: user=${clerkUserId} already has a VPS`)
-    return NextResponse.json({ error: 'Already provisioned' }, { status: 409 })
+    throw new Error(`User ${clerkUserId} already has a VPS — skipping`)
   }
 
-  // ── 3. Update status → "provisioning" ─────────────────────────────
+  // 3. Update status → "provisioning"
   await updateOnboardingStatus(clerkUserId, { status: 'provisioning' })
 
   try {
-    // ── 4. Create Composio entity ─────────────────────────────────
-    await logProvisioningEvent({
-      userId: clerkUserId,
-      action: 'create_composio_entity_start',
-    })
-
-    const composioRes = await fetch('https://backend.composio.dev/v2/users', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-API-KEY': COMPOSIO_API_KEY,
-      },
-      body: JSON.stringify({ identifier: clerkUserId }),
-    })
-
+    // 4. Create Composio entity
+    const composioApiKey = envOpt('COMPOSIO_API_KEY')
     let composioEntityId = clerkUserId
-    if (composioRes.ok) {
-      const composioData = await composioRes.json()
-      composioEntityId = composioData?.data?.id ?? composioEntityId
-    } else {
-      console.warn(`[provision] Composio entity creation failed (${composioRes.status}), using clerkUserId as fallback`)
+    if (composioApiKey) {
+      await logProvisioningEvent({ userId: clerkUserId, action: 'create_composio_entity_start' })
+      const res = await fetch('https://backend.composio.dev/v2/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-API-KEY': composioApiKey },
+        body: JSON.stringify({ identifier: clerkUserId }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        composioEntityId = data?.data?.id ?? composioEntityId
+      }
+      await logProvisioningEvent({
+        userId: clerkUserId,
+        action: 'create_composio_entity_done',
+        response: { composioEntityId },
+      })
     }
 
-    await logProvisioningEvent({
-      userId: clerkUserId,
-      action: 'create_composio_entity_done',
-      response: { composioEntityId },
-    })
-
-    // ── 5. Provision VPS ──────────────────────────────────────────────
+    // 5. Provision VPS
     const vps = await provisionVPS({ userId: clerkUserId, plan })
 
-    console.log(`[provision] VPS created: instanceId=${vps.instanceId} ip=${vps.ipAddress}`)
-
-    // ── 6. Build dashboard URL ────────────────────────────────────
-    // Dashboard URL: {slug}.app.clawops.studio
-    // slug is derived from business_name, slugified
+    // 6. Build dashboard URL: {slug}.app.clawops.studio
     const businessName = row.business_name ?? 'client'
     const slug = businessName
       .toLowerCase()
@@ -170,7 +129,7 @@ export async function POST(req: NextRequest) {
       .slice(0, 50)
     const dashboardUrl = `https://${slug}.app.clawops.studio`
 
-    // ── 7. Update Supabase ─────────────────────────────────────────
+    // 7. Update Supabase
     await updateOnboardingStatus(clerkUserId, {
       status: 'active',
       composio_entity_id: composioEntityId,
@@ -186,11 +145,11 @@ export async function POST(req: NextRequest) {
       response: { ip: vps.ipAddress, status: vps.status },
     })
 
-    // ── 8. Alert Pulkit ──────────────────────────────────────────
+    // 8. Alert Pulkit
     const agentName = row.agent_name ?? 'Your agent'
     const fullName = row.full_name ?? 'User'
     await alertPulkit(
-      `✅ Provisioning complete\n\n` +
+      `✅ <b>Provisioning complete</b>\n\n` +
       `Name: ${fullName}\n` +
       `Plan: ${plan}\n` +
       `Agent: ${agentName}\n` +
@@ -199,22 +158,90 @@ export async function POST(req: NextRequest) {
       `Dashboard: ${dashboardUrl}`
     )
 
-    // ── 9. Send welcome email ────────────────────────────────────
+    // 9. Send welcome email
     if (row.email) {
       await sendWelcomeEmail(row.email, agentName, dashboardUrl)
     }
 
-    return NextResponse.json({ success: true, dashboardUrl })
+    return { success: true, dashboardUrl }
 
   } catch (err: any) {
+    // Revert status so it can be retried
+    await updateOnboardingStatus(clerkUserId, { status: 'paid' })
+    await alertPulkit(`❌ <b>Provisioning failed</b>\n\nuser: ${clerkUserId}\nerror: ${err.message}`)
+    throw err
+  }
+}
+
+// ─── POST handler ─────────────────────────────────────────────────────────
+
+export async function POST(req: NextRequest) {
+  // ── MOCK_PAYMENT=true bypass ──────────────────────────────────────
+  // For local/testing: POST { clerk_user_id, plan } directly without Stripe
+  if (envOpt('MOCK_PAYMENT') === 'true') {
+    const body = await req.json()
+    const clerkUserId = body.clerk_user_id ?? body.clerkUserId
+    const plan = (body.plan ?? 'personal') as 'personal' | 'team' | 'business' | 'enterprise'
+
+    if (!clerkUserId) {
+      return NextResponse.json({ error: 'clerk_user_id required' }, { status: 400 })
+    }
+
+    try {
+      const result = await runProvisioning({ clerkUserId, plan })
+      return NextResponse.json(result)
+    } catch (err: any) {
+      return NextResponse.json({ error: err.message }, { status: 500 })
+    }
+  }
+
+  // ── Stripe webhook path ───────────────────────────────────────────
+  const stripeSecretKey = envOpt('STRIPE_SECRET_KEY')
+  if (!stripeSecretKey) {
+    return NextResponse.json(
+      { error: 'STRIPE_SECRET_KEY not configured — set MOCK_PAYMENT=true for testing' },
+      { status: 503 }
+    )
+  }
+
+  // Lazy Stripe init
+  const { default: Stripe } = await import('stripe')
+  const stripe = new Stripe(stripeSecretKey)
+
+  const body = await req.text()
+  const sig = req.headers.get('stripe-signature') ?? ''
+  const webhookSecret = envOpt('STRIPE_WEBHOOK_SECRET') ?? ''
+
+  let event: any
+  try {
+    event = stripe.webhooks.constructEvent(body, sig, webhookSecret)
+  } catch (err: any) {
+    console.error(`Stripe webhook signature verification failed: ${err.message}`)
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
+  }
+
+  if (event.type !== 'checkout.session.completed') {
+    return NextResponse.json({ received: true })
+  }
+
+  const session = event.data.object as any
+  const clerkUserId = session.metadata?.clerk_user_id ?? ''
+  const plan = (session.metadata?.plan ?? 'personal') as 'personal' | 'team' | 'business' | 'enterprise'
+
+  console.log(`[provision] Stripe webhook — user=${clerkUserId} plan=${plan}`)
+
+  await logProvisioningEvent({
+    userId: clerkUserId,
+    action: 'webhook_received',
+    payload: { eventType: event.type, sessionId: session.id },
+  })
+
+  try {
+    const result = await runProvisioning({ clerkUserId, plan })
+    return NextResponse.json(result)
+  } catch (err: any) {
     console.error(`[provision] Error for user=${clerkUserId}:`, err)
-
-    await updateOnboardingStatus(clerkUserId, {
-      status: 'paid', // Revert so it can be retried
-    })
-
-    await alertPulkit(`❌ Provisioning failed\n\nuser=${clerkUserId}\nerror=${err.message}`)
-
+    await alertPulkit(`❌ <b>Provision error</b>\n\nuser: ${clerkUserId}\nerror: ${err.message}`)
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }

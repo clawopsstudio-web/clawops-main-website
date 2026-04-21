@@ -63,11 +63,12 @@ async function getAccessToken(): Promise<string> {
 
 // ─── VPS specs per plan ───────────────────────────────────────────────────────
 
+// Updated 2026-04-21 — Contabo Cloud VPS lineup
 const PLAN_SPECS: Record<string, { vcpu: number; ramMb: number; diskGb: number; productLabel: string }> = {
-  personal:   { vcpu: 2,  ramMb: 4096,  diskGb: 50,  productLabel: 'Cloud VPS S' },
-  team:       { vcpu: 4,  ramMb: 8192,  diskGb: 100, productLabel: 'Cloud VPS M' },
-  business:   { vcpu: 6,  ramMb: 12288, diskGb: 200, productLabel: 'Cloud VPS L' },
-  enterprise:  { vcpu: 8,  ramMb: 16384, diskGb: 200, productLabel: 'Cloud VPS XL' },
+  personal:    { vcpu: 4,  ramMb: 8192,   diskGb: 75,  productLabel: 'Cloud VPS 10' },
+  team:       { vcpu: 6,  ramMb: 12288,  diskGb: 100, productLabel: 'Cloud VPS 20' },
+  business:   { vcpu: 8,  ramMb: 24576,  diskGb: 200, productLabel: 'Cloud VPS 30' },
+  enterprise:  { vcpu: 12, ramMb: 49152,  diskGb: 250, productLabel: 'Cloud VPS 40' },
 }
 
 // ─── Product ID lookup ────────────────────────────────────────────────────────
