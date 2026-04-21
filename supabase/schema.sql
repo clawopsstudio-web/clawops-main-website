@@ -274,3 +274,23 @@ create policy "Service role can read contact_submissions"
   on public.contact_submissions
   for select
   using (auth.role() = 'service_role');
+
+-- ─── provisioning_logs ─────────────────────────────────────────────────
+-- All Contabo/VPS/provisioning API calls logged here for audit trail
+create table if not exists public.provisioning_logs (
+  id          uuid default gen_random_uuid() primary key,
+  user_id     text not null,
+  action      text not null,
+  payload     jsonb,
+  response    jsonb,
+  status      text,
+  created_at  timestamptz default now()
+);
+
+alter table public.provisioning_logs enable row level security;
+
+-- Only service role can write/read (internal audit log)
+create policy "Service role full access provisioning_logs"
+  on public.provisioning_logs
+  for all
+  using (auth.role() = 'service_role');
