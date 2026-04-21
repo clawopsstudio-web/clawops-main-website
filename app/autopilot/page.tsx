@@ -1,232 +1,166 @@
+'use client'
+
+import { useState } from 'react'
 import Navigation from '../components/Navigation'
 import Footer from '../../components/sections/Footer'
-
-import type { Metadata } from 'next'
 import Link from 'next/link'
 
-export const metadata: Metadata = {
-  title: 'Autopilot — ClawOps Studio',
-  description: 'Set the goal. Go to sleep. Your AI team executes while you rest.',
-  openGraph: {
-    title: 'Autopilot — ClawOps Studio',
-    description: 'Set the goal. Go to sleep. Your AI team executes while you rest.',
-    type: 'website',
+type Mode = 'observe' | 'assist' | 'autopilot'
+
+const MODES: { id: Mode; label: string; sub: string }[] = [
+  { id: 'observe', label: 'OBSERVE', sub: 'Agents monitor and report only' },
+  { id: 'assist', label: 'ASSIST', sub: 'Agents draft, you approve' },
+  { id: 'autopilot', label: 'AUTOPILOT', sub: 'Agents act fully autonomously' },
+]
+
+const FEEDS: Record<Mode, { text: string; items: { agent: string; color: string; message: string; time: string }[] }> = {
+  observe: {
+    text: 'Agents watch and report — no action taken without your say.',
+    items: [
+      { agent: 'REX', color: '#34d399', message: 'Found 3 competitor price changes. Report sent to Slack.', time: '2m ago' },
+      { agent: 'ATLAS', color: '#e8ff47', message: 'Spotted 8 new leads in your ICP segment. Logged to CRM.', time: '18m ago' },
+      { agent: 'NOVA', color: '#a78bfa', message: 'Brand mention spike detected on LinkedIn (+340%). Summary queued.', time: '1h ago' },
+      { agent: 'MAYA', color: '#22d3ee', message: 'Invoice #1049 is 14 days overdue. Flagged for review.', time: '2h ago' },
+    ],
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Autopilot — ClawOps Studio',
-    description: 'Set the goal. Go to sleep. Your AI team executes while you rest.',
+  assist: {
+    text: 'Agents draft — you review and approve before anything goes out.',
+    items: [
+      { agent: 'ATLAS', color: '#e8ff47', message: 'Drafted outreach to 12 warm leads. 3 awaiting your approval.', time: 'Just now' },
+      { agent: 'ZARA', color: '#fb923c', message: 'Drafted 6 customer responses. 2 flagged for your review.', time: '5m ago' },
+      { agent: 'NOVA', color: '#a78bfa', message: 'Scheduled 5 LinkedIn posts for next week. Ready to publish.', time: '22m ago' },
+      { agent: 'MARCUS', color: '#60a5fa', message: 'Weekly ops report ready. 3 tasks need your sign-off.', time: '1h ago' },
+    ],
+  },
+  autopilot: {
+    text: 'Agents act — everything runs without touching your attention.',
+    items: [
+      { agent: 'NOVA', color: '#a78bfa', message: 'Published 3 posts to LinkedIn, Twitter, and Instagram.', time: 'Just now' },
+      { agent: 'ATLAS', color: '#e8ff47', message: 'Contacted 47 leads. 3 booked meetings. CRM updated.', time: '12m ago' },
+      { agent: 'ZARA', color: '#fb923c', message: 'Resolved 12 support tickets. 1 escalated to your inbox.', time: '38m ago' },
+      { agent: 'REX', color: '#34d399', message: 'Delivered morning briefing to Slack. 12 intel items.', time: '1h ago' },
+    ],
   },
 }
-const FEATURES = [
-  {
-    title: 'Define the mission',
-    description: 'Tell your agents what you want to achieve. One sentence. No prompts needed.',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z" />
-      </svg>
-    ),
-  },
-  {
-    title: 'Agents take it from here',
-    description: 'Your team divides the work, researches, drafts, and executes — without you in the loop.',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5" />
-      </svg>
-    ),
-  },
-  {
-    title: 'You wake up to results',
-    description: 'Agents report back with completed tasks, summaries, and next steps. Ready for your review.',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0H3" />
-      </svg>
-    ),
-  },
-]
-
-const MISSIONS = [
-  {
-    title: 'Weekly market report',
-    schedule: 'Every Monday 8am',
-    agent: 'Arjun',
-    color: '#34d399',
-    description: 'Scrapes competitor pricing, monitors industry news, compiles a brief for your review.',
-  },
-  {
-    title: 'Lead nurture sequence',
-    schedule: 'Daily at 10am',
-    agent: 'Ryan',
-    color: '#e8ff47',
-    description: 'Follows up with every unresponded lead from your CRM. Personalizes each touchpoint.',
-  },
-  {
-    title: 'Social content calendar',
-    schedule: 'Every Friday 5pm',
-    agent: 'Tyler',
-    color: '#a78bfa',
-    description: 'Writes and schedules the next week of posts across LinkedIn, Twitter, and Instagram.',
-  },
-  {
-    title: 'Support ticket digest',
-    schedule: 'Daily at 9am',
-    agent: 'Helena',
-    color: '#fb923c',
-    description: 'Triages overnight tickets, responds to FAQs, escalates anything that needs human attention.',
-  },
-  {
-    title: 'Invoice follow-up',
-    schedule: '1st of month',
-    agent: 'Maya',
-    color: '#22d3ee',
-    description: 'Sends payment reminders to overdue invoices, flags cash flow issues.',
-  },
-  {
-    title: 'Pipeline review',
-    schedule: 'Every Monday 9am',
-    agent: 'Ryan',
-    color: '#e8ff47',
-    description: 'Reviews your CRM pipeline, flags stale deals, and prepares a Monday pipeline report.',
-  },
-]
 
 export default function AutopilotPage() {
+  const [mode, setMode] = useState<Mode>('autopilot')
+  const feed = FEEDS[mode]
+
   return (
-      <>
+    <>
       <Navigation />
-    <main className="min-h-screen bg-[#0a0a0a] text-white">
-      {/* Hero */}
-      <div className="relative pt-32 pb-24 px-6 text-center overflow-hidden">
-        {/* Background grid */}
-        <div className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-            backgroundSize: '60px 60px',
-          }}
-        />
+      <main className="pt-16">
+        <div className="min-h-screen bg-[#0a0a0a] text-white">
 
-        <div className="relative max-w-3xl mx-auto">
-          <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(232,255,71,0.6)] mb-6">
-            AUTOPILOT
-          </p>
-          <h1
-            className="text-5xl md:text-7xl font-black text-white mb-6 leading-none"
-            style={{ fontFamily: 'var(--font-cabinet)', letterSpacing: '-0.02em' }}
-          >
-            Set the goal.
-            <br />
-            <span className="text-[#e8ff47]">Go to sleep.</span>
-          </h1>
-          <p className="text-white/50 text-lg md:text-xl max-w-xl mx-auto mb-10 leading-relaxed">
-            Your AI team runs on schedules you set — not on your attention.
-            They work through the night, the weekend, the holiday.
-            You wake up to done.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="/start"
-              className="px-8 py-4 bg-[#e8ff47] hover:bg-[#d4eb3a] text-[#0a0a0a] font-bold rounded-xl transition-colors"
+          {/* Hero */}
+          <div className="px-6 pt-28 pb-20 text-center">
+            <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(232,255,71,0.6)] mb-6">
+              AUTOPILOT
+            </p>
+            <h1
+              className="text-5xl md:text-7xl font-black text-white mb-3 leading-none tracking-tight"
+              style={{ fontFamily: 'var(--font-cabinet, sans-serif)', letterSpacing: '-0.03em' }}
             >
-              Set up your autopilot →
-            </a>
-            <a
-              href="/agents"
-              className="px-8 py-4 bg-white/5 hover:bg-white/10 text-white rounded-xl transition-colors border border-white/10"
+              SET THE MISSION.
+            </h1>
+            <h2
+              className="text-4xl md:text-6xl font-black mb-8 leading-none tracking-tight"
+              style={{ fontFamily: 'var(--font-cabinet, sans-serif)', letterSpacing: '-0.03em', color: '#e8ff47' }}
             >
-              Meet your agents
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* How it works */}
-      <div className="py-24 px-6 border-t border-white/5">
-        <div className="max-w-5xl mx-auto">
-          <p className="text-center text-sm font-semibold uppercase tracking-widest text-white/30 mb-12">
-            How it works
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {FEATURES.map((feature, i) => (
-              <div key={feature.title} className="text-center">
-                <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-5 text-[#e8ff47]">
-                  {feature.icon}
-                </div>
-                <div className="text-xs font-mono text-white/30 mb-2">
-                  {String(i + 1).padStart(2, '0')}
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2">{feature.title}</h3>
-                <p className="text-white/50 text-sm leading-relaxed">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Missions */}
-      <div className="py-24 px-6 border-t border-white/5">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-black text-white mb-4"
-              style={{ fontFamily: 'var(--font-cabinet)' }}>
-              Missions your team runs
+              YOUR AGENTS HANDLE THE REST.
             </h2>
-            <p className="text-white/50 max-w-lg mx-auto">
-              Pre-built schedules for common business tasks. Each one runs automatically — no babysitting.
+            <p className="text-white/40 text-base max-w-md mx-auto leading-relaxed">
+              Tell ClawOps what you need done.<br />
+              Set the intensity. Go run your business.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {MISSIONS.map(mission => (
-              <div
-                key={mission.title}
-                className="bg-[#111] rounded-2xl border border-white/7 p-6 hover:border-white/15 transition-colors"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="text-white font-bold text-base mb-1">{mission.title}</h3>
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="text-xs font-medium px-2 py-0.5 rounded-full"
-                        style={{ backgroundColor: `${mission.color}20`, color: mission.color }}
-                      >
-                        {mission.agent}
-                      </span>
-                      <span className="text-xs text-white/30 font-mono">{mission.schedule}</span>
-                    </div>
+          {/* Intensity selector */}
+          <div className="px-6 pb-20 max-w-3xl mx-auto">
+            <div className="grid grid-cols-3 gap-3">
+              {MODES.map(m => (
+                <button
+                  key={m.id}
+                  onClick={() => setMode(m.id)}
+                  className={`
+                    relative rounded-2xl p-5 text-left transition-all border-2
+                    ${mode === m.id
+                      ? 'border-[#e8ff47] bg-[rgba(232,255,71,0.06)]'
+                      : 'border-white/7 bg-[#111] hover:border-white/20'
+                    }
+                  `}
+                >
+                  {mode === m.id && (
+                    <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-[#e8ff47] animate-pulse" />
+                  )}
+                  <div className="text-base font-black text-white mb-1 tracking-tight"
+                    style={{ fontFamily: 'var(--font-cabinet, sans-serif)' }}>
+                    {m.label}
                   </div>
-                  <div className="w-2 h-2 rounded-full bg-emerald-400 mt-2 animate-pulse shrink-0" />
-                </div>
-                <p className="text-white/50 text-sm leading-relaxed">{mission.description}</p>
-              </div>
-            ))}
+                  <div className="text-[10px] text-white/40 leading-relaxed">{m.sub}</div>
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* CTA */}
-      <div className="py-24 px-6 border-t border-white/5">
-        <div className="max-w-xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-black text-white mb-4"
-            style={{ fontFamily: 'var(--font-cabinet)' }}>
-            Ready to hand off the grind?
-          </h2>
-          <p className="text-white/50 mb-8">
-            Your autopilot goes live within 2 hours of signup.
-            No training. No prompts. No babysitting.
-          </p>
-          <a
-            href="/start"
-            className="inline-block px-10 py-4 bg-[#e8ff47] hover:bg-[#d4eb3a] text-[#0a0a0a] font-bold rounded-xl transition-colors"
-          >
-            Start for $49 →
-          </a>
+          {/* Live example feed */}
+          <div className="border-y border-white/5 py-20 px-6">
+            <div className="max-w-3xl mx-auto">
+              <div className="flex items-center justify-between mb-8">
+                <p className="text-white/40 text-sm">{feed.text}</p>
+                <div className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[10px] text-white/30 font-mono uppercase tracking-wider">Live</span>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {feed.items.map((item, i) => (
+                  <div
+                    key={i}
+                    className="bg-[#111] rounded-xl border border-white/7 p-4 flex items-start gap-4"
+                  >
+                    <div className="shrink-0 mt-0.5">
+                      <span
+                        className="text-xs font-black px-2 py-1 rounded"
+                        style={{ backgroundColor: `${item.color}20`, color: item.color }}
+                      >
+                        {item.agent}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-white/70 text-sm leading-relaxed">{item.message}</p>
+                    </div>
+                    <span className="text-[10px] text-white/25 font-mono shrink-0 mt-0.5">{item.time}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="py-24 px-6 text-center">
+            <div className="max-w-xl mx-auto">
+              <h2 className="text-3xl font-black text-white mb-4 leading-none"
+                style={{ fontFamily: 'var(--font-cabinet, sans-serif)' }}>
+                Ready to activate Autopilot?
+              </h2>
+              <p className="text-white/40 mb-8 text-sm">
+                Your OS goes live within 2 hours of signup.
+              </p>
+              <Link
+                href="/start"
+                className="inline-block px-10 py-4 bg-[#e8ff47] hover:bg-[#d4eb3a] text-[#0a0a0a] font-bold rounded-xl transition-colors"
+              >
+                Activate Autopilot →
+              </Link>
+            </div>
+          </div>
+
         </div>
-      </div>
-    </main>
+      </main>
       <Footer />
-      </>
+    </>
   )
 }
