@@ -18,13 +18,13 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const code = searchParams.get('code')
   const state = searchParams.get('state')
-  const error = searchParams.get('error')
+  const oauthError = searchParams.get('error')
   const errorDescription = searchParams.get('error_description')
 
-  // Handle OAuth errors
-  if (error) {
+  // Handle OAuth errors from Composio
+  if (oauthError) {
     return NextResponse.redirect(
-      new URL(`/auth/login?error=${encodeURIComponent(errorDescription || error)}`, req.url)
+      new URL(`/auth/login?error=${encodeURIComponent(errorDescription || oauthError)}`, req.url)
     )
   }
 
@@ -32,19 +32,21 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL('/auth/login?error=missing_params', req.url))
   }
 
+  // Parse state to get user info
+  let redirectTo = '/dashboard'
+  let userId: string | null = null
+  let connectionType = ''
+
   try {
-    // Parse state to get user info (state contains redirect_url and connection_type)
-    let redirectTo = '/dashboard'
-    let connectionType = ''
+    const stateData = JSON.parse(Buffer.from(state, 'base64').toString())
+    redirectTo = stateData.redirect_url || '/dashboard'
+    userId = stateData.user_id || null
+    connectionType = stateData.connection_type || ''
+  } catch {
+    // State parsing failed, use defaults
+  }
 
-    try {
-      const stateData = JSON.parse(Buffer.from(state, 'base64').toString())
-      redirectTo = stateData.redirect_url || '/dashboard'
-      connectionType = stateData.connection_type || ''
-    } catch {
-      // State parsing failed, use defaults
-    }
-
+  try {
     // Exchange code for access token via Composio API
     const tokenRes = await fetch(`${COMPOSIO_BASE_URL}/oauth/exchange`, {
       method: 'POST',
@@ -65,14 +67,12 @@ export async function GET(req: NextRequest) {
 
     const tokenData = await tokenRes.json()
 
-    // Store the connection in Supabase
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    )
-
-    const userId = stateData?.user_id || null
+    // Store the connection in Supabase (only if user is logged in)
     if (userId) {
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      )
       await supabase.from('user_connections').upsert({
         user_id: userId,
         connection_type: connectionType,
