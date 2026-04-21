@@ -1,12 +1,56 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+
+// Inline SVG robot avatar components — consistent style, no broken URLs
+function RobotAvatar({ seed }: { seed: string }) {
+  const colors: Record<string, string> = {
+    ryan: '#e8ff47',
+    tyler: '#a78bfa',
+    arjun: '#34d399',
+    helena: '#fb923c',
+    marcus: '#f472b6',
+    maya: '#22d3ee',
+    ops: '#60a5fa',
+  }
+  const c = colors[seed] || '#e8ff47'
+
+  return (
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+      {/* Background */}
+      <rect width="200" height="200" fill="#111" />
+
+      {/* Antenna */}
+      <line x1="100" y1="30" x2="100" y2="50" stroke={c} strokeWidth="3" />
+      <circle cx="100" cy="24" r="8" fill={c} opacity="0.9" />
+
+      {/* Head */}
+      <rect x="50" y="48" width="100" height="80" rx="16" fill="#1a1a1a" stroke={c} strokeWidth="2.5" />
+
+      {/* Eyes */}
+      <rect x="68" y="68" width="26" height="26" rx="6" fill={c} opacity="0.9" />
+      <rect x="106" y="68" width="26" height="26" rx="6" fill={c} opacity="0.9" />
+      <rect x="75" y="75" width="12" height="12" rx="3" fill="#0a0a0a" />
+      <rect x="113" y="75" width="12" height="12" rx="3" fill="#0a0a0a" />
+
+      {/* Mouth */}
+      <rect x="76" y="108" width="48" height="10" rx="5" fill={c} opacity="0.4" />
+
+      {/* Body */}
+      <rect x="60" y="136" width="80" height="52" rx="12" fill="#1a1a1a" stroke={c} strokeWidth="2.5" />
+
+      {/* Chest detail */}
+      <circle cx="100" cy="158" r="14" fill={c} opacity="0.15" />
+      <circle cx="100" cy="158" r="8" fill={c} opacity="0.5" />
+    </svg>
+  )
+}
 
 const AGENTS = [
   {
     name: 'Ryan',
-    role: 'Sales Rep',
+    role: 'Sales Agent',
     department: 'Sales',
     departmentColor: '#e8ff47',
     tagline: 'Books meetings you never could.',
@@ -21,14 +65,13 @@ const AGENTS = [
     problems: ['No time for outreach', 'Leads going cold', 'Manual follow-ups'],
     rating: 4.8,
     reviews: 849,
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face',
   },
   {
     name: 'Tyler',
     role: 'Marketing Agent',
     department: 'Marketing',
-    departmentColor: '#e8ff47',
-    tagline: "Posts daily. You don't have to.",
+    departmentColor: '#a78bfa',
+    tagline: 'Posts daily. You don\'t have to.',
     personality: 'Drafting LinkedIn posts between espresso shots.',
     experience: [
       'Researches your audience and competitors',
@@ -40,13 +83,12 @@ const AGENTS = [
     problems: ['No time for content', 'Inconsistent posting', 'SEO ignored'],
     rating: 4.7,
     reviews: 1243,
-    avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&h=400&fit=crop&crop=face',
   },
   {
     name: 'Arjun',
     role: 'Research Agent',
     department: 'Research',
-    departmentColor: '#10b981',
+    departmentColor: '#34d399',
     tagline: 'Finds what your competitors are hiding.',
     personality: 'Reading SEC filings for fun.',
     experience: [
@@ -59,13 +101,12 @@ const AGENTS = [
     problems: ['No time for research', 'Missing market intel', 'Decisions based on gut'],
     rating: 4.9,
     reviews: 567,
-    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84e45a1fc?w=400&h=400&fit=crop&crop=face',
   },
   {
     name: 'Helena',
     role: 'Support Agent',
     department: 'Support',
-    departmentColor: '#f59e0b',
+    departmentColor: '#fb923c',
     tagline: 'Every ticket. Every time.',
     personality: 'Answering questions at 2am so you don\'t have to.',
     experience: [
@@ -78,13 +119,12 @@ const AGENTS = [
     problems: ['Tickets eating your day', 'FAQ answered 100 times', 'Customers going unanswered'],
     rating: 4.6,
     reviews: 2103,
-    avatar: 'https://images.unsplash.com/photo-1494790108378-2e7a5bccd87?w=400&h=400&fit=crop&crop=face',
   },
   {
     name: 'Marcus',
     role: 'Engineering Agent',
     department: 'Engineering',
-    departmentColor: '#ec4899',
+    departmentColor: '#f472b6',
     tagline: 'Ships code while you sleep.',
     personality: 'Refactoring legacy code between coffee runs.',
     experience: [
@@ -97,13 +137,12 @@ const AGENTS = [
     problems: ['Code reviews taking days', 'Deployments manual', 'Bugs discovered late'],
     rating: 4.8,
     reviews: 421,
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43?w=400&h=400&fit=crop&crop=face',
   },
   {
     name: 'Maya',
     role: 'Finance Agent',
     department: 'Finance',
-    departmentColor: '#06b6d4',
+    departmentColor: '#22d3ee',
     tagline: 'Every dollar tracked. Every invoice sent.',
     personality: 'Running P&L reports at 6am.',
     experience: [
@@ -116,19 +155,36 @@ const AGENTS = [
     problems: ['Invoices untracked', 'Cash flow blind spots', 'Reporting manual'],
     rating: 4.7,
     reviews: 312,
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=face',
   },
-];
+  {
+    name: 'Apex',
+    role: 'Operations Agent',
+    department: 'Operations',
+    departmentColor: '#60a5fa',
+    tagline: 'Runs your business. So you don\'t have to.',
+    personality: 'Optimizing workflows at 3am while you sleep.',
+    experience: [
+      'Maps and automates your business workflows',
+      'Manages schedules, tasks, and team coordination',
+      'Builds SOPs and process documentation',
+      'Identifies bottlenecks before they become problems',
+    ],
+    skills: ['Workflow Automation', 'Task Management', 'Process Design', 'n8n', 'Notion'],
+    problems: ['Too many tools', 'Processes not documented', 'Tasks falling through cracks'],
+    rating: 4.8,
+    reviews: 198,
+  },
+]
 
-const DEPARTMENTS = ['All', 'Sales', 'Marketing', 'Research', 'Support', 'Engineering', 'Finance', 'Operations'];
+const DEPARTMENTS = ['All', 'Sales', 'Marketing', 'Research', 'Support', 'Engineering', 'Finance', 'Operations']
 
 export default function AgentCards() {
-  const [activeTab, setActiveTab] = useState('All');
-  const [selectedAgent, setSelectedAgent] = useState<typeof AGENTS[0] | null>(null);
+  const [activeTab, setActiveTab] = useState('All')
+  const [selectedAgent, setSelectedAgent] = useState<typeof AGENTS[0] | null>(null)
 
-  const filtered = activeTab === 'All' 
-    ? AGENTS 
-    : AGENTS.filter(a => a.department === activeTab);
+  const filtered = activeTab === 'All'
+    ? AGENTS
+    : AGENTS.filter(a => a.department === activeTab)
 
   return (
     <div>
@@ -139,8 +195,8 @@ export default function AgentCards() {
             key={dept}
             onClick={() => setActiveTab(dept)}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-              activeTab === dept 
-                ? 'bg-[#e8ff47] text-[#0a0a0a]' 
+              activeTab === dept
+                ? 'bg-[#e8ff47] text-[#0a0a0a]'
                 : 'bg-white/5 text-white/60 hover:bg-white/10'
             }`}
           >
@@ -151,11 +207,11 @@ export default function AgentCards() {
 
       {/* Agent Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filtered.map((agent) => (
-          <AgentCard 
-            key={agent.name} 
-            agent={agent} 
-            onRecruit={() => setSelectedAgent(agent)} 
+        {filtered.map(agent => (
+          <AgentCard
+            key={agent.name}
+            agent={agent}
+            onRecruit={() => setSelectedAgent(agent)}
           />
         ))}
       </div>
@@ -167,7 +223,7 @@ export default function AgentCards() {
         )}
       </AnimatePresence>
     </div>
-  );
+  )
 }
 
 function AgentCard({ agent, onRecruit }: { agent: typeof AGENTS[0]; onRecruit: () => void }) {
@@ -177,24 +233,24 @@ function AgentCard({ agent, onRecruit }: { agent: typeof AGENTS[0]; onRecruit: (
       className="group relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#0a0a14] border border-white/10 cursor-pointer"
       onClick={onRecruit}
     >
-      {/* Image */}
-      <img 
-        src={agent.avatar} 
-        alt={agent.name}
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-      />
-      
+      {/* Robot Avatar */}
+      <div className="absolute inset-0 w-full h-full">
+        <RobotAvatar seed={agent.name.toLowerCase()} />
+      </div>
+
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-      
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+
       {/* Status dot */}
-      <div className="absolute top-4 right-4 flex items-center gap-2">
-        <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+      <div className="absolute top-4 right-4">
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+        </div>
       </div>
 
       {/* Department tag */}
       <div className="absolute top-4 left-4">
-        <span 
+        <span
           className="text-xs font-medium px-3 py-1 rounded-full"
           style={{ backgroundColor: `${agent.departmentColor}20`, color: agent.departmentColor }}
         >
@@ -207,7 +263,7 @@ function AgentCard({ agent, onRecruit }: { agent: typeof AGENTS[0]; onRecruit: (
         <h3 className="text-xl font-bold text-white mb-1">{agent.name}</h3>
         <p className="text-white/60 text-sm mb-3">{agent.role}</p>
         <p className="text-white/40 text-sm italic mb-4">"{agent.tagline}"</p>
-        
+
         {/* Rating */}
         <div className="flex items-center gap-2">
           <span className="text-[#f59e0b] text-sm">★ {agent.rating}</span>
@@ -226,7 +282,7 @@ function AgentCard({ agent, onRecruit }: { agent: typeof AGENTS[0]; onRecruit: (
         </span>
       </motion.button>
     </motion.div>
-  );
+  )
 }
 
 function AgentSheet({ agent, onClose }: { agent: typeof AGENTS[0]; onClose: () => void }) {
@@ -246,12 +302,12 @@ function AgentSheet({ agent, onClose }: { agent: typeof AGENTS[0]; onClose: () =
         className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-[#0a0a14] border border-white/10 rounded-2xl"
         onClick={e => e.stopPropagation()}
       >
-        {/* Header */}
+        {/* Header with robot avatar */}
         <div className="relative h-64 overflow-hidden">
-          <img src={agent.avatar} alt={agent.name} className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a14] to-transparent" />
+          <RobotAvatar seed={agent.name.toLowerCase()} />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a14] via-[#0a0a14]/50 to-transparent" />
           <div className="absolute bottom-6 left-6">
-            <span 
+            <span
               className="text-xs font-medium px-3 py-1 rounded-full mb-2 inline-block"
               style={{ backgroundColor: `${agent.departmentColor}20`, color: agent.departmentColor }}
             >
@@ -261,7 +317,7 @@ function AgentSheet({ agent, onClose }: { agent: typeof AGENTS[0]; onClose: () =
             <p className="text-white/60">{agent.role}</p>
             <p className="text-white/40 italic mt-1">"{agent.tagline}"</p>
           </div>
-          <button 
+          <button
             onClick={onClose}
             className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white/60 hover:bg-white/20 transition-colors"
           >
@@ -322,9 +378,12 @@ function AgentSheet({ agent, onClose }: { agent: typeof AGENTS[0]; onClose: () =
             <button className="flex-1 py-3 bg-white/10 text-white rounded-xl hover:bg-white/15 transition-colors">
               Available now
             </button>
-            <button className="flex-1 py-3 bg-[#e8ff47] text-[#0a0a0a] font-semibold rounded-xl hover:bg-[#e8ff47]/90 transition-colors">
+            <a
+              href="/start"
+              className="flex-1 py-3 bg-[#e8ff47] text-[#0a0a0a] font-semibold rounded-xl hover:bg-[#d4eb3a] transition-colors text-center"
+            >
               Recruit
-            </button>
+            </a>
           </div>
 
           {/* Onboarding */}
@@ -348,5 +407,5 @@ function AgentSheet({ agent, onClose }: { agent: typeof AGENTS[0]; onClose: () =
         </div>
       </motion.div>
     </motion.div>
-  );
+  )
 }
