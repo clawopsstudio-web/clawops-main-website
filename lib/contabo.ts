@@ -67,9 +67,9 @@ async function getAccessToken(): Promise<string> {
 // Product IDs: Contabo products API returns 404, using hardcoded IDs
 // Note: Update productId values if Contabo Cloud VPS 20/30/40 have different IDs
 const PLAN_SPECS: Record<string, { vcpu: number; ramMb: number; diskGb: number; productLabel: string; productId: string }> = {
-  personal:  { vcpu: 6,  ramMb: 12288,  diskGb: 100, productLabel: 'Cloud VPS 20', productId: 'V20' },
-  team:     { vcpu: 8,  ramMb: 24576,  diskGb: 200, productLabel: 'Cloud VPS 30', productId: 'V30' },
-  business: { vcpu: 12, ramMb: 49152,  diskGb: 250, productLabel: 'Cloud VPS 40', productId: 'V40' },
+  personal:  { vcpu: 6,  ramMb: 12288,  diskGb: 100, productLabel: 'Cloud VPS 20', productId: 'V95'  },
+  team:     { vcpu: 8,  ramMb: 24576,  diskGb: 200, productLabel: 'Cloud VPS 30', productId: 'V100' },
+  business: { vcpu: 12, ramMb: 49152,  diskGb: 250, productLabel: 'Cloud VPS 40', productId: 'V130' },
 }
 
 // ─── Product ID lookup ────────────────────────────────────────────────────────
@@ -81,36 +81,13 @@ async function getProductId(plan: string): Promise<string> {
 }
 
 // ─── Image ID ────────────────────────────────────────────────────────────────
-// Fixed 2026-04-22: Contabo /images endpoint unavailable. Using hardcoded image.
-// Previous session found: Debian 12, Ubuntu 24.04 (Plesk), AlmaLinux 10, RockyLinux 10 available.
-// Hardcoded Debian 12 image ID — update if account image differs.
-const DEBIAN_IMAGE_ID = 'a0d0f031-dc6e-4f59-9d69-5a6c1f9d18c0' // Debian 12 (bookworm) — adjust if needed
+// Confirmed working 2026-04-22: Ubuntu 24.04 LTS image ID from Contabo account.
+// Image: ubuntu-24.04, standardImage: true, OS: Linux
+const UBUNTU_IMAGE_ID = 'd64d5c6c-9dda-4e38-8174-0ee282474d8a'
 
 async function getUbuntuImageId(_token: string): Promise<string> {
-  // Try dynamic fetch first, fall back to hardcoded ID
-  try {
-    const token = await getAccessToken()
-    const res = await fetch(`${CONTABO_API_URL}/images`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'x-request-id': crypto.randomUUID(),
-      },
-    })
-    if (res.ok) {
-      const data = await res.json()
-      const images: any[] = data.data ?? []
-      // Find Debian 12
-      const debian = images.find((img: any) =>
-        img.name?.toLowerCase().includes('debian') && img.name?.includes('12')
-      )
-      if (debian) return debian.imageId
-      // Fall back to first available image
-      if (images.length > 0) return images[0].imageId
-    }
-  } catch {
-    // Fall through to hardcoded ID
-  }
-  return DEBIAN_IMAGE_ID
+  // Hardcoded Ubuntu 24.04 LTS — confirmed working on this Contabo account
+  return UBUNTU_IMAGE_ID
 }
 
 // ─── Main provisioning function ────────────────────────────────────────────────
