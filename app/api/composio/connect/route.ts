@@ -1,63 +1,45 @@
 /**
- * app/api/composio/connect/route.ts — Initiate Composio OAuth connection
+ * app/api/composio/connect/route.ts — Initiate OAuth connection for a user
+ * POST { clerkUserId, appName }
+ * Returns { connectUrl: string }
  *
- * Accepts: POST { clerk_user_id, app_name }
- * Returns: { connect_url: string }
- *
- * WHITE-LABEL RULES:
- * - Never expose "Composio" in API response
- * - App names mapped to display names in response
+ * WHITE-LABEL: Never exposes "Composio" in response
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { ComposioToolSet } from 'composio-core'
-
-function env(key: string): string {
-  const val = process.env[key]
-  if (!val) throw new Error(`Missing env var: ${key}`)
-  return val
-}
-
-// Display name mapping (never expose "composio" in frontend-facing responses)
-const APP_DISPLAY_NAMES: Record<string, string> = {
-  GMAIL: 'Gmail',
-  SLACK: 'Slack',
-  NOTION: 'Notion',
-  HUBSPOT: 'HubSpot',
-  SALESFORCE: 'Salesforce',
-  HUBSPOT_CRM: 'HubSpot',
-  GOOGLEDRIVE: 'Google Drive',
-  GITHUB: 'GitHub',
-  JIRA: 'Jira',
-  ASANA: 'Asana',
-}
+import { getConnectLink } from '@/lib/composio'
+import { getAuth } from '@clerk/nextjs/server'
 
 export async function POST(req: NextRequest) {
   try {
-    const { clerk_user_id, app_name } = await req.json()
-
-    if (!clerk_user_id || !app_name) {
-      return NextResponse.json({ error: 'clerk_user_id and app_name required' }, { status: 400 })
+    // Verify authenticated session
+    const { userId } = getAuth(req)
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const apiKey = env('COMPOSIO_API_KEY')
-    const toolset = new ComposioToolSet({ apiKey })
-    const entity = toolset.getEntity({ id: clerk_user_id })
+    const { clerkUserId, appName } = await req.json()
 
-    const displayName = APP_DISPLAY_NAMES[app_name.toUpperCase()] ?? app_name
+    if (!clerkUserId || !appName) {
+      return NextResponse.json(
+        { error: 'clerkUserId and appName are required' },
+        { status: 400 }
+      )
+    }
 
-    const connection = await entity.initiateConnection({
-      appName: app_name,
-      redirectUrl: 'https://connect.clawops.studio/oauth/callback',
-    })
+    // Security: ensure the authenticated user matches the requested clerkUserId
+    if (userId !== clerkUserId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
 
-    return NextResponse.json({
-      connect_url: connection.redirectUrl,
-      app: displayName,
-      status: 'pending',
-    })
+    const connectUrl = await getConnectLink(clerkUserId, appName)
+
+    return NextResponse.json({ connectUrl })
   } catch (err: any) {
     console.error('[composio/connect]', err?.message)
-    return NextResponse.json({ error: 'Failed to initiate connection' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Connection failed, please try again' },
+      { status: 500 }
+    )
   }
 }

@@ -294,3 +294,32 @@ create policy "Service role full access provisioning_logs"
   on public.provisioning_logs
   for all
   using (auth.role() = 'service_role');
+
+-- =============================================
+-- PHASE 2 UPDATES (2026-04-22)
+-- =============================================
+
+-- Add composio_entity_created flag
+alter table public.onboarding_submissions
+  add column if not exists composio_entity_created boolean not null default false;
+
+-- Add user channel columns (users bring their own tokens/webhooks)
+alter table public.onboarding_submissions
+  add column if not exists user_telegram_bot_token text,
+  add column if not exists user_whatsapp_number text,
+  add column if not exists user_slack_webhook_url text,
+  add column if not exists user_discord_webhook_url text;
+
+-- Update profiles plan enum — remove old tiers, add new 3-tier structure
+alter table public.profiles
+  drop constraint if exists profiles_plan_check;
+
+alter table public.profiles
+  add constraint profiles_plan_check
+  check (plan in ('personal', 'team', 'business'))
+  deferrable initially immediate;
+
+-- Add stripe-related payment status column
+alter table public.onboarding_submissions
+  add column if not exists payment_status text default 'pending'
+  check (payment_status in ('pending', 'paid', 'failed', 'refunded'));

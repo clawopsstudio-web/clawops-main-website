@@ -29,6 +29,7 @@ export type OnboardingStatus =
   | 'provisioning'
   | 'active'
   | 'abandoned'
+  | 'suspended'
 
 export interface OnboardingRow {
   id: string
@@ -43,9 +44,15 @@ export interface OnboardingRow {
   provisioned_at: string | null
   abandoned_at: string | null
   composio_entity_id: string | null
+  composio_entity_created: boolean | null
   vps_instance_id: string | null
   dashboard_url: string | null
   stripe_session_id: string | null
+  payment_status: string | null
+  user_telegram_bot_token: string | null
+  user_whatsapp_number: string | null
+  user_slack_webhook_url: string | null
+  user_discord_webhook_url: string | null
   created_at: string
 }
 
