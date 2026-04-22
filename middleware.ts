@@ -11,6 +11,7 @@ export default clerkMiddleware(async (auth, req) => {
     pathname.startsWith('/auth/') ||
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api/auth/') ||
+    pathname === '/api/provision' ||
     pathname.startsWith('/legal/') ||
     pathname === '/pricing' ||
     pathname === '/how-it-works' ||
