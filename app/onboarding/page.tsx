@@ -1,181 +1,199 @@
 'use client'
-
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase/client'
-import {
-  StepProfile,
-  StepIndustry,
-  StepUseCase,
-  StepIntegrations,
-  StepGoals,
-  StepComplete,
-  StepIndicator,
-} from '@/components/onboarding'
-import { OnboardingData, getOnboardingStatus } from '@/lib/onboarding'
-import ParticleConstellation from '@/components/ui/ParticleConstellation'
+import { useUser } from '@clerk/nextjs'
+import { useUser } from '@clerk/nextjs'
+import { createClient } from '@/lib/supabase/client'
 
-const TOTAL_STEPS = 6
+const USE_CASES = [
+  { id: 'sales', label: 'Sales Outreach' },
+  { id: 'support', label: 'Customer Support' },
+  { id: 'research', label: 'Research & Analysis' },
+  { id: 'marketing', label: 'Marketing' },
+  { id: 'ops', label: 'Operations' },
+  { id: 'all', label: 'All of the above' },
+]
 
-const initialData: OnboardingData = {
-  name: '',
-  company: '',
-  role: '',
-  industry: '',
-  useCases: [],
-  integrations: [],
-  goals: [],
-  goalOther: '',
-}
+const LOADING_STEPS = [
+  'Connecting AI runtime...',
+  'Setting up workspace...',
+  'Launching your agents...',
+  'Almost there...',
+]
 
-function validateStep(step: number, data: OnboardingData): boolean {
-  switch (step) {
-    case 1:
-      return !!(data.name.trim() && data.company.trim() && data.role)
-    case 2:
-      return !!data.industry
-    case 3:
-      return data.useCases.length > 0
-    case 4:
-      return true // integrations are optional
-    case 5:
-      return data.goals.length > 0 || !!data.goalOther?.trim()
-    case 6:
-      return true
-    default:
-      return false
-  }
-}
-
-export default function OnboardingPage() {
-  const [step, setStep] = useState(1)
-  const [data, setData] = useState<OnboardingData>(initialData)
-  const [isLoading, setIsLoading] = useState(true)
+function OnboardingPage() {
+  const { user, isLoaded } = useUser()
+  const { user } = useUser()
   const router = useRouter()
+  const supabase = createClient()
+  const [step, setStep] = useState(1)
+  const [workspace, setWorkspace] = useState('')
+  const [selectedCases, setSelectedCases] = useState<string[]>([])
+  const [loading, setLoading] = useState(false)
+  const [loadingStep, setLoadingStep] = useState(0)
+  const [error, setError] = useState('')
 
+  // Check auth + already-onboarded status
   useEffect(() => {
-    const checkAuth = async () => {
+    const check = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
-        router.replace('/auth/login')
+        router.replace('/auth/login?redirect=/onboarding')
         return
       }
-      const completed = await getOnboardingStatus(user.id)
-      if (completed) {
+      const { data: row } = await supabase
+        .from('onboarding_submissions')
+        .select('status')
+        .eq('clerk_user_id', user.id)
+        .eq('status', 'active')
+        .single()
+      if (row) {
         router.replace('/dashboard')
-        return
       }
-      setIsLoading(false)
     }
-    checkAuth()
-  }, [router])
+    check()
+  }, [router, supabase])
 
-  const updateData = (updates: Partial<OnboardingData>) => {
-    setData((prev) => ({ ...prev, ...updates }))
+  const toggle = (id: string) => {
+    setSelectedCases(prev =>
+      prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
+    )
   }
 
-  const handleNext = () => {
-    if (validateStep(step, data)) {
-      setStep((s) => Math.min(s + 1, TOTAL_STEPS))
+  const handleLaunch = async () => {
+    if (!workspace.trim()) return
+    setLoading(true)
+    setStep(3) // loading screen
+
+    // Cycle loading steps
+    let ls = 0
+    const interval = setInterval(() => {
+      ls = (ls + 1) % LOADING_STEPS.length
+      setLoadingStep(ls)
+    }, 800)
+
+    try {
+      const { data: { user } = {} } = await supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      const { error: dbErr } = await supabase
+        .from('onboarding_submissions')
+        .upsert({
+          clerk_user_id: user.id,
+          full_name: (user as any)?.full_name ?? user.email?.split('@')[0] ?? 'User',
+          business_name: workspace.trim(),
+          industry: selectedCases.join(', ') || 'General',
+          plan: 'personal',
+          status: 'active',
+          payment_status: 'paid',
+          agent_name: workspace.trim(),
+        }, { onConflict: 'clerk_user_id' })
+
+      if (dbErr) throw dbErr
+      clearInterval(interval)
+      router.push('/dashboard')
+    } catch (e: any) {
+      clearInterval(interval)
+      setError(e.message ?? 'Something went wrong')
+      setStep(2)
+      setLoading(false)
     }
   }
 
-  const handleBack = () => {
-    setStep((s) => Math.max(s - 1, 1))
-  }
-
-  const handleComplete = () => {
-    router.push('/dashboard')
-  }
-
-  if (isLoading) {
+  // Loading screen
+  if (step === 3) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+        <div className="text-center">
+          <div className="w-16 h-16 bg-[#e8ff47] rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <span className="text-black font-black text-2xl">C</span>
+          </div>
+          <p className="text-white font-bold text-lg mb-2">Setting up your workspace...</p>
+          <p className="text-white/40 text-sm animate-pulse">{LOADING_STEPS[loadingStep]}</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] relative overflow-hidden">
-      {/* Background effects */}
-      <div className="fixed inset-0 pointer-events-none">
-        <ParticleConstellation />
-      </div>
-      <div className="fixed inset-0 bg-gradient-radial from-cyan-500/[0.03] via-transparent to-transparent pointer-events-none" />
-
-      {/* Logo / Brand */}
-      <div className="fixed top-6 left-6 z-20">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">C</span>
+    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4">
+      <div className="w-full max-w-md">
+        {/* Logo */}
+        <div className="text-center mb-10">
+          <div className="w-12 h-12 bg-[#e8ff47] rounded-xl flex items-center justify-center mx-auto mb-4">
+            <span className="text-black font-black text-lg">C</span>
           </div>
-          <span className="text-white font-bold text-lg tracking-tight">ClawOps</span>
+          <h1 className="text-white font-black text-2xl">ClawOps Studio</h1>
+          <p className="text-white/40 text-sm mt-1">Step {step} of 2</p>
         </div>
-      </div>
 
-      {/* Main card */}
-      <div className="relative z-10 flex items-center justify-center min-h-screen p-4 py-20">
-        <motion.div
-          className="w-full max-w-xl bg-gray-900/80 backdrop-blur-xl border border-gray-800 rounded-2xl p-8 shadow-2xl"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
-        >
-          {/* Step Indicator */}
-          <div className="mb-8">
-            <StepIndicator currentStep={step} totalSteps={TOTAL_STEPS} />
-          </div>
-
-          {/* Step Content */}
-          <div className="min-h-[360px]">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={step}
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -30 }}
-                transition={{ duration: 0.3, ease: 'easeInOut' }}
-              >
-                {step === 1 && <StepProfile data={data} updateData={updateData} />}
-                {step === 2 && <StepIndustry data={data} updateData={updateData} />}
-                {step === 3 && <StepUseCase data={data} updateData={updateData} />}
-                {step === 4 && <StepIntegrations data={data} updateData={updateData} />}
-                {step === 5 && <StepGoals data={data} updateData={updateData} />}
-                {step === 6 && <StepComplete data={data} onComplete={handleComplete} />}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          {/* Navigation */}
-          {step < 6 && (
-            <div className="flex items-center justify-between mt-8 pt-4 border-t border-gray-800">
-              <button
-                onClick={handleBack}
-                disabled={step === 1}
-                className="flex items-center gap-2 px-5 py-2.5 bg-gray-800 hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24">
-                  <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                Back
-              </button>
-
-              <button
-                onClick={handleNext}
-                disabled={!validateStep(step, data)}
-                className="flex items-center gap-2 px-6 py-2.5 bg-cyan-600 hover:bg-cyan-500 disabled:bg-cyan-800 disabled:cursor-not-allowed text-white text-sm font-bold rounded-xl transition-colors"
-              >
-                {step === 5 ? 'Finish Setup' : 'Continue'}
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24">
-                  <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </button>
+        {/* Step 1: Workspace name */}
+        {step === 1 && (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-white font-semibold text-sm mb-2">
+                What should we call your workspace?
+              </label>
+              <input
+                autoFocus
+                value={workspace}
+                onChange={e => setWorkspace(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && workspace.trim()) setStep(2)
+                }}
+                placeholder="Acme Corp"
+                className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#e8ff47] transition-colors"
+              />
             </div>
-          )}
-        </motion.div>
+            {workspace.trim() && (
+              <button
+                onClick={() => setStep(2)}
+                className="w-full py-3 bg-[#e8ff47] hover:bg-[#d4eb3a] text-black font-bold rounded-xl transition-colors text-sm"
+              >
+                Continue →
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Step 2: Use cases */}
+        {step === 2 && (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-white font-semibold text-sm mb-3">
+                What will your agents handle?
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {USE_CASES.map(c => (
+                  <button
+                    key={c.id}
+                    onClick={() => toggle(c.id)}
+                    className={`px-4 py-3 rounded-xl border text-sm text-left transition-all ${
+                      selectedCases.includes(c.id)
+                        ? 'border-[#e8ff47] bg-[#e8ff47]/10 text-white'
+                        : 'border-white/10 text-white/60 hover:border-white/20'
+                    }`}
+                  >
+                    {c.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <button
+              onClick={handleLaunch}
+              disabled={!workspace.trim() || loading}
+              className="w-full py-3 bg-[#e8ff47] hover:bg-[#d4eb3a] disabled:opacity-40 disabled:cursor-not-allowed text-black font-bold rounded-xl transition-colors"
+            >
+              {loading ? 'Launching...' : 'Launch My OS →'}
+            </button>
+            {error && (
+              <p className="text-red-400 text-xs text-center">{error}</p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )
 }
+
+export default OnboardingPage
