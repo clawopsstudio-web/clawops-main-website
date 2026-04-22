@@ -74,7 +74,18 @@ export async function runProvisioning(params: {
   // 1. Fetch user row
   const row = await getOnboardingByUserId(clerkUserId)
   if (!row) throw new Error(`User not found: ${clerkUserId}`)
-  const email = row.email ?? 'unknown'
+  // Fetch email from profiles table if not in onboarding_submissions
+  let email = row.email ?? 'unknown'
+  if (!row.email) {
+    try {
+      const { data: profile } = await supabaseAdmin
+        .from('profiles')
+        .select('email')
+        .eq('id', clerkUserId)
+        .maybeSingle()
+      if (profile?.email) email = profile.email
+    } catch {}
+  }
 
   // 2. Verify status = "paid"
   if (row.status !== 'paid') {
