@@ -3,12 +3,14 @@
  *
  * After Contabo provisions the VPS, this script:
  * 1. SSHs in as root
- * 2. Updates system
- * 3. Installs Docker + Docker Compose
- * 4. Runs Hermes install script
- * 5. Creates hermes.config.json
- * 6. Starts Hermes container
- * 7. Health checks the /health endpoint
+ * 2. Updates system + installs system packages
+ * 3. Installs Docker + Ollama
+ * 4. Installs and configures SearXNG (self-hosted web search)
+ * 5. Installs Python tools (firecrawl-py, duckduckgo-search)
+ * 6. Installs Hermes-Agent v0.10.0
+ * 7. Configures Hermes with NVIDIA API (OpenAI-compatible)
+ * 8. Health checks
+ * 9. Returns dashboard URL
  */
 
 import { NodeSSH } from 'node-ssh'
@@ -25,31 +27,166 @@ interface InstallResult {
   success: boolean
   instanceId?: string
   logs: string[]
+  dashboardUrl?: string
   error?: string
 }
 
-const HERMES_INSTALL_CMD = `curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash`
+// Full provisioning script injected onto the VPS
+const PROVISION_SCRIPT = `
+set -e
 
-const DOCKER_INSTALL_CMD = `
-apt-get update -qq && apt-get install -y -qq docker.io docker-compose > /dev/null 2>&1 &&
-systemctl enable docker && systemctl start docker &&
-echo "DOCKER_OK" &&
+NVIDIA_API_KEY="{{NVIDIA_API_KEY}}"
+
+log() { echo "[$(date)] $1"; }
+
+log "=== ClawOps VPS Setup ==="
+
+# Step 1: System packages
+export DEBIAN_FRONTEND=noninteractive
+apt-get update -qq
+apt-get upgrade -y -qq 2>/dev/null | tail -2
+apt-get install -y -qq python3-full python3-pip python3-venv git curl wget jq htop tree ncdu httpie python3-babel python3-lxml sshpass 2>&1 | tail -3
+
+# Step 2: Docker (Contabo images usually have it, ensure running)
+systemctl enable docker 2>/dev/null || true
+systemctl start docker 2>/dev/null || true
 docker --version
+
+# Step 3: Ollama
+if ! command -v ollama &>/dev/null; then
+  curl -fsSL https://ollama.com/install.sh | sh
+fi
+systemctl enable ollama 2>/dev/null || true
+systemctl start ollama 2>/dev/null || true
+
+# Step 4: SearXNG
+if [ ! -f /opt/searxng/local/py3/bin/searxng-run ]; then
+  git clone --depth=1 https://github.com/searxng/searxng /opt/searxng
+  cd /opt/searxng
+  make -f Makefile install 2>&1 | tail -3
+fi
+
+SECRET=$(python3 -c 'import secrets; print(secrets.token_hex(32))')
+mkdir -p /etc/searxng
+cat > /etc/searxng/settings.yml << 'SXEOF'
+use_default_settings: true
+general:
+  instance_name: ClawOps Search
+search:
+  safe_search: 0
+  default_lang: en
+server:
+  bind_address: 127.0.0.1
+  port: 8888
+  limiter: false
+outgoing:
+  request_timeout: 10.0
+ui:
+  static_use_hash: true
+  default_theme: simple
+SXEOF
+
+python3 -c "
+import yaml, secrets
+cfg = yaml.safe_load(open('/etc/searxng/settings.yml'))
+cfg.setdefault('server', {})['secret_key'] = secrets.token_hex(32)
+yaml.dump(cfg, open('/etc/searxng/settings.yml','w'))
+"
+
+cat > /etc/systemd/system/searxng.service << 'SVCEOF'
+[Unit]
+Description=SearXNG Meta Search Engine
+After=network.target
+[Service]
+Type=simple
+User=root
+Environment="SEARXNG_SETTINGS_PATH=/etc/searxng/settings.yml"
+ExecStart=/opt/searxng/local/py3/bin/searxng-run
+Restart=on-failure
+RestartSec=5s
+[Install]
+WantedBy=multi-user.target
+SVCEOF
+
+systemctl daemon-reload
+systemctl enable searxng
+systemctl start searxng
+sleep 2
+curl -s http://127.0.0.1:8888 | grep -c 'html' && log "SearXNG UP"
+
+# Step 5: Python tools
+pip3 install firecrawl-py duckduckgo-search --break-system-packages --ignore-installed typing-extensions -q 2>&1 | tail -2
+python3 -c 'import firecrawl; print("Firecrawl OK")'
+python3 -c 'from duckduckgo_search import DDGS; print("DDG OK")'
+
+# Step 6: Hermes-Agent
+if [ ! -f /root/.hermes/hermes-agent/hermes ]; then
+  curl -Ls https://github.com/NousResearch/Hermes-Agent/releases/download/v0.10.0/hermes-installer.sh | bash 2>&1 | tail -5
+fi
+
+# Step 7: Hermes config with NVIDIA API
+cat > /root/.hermes/config.yaml << 'HEOF'
+model:
+  provider: custom
+  base_url: https://integrate.api.nvidia.com/v1
+  api_key: ${NVIDIA_API_KEY}
+  default: moonshotai/kimi-k2-thinking
+  context_length: 131072
+  max_tokens: 16384
+agent:
+  reasoning_effort: none
+compression:
+  enabled: false
+auxiliary:
+  compression:
+    enabled: false
+    model: moonshotai/kimi-k2-thinking
+    context_length: 131072
+websearch:
+  provider: searxng
+  base_url: http://127.0.0.1:8888
+tools:
+  enabled:
+    - terminal
+    - file
+    - web
+    - browser
+    - code_execution
+    - vision
+    - image_gen
+    - tts
+    - skills
+    - todo
+    - memory
+    - session_search
+    - clarify
+    - delegation
+    - cronjob
+    - messaging
+HEOF
+
+# Symlink hermes binary
+if [ ! -L /usr/local/bin/hermes ]; then
+  ln -sf /root/.hermes/hermes-agent/hermes /usr/local/bin/hermes
+fi
+
+log "=== VPS Setup Complete ==="
 `
 
 async function sshExec(
   ssh: NodeSSH,
   command: string,
-  label: string
+  label: string,
+  timeout = 300_000
 ): Promise<string> {
   console.log(`[hermes-install] ${label}...`)
   const result = await ssh.execCommand(command, {
     cwd: '/root',
-    timeout: 300_000,
+    timeout,
     env: { PATH: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin' },
   })
   if (result.code !== 0) {
-    throw new Error(`${label} failed (code ${result.code}): ${result.stderr}`)
+    throw new Error(`${label} failed (code ${result.code}): ${result.stderr?.slice(-500)}`)
   }
   return result.stdout
 }
@@ -59,11 +196,14 @@ export async function installHermesOnVPS(params: {
   sshPassword: string
   instanceId: string
   config: HermesConfig
-  hermesRegistryUrl?: string   // not ready yet — placeholder
+  nvidiaApiKey?: string   // from env var, defaults to ClawOps key
 }): Promise<InstallResult> {
-  const { ipAddress, sshPassword, instanceId, config, hermesRegistryUrl } = params
+  const { ipAddress, sshPassword, instanceId, config, nvidiaApiKey } = params
   const logs: string[] = []
   const ssh = new NodeSSH()
+
+  const NVIDIA_API_KEY = nvidiaApiKey || process.env.NVIDIA_API_KEY || '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'
+  const script = PROVISION_SCRIPT.replace('{{NVIDIA_API_KEY}}', NVIDIA_API_KEY)
 
   try {
     // ── 1. Connect via SSH ──────────────────────────────────────────────
@@ -78,62 +218,46 @@ export async function installHermesOnVPS(params: {
     })
     logs.push('SSH connected')
 
-    // ── 2. System update ─────────────────────────────────────────────────
-    await sshExec(ssh, 'apt-get update -qq && apt-get install -y -qq curl git', 'System update')
-    logs.push('System updated')
-
-    // ── 3. Install Docker ────────────────────────────────────────────────
-    const dockerOut = await sshExec(ssh, DOCKER_INSTALL_CMD, 'Docker install')
-    logs.push(`Docker: ${dockerOut.trim()}`)
-
-    // ── 4. Hermes install ────────────────────────────────────────────────
-    if (hermesRegistryUrl) {
-      // Full Hermes install when registry URL is available
-      const fullInstall = `${HERMES_INSTALL_CMD} 2>&1`
-      await sshExec(ssh, fullInstall, 'Hermes install')
-      logs.push('Hermes installed')
-    } else {
-      // Placeholder: install Hermes deps but mark as pending
-      logs.push('HERMES_PENDING: registry URL not set — installing deps only')
-      // Install uv + Python 3.11 (Hermes prerequisites)
-      await sshExec(ssh, 'curl -LsSf https://astral.sh/uv/install.sh | sh 2>&1 | tail -3', 'uv install')
-      logs.push('uv installed (Hermes prerequisite)')
-    }
-
-    // ── 5. Create hermes.config.json ─────────────────────────────────────
-    const configJson = JSON.stringify(config, null, 2)
-    const configB64 = Buffer.from(configJson).toString('base64')
+    // ── 2. Write and run provision script ───────────────────────────────
+    // Write script to remote server
+    const scriptB64 = Buffer.from(script).toString('base64')
     await sshExec(
       ssh,
-      `echo "${configB64}" | base64 -d > /root/hermes.config.json && echo "CONFIG_WRITTEN"`,
-      'Config write'
+      `echo "${scriptB64}" | base64 -d > /tmp/clawops_setup.sh && chmod +x /tmp/clawops_setup.sh`,
+      'Script transfer'
     )
-    logs.push('hermes.config.json written')
+    logs.push('Script transferred')
 
-    // ── 6. Health check ─────────────────────────────────────────────────
-    if (hermesRegistryUrl) {
-      let healthy = false
-      for (let i = 0; i < 10; i++) {
-        await new Promise(r => setTimeout(r, 30_000))
-        try {
-          const res = await fetch(`http://${ipAddress}:8000/health`, { signal: AbortSignal.timeout(5_000) })
-          if (res.ok) {
-            logs.push(`Health check passed after ${(i + 1) * 30}s`)
-            healthy = true
-            break
-          }
-        } catch {
-          logs.push(`Health check attempt ${i + 1}/10 — waiting...`)
-        }
-      }
-      if (!healthy) {
-        logs.push('Health check did not pass within 5 minutes — continuing anyway')
-      }
-    }
+    // Run it (this takes 5-15 minutes)
+    const output = await sshExec(ssh, 'bash /tmp/clawops_setup.sh 2>&1', 'Full VPS setup', 900_000)
+    logs.push('Setup output: ' + output.slice(-500))
 
+    // ── 3. Smoke test ───────────────────────────────────────────────────
+    logs.push('Running smoke tests...')
+
+    // Test SearXNG
+    const searxngTest = await ssh.execCommand(
+      'curl -s http://127.0.0.1:8888/search?q=hello | grep -c "hello"',
+      { timeout: 10_000 }
+    )
+    logs.push(`SearXNG: ${searxngTest.stdout.trim() > '0' ? 'OK' : 'FAILED'}`)
+
+    // Test Hermes
+    const hermesTest = await ssh.execCommand(
+      'timeout 30 hermes chat -q "say ok" -t terminal,file 2>&1 | grep -c "ok"',
+      { timeout: 45_000 }
+    )
+    logs.push(`Hermes: ${hermesTest.stdout.trim() > '0' ? 'OK' : 'FAILED'}`)
+
+    const dashboardUrl = `https://${config.entity_id}.app.clawops.studio`
     await ssh.dispose()
-    return { success: true, instanceId, logs }
 
+    return {
+      success: true,
+      instanceId,
+      logs,
+      dashboardUrl,
+    }
   } catch (err: any) {
     await ssh.dispose()
     return { success: false, instanceId, logs, error: err.message }
