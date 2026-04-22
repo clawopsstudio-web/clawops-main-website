@@ -5,7 +5,7 @@ import Footer from '../../components/sections/Footer'
 
 export const metadata: Metadata = {
   title: 'Pricing — ClawOps Studio',
-  description: 'Simple, flat-rate pricing for AI agents. Personal $49/mo, Team $149/mo, Business $299/mo, Enterprise $349/mo. No per-user fees.',
+  description: 'Simple, flat-rate pricing for AI agents. Personal $49/mo, Team $149/mo, Business $299/mo. No per-user fees. No token billing.',
   openGraph: {
     title: 'Pricing — ClawOps Studio',
     description: 'Simple, flat-rate pricing for AI agents. No per-user fees. No token billing.',

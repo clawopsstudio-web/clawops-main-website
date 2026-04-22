@@ -7,56 +7,45 @@ const MONTHLY_PLANS = [
   {
     name: 'Personal',
     price: 49,
-    description: '4 vCPU · 8GB RAM · 75GB NVMe',
+    description: '6 vCPU · 12GB RAM · 100GB NVMe',
     highlight: false,
     badge: null,
     features: [
-      '1 agent workspace',
-      '850+ tool integrations',
+      '1 agent workspace (up to 3)',
+      '20,000 tool calls/mo',
+      '850+ app integrations',
       'Telegram + WhatsApp',
-      'Community support',
+      'Email support (48hr response)',
     ],
   },
   {
     name: 'Team',
     price: 149,
-    description: '6 vCPU · 12GB RAM · 100GB NVMe',
-    highlight: false,
-    badge: null,
+    description: '8 vCPU · 24GB RAM · 200GB NVMe',
+    highlight: true,
+    badge: 'MOST POPULAR',
     features: [
-      '3 agent workspaces',
-      '850+ tool integrations',
-      'All messaging platforms',
-      'Firecrawl included',
-      'Priority support (4h response)',
+      '1 agent workspace (up to 5)',
+      '200,000 tool calls/mo',
+      '850+ app integrations',
+      'Telegram + WhatsApp + Slack + Discord',
+      'Web scraping included',
+      'Priority support (12hr response)',
     ],
   },
   {
     name: 'Business',
     price: 299,
-    description: '8 vCPU · 24GB RAM · 200GB NVMe',
-    highlight: true,
-    badge: 'MOST POPULAR',
-    features: [
-      'Unlimited workspaces',
-      '850+ tool integrations',
-      'All platforms + GHL',
-      'API access',
-      'Claude API key included',
-      'Priority support (1h response)',
-    ],
-  },
-  {
-    name: 'Enterprise',
-    price: 349,
     description: '12 vCPU · 48GB RAM · 250GB NVMe',
     highlight: false,
     badge: null,
     features: [
-      'Everything in Business ×20 scale',
-      'Dedicated account manager',
-      'Custom onboarding',
-      'SLA guarantee',
+      '1 agent workspace (unlimited)',
+      '200,000 tool calls/mo',
+      '850+ app integrations',
+      'All platforms + GoHighLevel + API access',
+      'Web scraping included',
+      'Dedicated support (4hr SLA)',
     ],
   },
 ]
@@ -65,7 +54,25 @@ const ANNUAL_PLANS = [
   { ...MONTHLY_PLANS[0], price: 39 },
   { ...MONTHLY_PLANS[1], price: 119 },
   { ...MONTHLY_PLANS[2], price: 239 },
-  { ...MONTHLY_PLANS[3], price: 279 },
+]
+
+const ADDON_PLANS = [
+  {
+    name: 'Claude API — 5x',
+    price: 50,
+    badge: 'ADD-ON',
+    description: '5M tokens/mo · 1,000 req per 5hr window',
+    models: 'Claude Haiku + Sonnet 4.6 + Opus 4.6 + Opus 4.7',
+    note: 'Get API key via support chat',
+  },
+  {
+    name: 'Claude API — 20x',
+    price: 99,
+    badge: 'ADD-ON',
+    description: '20M tokens/mo · 2,000 req per 5hr window',
+    models: 'Claude Haiku + Sonnet 4.6 + Opus 4.6 + Opus 4.7',
+    note: 'Get API key via support chat',
+  },
 ]
 
 const FAQS = [
@@ -83,21 +90,29 @@ const FAQS = [
   },
   {
     q: 'What integrations are included?',
-    a: '850+ Composio integrations — Gmail, HubSpot, Notion, Slack, Airtable, Linear, and more. All included in every plan.',
+    a: '850+ integrations — Gmail, HubSpot, Notion, Slack, Airtable, Linear, and more. All included in every plan.',
   },
   {
     q: 'Do I need technical skills?',
     a: 'No. Setup takes under 5 minutes. If you get stuck, our team sets it up for you free.',
   },
+  {
+    q: 'What is the Claude API add-on?',
+    a: 'Add direct API access to Claude models (Haiku, Sonnet 4.6, Opus 4.6, Opus 4.7) with a monthly token budget. Ideal if you want to use Claude outside of the built-in agent workflows.',
+  },
 ]
 
 const COMPARISON_ROWS = [
-  { feature: 'Agent workspaces', values: ['1', '3', 'Unlimited', 'Unlimited'] },
-  { feature: 'CPU / RAM', values: ['4 vCPU · 8GB', '6 vCPU · 12GB', '8 vCPU · 24GB', '12 vCPU · 48GB'] },
-  { feature: 'Storage (NVMe)', values: ['75GB', '100GB', '200GB', '250GB'] },
-  { feature: 'Tool integrations', values: ['850+', '850+', '850+', '850+'] },
-  { feature: 'Claude API included', values: ['✗', '✗', '✓', '✓'] },
-  { feature: 'White-label', values: ['✗', '✗', '✓', '✓'] },
+  { feature: 'Agent Workspaces', values: ['Up to 3', 'Up to 5', 'Unlimited'] },
+  { feature: 'Tool Calls / mo', values: ['20,000', '200,000', '200,000'] },
+  { feature: 'App Integrations', values: ['850+', '850+', '850+'] },
+  { feature: 'Telegram + WhatsApp', values: ['✓', '✓', '✓'] },
+  { feature: 'Slack + Discord', values: ['—', '✓', '✓'] },
+  { feature: 'Web Scraping', values: ['—', '✓', '✓'] },
+  { feature: 'GoHighLevel (GHL)', values: ['—', '—', '✓'] },
+  { feature: 'API Access', values: ['—', '—', '✓'] },
+  { feature: 'Support', values: ['Email 48hr', 'Priority 12hr', 'Dedicated 4hr'] },
+  { feature: 'Claude API Add-on', values: ['Available', 'Available', 'Available'] },
 ]
 
 export default function AmpereStylePricing() {
@@ -148,7 +163,7 @@ export default function AmpereStylePricing() {
 
       {/* Pricing cards */}
       <div className="px-6 pb-16 max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {plans.map((plan) => (
             <div
               key={plan.name}
@@ -209,6 +224,40 @@ export default function AmpereStylePricing() {
         </div>
       </div>
 
+      {/* Claude API Add-on section */}
+      <div className="px-6 pb-16 max-w-4xl mx-auto">
+        <div className="border border-white/7 bg-[#0d0d0d] rounded-2xl p-6">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-[rgba(232,255,71,0.5)] mb-4">
+            ADD-ON
+          </p>
+          <h2 className="text-xl font-black text-white mb-1" style={{ fontFamily: 'var(--font-cabinet, sans-serif)' }}>
+            Claude API Access
+          </h2>
+          <p className="text-white/40 text-sm mb-6">
+            Add direct Claude API access to any plan. Billed alongside your base plan.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {ADDON_PLANS.map((addon) => (
+              <div key={addon.name} className="bg-[#111] border border-white/7 rounded-xl p-5">
+                <div className="flex items-start justify-between mb-2">
+                  <div>
+                    <p className="text-white font-bold text-sm">{addon.name}</p>
+                    <p className="text-white/40 text-xs mt-0.5">{addon.description}</p>
+                  </div>
+                  <div className="text-right shrink-0 ml-4">
+                    <span className="text-xl font-black text-white">+${addon.price}</span>
+                    <span className="text-white/40 text-xs ml-1">/mo</span>
+                  </div>
+                </div>
+                <p className="text-white/50 text-xs mb-3">{addon.models}</p>
+                <p className="text-white/30 text-xs italic">{addon.note}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Comparison table */}
       <div className="border-y border-white/5 py-16 px-6">
         <div className="max-w-5xl mx-auto">
@@ -233,7 +282,7 @@ export default function AmpereStylePricing() {
                     <td className="py-3 pr-4 text-xs text-white/55">{row.feature}</td>
                     {row.values.map((v, j) => (
                       <td key={j} className="py-3 px-4 text-center text-xs font-medium" style={{
-                        color: v === '✓' ? '#e8ff47' : v === '✗' ? 'rgba(255,255,255,0.2)' : '#fff'
+                        color: v === '✓' ? '#e8ff47' : v === '—' ? 'rgba(255,255,255,0.18)' : '#fff'
                       }}>
                         {v}
                       </td>
