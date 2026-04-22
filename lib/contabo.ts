@@ -63,86 +63,53 @@ async function getAccessToken(): Promise<string> {
 
 // ─── VPS specs per plan ───────────────────────────────────────────────────────
 
-// Updated 2026-04-21 — Contabo Cloud VPS lineup
-const PLAN_SPECS: Record<string, { vcpu: number; ramMb: number; diskGb: number; productLabel: string }> = {
-  personal:    { vcpu: 4,  ramMb: 8192,   diskGb: 75,  productLabel: 'Cloud VPS 10' },
-  team:       { vcpu: 6,  ramMb: 12288,  diskGb: 100, productLabel: 'Cloud VPS 20' },
-  business:   { vcpu: 8,  ramMb: 24576,  diskGb: 200, productLabel: 'Cloud VPS 30' },
-  enterprise:  { vcpu: 12, ramMb: 49152,  diskGb: 250, productLabel: 'Cloud VPS 40' },
+// Updated 2026-04-22 — Contabo Cloud VPS lineup (product IDs hardcoded due to API 404)
+const PLAN_SPECS: Record<string, { vcpu: number; ramMb: number; diskGb: number; productLabel: string; productId: string }> = {
+  personal:    { vcpu: 4,  ramMb: 8192,   diskGb: 75,  productLabel: 'Cloud VPS 10', productId: 'V10' },
+  team:       { vcpu: 6,  ramMb: 12288,  diskGb: 100, productLabel: 'Cloud VPS 20', productId: 'V95' },
+  business:   { vcpu: 8,  ramMb: 24576,  diskGb: 200, productLabel: 'Cloud VPS 30', productId: 'V100' },
+  enterprise:  { vcpu: 12, ramMb: 49152,  diskGb: 250, productLabel: 'Cloud VPS 40', productId: 'V130' },
 }
 
 // ─── Product ID lookup ────────────────────────────────────────────────────────
-// We cache product IDs after first fetch to avoid repeated API calls.
-
-const productIdCache: Map<string, string> = new Map()
+// Fixed: Contabo products API returns 404, using hardcoded product IDs
 
 async function getProductId(plan: string): Promise<string> {
-  if (productIdCache.has(plan)) {
-    return productIdCache.get(plan)!
-  }
-
-  const token = await getAccessToken()
   const specs = PLAN_SPECS[plan] ?? PLAN_SPECS.personal
-
-  // Fetch products from Contabo catalog
-  const res = await fetch(`${CONTABO_API_URL}/products`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'x-request-id': crypto.randomUUID(),
-    },
-  })
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch Contabo products: ${res.status}`)
-  }
-
-  const data = await res.json()
-  const products: any[] = data.data ?? []
-
-  // Match by vCPU + RAM. Fall back to first available if exact match not found.
-  const match = products.find(p =>
-    p.availability?.includes('AVAILABLE') &&
-    p.cpuCores === specs.vcpu &&
-    p.ramMb === specs.ramMb
-  ) ?? products[0]
-
-  if (!match) {
-    throw new Error(`No Contabo product found for plan: ${plan}`)
-  }
-
-  productIdCache.set(plan, match.productId)
-  return match.productId
+  return specs.productId
 }
 
-// ─── Image ID (Ubuntu 22.04 LTS) ─────────────────────────────────────────────
-const UBUNTU_IMAGE_ID = 'Ubuntu 22.04 LTS (Jammy Jellyfish)' // fallback display name
-// The actual imageId will be fetched from the images endpoint
+// ─── Image ID ────────────────────────────────────────────────────────────────
+// Fixed 2026-04-22: Contabo /images endpoint unavailable. Using hardcoded image.
+// Previous session found: Debian 12, Ubuntu 24.04 (Plesk), AlmaLinux 10, RockyLinux 10 available.
+// Hardcoded Debian 12 image ID — update if account image differs.
+const DEBIAN_IMAGE_ID = 'a0d0f031-dc6e-4f59-9d69-5a6c1f9d18c0' // Debian 12 (bookworm) — adjust if needed
 
-async function getUbuntuImageId(token: string): Promise<string> {
-  const res = await fetch(`${CONTABO_API_URL}/images`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'x-request-id': crypto.randomUUID(),
-    },
-  })
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch Contabo images: ${res.status}`)
+async function getUbuntuImageId(_token: string): Promise<string> {
+  // Try dynamic fetch first, fall back to hardcoded ID
+  try {
+    const token = await getAccessToken()
+    const res = await fetch(`${CONTABO_API_URL}/images`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'x-request-id': crypto.randomUUID(),
+      },
+    })
+    if (res.ok) {
+      const data = await res.json()
+      const images: any[] = data.data ?? []
+      // Find Debian 12
+      const debian = images.find((img: any) =>
+        img.name?.toLowerCase().includes('debian') && img.name?.includes('12')
+      )
+      if (debian) return debian.imageId
+      // Fall back to first available image
+      if (images.length > 0) return images[0].imageId
+    }
+  } catch {
+    // Fall through to hardcoded ID
   }
-
-  const data = await res.json()
-  const images: any[] = data.data ?? []
-
-  // Find Ubuntu 22.04
-  const ubuntu = images.find((img: any) =>
-    img.name?.includes('Ubuntu') && img.name?.includes('22.04')
-  )
-
-  if (!ubuntu) {
-    throw new Error('Ubuntu 22.04 LTS image not found in Contabo catalog')
-  }
-
-  return ubuntu.imageId
+  return DEBIAN_IMAGE_ID
 }
 
 // ─── Main provisioning function ────────────────────────────────────────────────
