@@ -33,6 +33,17 @@ async function alertPulkit(html: string) {
 }
 
 export async function POST(req: NextRequest) {
+  // ── Debug: direct Contabo test ────────────────────────────────────
+  if (envOpt('MOCK_PAYMENT') === 'debug') {
+    const { provisionVPS } = await import('@/lib/contabo')
+    try {
+      const result = await provisionVPS({ userId: 'debug-test-' + Date.now(), plan: 'personal' })
+      return NextResponse.json({ debug: true, result })
+    } catch (err: any) {
+      return NextResponse.json({ debug: true, error: err.message, stack: err.stack?.slice(0, 500) }, { status: 500 })
+    }
+  }
+
   // ── MOCK_PAYMENT=true bypass ────────────────────────────────────
   if (envOpt('MOCK_PAYMENT') === 'true') {
     const body = await req.json()
@@ -47,7 +58,19 @@ export async function POST(req: NextRequest) {
       const result = await runProvisioning({ clerkUserId, plan })
       return NextResponse.json(result)
     } catch (err: any) {
+      console.error('[provision] MOCK_PAYMENT runProvisioning error:', err.message)
       return NextResponse.json({ error: err.message }, { status: 500 })
+    }
+  }
+
+  // ── Debug: direct Contabo test endpoint ────────────────────────────────────
+  if (envOpt('MOCK_PAYMENT') === 'debug') {
+    const { provisionVPS } = await import('@/lib/contabo')
+    try {
+      const result = await provisionVPS({ userId: 'debug-test', plan: 'personal' })
+      return NextResponse.json({ debug: true, result })
+    } catch (err: any) {
+      return NextResponse.json({ debug: true, error: err.message }, { status: 500 })
     }
   }
 
