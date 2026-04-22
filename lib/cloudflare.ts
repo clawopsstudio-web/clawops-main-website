@@ -77,7 +77,7 @@ export async function registerSubdomain(params: {
         type: 'A',
         name: fullName,
         content: ipAddress,
-        ttl: 300,
+        ttl: 1,
         proxied: false,
       }),
     }
