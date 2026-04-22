@@ -63,12 +63,13 @@ async function getAccessToken(): Promise<string> {
 
 // ─── VPS specs per plan ───────────────────────────────────────────────────────
 
-// Updated 2026-04-22 — Contabo Cloud VPS lineup (product IDs hardcoded due to API 404)
+// Updated 2026-04-22 — 3 tiers only, no Enterprise
+// Product IDs: Contabo products API returns 404, using hardcoded IDs
+// Note: Update productId values if Contabo Cloud VPS 20/30/40 have different IDs
 const PLAN_SPECS: Record<string, { vcpu: number; ramMb: number; diskGb: number; productLabel: string; productId: string }> = {
-  personal:    { vcpu: 4,  ramMb: 8192,   diskGb: 75,  productLabel: 'Cloud VPS 10', productId: 'V10' },
-  team:       { vcpu: 6,  ramMb: 12288,  diskGb: 100, productLabel: 'Cloud VPS 20', productId: 'V95' },
-  business:   { vcpu: 8,  ramMb: 24576,  diskGb: 200, productLabel: 'Cloud VPS 30', productId: 'V100' },
-  enterprise:  { vcpu: 12, ramMb: 49152,  diskGb: 250, productLabel: 'Cloud VPS 40', productId: 'V130' },
+  personal:  { vcpu: 6,  ramMb: 12288,  diskGb: 100, productLabel: 'Cloud VPS 20', productId: 'V20' },
+  team:     { vcpu: 8,  ramMb: 24576,  diskGb: 200, productLabel: 'Cloud VPS 30', productId: 'V30' },
+  business: { vcpu: 12, ramMb: 49152,  diskGb: 250, productLabel: 'Cloud VPS 40', productId: 'V40' },
 }
 
 // ─── Product ID lookup ────────────────────────────────────────────────────────
@@ -123,7 +124,7 @@ export interface ProvisionVPSResult {
 
 export async function provisionVPS(params: {
   userId: string
-  plan: 'personal' | 'team' | 'business' | 'enterprise'
+  plan: 'personal' | 'team' | 'business'
   instanceName?: string
 }): Promise<ProvisionVPSResult> {
   const { userId, plan, instanceName } = params
