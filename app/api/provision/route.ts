@@ -13,6 +13,12 @@ import { runProvisioning } from '@/lib/provision-orchestrator'
 import { supabaseAdmin, getOnboardingByUserId, logProvisioningEvent } from '@/lib/supabase-admin'
 import type { Plan } from '@/lib/provision-orchestrator'
 
+function env(key: string): string {
+  const val = process.env[key]
+  if (!val) throw new Error(`Missing env var: ${key}`)
+  return val
+}
+
 function envOpt(key: string): string | undefined {
   return process.env[key]
 }
@@ -20,7 +26,10 @@ function envOpt(key: string): string | undefined {
 async function alertPulkit(html: string) {
   const botToken = envOpt('TELEGRAM_BOT_TOKEN')
   const chatId = envOpt('TELEGRAM_CHAT_ID')
-  if (!botToken || !chatId) return
+  if (!botToken || !chatId) {
+    console.warn('[alertPulkit] Telegram token or chatId missing, skipping')
+    return
+  }
   try {
     await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
       method: 'POST',
@@ -33,21 +42,10 @@ async function alertPulkit(html: string) {
 }
 
 export async function POST(req: NextRequest) {
-  // ── Debug: direct Contabo test ────────────────────────────────────
-  if (envOpt('MOCK_PAYMENT') === 'debug') {
-    const { provisionVPS } = await import('@/lib/contabo')
-    try {
-      const result = await provisionVPS({ userId: 'debug-test-' + Date.now(), plan: 'personal' })
-      return NextResponse.json({ debug: true, result })
-    } catch (err: any) {
-      return NextResponse.json({ debug: true, error: err.message, stack: err.stack?.slice(0, 500) }, { status: 500 })
-    }
-  }
-
-  // ── MOCK_PAYMENT=true bypass ────────────────────────────────────
+  // ── MOCK_PAYMENT=true bypass ───────────────────────────
   if (envOpt('MOCK_PAYMENT') === 'true') {
     const body = await req.json()
-    const clerkUserId = body.clerk_user_id ?? body.clerkUserId
+    const clerkUserId = body.clerkUserId ?? body.clerk_user_id
     const plan = (body.plan ?? 'personal') as Plan
 
     if (!clerkUserId) {
@@ -58,29 +56,14 @@ export async function POST(req: NextRequest) {
       const result = await runProvisioning({ clerkUserId, plan })
       return NextResponse.json(result)
     } catch (err: any) {
-      console.error('[provision] MOCK_PAYMENT runProvisioning error:', err.message)
       return NextResponse.json({ error: err.message }, { status: 500 })
     }
   }
 
-  // ── Debug: direct Contabo test endpoint ────────────────────────────────────
-  if (envOpt('MOCK_PAYMENT') === 'debug') {
-    const { provisionVPS } = await import('@/lib/contabo')
-    try {
-      const result = await provisionVPS({ userId: 'debug-test', plan: 'personal' })
-      return NextResponse.json({ debug: true, result })
-    } catch (err: any) {
-      return NextResponse.json({ debug: true, error: err.message }, { status: 500 })
-    }
-  }
-
-  // ── Stripe webhook path ─────────────────────────────────────────
+  // ── Stripe webhook path ───────────────────────────────
   const stripeSecretKey = envOpt('STRIPE_SECRET_KEY')
   if (!stripeSecretKey) {
-    return NextResponse.json(
-      { error: 'STRIPE_SECRET_KEY not configured' },
-      { status: 503 }
-    )
+    return NextResponse.json({ error: 'STRIPE_SECRET_KEY not configured' }, { status: 503 })
   }
 
   const { default: Stripe } = await import('stripe')
@@ -94,7 +77,6 @@ export async function POST(req: NextRequest) {
   try {
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret)
   } catch (err: any) {
-    console.error(`Stripe webhook signature verification failed: ${err.message}`)
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
