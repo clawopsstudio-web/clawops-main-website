@@ -1,39 +1,43 @@
 import { NextResponse } from 'next/server'
+import { auth } from '@clerk/nextjs'
 import { createClient } from '@/lib/supabase/client'
 
 export async function GET() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const { userId } = auth()
+  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  // Check provisioning status
+  const supabase = createClient()
+
+  // Provisioning status
   const { data: row } = await supabase
     .from('onboarding_submissions')
     .select('status, vps_ip')
-    .eq('clerk_user_id', user.id)
+    .eq('clerk_user_id', userId)
     .single()
 
-  const isActive = row?.status === 'active'
+  if (!row) {
+    return NextResponse.json({ status: 'not_found' })
+  }
 
-  // Count agents
+  // Agent count
   const { count: agentCount } = await supabase
     .from('agents')
     .select('id', { count: 'exact' })
-    .eq('clerk_user_id', user.id)
+    .eq('clerk_user_id', userId)
 
-  // Count missions today
   const today = new Date().toISOString().split('T')[0]
   const { count: missionCount } = await supabase
     .from('missions')
     .select('id', { count: 'exact' })
-    .eq('clerk_user_id', user.id)
+    .eq('clerk_user_id', userId)
     .gte('started_at', today)
 
   return NextResponse.json({
-    status: isActive ? 'active' : 'provisioning',
+    status: row.status === 'active' ? 'active' : 'provisioning',
     activeAgents: agentCount ?? 0,
     missionsToday: missionCount ?? 0,
+    hermesLive: false, // updated by polling in layout
     connectedTools: 0,
-    hermesLive: false,
+    vpsIp: row.vps_ip ?? null,
   })
 }

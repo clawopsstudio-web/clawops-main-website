@@ -1,31 +1,55 @@
 /**
- * app/api/chat/message/route.ts
- * POST — send a message to Hermes via SSH
+ * POST /api/chat/message
+ * Body: { message: string, agentId?: string }
+ * Auth: Clerk server-side auth
  */
 import { NextRequest, NextResponse } from 'next/server'
+import { auth } from '@clerk/nextjs'
 import { execSSH } from '@/lib/vps-ssh'
 import { createClient } from '@/lib/supabase/client'
 
 export async function POST(req: NextRequest) {
-  const { message, agentId } = await req.json()
+  const { userId } = auth()
+  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const body = await req.json()
+  const { message, agentId } = body
+
   if (!message?.trim()) {
     return NextResponse.json({ error: 'Message is required' }, { status: 400 })
   }
 
-  // Get user from Clerk session via Supabase
   const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  // Store mission in DB
+  const { data: mission } = await supabase.from('missions').insert({
+    clerk_user_id: userId,
+    agent_id: agentId ?? null,
+    title: message.trim().slice(0, 100),
+    prompt: message,
+    status: 'running',
+    started_at: new Date().toISOString(),
+  }).select().single()
 
   try {
-    const result = await execSSH(
-      user.id,
-      `hermes chat -q "${message.replace(/"/g, '\\"')}" -t terminal,file`,
-      60_000
-    )
+    const result = await execSSH(userId, `hermes chat -q "${message.replace(/"/g, '\\"')}" -t terminal,file`, 60_000)
+
     const content = result.stdout.trim() || result.stderr.trim() || 'Agent completed with no output.'
+
+    // Update mission in DB
+    if (mission?.id) {
+      await supabase.from('missions').update({
+        output: content,
+        status: 'completed',
+        completed_at: new Date().toISOString(),
+      }).eq('id', mission.id)
+    }
+
     return NextResponse.json({ content })
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message ?? 'Hermes error' }, { status: 500 })
+  } catch (err: any) {
+    if (mission?.id) {
+      await supabase.from('missions').update({ status: 'failed' }).eq('id', mission.id).catch(() => {})
+    }
+    return NextResponse.json({ error: err.message ?? 'Hermes error' }, { status: 500 })
   }
 }
