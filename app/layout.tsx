@@ -3,7 +3,6 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 import GlobalStarField from "@/components/ui/GlobalStarField";
-import AuthProvider from "@/components/providers/AuthProvider";
 
 export const metadata: Metadata = {
   title: {
@@ -95,7 +94,7 @@ export default function RootLayout({
         <body className="bg-[#0a0a0a] text-white antialiased overflow-x-hidden">
           <GlobalStarField />
           <SmoothScroll>
-            <AuthProvider>{children}</AuthProvider>
+            {children}
           </SmoothScroll>
         </body>
       </html>
