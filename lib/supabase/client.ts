@@ -21,6 +21,11 @@ export function getSupabase(): SupabaseClient {
   return _supabase
 }
 
+// Alias: export createClient for compatibility
+export function createClient(): SupabaseClient {
+    return getSupabase()
+  }
+
 // Lazy proxy — resolves on first use, never throws at module load.
 // Safe for both SSR and client-side usage.
 export const supabase = new Proxy({} as SupabaseClient, {
