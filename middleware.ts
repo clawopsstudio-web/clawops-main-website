@@ -11,6 +11,7 @@ export default clerkMiddleware(async (auth, req) => {
     pathname.startsWith('/auth/') ||
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api/auth/') ||
+    pathname.startsWith('/api/') || // API routes handle their own auth — never redirect them
     pathname === '/api/provision' ||
     pathname === '/api/test-contabo' ||
     pathname === '/api/provision-debug' ||
