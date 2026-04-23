@@ -16,6 +16,8 @@ export default clerkMiddleware(async (auth, req) => {
     pathname === '/api/provision-debug' ||
     pathname.startsWith('/legal/') ||
     pathname === '/pricing' ||
+    pathname === '/agents' ||
+    pathname === '/autopilot' ||
     pathname === '/how-it-works' ||
     pathname === '/robots.txt' ||
     pathname === '/sitemap.xml' ||
@@ -43,6 +45,7 @@ export default clerkMiddleware(async (auth, req) => {
   const loginPage = pathname.startsWith("/auth/login") || pathname.startsWith("/auth/signup")
   if (userId && loginPage) {
     const dashUrl = new URL("/dashboard", req.url)
+    return NextResponse.redirect(dashUrl)
   }
 
   return NextResponse.next()
