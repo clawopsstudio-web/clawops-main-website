@@ -2,13 +2,15 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
+  turbopack: {
+    root: __dirname,
   },
-  serverExternalPackages: ['node-ssh', 'ssh2', 'cpu-features', 'ssh2-streams'],
   trailingSlash: false,
+  // node-ssh / ssh2 use native Node.js addons (cpu-features) that Turbopack
+  // cannot bundle. They only run server-side in API routes — marked external.
+  serverExternalPackages: ['ssh2', 'node-ssh', 'cpu-features'],
 }
 
 export default nextConfig
