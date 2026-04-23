@@ -323,3 +323,103 @@ alter table public.profiles
 alter table public.onboarding_submissions
   add column if not exists payment_status text default 'pending'
   check (payment_status in ('pending', 'paid', 'failed', 'refunded'));
+
+-- =============================================
+-- PHASE 3 TABLES (2026-04-23)
+-- =============================================
+
+CREATE TABLE IF NOT EXISTS public.agents (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  clerk_user_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  role TEXT,
+  status TEXT DEFAULT 'idle',
+  system_prompt TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS public.missions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  agent_id UUID REFERENCES agents(id),
+  title TEXT,
+  prompt TEXT,
+  output TEXT,
+  status TEXT DEFAULT 'running',
+  started_at TIMESTAMPTZ DEFAULT now(),
+  completed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS public.logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  level TEXT DEFAULT 'info',
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS public.user_model_config (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  provider TEXT NOT NULL,
+  model TEXT,
+  api_key_set BOOLEAN DEFAULT FALSE,
+  custom_base_url TEXT,
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS public.installed_mcp_servers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  server_name TEXT NOT NULL,
+  status TEXT DEFAULT 'installing',
+  installed_at TIMESTAMPTZ DEFAULT now()
+);
+
+
+-- Phase 3 — Dashboard tables (2026-04-23)
+-- Dashboard = control layer above Hermes — never replaces Hermes features
+-- Whitelist commands only, rate limit 30 req/min/user, log everything to Supabase logs
+
+CREATE TABLE IF NOT EXISTS public.agents (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  clerk_user_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  role TEXT,
+  status TEXT DEFAULT 'idle',
+  system_prompt TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS public.missions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  agent_id UUID REFERENCES public.agents(id) ON DELETE CASCADE,
+  title TEXT,
+  prompt TEXT,
+  output TEXT,
+  status TEXT DEFAULT 'running',
+  started_at TIMESTAMZ DEFAULT now(),
+  completed_at TIMESTAMPTZ
+);
+
+CREATE TABLE IF NOT EXISTS public.logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  agent_id UUID,
+  message TEXT,
+  level TEXT DEFAULT 'info',
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS public.user_model_config (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  provider TEXT NOT NULL,
+  model_name TEXT,
+  api_key_set BOOLEAN DEFAULT false,
+  custom_base_url TEXT,
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS public.installed_mcp_servers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  server_name TEXT NOT NULL,
+  smithery_id TEXT,
+  status TEXT DEFAULT 'installing',
+  installed_at TIMESTAMPTZ DEFAULT now()
+);
+
