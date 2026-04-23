@@ -4,7 +4,7 @@ import { SignIn } from '@clerk/nextjs'
 
 export default function LoginPage() {
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: '#ffffff' }}>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: '#0a0a0a' }}>
       <SignIn fallbackRedirectUrl="/dashboard" />
     </div>
   )
