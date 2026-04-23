@@ -14,7 +14,7 @@ export default function LogsPage() {
   useEffect(() => {
     if (tab !== 'Hermes Logs') return
     let cancelled = false
-    fetch('/api/vps/ssh', {
+    fetch('/api/ssh/exec', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ cmd: 'tail -100 /root/.hermes/logs/hermes.log' })

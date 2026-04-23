@@ -24,7 +24,7 @@ export default function TerminalPage() {
     setRunning(label)
     setOutput('')
     try {
-      const res = await fetch('/api/vps/ssh', {
+      const res = await fetch('/api/ssh/exec', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ cmd })
