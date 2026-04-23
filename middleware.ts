@@ -16,6 +16,8 @@ export default clerkMiddleware(async (auth, req) => {
     pathname === '/api/provision-debug' ||
     pathname.startsWith('/legal/') ||
     pathname === '/pricing' ||
+    pathname === '/about' ||
+    pathname === '/contact' ||
     pathname === '/agents' ||
     pathname === '/autopilot' ||
     pathname === '/how-it-works' ||

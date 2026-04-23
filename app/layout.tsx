@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description:
     "The autonomous AI OS for businesses that want to scale without hiring.  Sales, Support, Research, and Ops agents that run 24/7 — autonomously. Manage from Telegram, WhatsApp, or Slack. Flat monthly pricing from $49/mo.",
   keywords: "AI workforce, autonomous AI, agentic OS, scale without hiring, business AI automation, AI agents run 24/7, ClawOps, autonomous business, AI that runs itself",
-  metadataBase: new URL('https://app.clawops.studio'),
+  metadataBase: new URL('https://clawops.studio'),
   alternates: {
     canonical: '/',
     languages: {
