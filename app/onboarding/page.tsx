@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useUser } from '@clerk/nextjs'
-import { useUser } from '@clerk/nextjs'
 import { createClient } from '@/lib/supabase/client'
 
 const USE_CASES = [
@@ -23,7 +22,6 @@ const LOADING_STEPS = [
 
 function OnboardingPage() {
   const { user, isLoaded } = useUser()
-  const { user } = useUser()
   const router = useRouter()
   const supabase = createClient()
   const [step, setStep] = useState(1)
