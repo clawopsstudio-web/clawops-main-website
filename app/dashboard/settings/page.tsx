@@ -1,8 +1,6 @@
 'use client'
 import { useState } from 'react'
 import { useUser } from '@clerk/nextjs'
-import { useState } from 'react'
-
 const TABS = ['Profile', 'Plan', 'Workspace', 'Billing', 'Danger']
 
 export default function SettingsPage() {
