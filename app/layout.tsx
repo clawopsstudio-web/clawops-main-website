@@ -77,10 +77,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider
-      signInUrl="/auth/login"
-      signUpUrl="/auth/signup"
-    >
+    <ClerkProvider>
       <html lang="en" className="dark">
         <head>
           <link rel="preconnect" href="https://fonts.googleapis.com" />

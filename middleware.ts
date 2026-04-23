@@ -40,7 +40,7 @@ export default clerkMiddleware(async (auth, req) => {
     return redirectToSignIn({ returnBackUrl: `${req.url}` })
   }
 
-  // Logged in but on login page → go to dashboard
+  // Logged in but on login/signup page → go to dashboard
   const loginPage = pathname.startsWith('/auth/login') || pathname.startsWith('/auth/signup')
   if (loginPage) {
     return NextResponse.redirect(new URL('/dashboard', req.url))
