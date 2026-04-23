@@ -1,8 +1,7 @@
 'use client'
-
 import { useState } from 'react'
 import { useUser } from '@clerk/nextjs'
-import { execSSH } from '@/lib/vps-ssh'
+// execSSH removed - using API route
 
 const QUICK_ACTIONS = [
   { cmd: 'systemctl status hermes', label: 'Hermes Status' },
@@ -25,8 +24,13 @@ export default function TerminalPage() {
     setRunning(label)
     setOutput('')
     try {
-      const result = await execSSH(userId, cmd, 30_000)
-      setOutput(result.stdout || result.stderr || 'Done.')
+      const res = await fetch('/api/vps/ssh', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cmd })
+      })
+      const data = await res.json()
+      setOutput(data.output || data.error || 'Done.')
     } catch (e: any) {
       setOutput('Error: ' + (e.message ?? 'Unknown'))
     } finally {
@@ -34,54 +38,25 @@ export default function TerminalPage() {
     }
   }
 
-  if (!isLoaded) {
-    return <div className="p-6 text-white/30 text-sm">Loading...</div>
-  }
-
-  if (!userId) {
-    return <div className="p-6 text-red-400 text-sm">Not signed in.</div>
-  }
+  if (!isLoaded) return <div className="p-8 text-white/40">Loading...</div>
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-white font-black text-lg">Mission Control</h1>
-        <p className="text-white/30 text-xs mt-1">Monitor and control your VPS runtime.</p>
+    <div className="p-6 space-y-4">
+      <h1 className="text-white font-black text-lg">Terminal</h1>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+        {QUICK_ACTIONS.map(a => (
+          <button key={a.cmd} onClick={() => run(a.cmd, a.label)}
+            disabled={!!running}
+            className="bg-white/5 hover:bg-white/10 text-white/70 text-xs font-semibold py-2 px-3 rounded-lg transition-colors disabled:opacity-40">
+            {running === a.label ? 'Running...' : a.label}
+          </button>
+        ))}
       </div>
-
-      {/* Quick Actions */}
-      <div>
-        <p className="text-white/40 text-xs uppercase tracking-widest font-semibold mb-3">Quick Actions</p>
-        <div className="grid grid-cols-4 gap-2">
-          {QUICK_ACTIONS.map(a => (
-            <button
-              key={a.cmd}
-              onClick={() => run(a.cmd, a.label)}
-              disabled={!!running || !userId}
-              className="bg-[#111] border border-white/7 text-white/50 hover:text-white hover:border-white/15 disabled:opacity-40 text-xs px-3 py-2 rounded-xl transition-all text-left flex items-center gap-2"
-            >
-              {running === a.label && (
-                <span className="w-3 h-3 border-2 border-white/20 border-t-white/60 rounded-full animate-spin shrink-0" />
-              )}
-              {a.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Output */}
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-white/40 text-xs uppercase tracking-widest font-semibold">Output</p>
-          {output && (
-            <button onClick={() => setOutput('')} className="text-white/20 hover:text-white/60 text-[10px]">Clear</button>
-          )}
-        </div>
-        <pre className="bg-[#111] border border-white/7 rounded-xl p-4 text-[11px] font-mono text-white/50 whitespace-pre-wrap min-h-32 max-h-64 overflow-auto">
-          {output || 'Click an action to see output.'}
+      {output && (
+        <pre className="bg-[#0a0a0a] border border-white/7 rounded-xl p-4 text-[11px] font-mono text-[#e8ff47] whitespace-pre-wrap overflow-x-auto max-h-96 overflow-y-auto">
+          {output}
         </pre>
-      </div>
+      )}
     </div>
   )
 }
