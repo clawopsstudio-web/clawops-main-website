@@ -33,11 +33,17 @@ export default clerkMiddleware(async (auth, req) => {
   const isService = pathname === '/n8n' || pathname === '/chrome'
   if (isService) return NextResponse.next()
 
-  // Use Clerk's native protect() — redirects to signInUrl if not authenticated
-  // This is the correct Clerk v6 pattern instead of manual userId checks
+  // Check auth once — use throughout
   const { userId, redirectToSignIn } = await auth()
+
+  // Authenticated user visiting homepage → send to dashboard
+  if (userId && pathname === '/') {
+    return NextResponse.redirect(new URL('/dashboard', req.url))
+  }
+
+  // Not authenticated → redirect to sign in
   if (!userId) {
-    return redirectToSignIn({ returnBackUrl: `${req.url}` })
+    return redirectToSignIn({ returnBackUrl: req.url })
   }
 
   // Logged in but on login/signup page → go to dashboard

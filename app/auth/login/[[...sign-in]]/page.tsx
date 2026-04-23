@@ -3,5 +3,9 @@
 import { SignIn } from '@clerk/nextjs'
 
 export default function LoginPage() {
-  return <SignIn />
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <SignIn path="/auth/login" routing="path" />
+    </div>
+  )
 }
