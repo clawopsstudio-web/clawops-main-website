@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { streamSSH } from '@/lib/vps-ssh'
+// SSH streaming moved to server-side API route
 
 const TABS = ['Activity Logs', 'Hermes Logs']
 const LEVELS = ['all', 'ssh', 'error', 'info']
@@ -13,12 +13,21 @@ export default function LogsPage() {
 
   useEffect(() => {
     if (tab !== 'Hermes Logs') return
-    let chunks: string[] = []
-    let done = false
-    streamSSH('test' as any, 'tail -100 /root/.hermes/logs/hermes.log', (chunk) => {
-      if (!paused) setHermesLines(prev => [...prev.slice(-99), chunk])
-    }).catch(() => {})
-    return () => { done = true }
+    let cancelled = false
+    fetch('/api/vps/ssh', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cmd: 'tail -100 /root/.hermes/logs/hermes.log' })
+    })
+      .then(r => r.text())
+      .then(text => {
+        if (!cancelled && !paused) {
+          const lines = text.split('\n').filter(Boolean)
+          setHermesLines(lines.slice(-100))
+        }
+      })
+      .catch(() => {})
+    return () => { cancelled = true }
   }, [tab, paused])
 
   return (
@@ -34,13 +43,14 @@ export default function LogsPage() {
           ))}
         </div>
       </div>
-
       {tab === 'Hermes Logs' && (
         <div className="flex items-center justify-between">
           <div className="flex gap-1 bg-white/5 p-1 rounded-lg">
             {LEVELS.map(l => (
               <button key={l} onClick={() => setLevel(l)}
-                className={`px-3 py-1 rounded text-[10px] font-semibold capitalize ${level === l ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white/70'}`}>{l}</button>
+                className={`px-3 py-1 rounded text-[10px] font-semibold capitalize ${level === l ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white/70'}`}>
+                {l}
+              </button>
             ))}
           </div>
           <button onClick={() => setPaused(p => !p)}
@@ -49,10 +59,9 @@ export default function LogsPage() {
           </button>
         </div>
       )}
-
       <pre className="bg-[#0a0a0a] border border-white/7 rounded-xl p-4 text-[11px] font-mono text-white/50 whitespace-pre-wrap overflow-x-auto h-[calc(100vh-200px)] overflow-y-auto">
         {tab === 'Hermes Logs'
-          ? hermesLines.join('')
+          ? hermesLines.join('\n')
           : 'Activity logs will appear here.'}
       </pre>
     </div>
