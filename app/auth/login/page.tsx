@@ -1,7 +1,9 @@
-'use client'
-
 import { SignIn } from '@clerk/nextjs'
 
 export default function LoginPage() {
-  return <SignIn fallbackRedirectUrl="/dashboard" />
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: '#0a0a0a' }}>
+      <SignIn fallbackRedirectUrl="/dashboard" />
+    </div>
+  )
 }
