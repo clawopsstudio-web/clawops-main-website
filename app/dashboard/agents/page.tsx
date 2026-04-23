@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 const ROLES = ['Sales', 'Support', 'Research', 'Marketing', 'Operations', 'Custom']
-const PLANS = { personal: 3, team: 5, business: 999 }
 
 export default function AgentsPage() {
   const [agents, setAgents] = useState<any[]>([])
@@ -97,4 +96,3 @@ export default function AgentsPage() {
     </div>
   )
 }
-</parameter>

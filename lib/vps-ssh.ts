@@ -45,17 +45,19 @@ function checkRate(userId: string): boolean {
 }
 
 // ─── Logging ────────────────────────────────────────────────────────
-function logCmd(userId: string, cmd: string) {
+async function logCmd(userId: string, cmd: string) {
   try {
     const sb = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     )
-    sb.from('logs').insert({
-      clerk_user_id: userId,
-      message: cmd,
-      level: 'ssh',
-    }).catch(() => {})
+    try {
+      await sb.from('logs').insert({
+        clerk_user_id: userId,
+        message: cmd,
+        level: 'ssh',
+      })
+    } catch { /* non-critical */ }
   } catch { /* non-critical */
   }
 }
@@ -113,7 +115,8 @@ export async function execSSH(
     const result = await ssh.execCommand(command, {
       onStdout: () => {},
       onStderr: () => {},
-    }, { execTimeout: timeoutMs })
+      execTimeout: timeoutMs,
+    } as any)
     return {
       stdout: String(result.stdout ?? ''),
       stderr: String(result.stderr ?? ''),

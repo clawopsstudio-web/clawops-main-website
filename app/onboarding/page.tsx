@@ -34,15 +34,15 @@ function OnboardingPage() {
   // Check auth + already-onboarded status
   useEffect(() => {
     const check = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
+      const { data: { user: authUser } } = await supabase.auth.getUser()
+      if (!authUser) {
         router.replace('/auth/login?redirect=/onboarding')
         return
       }
       const { data: row } = await supabase
         .from('onboarding_submissions')
         .select('status')
-        .eq('clerk_user_id', user.id)
+        .eq('clerk_user_id', authUser.id)
         .eq('status', 'active')
         .single()
       if (row) {
@@ -71,14 +71,14 @@ function OnboardingPage() {
     }, 800)
 
     try {
-      const { data: { user } = {} } = await supabase.auth.getUser()
-      if (!user) throw new Error('Not authenticated')
+      const { data: { user: authUser } } = await supabase.auth.getUser()
+      if (!authUser) throw new Error('Not authenticated')
 
       const { error: dbErr } = await supabase
         .from('onboarding_submissions')
         .upsert({
-          clerk_user_id: user.id,
-          full_name: (user as any)?.full_name ?? user.email?.split('@')[0] ?? 'User',
+          clerk_user_id: authUser.id,
+          full_name: (authUser as any)?.full_name ?? authUser.email?.split('@')[0] ?? 'User',
           business_name: workspace.trim(),
           industry: selectedCases.join(', ') || 'General',
           plan: 'personal',

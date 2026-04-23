@@ -54,7 +54,7 @@ export default function MissionsPage() {
                 </td>
                 <td className="px-4 py-3 text-white/40 text-xs">
                   {m.completed_at && m.started_at
-                    ? Math.round((new Date(m.completed_at) - new Date(m.started_at)) / 1000 + 's'
+                    ? Math.round((new Date(m.completed_at).getTime() - new Date(m.started_at).getTime()) / 1000) + 's'
                     : '—'}
                 </td>
                 <td className="px-4 py-3 text-white/30 text-xs">
