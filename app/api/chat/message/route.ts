@@ -4,8 +4,7 @@
  * Auth: Clerk server-side auth
  */
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs'
-import { execSSH } from '@/lib/vps-ssh'
+import { auth } from '@clerk/nextjs/server'import { execSSH } from '@/lib/vps-ssh'
 import { createClient } from '@/lib/supabase/client'
 
 export async function POST(req: NextRequest) {
