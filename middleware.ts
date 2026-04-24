@@ -31,6 +31,7 @@ const PUBLIC_API_PATHS = [
   '/api/auth',
   '/api/composio/callback',
   '/api/checkout',
+  '/api/admin/seed',
 ]
 
 // Root → redirect logged-in users to dashboard, else to login
