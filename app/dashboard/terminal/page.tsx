@@ -2,14 +2,14 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
+const MISSION_CONTROL_URL = 'https://hermes.clawops.studio'
+
 const QUICK_ACTIONS = [
-  { cmd: 'systemctl status hermes', label: 'Hermes Status' },
-  { cmd: 'systemctl restart hermes', label: 'Restart Hermes' },
-  { cmd: 'hermes doctor', label: 'Run Doctor' },
-  { cmd: 'hermes cache clear', label: 'Clear Cache' },
-  { cmd: 'df -h', label: 'Disk Usage' },
-  { cmd: 'free -h', label: 'Memory' },
-  { cmd: 'curl -s http://127.0.0.1:8888 | head -1', label: 'Check SearXNG' },
+  { cmd: 'systemctl restart hermes-gateway', label: 'Restart Agent Runtime' },
+  { cmd: 'hermes mission trigger "Daily Lead Digest"', label: 'Run Daily Lead Digest' },
+  { cmd: 'hermes queue clear', label: 'Clear message queue' },
+  { cmd: 'df -h && free -h && systemctl status hermes-gateway', label: 'Check VPS Status' },
+  { cmd: "curl -s -X POST 'https://api.telegram.org/bot7951858806:AAFpypvacA6oVjCnuVBewT1IXg50p21ghoI/sendMessage' -d 'chat_id=381136631&text=Test alert from Mission Control'", label: 'Send Test Alert' },
 ]
 
 export default function TerminalPage() {
@@ -19,28 +19,12 @@ export default function TerminalPage() {
   const [running, setRunning] = useState('')
   const [bannerDismissed, setBannerDismissed] = useState(false)
   const [activeTab, setActiveTab] = useState<'terminal' | 'mission-control'>('mission-control')
-  const [vpsUrl, setVpsUrl] = useState<string | null>(null)
-  const [vpsLoading, setVpsLoading] = useState(true)
 
   useEffect(() => {
     const supabase = createClient()
-    supabase.auth.getUser().then(async ({ data }) => {
+    supabase.auth.getUser().then(({ data }) => {
       setUserId(data.user?.id ?? '')
       setIsLoaded(true)
-      if (data.user?.id) {
-        const { data: row } = await supabase
-          .from('onboarding_submissions')
-          .select('dashboard_url, vps_ip')
-          .eq('clerk_user_id', data.user.id)
-          .eq('status', 'active')
-          .maybeSingle()
-        if (row?.dashboard_url) {
-          setVpsUrl(row.dashboard_url)
-        } else if (row?.vps_ip) {
-          setVpsUrl(`http://${row.vps_ip}:9119`)
-        }
-      }
-      setVpsLoading(false)
     })
   }, [])
 
@@ -108,28 +92,15 @@ export default function TerminalPage() {
         </button>
       </div>
 
-      {/* Mission Control tab */}
+      {/* Mission Control tab — iframe loads via Cloudflare Tunnel HTTPS */}
       {activeTab === 'mission-control' && (
-        <div className="flex-1 px-4 pb-4 min-h-0 flex flex-col">
-          {vpsLoading && (
-            <div className="flex-1 flex items-center justify-center">
-              <p className="text-white/40 text-sm">Loading Mission Control...</p>
-            </div>
-          )}
-          {!vpsLoading && !vpsUrl && (
-            <div className="flex-1 flex flex-col items-center justify-center">
-              <p className="text-white/60 text-sm font-medium mb-2">Mission Control not configured</p>
-              <p className="text-white/30 text-xs">Your VPS is being provisioned. Check back in ~20 minutes.</p>
-            </div>
-          )}
-          {!vpsLoading && vpsUrl && (
-            <iframe
-              src={vpsUrl}
-              className="w-full h-full rounded-xl border border-white/10 bg-black"
-              title="Hermes Mission Control"
-              allow="clipboard-write"
-            />
-          )}
+        <div className="flex-1 px-4 pb-4 min-h-0">
+          <iframe
+            src={MISSION_CONTROL_URL}
+            className="w-full h-full rounded-xl border border-white/10 bg-black"
+            title="Hermes Mission Control"
+            allow="clipboard-write"
+          />
         </div>
       )}
 
