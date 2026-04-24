@@ -4,81 +4,36 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 
-// Unique inline SVG robot per agent — geometric, consistent style
-function RobotAvatar({ name, color }: { name: string; color: string }) {
-  const shapes: Record<string, React.ReactNode> = {
-    ATLAS: (
-      <>
-        {/* Upward arrow = sales growth */}
-        <polygon points="100,30 70,80 90,80 90,110 110,110 110,80 130,80" fill={color} opacity="0.9" />
-        <circle cx="100" cy="130" r="30" fill={color} opacity="0.15" />
-      </>
-    ),
-    NOVA: (
-      <>
-        {/* Star = marketing/star content */}
-        <polygon
-          points="100,25 112,75 165,80 125,115 138,168 100,140 62,168 75,115 35,80 88,75"
-          fill={color} opacity="0.85"
-        />
-      </>
-    ),
-    REX: (
-      <>
-        {/* Target circles = research */}
-        <circle cx="100" cy="100" r="65" fill="none" stroke={color} strokeWidth="8" opacity="0.2" />
-        <circle cx="100" cy="100" r="40" fill="none" stroke={color} strokeWidth="8" opacity="0.4" />
-        <circle cx="100" cy="100" r="18" fill={color} opacity="0.85" />
-      </>
-    ),
-    ZARA: (
-      <>
-        {/* Headset = support */}
-        <rect x="55" y="55" width="90" height="70" rx="14" fill="#1a1a1a" stroke={color} strokeWidth="6" />
-        <path d="M55 90 Q30 90 30 115" stroke={color} strokeWidth="7" fill="none" strokeLinecap="round" />
-        <path d="M145 90 Q170 90 170 115" stroke={color} strokeWidth="7" fill="none" strokeLinecap="round" />
-        <rect x="70" y="75" width="60" height="30" rx="8" fill={color} opacity="0.8" />
-        <rect x="77" y="82" width="18" height="16" rx="4" fill="#0a0a0a" />
-        <rect x="105" y="82" width="18" height="16" rx="4" fill="#0a0a0a" />
-        <rect x="88" y="105" width="24" height="8" rx="4" fill={color} opacity="0.4" />
-      </>
-    ),
-    MARCUS: (
-      <>
-        {/* Gears = ops */}
-        <circle cx="100" cy="100" r="25" fill={color} opacity="0.85" />
-        {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => (
-          <rect
-            key={i}
-            x="93" y="30"
-            width="14" height="28"
-            rx="3"
-            fill={color}
-            opacity="0.7"
-            style={{ transformOrigin: '100px 100px', transform: `rotate(${angle}deg)` }}
-          />
-        ))}
-        <circle cx="100" cy="100" r="12" fill="#0a0a0a" />
-      </>
-    ),
-    MAYA: (
-      <>
-        {/* Chart bars = finance */}
-        <rect x="45" y="100" width="22" height="55" rx="4" fill={color} opacity="0.9" />
-        <rect x="79" y="75" width="22" height="80" rx="4" fill={color} opacity="0.7" />
-        <rect x="113" y="50" width="22" height="105" rx="4" fill={color} opacity="0.5" />
-        <rect x="147" y="30" width="22" height="125" rx="4" fill={color} opacity="0.3" />
-        <line x1="35" y1="155" x2="185" y2="155" stroke={color} strokeWidth="3" strokeLinecap="round" />
-      </>
-    ),
-  }
+// Styled initials circle avatars per agent
+const AGENT_AVATAR_COLORS: Record<string, { bg: string; text: string }> = {
+  ATLAS: { bg: '#e8ff4733', text: '#e8ff47' },
+  NOVA: { bg: '#a78bfa33', text: '#a78bfa' },
+  REX: { bg: '#34d39933', text: '#34d399' },
+  ZARA: { bg: '#fb923c33', text: '#fb923c' },
+  MARCUS: { bg: '#60a5fa33', text: '#60a5fa' },
+  MAYA: { bg: '#22d3ee33', text: '#22d3ee' },
+}
 
+function AgentAvatar({ name, color }: { name: string; color: string }) {
+  const initials = name[0]
+  const avatarStyle = AGENT_AVATAR_COLORS[name] ?? { bg: `${color}33`, text: color }
   return (
-    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-      <rect width="200" height="200" fill="#111" />
-      <rect x="45" y="45" width="110" height="110" rx="20" fill="#1a1a1a" stroke={color} strokeWidth="4" />
-      {shapes[name] || shapes.ATLAS}
-    </svg>
+    <div
+      className="w-full h-full flex items-center justify-center"
+      style={{ background: '#111' }}
+    >
+      <div
+        className="w-24 h-24 rounded-full flex items-center justify-center font-black text-4xl"
+        style={{
+          background: avatarStyle.bg,
+          color: avatarStyle.text,
+          fontFamily: 'var(--font-cabinet, sans-serif)',
+          letterSpacing: '-0.03em',
+        }}
+      >
+        {initials}
+      </div>
+    </div>
   )
 }
 
@@ -220,9 +175,9 @@ function AgentCard({ agent, onDeploy }: { agent: typeof AGENTS[0]; onDeploy: () 
       animate={{ opacity: 1, y: 0 }}
       className="bg-[#111] rounded-2xl border border-white/7 overflow-hidden flex flex-col"
     >
-      {/* Robot avatar */}
+      {/* Agent avatar */}
       <div className="aspect-square w-full">
-        <RobotAvatar name={agent.name} color={agent.color} />
+        <AgentAvatar name={agent.name} color={agent.color} />
       </div>
 
       {/* Card body */}
@@ -303,7 +258,7 @@ function AgentModal({ agent, onClose }: { agent: typeof AGENTS[0]; onClose: () =
       >
         {/* Avatar header */}
         <div className="aspect-video w-full" style={{ backgroundColor: '#0a0a0a' }}>
-          <RobotAvatar name={agent.name} color={agent.color} />
+          <AgentAvatar name={agent.name} color={agent.color} />
         </div>
 
         {/* Content */}

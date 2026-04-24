@@ -83,13 +83,11 @@ export default function ToolsPage() {
               </div>
               <p className="text-white font-semibold text-xs">{t.name}</p>
               <p className="text-white/30 text-[10px] mt-0.5">{t.category}</p>
-              <div className={`mt-2.5 text-[10px] px-2 py-1 rounded-lg text-center font-medium ${
-                t.connected
-                  ? 'bg-emerald-950 text-emerald-400 border border-emerald-900'
-                  : 'bg-white/8 text-white/40 border border-white/10'
-              }`}>
-                {t.connected ? 'Connected' : 'Not Connected'}
-              </div>
+              {t.connected && (
+                <div className="mt-2.5 text-[10px] px-2 py-1 rounded-lg text-center font-medium bg-emerald-950 text-emerald-400 border border-emerald-900">
+                  Connected
+                </div>
+              )}
               {!t.connected && (
                 <button
                   onClick={() => {

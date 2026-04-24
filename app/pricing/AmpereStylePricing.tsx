@@ -36,7 +36,7 @@ const MONTHLY_PLANS = [
   {
     name: 'Business',
     price: 299,
-    description: 'Established businesses · Claude API key included',
+    description: 'Established businesses',
     highlight: false,
     badge: null,
     features: [
@@ -88,33 +88,6 @@ const ADDON_PLANS = [
     description: '20M tokens/mo · 2,000 req per 5hr window',
     models: 'Claude Haiku + Sonnet 4.6 + Opus 4.6 + Opus 4.7',
     note: 'Get API key via support chat',
-  },
-]
-
-const FAQS = [
-  {
-    q: 'Can I change plans later?',
-    a: 'Yes. Upgrade or downgrade anytime from your dashboard. Changes apply immediately.',
-  },
-  {
-    q: 'Is my data private?',
-    a: 'Your agents run on your own dedicated server. Your data never touches our infrastructure unless you explicitly connect a third-party integration.',
-  },
-  {
-    q: 'What does setup look like?',
-    a: 'You fill in our onboarding form, connect your tools, and your agents are live within 2 hours. No technical skills needed.',
-  },
-  {
-    q: 'What integrations are included?',
-    a: '850+ integrations — Gmail, HubSpot, Notion, Slack, Airtable, Linear, and more. All included in every plan.',
-  },
-  {
-    q: 'Do I need technical skills?',
-    a: 'No. Setup takes under 5 minutes. If you get stuck, our team sets it up for you free.',
-  },
-  {
-    q: 'What is the Claude API add-on?',
-    a: 'Add direct API access to Claude models (Haiku, Sonnet 4.6, Opus 4.6, Opus 4.7) with a monthly token budget. Ideal if you want to use Claude outside of the built-in agent workflows.',
   },
 ]
 
