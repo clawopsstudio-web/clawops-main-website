@@ -73,7 +73,7 @@ export default function PrivacyPolicyPage() {
                   We may share information with:
                 </p>
                 <ul className="space-y-2 list-disc list-inside mt-3">
-                  <li><strong className="text-white">Service providers:</strong> Stripe (payments), Composio (tool integrations), Clerk (authentication) — only as needed to operate our service</li>
+                  <li><strong className="text-white">Service providers:</strong> Stripe (payments), Composio (tool integrations), Supabase (authentication) — only as needed to operate our service</li>
                   <li><strong className="text-white">Legal requirements:</strong> when required by law or to protect our rights</li>
                   <li><strong className="text-white">Business transfers:</strong> in the event of a merger, acquisition, or sale of assets</li>
                 </ul>
@@ -117,7 +117,7 @@ export default function PrivacyPolicyPage() {
               <section>
                 <h2 className="text-white font-bold text-base mb-3">8. Cookies and tracking</h2>
                 <p>
-                  We use cookies for authentication (via Clerk), analytics (via PostHog), and
+                  We use cookies for authentication (via Supabase), analytics (via PostHog), and
                   essential site functionality. See our{' '}
                   <a href="/cookie-policy" className="text-[#e8ff47] hover:underline">Cookie Policy</a>{' '}
                   for full details.

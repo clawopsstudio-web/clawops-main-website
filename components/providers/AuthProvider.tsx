@@ -1,11 +1,11 @@
 'use client'
 
-import { useUser } from '@clerk/nextjs'
-import { createContext, useContext, useEffect } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
 
 interface AuthContextValue {
   userId: string | null
-  user: ReturnType<typeof useUser>['user']
+  user: any
   isSignedIn: boolean
   isLoaded: boolean
 }
@@ -20,26 +20,34 @@ const AuthContext = createContext<AuthContextValue>({
 export const useAuth = () => useContext(AuthContext)
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { user, isSignedIn, isLoaded } = useUser()
+  const [state, setState] = useState<AuthContextValue>({
+    userId: null,
+    user: null,
+    isSignedIn: false,
+    isLoaded: false,
+  })
 
   useEffect(() => {
-    if (isSignedIn && user) {
-      window.dispatchEvent(new CustomEvent('clerk:session', { detail: { user, isSignedIn } }))
-    } else if (isLoaded && !isSignedIn) {
-      window.dispatchEvent(new CustomEvent('clerk:session', { detail: { user: null, isSignedIn: false } }))
-    }
-  }, [user, isSignedIn, isLoaded])
+    const supabase = createClient()
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setState({
+        userId: session?.user?.id ?? null,
+        user: session?.user ?? null,
+        isSignedIn: !!session,
+        isLoaded: true,
+      })
+    })
+    // Initial load
+    supabase.auth.getUser().then(({ data }) => {
+      setState({
+        userId: data.user?.id ?? null,
+        user: data.user ?? null,
+        isSignedIn: !!data.user,
+        isLoaded: true,
+      })
+    })
+    return () => subscription.unsubscribe()
+  }, [])
 
-  return (
-    <AuthContext.Provider
-      value={{
-        userId: user?.id ?? null,
-        user,
-        isSignedIn: isSignedIn ?? false,
-        isLoaded,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={state}>{children}</AuthContext.Provider>
 }

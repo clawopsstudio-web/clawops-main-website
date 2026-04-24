@@ -1,5 +1,4 @@
-// Auth layout — no wrappers, no GlobalStarField, no SmoothScroll.
-// Clerk SignIn/SignUp need a clean rendering context.
+// Auth layout — clean rendering context for Supabase email/password auth pages.
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
-  return children
+  return <>{children}</>
 }

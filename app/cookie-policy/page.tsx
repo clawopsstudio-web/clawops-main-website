@@ -51,10 +51,10 @@ export default function CookiePolicyPage() {
                 <div className="space-y-4 mt-4">
                   {[
                     {
-                      name: 'Clerk (Authentication)',
+                      name: 'Supabase (Authentication)',
                       type: 'Essential',
                       duration: 'Session / 30 days',
-                      purpose: 'Clerk handles user authentication for ClawOps. It sets session cookies to keep you logged in, detect your auth state, and secure your account. These cannot be disabled without logging out.',
+                      purpose: 'Supabase handles user authentication for ClawOps. It sets session cookies to keep you logged in, detect your auth state, and secure your account. These cannot be disabled without logging out.',
                     },
                     {
                       name: 'PostHog (Analytics)',

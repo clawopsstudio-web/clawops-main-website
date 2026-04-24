@@ -1,7 +1,6 @@
 'use client'
-import { useState } from 'react'
-import { useUser } from '@clerk/nextjs'
-// execSSH removed - using API route
+import { useState, useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client'
 
 const QUICK_ACTIONS = [
   { cmd: 'systemctl status hermes', label: 'Hermes Status' },
@@ -14,8 +13,16 @@ const QUICK_ACTIONS = [
 ]
 
 export default function TerminalPage() {
-  const { user, isLoaded } = useUser()
-  const userId = user?.id ?? ''
+  const [userId, setUserId] = useState('')
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data }) => {
+      setUserId(data.user?.id ?? '')
+      setIsLoaded(true)
+    })
+  }, [])
   const [output, setOutput] = useState('')
   const [running, setRunning] = useState('')
 

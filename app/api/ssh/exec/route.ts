@@ -4,14 +4,13 @@
  * Runs whitelisted SSH command, returns stdout/stderr
  */
 import { NextRequest, NextResponse } from 'next/server'
+import { getUserIdFromRequest } from '@/lib/auth-server'
 import { execSSH } from '@/lib/vps-ssh'
 
 export const runtime = 'nodejs'
 
 export async function POST(req: NextRequest) {
-  const { userId } = req.headers.get('x-clerk-user-id')
-    ? { userId: req.headers.get('x-clerk-user-id') }
-    : { userId: '' }
+  const userId = await getUserIdFromRequest(req)
 
   if (!userId) {
     return NextResponse.json({ stdout: '', stderr: 'Unauthorized', exitCode: 401 })

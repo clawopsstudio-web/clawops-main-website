@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useUser } from '@clerk/nextjs'
+import { createClient } from '@/lib/supabase/client'
 import { AnimatePresence, motion } from 'framer-motion'
 import StepIndicator from '@/components/onboarding/start/StepIndicator'
 import Step1Profile from '@/components/onboarding/start/Step1Profile'
@@ -43,7 +43,10 @@ function clearFormData() {
 export default function StartForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { user, isSignedIn, isLoaded } = useUser()
+  const supabase = createClient()
+  const [user, setUser] = useState<any>(null)
+  const [isSignedIn, setIsSignedIn] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(false)
 
   const [step, setStep] = useState(1)
   const [data, setData] = useState<StartFormData>(defaultFormData)
@@ -59,10 +62,10 @@ export default function StartForm() {
     }
     // Check if returning from sign-in with step=4 param
     const returnedStep = searchParams.get('step')
-    if (returnedStep === '4' && isSignedIn) {
+    if (returnedStep === '4') {
       setStep(4)
     }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])
 
   // Save form data + step to session storage
   useEffect(() => {
@@ -73,14 +76,22 @@ export default function StartForm() {
 
   // Pre-fill user info when signed in
   useEffect(() => {
-    if (isSignedIn && user) {
-      setData(prev => ({
-        ...prev,
-        full_name: prev.full_name || user.fullName || user.firstName || '',
-        email: prev.email || (user.primaryEmailAddress?.emailAddress ?? ''),
-      }))
+    const init = async () => {
+      const { data } = await supabase.auth.getUser()
+      setUser(data.user)
+      setIsSignedIn(!!data.user)
+      setIsLoaded(true)
+      if (data.user) {
+        setData(prev => ({
+          ...prev,
+          full_name: prev.full_name || data.user?.user_metadata?.full_name || '',
+          email: prev.email || (data.user?.email ?? ''),
+        }))
+      }
     }
-  }, [isSignedIn, user])
+    init()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const updateData = (updates: Partial<StartFormData>) => {
     setData(prev => {

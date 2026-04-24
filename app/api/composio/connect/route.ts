@@ -8,31 +8,25 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getConnectLink } from '@/lib/composio'
-import { getAuth } from '@clerk/nextjs/server'
+import { getUserIdFromRequest } from '@/lib/auth-server'
 
 export async function POST(req: NextRequest) {
   try {
-    // Verify authenticated session
-    const { userId } = getAuth(req)
+    const userId = await getUserIdFromRequest(req)
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { clerkUserId, appName } = await req.json()
+    const { appName } = await req.json()
 
-    if (!clerkUserId || !appName) {
+    if (!appName) {
       return NextResponse.json(
-        { error: 'clerkUserId and appName are required' },
+        { error: 'appName is required' },
         { status: 400 }
       )
     }
 
-    // Security: ensure the authenticated user matches the requested clerkUserId
-    if (userId !== clerkUserId) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-    }
-
-    const connectUrl = await getConnectLink(clerkUserId, appName)
+    const connectUrl = await getConnectLink(userId, appName)
 
     return NextResponse.json({ connectUrl })
   } catch (err: any) {

@@ -1,7 +1,11 @@
 'use client'
-
-import { AuthenticateWithRedirectCallback } from '@clerk/nextjs'
+// SSO callback — not used with Supabase email/password auth
+// Redirects to login
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function SSOCallback() {
-  return <AuthenticateWithRedirectCallback />
+  const router = useRouter()
+  useEffect(() => { router.replace('/auth/login') }, [router])
+  return <div className="min-h-screen bg-[#0a0a0a]" />
 }

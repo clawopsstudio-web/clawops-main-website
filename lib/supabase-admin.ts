@@ -48,7 +48,6 @@ export interface OnboardingRow {
   vps_instance_id: string | null
   dashboard_url: string | null
   stripe_session_id: string | null
-  composio_entity_created: boolean | null
   payment_status: string | null
   user_telegram_bot_token: string | null
   user_whatsapp_number: string | null

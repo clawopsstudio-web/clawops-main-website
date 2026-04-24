@@ -1,26 +1,21 @@
-import { NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { getUserIdFromRequest } from '@/lib/auth-server'
 
-export async function GET() {
-  const { userId, sessionId, getToken } = await auth()
+export async function GET(request: NextRequest) {
+  const userId = await getUserIdFromRequest(request)
 
   if (!userId) {
     return NextResponse.json({ authenticated: false, userId: null })
   }
 
-  const clerkToken = await getToken()
-
   return NextResponse.json({
     authenticated: true,
     userId,
-    sessionId,
-    // Pass Clerk token for any backend verification
-    token: clerkToken,
   })
 }
 
-export async function POST(request: Request) {
-  const { userId } = await auth()
+export async function POST(request: NextRequest) {
+  const userId = await getUserIdFromRequest(request)
 
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

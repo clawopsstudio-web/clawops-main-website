@@ -1,11 +1,20 @@
 'use client'
-import { useState } from 'react'
-import { useUser } from '@clerk/nextjs'
+import { useState, useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client'
 const TABS = ['Profile', 'Plan', 'Workspace', 'Billing', 'Danger']
 
 export default function SettingsPage() {
-  const { user, isLoaded } = useUser()
+  const [user, setUser] = useState<any>(null)
+  const [isLoaded, setIsLoaded] = useState(false)
   const [tab, setTab] = useState('Profile')
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user)
+      setIsLoaded(true)
+    })
+  }, [])
 
   return (
     <div className="p-6">
@@ -32,13 +41,13 @@ export default function SettingsPage() {
               <div className="bg-[#111] border border-white/7 rounded-xl p-5 space-y-4">
                 <div>
                   <p className="text-white/40 text-xs mb-1">Name</p>
-                  <p className="text-white">{user?.fullName ?? '—'}</p>
+                  <p className="text-white">{user?.user_metadata?.full_name ?? '—'}</p>
                 </div>
                 <div>
                   <p className="text-white/40 text-xs mb-1">Email</p>
-                  <p className="text-white/70 text-sm">{user?.primaryEmailAddress?.emailAddress ?? '—'}</p>
+                  <p className="text-white/70 text-sm">{user?.email ?? '—'}</p>
                 </div>
-                <p className="text-white/20 text-xs">Profile managed via Clerk. Edits must be made on Clerk's dashboard.</p>
+                <p className="text-white/20 text-xs">Update your profile information below.</p>
               </div>
             </div>
           )}

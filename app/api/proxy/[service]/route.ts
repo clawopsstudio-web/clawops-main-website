@@ -1,6 +1,6 @@
 // Proxy API route for iframing service pages inside the dashboard
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
+import { getUserIdFromRequest } from '@/lib/auth-server'
 
 const SERVICE_PORTS: Record<string, number> = {
   n8n: 5678,
@@ -14,12 +14,11 @@ async function proxyRequest(request: NextRequest, service: string, method: strin
     return new NextResponse('Service not found', { status: 404 })
   }
 
-  const { userId, getToken } = await auth()
+  const userId = await getUserIdFromRequest(request)
   if (!userId) {
     return new NextResponse('Unauthorized', { status: 401 })
   }
 
-  const clerkToken = await getToken()
   const url = new URL(request.url)
   const path = url.searchParams.get('path') || '/'
 
@@ -31,7 +30,6 @@ async function proxyRequest(request: NextRequest, service: string, method: strin
       method,
       headers: {
         'X-Forwarded-User-Id': userId,
-        'X-Clerk-Token': clerkToken || '',
         'X-Forwarded-Proto': 'https',
         'Host': 'app.clawops.studio',
         'Content-Type': request.headers.get('content-type') || 'application/json',

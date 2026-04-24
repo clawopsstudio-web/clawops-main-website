@@ -1,15 +1,42 @@
+/**
+ * app/api/user/status/route.ts
+ * Returns provisioning + session status for the current user
+ * Auth: Supabase session
+ */
 import { NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@supabase/supabase-js'
 
 export async function GET() {
-  const { userId } = await auth()
-  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  // Read user from session cookie
+  let userId: string | null = null
+  try {
+    const { createServerClient } = await import('@supabase/ssr')
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) { return null }, // cookies accessed via headers in middleware context
+          set(_n: string, _v: string, _o: any) {},
+          remove(_n: string, _o: any) {},
+        },
+      }
+    )
+    const { data } = await supabase.auth.getUser()
+    userId = data.user?.id ?? null
+  } catch {}
 
-  const supabase = createClient()
+  if (!userId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const supabaseAdmin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
 
   // Provisioning status
-  const { data: row } = await supabase
+  const { data: row } = await supabaseAdmin
     .from('onboarding_submissions')
     .select('status, vps_ip')
     .eq('clerk_user_id', userId)
@@ -19,25 +46,8 @@ export async function GET() {
     return NextResponse.json({ status: 'not_found' })
   }
 
-  // Agent count
-  const { count: agentCount } = await supabase
-    .from('agents')
-    .select('id', { count: 'exact' })
-    .eq('clerk_user_id', userId)
-
-  const today = new Date().toISOString().split('T')[0]
-  const { count: missionCount } = await supabase
-    .from('missions')
-    .select('id', { count: 'exact' })
-    .eq('clerk_user_id', userId)
-    .gte('started_at', today)
-
   return NextResponse.json({
     status: row.status === 'active' ? 'active' : 'provisioning',
-    activeAgents: agentCount ?? 0,
-    missionsToday: missionCount ?? 0,
-    hermesLive: false, // updated by polling in layout
-    connectedTools: 0,
     vpsIp: row.vps_ip ?? null,
   })
 }

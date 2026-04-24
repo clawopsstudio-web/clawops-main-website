@@ -6,7 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getConnectionStatus, upsertConnection } from '@/lib/composio'
-import { getAuth } from '@clerk/nextjs/server'
+import { getUserIdFromRequest } from '@/lib/auth-server'
 import { createClient } from '@supabase/supabase-js'
 
 function getSupabaseAdmin() {
@@ -18,35 +18,29 @@ function getSupabaseAdmin() {
 
 export async function GET(req: NextRequest) {
   try {
-    const { userId } = getAuth(req)
+    const userId = await getUserIdFromRequest(req)
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const { searchParams } = req.nextUrl
-    const clerkUserId = searchParams.get('clerkUserId')
     const appName = searchParams.get('appName')
 
-    if (!clerkUserId || !appName) {
+    if (!appName) {
       return NextResponse.json(
-        { error: 'clerkUserId and appName query params required' },
+        { error: 'appName query param required' },
         { status: 400 }
       )
     }
 
-    // Security: only allow checking own connections
-    if (userId !== clerkUserId) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-    }
-
-    const status = await getConnectionStatus(clerkUserId, appName)
+    const status = await getConnectionStatus(userId, appName)
 
     // Upsert into user_connections table
     try {
       const supabaseAdmin = getSupabaseAdmin()
       await upsertConnection({
         supabaseAdmin,
-        clerkUserId,
+        clerkUserId: userId,
         appName,
         connected: status.connected,
         connectedAccountId: status.connectedAccountId,
