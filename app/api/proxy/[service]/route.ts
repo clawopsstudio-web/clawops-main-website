@@ -6,6 +6,7 @@ const SERVICE_PORTS: Record<string, number> = {
   n8n: 5678,
   chrome: 5800,
   gateway: 18789,
+  dashboard: 9119,
 }
 
 async function proxyRequest(request: NextRequest, service: string, method: string) {
