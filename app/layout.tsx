@@ -5,7 +5,7 @@ import GlobalStarField from "@/components/ui/GlobalStarField";
 
 export const metadata: Metadata = {
   title: {
-    default: "ClawOps — The Agentic OS for Businesses That Scale",
+    default: "ClawOps — The OS your business runs on.",
     template: "%s | ClawOps",
   },
   description:

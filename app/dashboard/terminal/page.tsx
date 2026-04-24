@@ -2,8 +2,6 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-const ADMIN_USER_ID = '5a1f1a65-b620-46dc-879d-c67e69ba0c04'
-
 const QUICK_ACTIONS = [
   { cmd: 'systemctl status hermes', label: 'Hermes Status' },
   { cmd: 'systemctl restart hermes', label: 'Restart Hermes' },
@@ -21,12 +19,28 @@ export default function TerminalPage() {
   const [running, setRunning] = useState('')
   const [bannerDismissed, setBannerDismissed] = useState(false)
   const [activeTab, setActiveTab] = useState<'terminal' | 'mission-control'>('mission-control')
+  const [vpsUrl, setVpsUrl] = useState<string | null>(null)
+  const [vpsLoading, setVpsLoading] = useState(true)
 
   useEffect(() => {
     const supabase = createClient()
-    supabase.auth.getUser().then(({ data }) => {
+    supabase.auth.getUser().then(async ({ data }) => {
       setUserId(data.user?.id ?? '')
       setIsLoaded(true)
+      if (data.user?.id) {
+        const { data: row } = await supabase
+          .from('onboarding_submissions')
+          .select('dashboard_url, vps_ip')
+          .eq('clerk_user_id', data.user.id)
+          .eq('status', 'active')
+          .maybeSingle()
+        if (row?.dashboard_url) {
+          setVpsUrl(row.dashboard_url)
+        } else if (row?.vps_ip) {
+          setVpsUrl(`http://${row.vps_ip}:9119`)
+        }
+      }
+      setVpsLoading(false)
     })
   }, [])
 
@@ -38,7 +52,7 @@ export default function TerminalPage() {
       const res = await fetch('/api/ssh/exec', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cmd })
+        body: JSON.stringify({ cmd }),
       })
       const data = await res.json()
       setOutput(data.output || data.error || 'Done.')
@@ -53,6 +67,7 @@ export default function TerminalPage() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-44px)]">
+
       {/* Warning banner */}
       {!bannerDismissed && (
         <div className="flex items-center gap-3 bg-amber-950/40 border border-amber-500/30 rounded-xl mx-4 mt-4 px-4 py-3">
@@ -93,19 +108,32 @@ export default function TerminalPage() {
         </button>
       </div>
 
-      {/* Mission Control — Hermes Dashboard iframe */}
+      {/* Mission Control tab */}
       {activeTab === 'mission-control' && (
-        <div className="flex-1 px-4 pb-4 min-h-0">
-          <iframe
-            src={`${process.env.NEXT_PUBLIC_HERMES_DASHBOARD_URL ?? 'http://178.238.232.52:9119'}`}
-            className="w-full h-full rounded-xl border border-white/10 bg-black"
-            title="Hermes Mission Control"
-            allow="clipboard-write"
-          />
+        <div className="flex-1 px-4 pb-4 min-h-0 flex flex-col">
+          {vpsLoading && (
+            <div className="flex-1 flex items-center justify-center">
+              <p className="text-white/40 text-sm">Loading Mission Control...</p>
+            </div>
+          )}
+          {!vpsLoading && !vpsUrl && (
+            <div className="flex-1 flex flex-col items-center justify-center">
+              <p className="text-white/60 text-sm font-medium mb-2">Mission Control not configured</p>
+              <p className="text-white/30 text-xs">Your VPS is being provisioned. Check back in ~20 minutes.</p>
+            </div>
+          )}
+          {!vpsLoading && vpsUrl && (
+            <iframe
+              src={vpsUrl}
+              className="w-full h-full rounded-xl border border-white/10 bg-black"
+              title="Hermes Mission Control"
+              allow="clipboard-write"
+            />
+          )}
         </div>
       )}
 
-      {/* Quick Actions terminal */}
+      {/* Quick Actions tab */}
       {activeTab === 'terminal' && (
         <div className="flex-1 px-4 pb-4 overflow-y-auto space-y-4">
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">

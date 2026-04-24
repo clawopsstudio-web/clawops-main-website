@@ -51,6 +51,7 @@ export async function POST(req: NextRequest) {
       plan: 'enterprise',
       status: 'active',
       dashboard_url: 'https://demo.app.clawops.studio',
+      vps_ip: '178.238.232.52',
       paid_at: new Date().toISOString(),
       provisioned_at: new Date().toISOString(),
     }
