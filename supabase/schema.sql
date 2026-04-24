@@ -338,18 +338,6 @@ CREATE TABLE IF NOT EXISTS public.agents (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE TABLE IF NOT EXISTS public.missions (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  agent_id UUID REFERENCES agents(id),
-  title TEXT,
-  prompt TEXT,
-  output TEXT,
-  status TEXT DEFAULT 'running',
-  started_at TIMESTAMPTZ DEFAULT now(),
-  completed_at TIMESTAMPTZ,
-  created_at TIMESTAMPTZ DEFAULT now()
-);
-
 CREATE TABLE IF NOT EXISTS public.logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   level TEXT DEFAULT 'info',
@@ -379,7 +367,7 @@ CREATE TABLE IF NOT EXISTS public.installed_mcp_servers (
 
 CREATE TABLE IF NOT EXISTS public.agents (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  clerk_user_id TEXT NOT NULL,
+  user_id TEXT NOT NULL,
   name TEXT NOT NULL,
   role TEXT,
   status TEXT DEFAULT 'idle',
@@ -387,16 +375,28 @@ CREATE TABLE IF NOT EXISTS public.agents (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+ALTER TABLE public.agents ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users manage own agents" ON public.agents
+  FOR ALL USING (auth.uid()::TEXT = user_id);
+
 CREATE TABLE IF NOT EXISTS public.missions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  agent_id UUID REFERENCES public.agents(id) ON DELETE CASCADE,
+  user_id TEXT NOT NULL,
+  agent_id UUID REFERENCES public.agents(id) ON DELETE SET NULL,
   title TEXT,
   prompt TEXT,
   output TEXT,
-  status TEXT DEFAULT 'running',
-  started_at TIMESTAMZ DEFAULT now(),
-  completed_at TIMESTAMPTZ
+  status TEXT DEFAULT 'completed',
+  started_at TIMESTAMPTZ DEFAULT now(),
+  completed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT now()
 );
+
+ALTER TABLE public.missions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users manage own missions" ON public.missions
+  FOR ALL USING (auth.uid()::TEXT = user_id);
 
 CREATE TABLE IF NOT EXISTS public.logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
