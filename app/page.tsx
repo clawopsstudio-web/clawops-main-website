@@ -1,11 +1,11 @@
-import Navbar from "@/components/ui/Navbar"
+import Navigation from "./components/Navigation"
 import Footer from "@/components/sections/Footer"
 import LandingClient from "./LandingClient"
 
 export default function HomePage() {
   return (
     <>
-      <Navbar />
+      <Navigation />
       <LandingClient />
       <Footer />
     </>

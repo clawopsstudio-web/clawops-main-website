@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       clerk_user_id,
       plan,
     },
-    success_url: `${appUrl}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
+    success_url: `${appUrl}/provisioning?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${appUrl}/start?step=5`,
   })
 

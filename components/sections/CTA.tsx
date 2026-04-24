@@ -62,13 +62,13 @@ export default function CTA() {
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="#cta"
+              href="/auth/signup"
               className="group relative px-8 py-4 rounded-xl font-bold text-[#0a0a0a] text-sm tracking-wide transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(0,212,255,0.3)]"
               style={{
                 background: "linear-gradient(135deg, #e8ff47, #e8ff47)",
               }}
             >
-              Book a Demo — Free for 14 Days
+              Start Free →
               <span className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ boxShadow: "0 0 40px rgba(0,212,255,0.35)" }} />
             </a>
             <a

@@ -261,7 +261,7 @@ export default function HeroNew() {
                 transition={{ duration: 0.6 }}
                 className="inline-flex items-center gap-2 mx-auto md:mx-0 bg-[rgba(0,212,255,0.08)] border border-[rgba(0,212,255,0.2)] text-[#e8ff47] px-4 py-1.5 rounded-full text-xs font-medium mb-8">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
-                AGENTIC OS — EARLY ACCESS
+                AI OS — EARLY ACCESS
               </motion.div>
 
               <motion.h1
@@ -271,11 +271,7 @@ export default function HeroNew() {
                 transition={{ duration: 0.7, delay: 0.1 }}
                 className="text-[clamp(2.5rem,7vw,5rem)] font-black leading-[1.05] tracking-[-0.03em] mb-6"
               >
-                <span className="text-white">The Agentic OS.</span>
-                <br />
-                <span className="bg-gradient-to-r from-[#e8ff47] to-[#d4eb3a] bg-clip-text text-transparent">
-                  Your AI workforce runs on.
-                </span>
+                <span className="text-white">The OS your business runs on.</span>
               </motion.h1>
 
               <motion.p
@@ -284,9 +280,7 @@ export default function HeroNew() {
                 style={{ y: subtextY }}
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="text-lg md:text-xl text-[rgba(255,255,255,0.5)] mb-10 max-w-xl leading-relaxed">
-                Deploy a team of AI agents that handle
-                sales, marketing, research, and ops —
-                autonomously, 24/7. No code. No hiring.
+                One workspace. Multiple agents. Working while you sleep.
               </motion.p>
 
               <motion.div

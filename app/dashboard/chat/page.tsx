@@ -3,6 +3,14 @@
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
+const ADMIN_USER_ID = '5a1f1a65-b620-46dc-879d-c67e69ba0c04'
+
+const SUGGESTED_PROMPTS_ADMIN = [
+  'Ryan, find me 10 promising SaaS startups from Product Hunt this week',
+  "Arjun, research our top 3 competitors' pricing strategies",
+  'Helena, show me any unresolved support tickets from today',
+]
+
 interface Agent { id: string; name: string; role: string }
 interface Message { id: string; agent_name: string; role: 'user' | 'agent'; content: string; created_at: string }
 
@@ -13,16 +21,21 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
+  const [userId, setUserId] = useState<string>('')
   const messagesEnd = useRef<HTMLDivElement>(null)
 
-  // Load agents
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setUserId(data.user?.id ?? '')
+    })
+  }, [])
+
   useEffect(() => {
     supabase.from('agents').select('id, name, role').then(({ data }) => {
       if (data) setAgents(data)
     })
   }, [])
 
-  // Load messages for active agent
   useEffect(() => {
     let q = supabase.from('missions').select('id, title, status, created_at').order('created_at', { ascending: false }).limit(20)
     if (activeAgent !== 'all') q = q.eq('agent_id', activeAgent)
@@ -39,7 +52,6 @@ export default function ChatPage() {
     const text = input.trim()
     setInput('')
     setSending(true)
-    // Optimistic add
     const tempId = Date.now().toString()
     setMessages(prev => [...prev, { id: tempId, agent_name: 'You', role: 'user', content: text, created_at: new Date().toISOString() }])
 
@@ -66,6 +78,9 @@ export default function ChatPage() {
       messagesEnd.current?.scrollIntoView()
     }
   }
+
+  const isAdmin = userId === ADMIN_USER_ID
+  const suggestedPrompts = isAdmin ? SUGGESTED_PROMPTS_ADMIN : []
 
   return (
     <div className="flex h-[calc(100vh-44px)]">
@@ -110,9 +125,31 @@ export default function ChatPage() {
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {messages.length === 0 && (
-            <div className="text-center mt-20 text-white/20 text-sm">
-              <p>No messages yet.</p>
-              <p className="text-xs mt-1">Start a conversation with your agents.</p>
+            <div className="text-center mt-12">
+              {isAdmin && suggestedPrompts.length > 0 ? (
+                <div className="space-y-4">
+                  <div className="text-white/20 text-sm">
+                    <p>Your team is ready. What would you like to do?</p>
+                    <p className="text-xs mt-1 text-white/15">Pick a prompt below or type your own</p>
+                  </div>
+                  <div className="flex flex-col gap-2 max-w-md mx-auto">
+                    {suggestedPrompts.map((prompt, i) => (
+                      <button
+                        key={i}
+                        onClick={() => { setInput(prompt); setActiveAgent('all') }}
+                        className="text-left px-4 py-3 rounded-xl bg-white/5 border border-white/8 text-white/60 text-xs hover:bg-white/10 hover:text-white/80 hover:border-white/15 transition-all"
+                      >
+                        {prompt}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center mt-20 text-white/20 text-sm">
+                  <p>No messages yet.</p>
+                  <p className="text-xs mt-1">Start a conversation with your agents.</p>
+                </div>
+              )}
             </div>
           )}
           {messages.map(msg => (

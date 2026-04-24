@@ -5,47 +5,60 @@ import Navigation from '../components/Navigation'
 import Footer from '../../components/sections/Footer'
 import Link from 'next/link'
 
-type Mode = 'observe' | 'assist' | 'autopilot'
+type Mode = 'gentle' | 'steady' | 'intense'
 
-const MODES: { id: Mode; label: string; sub: string }[] = [
-  { id: 'observe', label: 'OBSERVE', sub: 'Agents monitor and report only' },
-  { id: 'assist', label: 'ASSIST', sub: 'Agents draft, you approve' },
-  { id: 'autopilot', label: 'AUTOPILOT', sub: 'Agents act fully autonomously' },
+const MODES: { id: Mode; label: string; sub: string; desc: string }[] = [
+  {
+    id: 'gentle',
+    label: 'Gentle',
+    sub: 'Conservative actions · Frequent confirmations',
+    desc: 'Agents move cautiously. Every significant action — sending an email, updating a record, posting content — requires your approval first. Ideal when you want full visibility and control, especially when starting out.',
+  },
+  {
+    id: 'steady',
+    label: 'Steady',
+    sub: 'Balanced automation · Moderate confirmations',
+    desc: 'Agents handle routine work autonomously but pause for complex decisions. Good for daily ops — research, data enrichment, ticket drafting all happen without you. Anything unusual gets flagged.',
+  },
+  {
+    id: 'intense',
+    label: 'Intense',
+    sub: 'Maximum automation · Minimal friction',
+    desc: 'Agents act fast and move without stopping. Approves routine tasks, executes campaigns, handles support tickets, sends outreach — all without touching your attention. Best for experienced users who trust their agent setup.',
+  },
 ]
 
-const FEEDS: Record<Mode, { text: string; items: { agent: string; color: string; message: string; time: string }[] }> = {
-  observe: {
-    text: 'Agents watch and report — no action taken without your say.',
+const FEEDS: Record<Mode, { items: { agent: string; color: string; message: string; time: string }[] }> = {
+  gentle: {
     items: [
-      { agent: 'REX', color: '#34d399', message: 'Found 3 competitor price changes. Report sent to Slack.', time: '2m ago' },
-      { agent: 'ATLAS', color: '#e8ff47', message: 'Spotted 8 new leads in your ICP segment. Logged to CRM.', time: '18m ago' },
-      { agent: 'NOVA', color: '#a78bfa', message: 'Brand mention spike detected on LinkedIn (+340%). Summary queued.', time: '1h ago' },
-      { agent: 'MAYA', color: '#22d3ee', message: 'Invoice #1049 is 14 days overdue. Flagged for review.', time: '2h ago' },
+      { agent: 'Ryan', color: '#e8ff47', message: 'Drafted outreach to 15 prospects. Awaiting your approval to send.', time: 'Just now' },
+      { agent: 'Helena', color: '#f59e0b', message: '3 support tickets auto-resolved. 1 flagged — needs your review.', time: '5m ago' },
+      { agent: 'Arjun', color: '#10b981', message: 'Competitor research complete. Report ready — 8 new findings.', time: '22m ago' },
+      { agent: 'Ryan', color: '#e8ff47', message: 'Drafted follow-up sequence for 20 leads. Confirm to send.', time: '1h ago' },
     ],
   },
-  assist: {
-    text: 'Agents draft — you review and approve before anything goes out.',
+  steady: {
     items: [
-      { agent: 'ATLAS', color: '#e8ff47', message: 'Drafted outreach to 12 warm leads. 3 awaiting your approval.', time: 'Just now' },
-      { agent: 'ZARA', color: '#fb923c', message: 'Drafted 6 customer responses. 2 flagged for your review.', time: '5m ago' },
-      { agent: 'NOVA', color: '#a78bfa', message: 'Scheduled 5 LinkedIn posts for next week. Ready to publish.', time: '22m ago' },
-      { agent: 'MARCUS', color: '#60a5fa', message: 'Weekly ops report ready. 3 tasks need your sign-off.', time: '1h ago' },
+      { agent: 'Arjun', color: '#10b981', message: 'Scraped 40 competitor landing pages. Data logged to Notion.', time: 'Just now' },
+      { agent: 'Ryan', color: '#e8ff47', message: 'Sent 30 outreach emails. 4 positive replies. CRM updated.', time: '8m ago' },
+      { agent: 'Helena', color: '#f59e0b', message: 'Resolved 12 tickets automatically. 2 escalated to your inbox.', time: '38m ago' },
+      { agent: 'Arjun', color: '#10b981', message: 'Daily brief generated and sent to Slack. 15 intel items.', time: '1h ago' },
     ],
   },
-  autopilot: {
-    text: 'Agents act — everything runs without touching your attention.',
+  intense: {
     items: [
-      { agent: 'NOVA', color: '#a78bfa', message: 'Published 3 posts to LinkedIn, Twitter, and Instagram.', time: 'Just now' },
-      { agent: 'ATLAS', color: '#e8ff47', message: 'Contacted 47 leads. 3 booked meetings. CRM updated.', time: '12m ago' },
-      { agent: 'ZARA', color: '#fb923c', message: 'Resolved 12 support tickets. 1 escalated to your inbox.', time: '38m ago' },
-      { agent: 'REX', color: '#34d399', message: 'Delivered morning briefing to Slack. 12 intel items.', time: '1h ago' },
+      { agent: 'Ryan', color: '#e8ff47', message: 'Ran 3 outreach campaigns. 47 emails sent. 6 meetings booked.', time: 'Just now' },
+      { agent: 'Helena', color: '#f59e0b', message: 'Auto-resolved 28 tickets. 3 edge cases escalated.', time: '12m ago' },
+      { agent: 'Arjun', color: '#10b981', message: 'Scraped + enriched 120 leads. All added to CRM.', time: '45m ago' },
+      { agent: 'Ryan', color: '#e8ff47', message: 'Posted to LinkedIn, Twitter, Instagram. Engagement tracked.', time: '2h ago' },
     ],
   },
 }
 
 export default function AutopilotPage() {
-  const [mode, setMode] = useState<Mode>('autopilot')
+  const [mode, setMode] = useState<Mode>('intense')
   const feed = FEEDS[mode]
+  const activeMode = MODES.find(m => m.id === mode)!
 
   return (
     <>
@@ -59,25 +72,24 @@ export default function AutopilotPage() {
               AUTOPILOT
             </p>
             <h1
-              className="text-5xl md:text-7xl font-black text-white mb-3 leading-none tracking-tight"
+              className="text-5xl md:text-7xl font-black text-white mb-6 leading-none tracking-tight"
               style={{ fontFamily: 'var(--font-cabinet, sans-serif)', letterSpacing: '-0.03em' }}
             >
-              SET THE MISSION.
+              Set the goal.
             </h1>
             <h2
-              className="text-4xl md:text-6xl font-black mb-8 leading-none tracking-tight"
+              className="text-4xl md:text-6xl font-black mb-10 leading-none tracking-tight"
               style={{ fontFamily: 'var(--font-cabinet, sans-serif)', letterSpacing: '-0.03em', color: '#e8ff47' }}
             >
-              YOUR AGENTS HANDLE THE REST.
+              Go to sleep.
             </h2>
             <p className="text-white/40 text-base max-w-md mx-auto leading-relaxed">
-              Tell ClawOps what you need done.<br />
-              Set the intensity. Go run your business.
+              Tell your agents what you need. Choose how much autonomy to give them. They work while you rest.
             </p>
           </div>
 
           {/* Intensity selector */}
-          <div className="px-6 pb-20 max-w-3xl mx-auto">
+          <div className="px-6 pb-12 max-w-3xl mx-auto">
             <div className="grid grid-cols-3 gap-3">
               {MODES.map(m => (
                 <button
@@ -104,11 +116,18 @@ export default function AutopilotPage() {
             </div>
           </div>
 
+          {/* Mode description */}
+          <div className="px-6 pb-16 max-w-2xl mx-auto text-center">
+            <p className="text-white/60 text-sm leading-relaxed">{activeMode.desc}</p>
+          </div>
+
           {/* Live example feed */}
           <div className="border-y border-white/5 py-20 px-6">
             <div className="max-w-3xl mx-auto">
               <div className="flex items-center justify-between mb-8">
-                <p className="text-white/40 text-sm">{feed.text}</p>
+                <p className="text-white/40 text-sm">
+                  Sample activity on <strong className="text-white">{activeMode.label}</strong> mode
+                </p>
                 <div className="flex items-center gap-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                   <span className="text-[10px] text-white/30 font-mono uppercase tracking-wider">Live</span>
@@ -144,16 +163,16 @@ export default function AutopilotPage() {
             <div className="max-w-xl mx-auto">
               <h2 className="text-3xl font-black text-white mb-4 leading-none"
                 style={{ fontFamily: 'var(--font-cabinet, sans-serif)' }}>
-                Ready to activate Autopilot?
+                Ready to set the intensity?
               </h2>
               <p className="text-white/40 mb-8 text-sm">
                 Your OS goes live within 2 hours of signup.
               </p>
               <Link
-                href="/start"
+                href="/auth/signup"
                 className="inline-block px-10 py-4 bg-[#e8ff47] hover:bg-[#d4eb3a] text-[#0a0a0a] font-bold rounded-xl transition-colors"
               >
-                Activate Autopilot →
+                Start Your OS →
               </Link>
             </div>
           </div>

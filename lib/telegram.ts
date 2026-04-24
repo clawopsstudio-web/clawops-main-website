@@ -4,14 +4,17 @@
  * Alerts sent at key pipeline events.
  */
 
+// Default to Pulkit's Telegram chat ID for admin alerts
+const DEFAULT_CHAT_ID = process.env.TELEGRAM_CHAT_ID ?? '381136631'
+
 function envOpt(key: string): string | undefined {
   return process.env[key]
 }
 
 async function send(html: string): Promise<void> {
   const botToken = envOpt('TELEGRAM_BOT_TOKEN')
-  const chatId = envOpt('TELEGRAM_CHAT_ID')
-  if (!botToken || !chatId) {
+  const chatId = envOpt('TELEGRAM_CHAT_ID') ?? DEFAULT_CHAT_ID
+  if (!botToken) {
     console.warn('[Telegram] TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not set — skipping alert')
     return
   }

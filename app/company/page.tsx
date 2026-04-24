@@ -1,11 +1,11 @@
-import Navbar from "@/components/ui/Navbar";
-import Footer from "@/components/sections/Footer";
+import Navigation from "../components/Navigation";
+import Footer from "../../components/sections/Footer";
 import CompanyPageClient from "./CompanyPageClient";
 
 export default function CompanyPage() {
   return (
     <>
-      <Navbar />
+      <Navigation />
       <CompanyPageClient />
       <Footer />
     </>

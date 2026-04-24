@@ -46,6 +46,7 @@ export interface OnboardingRow {
   composio_entity_id: string | null
   composio_entity_created: boolean | null
   vps_instance_id: string | null
+  vps_ip: string | null
   dashboard_url: string | null
   stripe_session_id: string | null
   payment_status: string | null

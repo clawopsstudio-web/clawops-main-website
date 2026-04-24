@@ -7,7 +7,7 @@ const MONTHLY_PLANS = [
   {
     name: 'Personal',
     price: 49,
-    description: '6 vCPU · 12GB RAM · 100GB NVMe',
+    description: 'Perfect for solo operators',
     highlight: false,
     badge: null,
     features: [
@@ -21,7 +21,7 @@ const MONTHLY_PLANS = [
   {
     name: 'Team',
     price: 149,
-    description: '8 vCPU · 24GB RAM · 200GB NVMe',
+    description: 'Growing teams',
     highlight: true,
     badge: 'MOST POPULAR',
     features: [
@@ -36,11 +36,26 @@ const MONTHLY_PLANS = [
   {
     name: 'Business',
     price: 299,
-    description: '12 vCPU · 48GB RAM · 250GB NVMe',
+    description: 'Established businesses · Claude API key included',
     highlight: false,
     badge: null,
     features: [
       '1 agent workspace (unlimited)',
+      '200,000 tool calls/mo',
+      '850+ app integrations',
+      'All platforms + GoHighLevel + API access',
+      'Web scraping included',
+      'Dedicated support (4hr SLA)',
+    ],
+  },
+  {
+    name: 'Enterprise',
+    price: 349,
+    description: 'Large organizations · 20 seats, same as Business',
+    highlight: false,
+    badge: null,
+    features: [
+      '20 agent workspaces',
       '200,000 tool calls/mo',
       '850+ app integrations',
       'All platforms + GoHighLevel + API access',
@@ -54,6 +69,7 @@ const ANNUAL_PLANS = [
   { ...MONTHLY_PLANS[0], price: 39 },
   { ...MONTHLY_PLANS[1], price: 119 },
   { ...MONTHLY_PLANS[2], price: 239 },
+  { ...MONTHLY_PLANS[3], price: 279 },
 ]
 
 const ADDON_PLANS = [
@@ -103,16 +119,16 @@ const FAQS = [
 ]
 
 const COMPARISON_ROWS = [
-  { feature: 'Agent Workspaces', values: ['Up to 3', 'Up to 5', 'Unlimited'] },
-  { feature: 'Tool Calls / mo', values: ['20,000', '200,000', '200,000'] },
-  { feature: 'App Integrations', values: ['850+', '850+', '850+'] },
-  { feature: 'Telegram + WhatsApp', values: ['✓', '✓', '✓'] },
-  { feature: 'Slack + Discord', values: ['—', '✓', '✓'] },
-  { feature: 'Web Scraping', values: ['—', '✓', '✓'] },
-  { feature: 'GoHighLevel (GHL)', values: ['—', '—', '✓'] },
-  { feature: 'API Access', values: ['—', '—', '✓'] },
-  { feature: 'Support', values: ['Email 48hr', 'Priority 12hr', 'Dedicated 4hr'] },
-  { feature: 'Claude API Add-on', values: ['Available', 'Available', 'Available'] },
+  { feature: 'Agent Workspaces', values: ['Up to 3', 'Up to 5', 'Unlimited', '20 seats'] },
+  { feature: 'Tool Calls / mo', values: ['20,000', '200,000', '200,000', '200,000'] },
+  { feature: 'App Integrations', values: ['850+', '850+', '850+', '850+'] },
+  { feature: 'Telegram + WhatsApp', values: ['✓', '✓', '✓', '✓'] },
+  { feature: 'Slack + Discord', values: ['—', '✓', '✓', '✓'] },
+  { feature: 'Web Scraping', values: ['—', '✓', '✓', '✓'] },
+  { feature: 'GoHighLevel (GHL)', values: ['—', '—', '✓', '✓'] },
+  { feature: 'API Access', values: ['—', '—', '✓', '✓'] },
+  { feature: 'Support', values: ['Email 48hr', 'Priority 12hr', 'Dedicated 4hr', 'Dedicated 4hr'] },
+  { feature: 'Claude API Key', values: ['—', '—', 'Included', 'Included'] },
 ]
 
 export default function AmpereStylePricing() {
@@ -163,7 +179,7 @@ export default function AmpereStylePricing() {
 
       {/* Pricing cards */}
       <div className="px-6 pb-16 max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {plans.map((plan) => (
             <div
               key={plan.name}

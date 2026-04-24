@@ -6,9 +6,9 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 
 const PLANS: Record<string, { name: string; price: number; color: string; features: string[] }> = {
-  starter: { name: 'Starter', price: 49, color: '#e8ff47', features: ['2 vCPU, 4GB RAM', '1 AI Agent Workspace', 'Gemma 4 (local)', '500+ Integrations'] },
-  pro: { name: 'Pro', price: 99, color: '#e8ff47', features: ['4 vCPU, 8GB RAM', '3 AI Agent Workspaces', 'Gemma 4 2B + 7B', 'Unlimited automations'] },
-  business: { name: 'Business', price: 149, color: '#10b981', features: ['6 vCPU, 12GB RAM', 'Unlimited AI Workspaces', 'Any local model', 'White-label capability'] },
+  starter: { name: 'Starter', price: 49, color: '#e8ff47', features: ['2 vCPU, 4GB RAM', '1 AI Agent Workspace', 'Cloud AI inference', '500+ Integrations'] },
+  pro: { name: 'Pro', price: 99, color: '#e8ff47', features: ['4 vCPU, 8GB RAM', '3 AI Agent Workspaces', 'Cloud AI + API access', 'Unlimited automations'] },
+  business: { name: 'Business', price: 149, color: '#10b981', features: ['6 vCPU, 12GB RAM', 'Unlimited AI Workspaces', 'Cloud AI + API access', 'White-label capability'] },
 }
 
 function Spinner() {

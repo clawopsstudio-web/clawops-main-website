@@ -53,7 +53,7 @@ const INTEGRATIONS = [
     color: "#e8ff47",
     items: [
       { name: "ClawOps Gateway", desc: "Central hub for managing all AI workers.", icon: "O" },
-      { name: "Ollama (Local)", desc: "Run Gemma 4 2B and other models on managed infrastructure.", icon: "L" },
+      { name: "Cloud AI", desc: "Access Claude, GPT-4, Gemini and other cloud models via API.", icon: "L" },
       { name: "Supabase", desc: "Database, auth, and real-time subscriptions.", icon: "S" },
       { name: "Contabo VPS", desc: "Fully managed infrastructure provisioning and management.", icon: "V" },
       { name: "CLI Access", desc: "SSH access, manage workers from terminal.", icon: "C" },

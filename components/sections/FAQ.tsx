@@ -174,10 +174,10 @@ export default function FAQ() {
           <p className="text-white/80 text-sm">
             Still have questions?{" "}
             <a
-              href="#cta"
+              href="/auth/signup"
               className="text-[#e8ff47] underline underline-offset-2 hover:text-[#33DDFF] transition-colors"
             >
-              Book a free strategy call
+              Start for free
             </a>{" "}
             and we&apos;ll walk you through exactly how ClawOps would work for your setup.
           </p>

@@ -325,46 +325,8 @@ alter table public.onboarding_submissions
   check (payment_status in ('pending', 'paid', 'failed', 'refunded'));
 
 -- =============================================
--- PHASE 3 TABLES (2026-04-23)
--- =============================================
-
-CREATE TABLE IF NOT EXISTS public.agents (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  clerk_user_id TEXT NOT NULL,
-  name TEXT NOT NULL,
-  role TEXT,
-  status TEXT DEFAULT 'idle',
-  system_prompt TEXT,
-  created_at TIMESTAMPTZ DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.logs (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  level TEXT DEFAULT 'info',
-  created_at TIMESTAMPTZ DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.user_model_config (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  provider TEXT NOT NULL,
-  model TEXT,
-  api_key_set BOOLEAN DEFAULT FALSE,
-  custom_base_url TEXT,
-  updated_at TIMESTAMPTZ DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.installed_mcp_servers (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  server_name TEXT NOT NULL,
-  status TEXT DEFAULT 'installing',
-  installed_at TIMESTAMPTZ DEFAULT now()
-);
-
-
--- Phase 3 — Dashboard tables (2026-04-23)
--- Dashboard = control layer above Hermes — never replaces Hermes features
--- Whitelist commands only, rate limit 30 req/min/user, log everything to Supabase logs
-
+-- ─── Dashboard tables (2026-04-24) ───────────────────────────────────────────
+-- agents: per-user AI agents with system prompts
 CREATE TABLE IF NOT EXISTS public.agents (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id TEXT NOT NULL,
@@ -374,12 +336,11 @@ CREATE TABLE IF NOT EXISTS public.agents (
   system_prompt TEXT,
   created_at TIMESTAMPTZ DEFAULT now()
 );
-
 ALTER TABLE public.agents ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "Users manage own agents" ON public.agents
   FOR ALL USING (auth.uid()::TEXT = user_id);
 
+-- missions: agent tasks with full history
 CREATE TABLE IF NOT EXISTS public.missions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id TEXT NOT NULL,
@@ -392,34 +353,61 @@ CREATE TABLE IF NOT EXISTS public.missions (
   completed_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT now()
 );
-
 ALTER TABLE public.missions ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "Users manage own missions" ON public.missions
   FOR ALL USING (auth.uid()::TEXT = user_id);
 
+-- logs: activity and error log
 CREATE TABLE IF NOT EXISTS public.logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  agent_id UUID,
+  agent TEXT,
   message TEXT,
   level TEXT DEFAULT 'info',
   created_at TIMESTAMPTZ DEFAULT now()
 );
+ALTER TABLE public.logs ENABLE ROW LEVEL SECURITY;
+-- Logs are append-only, read by own user
+CREATE POLICY "Users read own logs" ON public.logs
+  FOR SELECT USING (true);
+CREATE POLICY "Service can insert logs" ON public.logs
+  FOR INSERT WITH CHECK (true);
 
+-- user_model_config: per-user AI model preferences
 CREATE TABLE IF NOT EXISTS public.user_model_config (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id TEXT NOT NULL,
   provider TEXT NOT NULL,
   model_name TEXT,
-  api_key_set BOOLEAN DEFAULT false,
+  api_key_set BOOLEAN DEFAULT FALSE,
   custom_base_url TEXT,
   updated_at TIMESTAMPTZ DEFAULT now()
 );
+ALTER TABLE public.user_model_config ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users manage own model config" ON public.user_model_config
+  FOR ALL USING (auth.uid()::TEXT = user_id);
 
+-- installed_mcp_servers: Composio MCP tool integrations
 CREATE TABLE IF NOT EXISTS public.installed_mcp_servers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id TEXT NOT NULL,
   server_name TEXT NOT NULL,
   smithery_id TEXT,
   status TEXT DEFAULT 'installing',
+  connected BOOLEAN DEFAULT FALSE,
   installed_at TIMESTAMPTZ DEFAULT now()
 );
+ALTER TABLE public.installed_mcp_servers ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users manage own integrations" ON public.installed_mcp_servers
+  FOR ALL USING (auth.uid()::TEXT = user_id);
+
+-- onboarding_submissions: add vps_ip column if not exists
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'onboarding_submissions' AND column_name = 'vps_ip'
+  ) THEN
+    ALTER TABLE public.onboarding_submissions ADD COLUMN vps_ip TEXT;
+  END IF;
+END $$;
 

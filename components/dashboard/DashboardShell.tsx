@@ -63,14 +63,27 @@ async function handleLogout() {
   }
 }
 
-export default function DashboardShell({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const router = useRouter();
-  const userId = extractUserId(pathname);
+interface DashboardShellProps {
+  children?: React.ReactNode
+  /** Slug from subdomain (e.g. 'demo' from demo.app.clawops.studio). */
+  userSlug?: string
+}
 
-  // Build full nav list — inject userId into service links
+export default function DashboardShell({ children, userSlug }: DashboardShellProps) {
+  const pathname = usePathname()
+  const router = useRouter()
+  const userId = extractUserId(pathname)
+
+  // Determine the base path: workspace subdomain or /dashboard
+  const baseHref = userSlug
+    ? `https://${userSlug}.app.clawops.studio`
+    : userId
+      ? `/dashboard/${userId}`
+      : '/dashboard'
+
+  // Build full nav list
   const overviewItem: NavItemDef = {
-    href: userId ? `/dashboard/${userId}` : '/dashboard',
+    href: baseHref,
     label: 'Overview',
     icon: LayoutDashboard,
     exact: true,
@@ -80,10 +93,10 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   const allItems: NavItemDef[] = [
     overviewItem,
     ...STATIC_NAV_ITEMS,
-    // Service links only when userId is known
-    ...(userId
+    // Service links only when we have a workspace slug or userId
+    ...((userSlug || userId)
       ? Object.entries(SERVICE_LABELS).map(([key, info]) => ({
-          href: `/dashboard/${userId}/${key}`,
+          href: `${baseHref}/${key}`,
           label: info.label,
           icon: info.icon,
           section: 'services',

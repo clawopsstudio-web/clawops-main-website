@@ -26,8 +26,8 @@ function envOpt(key: string): string | undefined {
 
 async function alertPulkit(html: string) {
   const botToken = envOpt('TELEGRAM_BOT_TOKEN')
-  const chatId = envOpt('TELEGRAM_CHAT_ID')
-  if (!botToken || !chatId) return
+  const chatId = envOpt('TELEGRAM_CHAT_ID') ?? '381136631'
+  if (!botToken) return
   try {
     await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
       method: 'POST',

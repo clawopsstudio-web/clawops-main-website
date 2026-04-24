@@ -39,13 +39,13 @@ export default function Navigation() {
         {/* CTA */}
         <div className="flex items-center gap-3">
           <a href="/auth/login" className="hidden md:block text-white/60 hover:text-white text-sm">
-            Sign in
+            Log In
           </a>
           <a
-            href="/start?plan=personal"
+            href="/auth/signup"
             className="px-4 py-2 bg-[#e8ff47] text-[#0a0a0a] font-semibold text-sm rounded-xl hover:bg-[#e8ff47]/90 transition-colors"
           >
-            Start for $49 →
+            Start Your OS →
           </a>
 
           {/* Mobile menu button */}
@@ -78,7 +78,7 @@ export default function Navigation() {
               </a>
             ))}
             <a href="/auth/login" className="block text-white/60 py-2 text-sm">
-              Sign in
+              Log In
             </a>
           </motion.div>
         )}
