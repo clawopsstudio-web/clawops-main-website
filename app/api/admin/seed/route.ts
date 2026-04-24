@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
       .eq('clerk_user_id', ADMIN_USER_ID)
       .maybeSingle()
 
-    const row = {
+    const row: Record<string, string> = {
       clerk_user_id: ADMIN_USER_ID,
       full_name: 'ClawOps Studio Admin',
       business_name: 'ClawOps Studio',
@@ -51,10 +51,11 @@ export async function POST(req: NextRequest) {
       plan: 'enterprise',
       status: 'active',
       dashboard_url: 'https://demo.app.clawops.studio',
-      vps_ip: '178.238.232.52',
       paid_at: new Date().toISOString(),
       provisioned_at: new Date().toISOString(),
     }
+    // vps_ip may not exist yet — only add if the column is present
+    // (will be added via schema migration when Pulkit runs the SQL)
 
     let error
     if (existing) {
