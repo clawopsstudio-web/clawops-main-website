@@ -5,7 +5,11 @@ const isPublicRoute = createRouteMatcher([
   '/',
   '/auth/login(.*)',
   '/auth/signup(.*)',
-  '/api/webhook(.*)',
+  '/api/webhooks/stripe(.*)',   // Stripe webhook — no auth
+  '/api/provision(.*)',         // Provisioning endpoint — called by Stripe webhook
+  '/api/composio/callback(.*)', // OAuth callback from Composio
+  '/api/composio/status(.*)',   // Connection status check
+  '/api/webhook(.*)',            // Legacy webhook pattern
 ])
 
 export default clerkMiddleware(async (auth, req) => {
