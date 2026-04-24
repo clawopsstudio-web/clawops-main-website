@@ -132,7 +132,7 @@ export default function StartForm() {
       const res = await fetch('/api/start/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, user_id: user?.id }),
+        body: JSON.stringify({ ...data, clerk_user_id: user?.id }),
       })
       const result = await res.json()
       if (!res.ok) throw new Error(result.error || 'Submission failed')
