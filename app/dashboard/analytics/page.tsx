@@ -39,7 +39,7 @@ export default function AnalyticsPage() {
   const [period, setPeriod] = useState<Period>('7D')
   const kpis = DEMO_KPIS[period]
   const maxTool = Math.max(...TOOL_USAGE.map(t => t.calls))
-  const maxChart = Math.max(...DEMO_CHART.map(d => Math.max(d.ryan, d.arjun, d.helena)))
+  const maxChart = Math.max(...DEMO_CHART.map(d => d.ryan + d.arjun + d.helena))
 
   return (
     <div className="p-6 space-y-8">
@@ -86,7 +86,7 @@ export default function AnalyticsPage() {
         <div className="flex items-end gap-2 h-40">
           {DEMO_CHART.map(d => (
             <div key={d.day} className="flex-1 flex flex-col items-center gap-1">
-              <div className="w-full flex gap-0.5 items-end" style={{ height: `${(Math.max(d.ryan + d.arjun + d.helena) / maxChart) * 100}%` }}>
+              <div className="w-full flex gap-0.5 items-end" style={{ height: `${((d.ryan + d.arjun + d.helena) / maxChart) * 100}%` }}>
                 <div className="flex-1 rounded-t-sm bg-[#22c55e]/60" style={{ height: `${(d.ryan / maxChart) * 100}%` }} />
                 <div className="flex-1 rounded-t-sm bg-[#f59e0b]/60" style={{ height: `${(d.arjun / maxChart) * 100}%` }} />
                 <div className="flex-1 rounded-t-sm bg-[#3b82f6]/60" style={{ height: `${(d.helena / maxChart) * 100}%` }} />
