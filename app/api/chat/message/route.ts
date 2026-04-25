@@ -76,21 +76,13 @@ export async function POST(req: NextRequest) {
   }
 
   // ── Store chat message in DB (best effort — don't fail the chat if this errors) ─
+  // agent_id is NOT NULL in the schema — use placeholder UUID when not provided
+  const NO_AGENT = '00000000-0000-0000-0000-000000000000'
   try {
-    await supabase.from('chat_messages').insert({
-      user_id: userId,
-      agent_id: agentId ?? null,
-      role: 'user',
-      content: message,
-      created_at: new Date().toISOString(),
-    })
-    await supabase.from('chat_messages').insert({
-      user_id: userId,
-      agent_id: agentId ?? null,
-      role: 'assistant',
-      content: aiContent,
-      created_at: new Date().toISOString(),
-    })
+    const now = new Date().toISOString()
+    const base = { user_id: userId, created_at: now, agent_id: agentId ?? NO_AGENT }
+    await supabase.from('chat_messages').insert({ ...base, role: 'user', content: message })
+    await supabase.from('chat_messages').insert({ ...base, role: 'assistant', content: aiContent })
   } catch (err) {
     // Non-fatal — log but don't fail the user's chat
     console.warn('[chat/message] could not save chat message:', err)
