@@ -1,8 +1,12 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-const MISSION_CONTROL_URL = 'https://hermes.clawops.studio'
+const PRODUCT_NAME = process.env.NEXT_PUBLIC_PRODUCT_NAME ?? 'Hermes'
+
+const MISSION_CONTROL_URL =
+  process.env.NEXT_PUBLIC_HERMES_DASHBOARD_URL ??
+  `https://hermes.clawops.studio`
 
 const QUICK_ACTIONS = [
   { cmd: 'systemctl restart hermes-gateway', label: 'Restart Agent Runtime' },
@@ -19,6 +23,8 @@ export default function TerminalPage() {
   const [running, setRunning] = useState('')
   const [bannerDismissed, setBannerDismissed] = useState(false)
   const [activeTab, setActiveTab] = useState<'terminal' | 'mission-control'>('mission-control')
+  const [iframeLoaded, setIframeLoaded] = useState(false)
+  const iframeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     const supabase = createClient()
@@ -26,6 +32,13 @@ export default function TerminalPage() {
       setUserId(data.user?.id ?? '')
       setIsLoaded(true)
     })
+
+    // iframe load timeout (10s fallback)
+    iframeTimer.current = setTimeout(() => setIframeLoaded(true), 10_000)
+
+    return () => {
+      if (iframeTimer.current) clearTimeout(iframeTimer.current)
+    }
   }, [])
 
   const run = async (cmd: string, label: string) => {
@@ -95,12 +108,24 @@ export default function TerminalPage() {
       {/* Mission Control tab — iframe loads via Cloudflare Tunnel HTTPS */}
       {activeTab === 'mission-control' && (
         <div className="flex-1 px-4 pb-4 min-h-0">
+          <div className="relative w-full h-full rounded-xl border border-white/10 bg-black overflow-hidden">
+          {!iframeLoaded && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black z-10">
+              <div className="w-6 h-6 border-2 border-[#e8ff47] border-t-transparent rounded-full animate-spin" />
+              <p className="text-white/40 text-xs">Loading {PRODUCT_NAME} Mission Control…</p>
+            </div>
+          )}
           <iframe
             src={MISSION_CONTROL_URL}
-            className="w-full h-full rounded-xl border border-white/10 bg-black"
-            title="Hermes Mission Control"
+            className="w-full h-full"
+            title={`${PRODUCT_NAME} Mission Control`}
             allow="clipboard-write"
+            onLoad={() => {
+              if (iframeTimer.current) clearTimeout(iframeTimer.current)
+              setIframeLoaded(true)
+            }}
           />
+        </div>
         </div>
       )}
 
