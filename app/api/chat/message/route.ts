@@ -4,7 +4,8 @@
  * Auth: Supabase session
  *
  * Architecture: calls NVIDIA API directly for chat responses.
- * Missions are stored in Supabase for history.
+ * Stores messages in chat_messages table ONLY.
+ * Never writes to missions table.
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { getUserIdFromRequest } from '@/lib/auth-server'
@@ -12,6 +13,19 @@ import { createClient } from '@/lib/supabase/client'
 
 const NVIDIA_API_KEY = process.env.NVIDIA_API_KEY
 const NVIDIA_BASE_URL = 'https://integrate.api.nvidia.com/v1'
+
+// Agent names mapped by agent ID
+const AGENT_NAMES: Record<string, { name: string; avatar: string }> = {
+  'ryan': { name: 'Ryan', avatar: 'R' },
+  'arjun': { name: 'Arjun', avatar: 'A' },
+  'helena': { name: 'Helena', avatar: 'H' },
+}
+
+function getAgentInfo(agentId?: string) {
+  if (!agentId || agentId === 'all') return null
+  const key = agentId.toLowerCase()
+  return AGENT_NAMES[key] ?? null
+}
 
 export async function POST(req: NextRequest) {
   const userId = await getUserIdFromRequest(req)
@@ -25,14 +39,16 @@ export async function POST(req: NextRequest) {
   }
 
   const supabase = createClient()
+  const agentInfo = getAgentInfo(agentId)
+  const NO_AGENT = '00000000-0000-0000-0000-000000000000'
 
   // ── Call NVIDIA API ────────────────────────────────────────────────────────
   if (!NVIDIA_API_KEY) {
-    console.error('[chat/message] NVIDIA_API_KEY not set')
-    return NextResponse.json({ content: 'AI service not configured. Please contact support.' }, { status: 503 })
+    return NextResponse.json({ content: 'AI service not configured.' }, { status: 503 })
   }
 
   let aiContent: string
+  const agentName = agentInfo?.name ?? 'Agent'
   try {
     const aiRes = await fetch(`${NVIDIA_BASE_URL}/chat/completions`, {
       method: 'POST',
@@ -45,12 +61,9 @@ export async function POST(req: NextRequest) {
         messages: [
           {
             role: 'system',
-            content: `You are Hermes, the AI agent for ClawOps Studio. You are helpful, direct, and technically capable. You help businesses automate their workflows using AI agents. Keep responses concise and actionable. Current user ID: ${userId}.`,
+            content: `You are ${agentName}, an AI agent for ClawOps Studio. Be helpful, direct, and technically capable. Keep responses concise and actionable.`,
           },
-          {
-            role: 'user',
-            content: message,
-          },
+          { role: 'user', content: message },
         ],
         max_tokens: 2048,
         temperature: 0.7,
@@ -60,32 +73,42 @@ export async function POST(req: NextRequest) {
     if (!aiRes.ok) {
       const errText = await aiRes.text()
       console.error('[chat/message] NVIDIA API error:', aiRes.status, errText)
-      return NextResponse.json({ content: 'AI service returned an error. Please try again.' }, { status: 502 })
+      return NextResponse.json({ content: 'AI service error. Please try again.' }, { status: 502 })
     }
 
     const aiData = await aiRes.json()
     aiContent = aiData.choices?.[0]?.message?.content ?? 'No response from AI.'
-
-    // Trim very long responses
-    if (aiContent.length > 8000) {
-      aiContent = aiContent.slice(0, 8000) + '\n\n[Response truncated]'
-    }
+    if (aiContent.length > 8000) aiContent = aiContent.slice(0, 8000) + '\n\n[Response truncated]'
   } catch (err) {
     console.error('[chat/message] AI call failed:', err)
     return NextResponse.json({ content: 'Failed to reach AI service. Please try again.' }, { status: 502 })
   }
 
-  // ── Store chat message in DB (best effort — don't fail the chat if this errors) ─
-  // agent_id is NOT NULL in the schema — use placeholder UUID when not provided
-  const NO_AGENT = '00000000-0000-0000-0000-000000000000'
+  // ── Store in chat_messages ONLY ─────────────────────────────────────────
+  const now = new Date().toISOString()
+  const base = {
+    user_id: userId,
+    agent_id: agentId ?? NO_AGENT,
+    sender_name: 'You',
+    avatar: 'Y',
+    created_at: now,
+  }
   try {
-    const now = new Date().toISOString()
-    const base = { user_id: userId, created_at: now, agent_id: agentId ?? NO_AGENT }
-    await supabase.from('chat_messages').insert({ ...base, role: 'user', content: message })
-    await supabase.from('chat_messages').insert({ ...base, role: 'assistant', content: aiContent })
+    await supabase.from('chat_messages').insert({
+      ...base,
+      role: 'user',
+      content: message,
+    })
+    await supabase.from('chat_messages').insert({
+      ...base,
+      role: 'assistant',
+      sender_name: agentName,
+      avatar: agentInfo?.avatar ?? 'A',
+      content: aiContent,
+    })
   } catch (err) {
-    // Non-fatal — log but don't fail the user's chat
-    console.warn('[chat/message] could not save chat message:', err)
+    // Non-fatal — log but don't fail the user
+    console.warn('[chat/message] could not save message:', err)
   }
 
   return NextResponse.json({ content: aiContent })

@@ -23,12 +23,19 @@ interface DemoStats {
   recentActivity: Array<{ agent: string; action: string; time: string }>
 }
 
-function getDemoStats(): DemoStats {
+async function getDemoStats(supabase: ReturnType<typeof createServerClient>): Promise<DemoStats> {
+  // Fetch live agent count from DB
+  const { count } = await supabase
+    .from('agents')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', ADMIN_USER_ID)
+    .in('status', ['running', 'active'])
+
   return {
     workspaceName: 'ClawOps Studio',
     vpsStatus: 'online',
     toolsConnected: 5,
-    agentsActive: 3,
+    agentsActive: count ?? 3,
     lastMissionRun: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
     recentActivity: [
       { agent: 'Ryan', action: 'Sent 20 outreach emails', time: '3 min ago' },
@@ -69,7 +76,7 @@ export default async function DashboardPage() {
   const isAdmin = user.id === ADMIN_USER_ID
   const displayName = user.user_metadata?.full_name ?? user.email?.split('@')[0] ?? 'User'
 
-  const demoStats = isAdmin ? getDemoStats() : null
+  const demoStats = isAdmin ? await getDemoStats(supabase) : null
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
@@ -97,7 +104,7 @@ export default async function DashboardPage() {
           />
           <StatusCard
             label="Missions today"
-            value={isAdmin && demoStats ? '3' : '0'}
+            value={isAdmin && demoStats ? String(demoStats.agentsActive) : '0'}
             icon="◇"
             badge={isAdmin && demoStats ? { text: 'Live', color: 'bg-emerald-500/20 text-emerald-400' } : undefined}
           />
