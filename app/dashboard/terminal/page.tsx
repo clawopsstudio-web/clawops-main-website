@@ -8,7 +8,7 @@ const MISSION_CONTROL_URL =
   process.env.NEXT_PUBLIC_HERMES_DASHBOARD_URL ??
   `https://hermes.clawops.studio`
 
-const QUICK_ACTIONS = [
+const FALLBACK_ACTIONS = [
   { cmd: 'systemctl restart hermes-gateway', label: 'Restart Agent Runtime' },
   { cmd: 'hermes mission trigger "Daily Lead Digest"', label: 'Run Daily Lead Digest' },
   { cmd: 'hermes queue clear', label: 'Clear message queue' },
@@ -25,6 +25,8 @@ export default function TerminalPage() {
   const [activeTab, setActiveTab] = useState<'terminal' | 'mission-control'>('mission-control')
   const [iframeLoaded, setIframeLoaded] = useState(false)
   const iframeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [commands, setCommands] = useState(FALLBACK_ACTIONS)
+  const [hermesOffline, setHermesOffline] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
@@ -35,6 +37,20 @@ export default function TerminalPage() {
 
     // iframe load timeout (10s fallback)
     iframeTimer.current = setTimeout(() => setIframeLoaded(true), 10_000)
+
+    // Check Hermes status
+    const fetchHermesStatus = async () => {
+      try {
+        const res = await fetch('/api/hermes/status')
+        if (!res.ok) throw new Error('Hermes offline')
+        const status = await res.json()
+        if (!status.live) throw new Error('Hermes not live')
+        setHermesOffline(false)
+      } catch {
+        setHermesOffline(true)
+      }
+    }
+    fetchHermesStatus()
 
     return () => {
       if (iframeTimer.current) clearTimeout(iframeTimer.current)
@@ -132,8 +148,14 @@ export default function TerminalPage() {
       {/* Quick Actions tab */}
       {activeTab === 'terminal' && (
         <div className="flex-1 px-4 pb-4 overflow-y-auto space-y-4">
+          {hermesOffline && (
+            <div className="flex items-center gap-2 bg-amber-950/40 border border-amber-500/30 rounded-lg px-3 py-2 text-amber-400/80 text-[11px]">
+              <span>⚠️</span>
+              <span>Hermes offline — showing cached commands</span>
+            </div>
+          )}
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
-            {QUICK_ACTIONS.map(a => (
+            {commands.map(a => (
               <button
                 key={a.cmd}
                 onClick={() => run(a.cmd, a.label)}
