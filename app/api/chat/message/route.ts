@@ -15,6 +15,10 @@ const NVIDIA_API_KEY = process.env.NVIDIA_API_KEY
 const NVIDIA_BASE_URL = 'https://integrate.api.nvidia.com/v1'
 
 // Agent names mapped by agent ID
+const AGENT_NAMES: Record<string, { name: string }> = {
+  ryan: { name: 'Ryan' },
+  arjun: { name: 'Arjun' },
+  helena: { name: 'Helena' },
 }
 
 function getAgentInfo(agentId?: string) {
