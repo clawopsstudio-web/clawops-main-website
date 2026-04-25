@@ -42,10 +42,24 @@ export default function MissionsPage() {
   const [filter, setFilter] = useState('all')
   const [selected, setSelected] = useState<any>(null)
   const [userId, setUserId] = useState('')
+  const [agentMap, setAgentMap] = useState<Record<string, string>>({})
   const supabase = createClient()
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? ''))
+  }, [])
+
+  // Fetch agents for name lookup
+  useEffect(() => {
+    supabase.from('agents').select('id, name').then(({ data }) => {
+      if (data) {
+        const map: Record<string, string> = {}
+        for (const a of data) {
+          map[a.id] = a.name
+        }
+        setAgentMap(map)
+      }
+    })
   }, [])
 
   useEffect(() => {
@@ -53,6 +67,12 @@ export default function MissionsPage() {
     if (filter !== 'all') q = q.eq('status', filter)
     q.then(({ data }) => setMissions(data ?? []))
   }, [filter])
+
+  // Helper to get agent name from UUID
+  const getAgentName = (agentId: string | undefined) => {
+    if (!agentId) return 'Unknown Agent'
+    return agentMap[agentId] ?? 'Unknown Agent'
+  }
 
   const isAdmin = userId === ADMIN_USER_ID
   const displayMissions = isAdmin
@@ -241,7 +261,7 @@ export default function MissionsPage() {
               <tr key={m.id}
                 onClick={() => setSelected(m)}
                 className="border-t border-white/5 hover:bg-white/4 cursor-pointer">
-                <td className="px-4 py-3 text-white/70 text-xs">{m.agent_id}</td>
+                <td className="px-4 py-3 text-white/70 text-xs">{getAgentName(m.agent_id)}</td>
                 <td className="px-4 py-3 text-white/70 text-xs truncate max-w-xs">{m.title ?? m.prompt?.slice(0,40) ?? '—'}</td>
                 <td className="px-4 py-3">
                   <span className={`text-[10px] px-2 py-0.5 rounded-full border ${typeBadgeClass(m)}`}>
