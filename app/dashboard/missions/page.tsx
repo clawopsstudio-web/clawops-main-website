@@ -61,6 +61,39 @@ export default function MissionsPage() {
       : [...DEMO_MISSIONS.filter(m => m.status === filter), ...missions]
     : missions
 
+  // Create mission modal state
+  const [showCreate, setShowCreate] = useState(false)
+  const [createStep, setCreateStep] = useState(1)
+  const [agent, setAgent] = useState('Ryan')
+  const [goal, setGoal] = useState('')
+  const [trigger, setTrigger] = useState<'manual'|'cron'|'gmail'>('manual')
+  const [cron, setCron] = useState('Daily 8:00 AM')
+  const [savingMission, setSavingMission] = useState(false)
+
+  const handleCreateMission = async () => {
+    setSavingMission(true)
+    const { data: userData } = await supabase.auth.getUser()
+    if (!userData?.user) { setSavingMission(false); return }
+    const prompt = trigger === 'manual'
+      ? goal
+      : trigger === 'cron'
+      ? `CRON: ${cron} — ${goal}`
+      : `TRIGGER: On new Gmail — ${goal}`
+    await supabase.from('missions').insert({
+      user_id: userData.user.id,
+      title: goal.slice(0, 60) || 'New Mission',
+      prompt,
+      status: 'idle',
+    })
+    setSavingMission(false)
+    setShowCreate(false)
+    setCreateStep(1)
+    setAgent('Ryan'); setGoal(''); setTrigger('manual'); setCron('Daily 8:00 AM')
+    // Refresh
+    const { data: refreshed } = await supabase.from('missions').select('*').limit(50)
+    if (refreshed) setMissions(refreshed)
+  }
+
   // DB doesn't have a 'type' column — derive from schedule/prompt pattern
   const typeBadgeClass = (mission: any) => {
     const title = (mission.title ?? '').toLowerCase()
@@ -90,7 +123,12 @@ export default function MissionsPage() {
     <div className="p-6 space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-white font-black text-lg">Missions</h1>
-        <div className="flex gap-1 bg-white/5 p-1 rounded-lg">
+        <div className="flex items-center gap-3">
+          <button onClick={() => setShowCreate(true)}
+            className="px-4 py-2 bg-[#e8ff47] hover:bg-[#d4eb3a] text-black font-bold text-xs rounded-xl transition-colors">
+            + New Mission
+          </button>
+          <div className="flex gap-1 bg-white/5 p-1 rounded-lg">
           {['all','running','completed','failed'].map(f => (
             <button key={f} onClick={() => setFilter(f)}
               className={`px-3 py-1.5 rounded-lg text-xs capitalize ${filter === f ? 'bg-white/10 text-white font-semibold' : 'text-white/40'}`}>
@@ -98,7 +136,95 @@ export default function MissionsPage() {
             </button>
           ))}
         </div>
+        </div>
       </div>
+
+      {/* Create Mission Modal */}
+      {showCreate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
+          <div className="bg-[#141414] border border-white/10 rounded-2xl w-full max-w-md overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
+              <div>
+                <h3 className="text-white font-bold">Create Mission</h3>
+                <p className="text-white/30 text-xs mt-0.5">Step {createStep} of 4</p>
+              </div>
+              <button onClick={() => { setShowCreate(false); setCreateStep(1) }} className="text-white/30 hover:text-white">✕</button>
+            </div>
+            <div className="p-6 space-y-4">
+              {createStep === 1 && (
+                <div className="space-y-4">
+                  <p className="text-white/70 text-sm">Which agent should run this mission?</p>
+                  {['Ryan', 'Arjun', 'Helena'].map(a => (
+                    <button key={a} onClick={() => { setAgent(a); setCreateStep(2) }}
+                      className={`w-full flex items-center gap-3 p-4 rounded-xl border transition-colors ${
+                        agent === a ? 'border-[#e8ff47] bg-[#e8ff47]/5' : 'border-white/8 hover:border-white/15 bg-[#111]'
+                      }`}>
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold ${
+                        a === 'Ryan' ? 'bg-emerald-500/20 text-emerald-400' : a === 'Arjun' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-blue-500/20 text-blue-400'
+                      }`}>{a[0]}</div>
+                      <span className="text-white font-medium text-sm">{a}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {createStep === 2 && (
+                <div className="space-y-4">
+                  <p className="text-white/70 text-sm">What should {agent} do?</p>
+                  <textarea value={goal} onChange={e => setGoal(e.target.value)} rows={4}
+                    placeholder={`e.g. Find 10 SaaS founders on LinkedIn and send them outreach emails...`}
+                    className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white/70 text-sm focus:outline-none focus:border-white/20 resize-none" />
+                  <div className="flex gap-2">
+                    <button onClick={() => setCreateStep(1)} className="flex-1 py-2.5 border border-white/10 text-white/50 rounded-xl text-sm hover:bg-white/5">Back</button>
+                    <button onClick={() => goal.trim() && setCreateStep(3)} disabled={!goal.trim()}
+                      className="flex-1 py-2.5 bg-[#e8ff47] hover:bg-[#d4eb3a] disabled:opacity-40 text-black font-bold rounded-xl text-sm">Next →</button>
+                  </div>
+                </div>
+              )}
+              {createStep === 3 && (
+                <div className="space-y-4">
+                  <p className="text-white/70 text-sm">How should this mission be triggered?</p>
+                  {[
+                    { id: 'manual' as const, label: 'Manual', desc: 'Run on demand' },
+                    { id: 'cron' as const, label: 'Scheduled', desc: 'Daily, weekly, or hourly' },
+                    { id: 'gmail' as const, label: 'On new email', desc: 'Runs when a new Gmail arrives' },
+                  ].map(t => (
+                    <button key={t.id} onClick={() => { setTrigger(t.id); setCreateStep(4) }}
+                      className={`w-full flex items-center gap-3 p-4 rounded-xl border transition-colors ${
+                        trigger === t.id ? 'border-[#e8ff47] bg-[#e8ff47]/5' : 'border-white/8 hover:border-white/15 bg-[#111]'
+                      }`}>
+                      <div className={`w-2 h-2 rounded-full ${trigger === t.id ? 'bg-[#e8ff47]' : 'bg-white/20'}`} />
+                      <div className="text-left">
+                        <p className="text-white font-medium text-sm">{t.label}</p>
+                        <p className="text-white/40 text-xs">{t.desc}</p>
+                      </div>
+                    </button>
+                  ))}
+                  <button onClick={() => setCreateStep(2)} className="text-white/40 text-xs hover:text-white/60 transition-colors">← Back</button>
+                </div>
+              )}
+              {createStep === 4 && (
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-white/70 text-sm mb-2">Mission summary</p>
+                    <div className="bg-[#111] border border-white/8 rounded-xl p-4 space-y-2">
+                      <div className="flex justify-between text-xs"><span className="text-white/40">Agent</span><span className="text-white/70">{agent}</span></div>
+                      <div className="flex justify-between text-xs"><span className="text-white/40">Task</span><span className="text-white/70 max-w-[200px] truncate">{goal}</span></div>
+                      <div className="flex justify-between text-xs"><span className="text-white/40">Trigger</span><span className="text-white/70 capitalize">{trigger}</span></div>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button onClick={() => setCreateStep(3)} className="flex-1 py-2.5 border border-white/10 text-white/50 rounded-xl text-sm hover:bg-white/5">Back</button>
+                    <button onClick={handleCreateMission} disabled={savingMission}
+                      className="flex-[2] py-2.5 bg-[#e8ff47] hover:bg-[#d4eb3a] disabled:opacity-40 text-black font-bold rounded-xl text-sm">
+                      {savingMission ? 'Creating...' : 'Create Mission'}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Table */}
       <div className="bg-[#111] border border-white/7 rounded-xl overflow-hidden">

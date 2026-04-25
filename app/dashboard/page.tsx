@@ -220,24 +220,54 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        {/* Chat CTA */}
+        {/* Chat with agents — quick actions */}
         <div className="bg-[#111] border border-white/5 rounded-2xl p-6">
-          <h2 className="text-white font-semibold mb-3">Chat with your agent</h2>
+          <h2 className="text-white font-semibold mb-3">Chat with your agents</h2>
           {isAdmin ? (
-            <Link
-              href="/dashboard/chat"
-              className="flex items-center justify-between bg-black/30 rounded-xl p-5 border border-white/5 hover:border-[#e8ff47]/30 transition-colors group"
-            >
-              <div>
-                <p className="text-white/80 text-sm font-medium">
-                  {data?.agents.length ?? 0} agents ready
-                </p>
-                <p className="text-white/30 text-xs mt-0.5">Click to open chat</p>
+            <div className="space-y-4">
+              {/* Prompt chips */}
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { text: 'Ask Ryan for 10 leads', agent: 'Ryan', color: '#22c55e', msg: 'Ryan, find me 10 leads from LinkedIn in the SaaS space' },
+                  { text: 'Ask Arjun to research a competitor', agent: 'Arjun', color: '#f59e0b', msg: 'Arjun, research our top 3 competitors and summarize their pricing' },
+                  { text: 'Ask Helena to draft a reply', agent: 'Helena', color: '#3b82f6', msg: 'Helena, draft a reply to an angry customer who waited 3 days' },
+                ].map(chip => (
+                  <Link
+                    key={chip.agent}
+                    href={`/dashboard/chat?msg=${encodeURIComponent(chip.msg)}`}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-black/30 border border-white/8 hover:border-white/15 transition-all text-xs group"
+                  >
+                    <div className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-black shrink-0" style={{ backgroundColor: chip.color }}>
+                      {chip.agent[0]}
+                    </div>
+                    <span className="text-white/60 group-hover:text-white/80 transition-colors">{chip.text}</span>
+                  </Link>
+                ))}
               </div>
-              <span className="text-[#e8ff47] group-hover:translate-x-1 transition-transform text-sm font-medium">
-                Go to Chat →
-              </span>
-            </Link>
+
+              {/* Quick input */}
+              <form
+                onSubmit={e => {
+                  e.preventDefault()
+                  const input = (e.currentTarget.elements.namedItem('q') as HTMLInputElement)?.value
+                  if (input?.trim()) window.location.href = `/dashboard/chat?msg=${encodeURIComponent(input.trim())}`
+                }}
+                className="flex gap-2"
+              >
+                <input
+                  name="q"
+                  placeholder="Message your agents..."
+                  className="flex-1 bg-[#0d0d0d] border border-white/10 rounded-xl px-4 py-2.5 text-white/60 text-sm focus:outline-none focus:border-white/20 placeholder:text-white/20"
+                />
+                <button type="submit" className="px-4 py-2.5 bg-[#e8ff47] hover:bg-[#d4eb3a] text-black font-bold text-xs rounded-xl shrink-0 transition-colors">
+                  Send →
+                </button>
+              </form>
+
+              <Link href="/dashboard/chat" className="text-center text-white/30 hover:text-white/50 text-xs transition-colors block">
+                Open full chat →
+              </Link>
+            </div>
           ) : (
             <div className="bg-black/30 rounded-xl p-5 text-center text-white/20 text-sm border border-white/5">
               Your AI workspace will be ready after onboarding.

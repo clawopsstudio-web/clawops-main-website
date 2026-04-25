@@ -11,6 +11,7 @@ import {
   Wrench,
   Puzzle,
   Target,
+  BarChart3,
   ScrollText,
   Terminal,
 } from 'lucide-react'
@@ -24,6 +25,7 @@ const NAV = [
   { href: '/dashboard/tools', label: 'Tools', icon: Wrench },
   { href: '/dashboard/plugins', label: 'Plugins', icon: Puzzle },
   { href: '/dashboard/missions', label: 'Missions', icon: Target },
+  { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/dashboard/logs', label: 'Logs', icon: ScrollText },
   { href: '/dashboard/terminal', label: 'Mission Control', icon: Terminal },
 ]
