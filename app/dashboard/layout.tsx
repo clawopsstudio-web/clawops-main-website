@@ -14,7 +14,10 @@ import {
   BarChart3,
   ScrollText,
   Terminal,
+  Settings,
 } from 'lucide-react'
+
+const PRODUCT_NAME = process.env.NEXT_PUBLIC_PRODUCT_NAME ?? 'Hermes'
 
 const ADMIN_UID = '5a1f1a65-b620-46dc-879d-c67e69ba0c04'
 
@@ -27,6 +30,7 @@ const NAV = [
   { href: '/dashboard/missions', label: 'Missions', icon: Target },
   { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/dashboard/logs', label: 'Logs', icon: ScrollText },
+  { href: '/dashboard/settings', label: 'Settings', icon: Settings },
   { href: '/dashboard/terminal', label: 'Mission Control', icon: Terminal },
 ]
 
@@ -215,6 +219,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [hermesLive, setHermesLive] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [showOnboarding, setShowOnboarding] = useState(false)
+  const [avatarOpen, setAvatarOpen] = useState(false)
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data }) => {
@@ -235,10 +240,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       setIsLoading(false)
     })
 
-    // Hermes status poll
+    // Hermes status poll (10s timeout)
     const check = async () => {
       try {
-        const r = await fetch('/api/hermes/status');
+        const controller = new AbortController()
+        const timeout = setTimeout(() => controller.abort(), 10_000)
+        const r = await fetch('/api/hermes/status', { signal: controller.signal })
+        clearTimeout(timeout)
         setHermesLive(r.ok)
       } catch { setHermesLive(false) }
     }
@@ -331,11 +339,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <div className="flex-1 min-w-0">
                 <p className="text-[12px] text-white/80 truncate font-medium">{displayName}</p>
               </div>
-              <button onClick={handleLogout} className="text-white/30 hover:text-red-400 transition-colors shrink-0" title="Sign out">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M21 15l-5-5-5-5m5 5-5 5 5" />
-                </svg>
-              </button>
             </div>
           </div>
         </aside>
@@ -349,10 +352,43 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1.5 text-[11px] text-white/40">
                 <div className={`w-1.5 h-1.5 rounded-full ${hermesLive ? 'bg-emerald-400' : 'bg-red-500'}`} />
-                {hermesLive ? 'Hermes live' : 'Hermes offline'}
+                {hermesLive ? `${PRODUCT_NAME} live` : `${PRODUCT_NAME} offline`}
               </div>
-              <div className="w-7 h-7 bg-white/10 rounded-full flex items-center justify-center text-[11px] font-bold text-white/60">
-                {initials}
+              <div className="relative">
+                <button
+                  onClick={() => setAvatarOpen(v => !v)}
+                  className="w-7 h-7 bg-white/10 rounded-full flex items-center justify-center text-[11px] font-bold text-white/60 hover:bg-white/20 transition-colors"
+                >
+                  {initials}
+                </button>
+                {avatarOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-[200] overflow-hidden py-1">
+                    <Link
+                      href="/dashboard/settings"
+                      onClick={() => setAvatarOpen(false)}
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-white/70 hover:text-white hover:bg-white/5 transition-colors"
+                    >
+                      <Settings className="w-4 h-4" />
+                      Profile & Settings
+                    </Link>
+                    <Link
+                      href="/dashboard/settings"
+                      onClick={() => setAvatarOpen(false)}
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-white/70 hover:text-white hover:bg-white/5 transition-colors"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                      Subscription
+                    </Link>
+                    <div className="border-t border-white/5 my-1" />
+                    <button
+                      onClick={() => { setAvatarOpen(false); handleLogout() }}
+                      className="w-full flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-red-400/70 hover:text-red-400 hover:bg-white/5 transition-colors"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M21 15l-5-5-5-5m5 5-5 5 5"/></svg>
+                      Sign Out
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
