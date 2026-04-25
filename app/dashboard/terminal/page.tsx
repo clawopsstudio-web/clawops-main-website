@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect } from 'react'
-export const metadata = { title: 'Mission Control — ClawOps' };
 import { createClient } from '@/lib/supabase/client'
 
 const MISSION_CONTROL_URL = 'https://hermes.clawops.studio'

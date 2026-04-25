@@ -1,4 +1,3 @@
-export const metadata = { title: 'Log In u2014 ClawOps' };
 'use client'
 
 import { useState } from 'react'

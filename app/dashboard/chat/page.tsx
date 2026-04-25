@@ -1,6 +1,5 @@
 'use client'
 
-export const metadata = { title: 'Chat — ClawOps' }
 
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -8,19 +7,17 @@ import { createClient } from '@/lib/supabase/client'
 const ADMIN_UID = '5a1f1a65-b620-46dc-879d-c67e69ba0c04'
 const NO_AGENT = '00000000-0000-0000-0000-000000000000'
 
-// Agent display info — keyed by agent_id placeholder UUID
-// For demo, NO_AGENT = "You", other agents would have real UUIDs
+// Agent display info — keyed by actual Supabase UUIDs
 const AGENT_MAP: Record<string, { name: string; color: string; bg: string }> = {
-  [NO_AGENT]: { name: 'AI Team', color: 'text-purple-400', bg: 'bg-purple-500' },
-  'ryan':        { name: 'Ryan',    color: 'text-blue-400',    bg: 'bg-blue-500' },
-  'arjun':        { name: 'Arjun',   color: 'text-purple-400', bg: 'bg-purple-500' },
-  'helena':      { name: 'Helena',  color: 'text-green-400',  bg: 'bg-green-500' },
+  [NO_AGENT]: { name: 'You', color: 'text-black', bg: 'bg-[#e8ff47]' },
+  'f4720d9d-cf17-4990-aaf4-b4f8688e7b9a': { name: 'Ryan',   color: 'text-blue-400',   bg: 'bg-blue-500' },
+  '67965911-391f-4930-ab0b-0f036672f414': { name: 'Arjun',  color: 'text-yellow-400', bg: 'bg-yellow-500' },
+  'd8008e7c-bb65-4c66-9dbf-e840d5cb3f53': { name: 'Helena', color: 'text-green-400',  bg: 'bg-green-500' },
 }
 
 function getAgent(id?: string): { name: string; color: string; bg: string } {
   if (!id || id === NO_AGENT) return AGENT_MAP[NO_AGENT]
-  const key = Object.keys(AGENT_MAP).find(k => k !== NO_AGENT && id.includes(k))
-  return key ? AGENT_MAP[key] : { name: 'Agent', color: 'text-white/60', bg: 'bg-white/10' }
+  return AGENT_MAP[id] ?? { name: 'Agent', color: 'text-white/60', bg: 'bg-white/10' }
 }
 
 const SUGGESTED_PROMPTS_ADMIN = [

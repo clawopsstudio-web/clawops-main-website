@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect } from 'react'
-export const metadata = { title: 'Agents — ClawOps' };
 import { createClient } from '@/lib/supabase/client'
 
 const ADMIN_USER_ID = '5a1f1a65-b620-46dc-879d-c67e69ba0c04'
@@ -60,7 +59,8 @@ export default function AgentsPage() {
   }, [])
 
   const isAdmin = userId === ADMIN_USER_ID
-  const displayAgents = isAdmin ? [...DEMO_AGENTS, ...agents] : agents
+  // DB has the real agents — don't mix with hardcoded DEMO_AGENTS (causes duplicate cards)
+  const displayAgents = agents
 
   const openEditModal = (agent: typeof DEMO_AGENTS[0]) => {
     setEditModal(agent)

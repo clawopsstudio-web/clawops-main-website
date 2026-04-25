@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect } from 'react'
-export const metadata = { title: 'Missions — ClawOps' };
 import { createClient } from '@/lib/supabase/client'
 
 const ADMIN_USER_ID = '5a1f1a65-b620-46dc-879d-c67e69ba0c04'
@@ -62,12 +61,20 @@ export default function MissionsPage() {
       : [...DEMO_MISSIONS.filter(m => m.status === filter), ...missions]
     : missions
 
-  const typeBadgeClass = (type: string) => {
-    switch (type) {
-      case 'CRON': return 'bg-blue-950 text-blue-400 border-blue-900'
-      case 'TRIGGER': return 'bg-purple-950 text-purple-400 border-purple-900'
-      default: return 'bg-white/8 text-white/40 border-white/10'
-    }
+  // DB doesn't have a 'type' column — derive from schedule/prompt pattern
+  const typeBadgeClass = (mission: any) => {
+    const title = (mission.title ?? '').toLowerCase()
+    const schedule = (mission.schedule ?? mission.prompt ?? '').toLowerCase()
+    if (schedule.includes('daily') || schedule.includes('weekly') || schedule.includes('hour')) return 'bg-blue-950 text-blue-400 border-blue-900'
+    if (schedule.includes('gmail') || schedule.includes('trigger') || schedule.includes('new ')) return 'bg-purple-950 text-purple-400 border-purple-900'
+    return 'bg-white/8 text-white/40 border-white/10'
+  }
+
+  const getTypeLabel = (mission: any) => {
+    const schedule = (mission.schedule ?? mission.prompt ?? '').toLowerCase()
+    if (schedule.includes('daily') || schedule.includes('weekly') || schedule.includes('hour')) return 'CRON'
+    if (schedule.includes('gmail') || schedule.includes('trigger') || schedule.includes('new ')) return 'TRIGGER'
+    return 'MANUAL'
   }
 
   const statusBadgeClass = (status: string) => {
@@ -111,8 +118,8 @@ export default function MissionsPage() {
                 <td className="px-4 py-3 text-white/70 text-xs">{m.agent_id}</td>
                 <td className="px-4 py-3 text-white/70 text-xs truncate max-w-xs">{m.title ?? m.prompt?.slice(0,40) ?? '—'}</td>
                 <td className="px-4 py-3">
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full border ${typeBadgeClass(m.type || 'MANUAL')}`}>
-                    {m.type || 'MANUAL'}
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full border ${typeBadgeClass(m)}`}>
+                    {getTypeLabel(m)}
                   </span>
                 </td>
                 <td className="px-4 py-3">
@@ -120,7 +127,7 @@ export default function MissionsPage() {
                     {m.status ?? 'idle'}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-white/40 text-xs">{m.lastRan ?? '—'}</td>
+                <td className="px-4 py-3 text-white/40 text-xs">{m.lastRan ?? (m.completed_at ? new Date(m.completed_at).toLocaleDateString() : m.started_at ? new Date(m.started_at).toLocaleDateString() : '—')}</td>
                 <td className="px-4 py-3 text-white/30 text-xs">
                   {m.created_at ? new Date(m.created_at).toLocaleDateString() : '—'}
                 </td>
