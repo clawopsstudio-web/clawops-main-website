@@ -1,7 +1,7 @@
 /**
  * POST /api/admin/cleanup
  *
- * Cleans up duplicate/ghost records for the demo admin account.
+ * Demo account cleanup — fixes plan, agents, missions, chat pollution.
  * Run once after seed issues.
  */
 import { NextRequest, NextResponse } from 'next/server'
@@ -25,69 +25,91 @@ export async function POST(req: NextRequest) {
   const supabase = await getServiceClient()
   const results: string[] = []
 
-  // ── 1. Clean duplicate agents ───────────────────────────────────────────────
-  // Keep: agents with status='running'. Remove: duplicates with status='active'
+  // ── SQL-1: Fix plan badge → Business ────────────────────────────────────
   try {
-    const { data: allAgents } = await supabase
+    await supabase.from('profiles').upsert({ id: ADMIN_USER_ID, plan: 'business' })
+    results.push('profiles.plan: set to business')
+  } catch (err: any) {
+    results.push(`profiles: ERROR — ${err.message}`)
+  }
+
+  // ── SQL-2: Delete duplicate agents (status='active') ─────────────────────
+  try {
+    const { data } = await supabase
       .from('agents')
       .select('id, name, status')
       .eq('user_id', ADMIN_USER_ID)
+      .eq('status', 'active')
 
-    if (allAgents) {
-      const seen = new Set<string>()
-      const toDelete: string[] = []
-      for (const a of allAgents) {
-        const key = a.name
-        if (seen.has(key)) {
-          toDelete.push(a.id)
-        } else {
-          seen.add(key)
-        }
+    if (data && data.length > 0) {
+      for (const a of data) {
+        await supabase.from('agents').delete().eq('id', a.id)
       }
-      for (const id of toDelete) {
-        await supabase.from('agents').delete().eq('id', id)
-        results.push(`agent deleted: ${id.slice(0, 8)}...`)
-      }
-      results.push(`agents: ${allAgents.length - toDelete.length} kept, ${toDelete.length} duplicates removed`)
+      results.push(`agents: deleted ${data.length} duplicate 'active' rows`)
+    } else {
+      results.push('agents: no duplicate active rows found')
     }
   } catch (err: any) {
     results.push(`agents: ERROR — ${err.message}`)
   }
 
-  // ── 2. Clean orphaned missions ──────────────────────────────────────────
-  // Keep: missions with a title from the 3 named missions
-  const KEEP_TITLES = ['Daily Lead Digest', 'Support Ticket Monitor', 'Weekly Performance Report']
+  // ── SQL-3: Delete orphaned missions ──────────────────────────────────────
+  // Keep: 'Daily Lead Digest', 'Support Ticket Monitor', 'Weekly Performance Report'
   try {
-    const { data: allMissions } = await supabase
+    const { data } = await supabase
       .from('missions')
       .select('id, title')
       .eq('user_id', ADMIN_USER_ID)
 
-    if (allMissions) {
-      const toDelete = allMissions
-        .filter(m => !KEEP_TITLES.some(t => m.title?.includes(t)))
-        .map(m => m.id)
+    if (data) {
+      const KEEP_PREFIXES = ['Daily Lead Digest', 'Support Ticket Monitor', 'Weekly Report']
+      const orphaned = data.filter(m =>
+        !KEEP_PREFIXES.some(p => m.title?.includes(p))
+      ).map(m => m.id)
 
-      for (const id of toDelete) {
+      for (const id of orphaned) {
         await supabase.from('missions').delete().eq('id', id)
       }
-      results.push(`missions: ${allMissions.length - toDelete.length} kept, ${toDelete.length} orphaned removed`)
+      results.push(`missions: ${data.length - orphaned.length} kept, ${orphaned.length} orphaned removed`)
     }
   } catch (err: any) {
     results.push(`missions: ERROR — ${err.message}`)
   }
 
-  // ── 3. Update demo account plan → business ──────────────────────────────
+  // ── SQL-4: Fix chat pollution ────────────────────────────────────────────
+  // Delete orphaned mission-name chat entries and fix sender names
   try {
+    // First delete orphaned entries
+    const ORPHANED_TITLES = ['Daily Lead Digest', 'Support Ticket Monitor', 'Weekly Performance Report']
+    for (const title of ORPHANED_TITLES) {
+      await supabase.from('missions').delete().eq('user_id', ADMIN_USER_ID).eq('title', title)
+    }
+
+    // Fix sender_name for seeded messages
     await supabase
-      .from('profiles')
-      .upsert({ id: ADMIN_USER_ID, plan: 'business', full_name: 'ClawOps Studio Admin' })
-    results.push('profiles.plan: updated to business')
+      .from('missions')
+      .update({ sender_name: 'Ryan', avatar: 'R' })
+      .eq('user_id', ADMIN_USER_ID)
+      .ilike('title', '%Ryan%')
+
+    await supabase
+      .from('missions')
+      .update({ sender_name: 'Arjun', avatar: 'A' })
+      .eq('user_id', ADMIN_USER_ID)
+      .ilike('title', '%Arjun%')
+
+    await supabase
+      .from('missions')
+      .update({ sender_name: 'Helena', avatar: 'H' })
+      .eq('user_id', ADMIN_USER_ID)
+      .ilike('title', '%Helena%')
+
+    results.push('chat: orphaned entries cleaned, sender names fixed')
   } catch (err: any) {
-    results.push(`profiles: ERROR — ${err.message}`)
+    results.push(`chat: ERROR — ${err.message}`)
   }
 
-  // ── 4. Ensure overview seed data is correct ─────────────────────────────
+  // ── SQL-5: Fix provisioning state ────────────────────────────────────────
   try {
     const { data: row } = await supabase
       .from('onboarding_submissions')
@@ -101,67 +123,34 @@ export async function POST(req: NextRequest) {
         .update({
           status: 'active',
           plan: 'business',
-          dashboard_url: 'https://demo.app.clawops.studio',
+          dashboard_url: 'https://hermes.clawops.studio',
           vps_ip: '178.238.232.52',
           provisioned_at: new Date().toISOString(),
         })
         .eq('id', row.id)
-      results.push('onboarding_submissions: status=active, plan=business, vps_ip=178.238.232.52')
+      results.push('onboarding_submissions: active, business, hermes.clawops.studio, 178.238.232.52')
     }
   } catch (err: any) {
     results.push(`onboarding_submissions: ERROR — ${err.message}`)
   }
 
-  // ── 5. Seed 3 real chat conversations ───────────────────────────────────
-  const DEMO_CONVERSATIONS = [
-    {
-      agent: 'Ryan',
-      role: 'user',
-      content: 'Find me 10 SaaS founders in London on LinkedIn',
-    },
-    {
-      agent: 'Ryan',
-      role: 'agent',
-      content: "On it. I found 10 profiles matching your criteria. Here's the list with company, role, and connection status:\n\n1. James Chen — Founder @ TechFlow (Series A) — CTO background\n2. Sarah Williams — CEO @ Buildfast (Bootstrapped) — 50 employees\n3. Arjun Patel — Founder @ DevOps Co (Seed) — ex-Google\n... (9 more)\n\nWant me to draft personalised outreach for any of these?",
-    },
-    {
-      agent: 'Arjun',
-      role: 'user',
-      content: "What's the state of AI agent tooling in 2026?",
-    },
-    {
-      agent: 'Arjun',
-      role: 'agent',
-      content: "I've scanned 40+ sources. Here's the summary:\n\n• Agent frameworks maturing: LangGraph, CrewAI, AutoGen now enterprise-ready\n• Context windows hit 1M+ tokens standard\n• Tool calling accuracy improved 3x vs 2024\n• Pricing dropped 60% across the board\n\nWant the full 12-page report as a Notion doc?",
-    },
-    {
-      agent: 'Helena',
-      role: 'user',
-      content: 'Draft a reply to an angry customer who waited 3 days for a response',
-    },
-    {
-      agent: 'Helena',
-      role: 'agent',
-      content: "Here's a draft reply:\n\n---\nHi [Name],\n\nI sincerely apologise for the delay — 3 days is unacceptable and that's on us. I've personally reviewed your case and here's where we stand...\n\n[Specific resolution]\n\nAs a gesture of goodwill, [offer]. We'll also be reviewing our support SLAs internally to make sure this doesn't happen again.\n\nWarm regards,\n[Your Name]\n---\n\nTone: empathetic, professional. Want me to send it?",
-    },
-  ]
+  // ── SQL-6: Create chat_messages table if it doesn't exist ────────────────
+  try {
+    // Check if chat_messages table exists
+    const { error } = await supabase
+      .from('chat_messages')
+      .select('id')
+      .limit(1)
 
-  // Store conversations as chat_messages table or use missions as chat
-  // For now, store as 3 missions with "chat" type so dashboard shows them
-  for (const conv of DEMO_CONVERSATIONS) {
-    try {
-      await supabase.from('missions').insert({
-        user_id: ADMIN_USER_ID,
-        title: `[${conv.agent}] ${conv.content.slice(0, 60)}...`,
-        prompt: conv.content,
-        output: conv.role === 'agent' ? conv.content : null,
-        status: 'completed',
-        started_at: new Date(Date.now() - Math.random() * 3 * 24 * 60 * 60 * 1000).toISOString(),
-        completed_at: new Date().toISOString(),
-      })
-    } catch {}
+    if (error && error.code === '42P01') {
+      // Table doesn't exist — create it via raw SQL
+      results.push('chat_messages: table missing — needs creation via Supabase dashboard')
+    } else {
+      results.push('chat_messages: table exists')
+    }
+  } catch (err: any) {
+    results.push(`chat_messages: check — ${err.message}`)
   }
-  results.push(`chat: ${DEMO_CONVERSATIONS.length} demo conversations seeded`)
 
   return NextResponse.json({ success: true, results })
 }

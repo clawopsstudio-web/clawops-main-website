@@ -9,14 +9,12 @@ import Integrations from '@/components/sections/Integrations'
 import AmpereStylePricing from './pricing/AmpereStylePricing'
 import FAQ from '@/components/sections/FAQ'
 import CTA from '@/components/sections/CTA'
-import SocialProof from '@/components/sections/SocialProof'
 import WhyClawOps from '@/components/sections/WhyClawOps'
 
 export default function LandingPage() {
   return (
     <main>
       <HeroNew />
-      <SocialProof />
       <WhyClawOps />
       <LiveFeed />
       <section id="agents">

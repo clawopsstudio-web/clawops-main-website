@@ -1,5 +1,6 @@
 // app/dashboard/page.tsx — ClawOps Studio Dashboard
 // Auth: Supabase session (layout handles protection)
+export const metadata = { title: 'Dashboard — ClawOps' };
 import { redirect } from 'next/navigation'
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'

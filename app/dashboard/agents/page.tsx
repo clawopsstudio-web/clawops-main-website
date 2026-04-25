@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+export const metadata = { title: 'Agents — ClawOps' };
 import { createClient } from '@/lib/supabase/client'
 
 const ADMIN_USER_ID = '5a1f1a65-b620-46dc-879d-c67e69ba0c04'

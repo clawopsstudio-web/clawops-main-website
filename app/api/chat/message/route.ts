@@ -75,21 +75,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ content: 'Failed to reach AI service. Please try again.' }, { status: 502 })
   }
 
-  // ── Store mission in DB (best effort — don't fail the chat if this errors) ─
+  // ── Store chat message in DB (best effort — don't fail the chat if this errors) ─
   try {
-    await supabase.from('missions').insert({
+    await supabase.from('chat_messages').insert({
       user_id: userId,
       agent_id: agentId ?? null,
-      title: message.slice(0, 120),
-      prompt: message,
-      output: aiContent,
-      status: 'completed',
-      started_at: new Date().toISOString(),
-      completed_at: new Date().toISOString(),
+      role: 'user',
+      content: message,
+      created_at: new Date().toISOString(),
+    })
+    await supabase.from('chat_messages').insert({
+      user_id: userId,
+      agent_id: agentId ?? null,
+      role: 'assistant',
+      content: aiContent,
+      created_at: new Date().toISOString(),
     })
   } catch (err) {
     // Non-fatal — log but don't fail the user's chat
-    console.warn('[chat/message] could not save mission:', err)
+    console.warn('[chat/message] could not save chat message:', err)
   }
 
   return NextResponse.json({ content: aiContent })

@@ -48,28 +48,12 @@ const MONTHLY_PLANS = [
       'Dedicated support (4hr SLA)',
     ],
   },
-  {
-    name: 'Enterprise',
-    price: 349,
-    description: 'For growing teams · 20 seats',
-    highlight: false,
-    badge: null,
-    features: [
-      '20 agent workspaces',
-      '200,000 tool calls/mo',
-      '850+ app integrations',
-      'All platforms + GoHighLevel + API access',
-      'Web scraping included',
-      'Dedicated support (4hr SLA)',
-    ],
-  },
 ]
 
 const ANNUAL_PLANS = [
   { ...MONTHLY_PLANS[0], price: 39 },
   { ...MONTHLY_PLANS[1], price: 119 },
   { ...MONTHLY_PLANS[2], price: 239 },
-  { ...MONTHLY_PLANS[3], price: 279 },
 ]
 
 const ADDON_PLANS = [
@@ -92,16 +76,15 @@ const ADDON_PLANS = [
 ]
 
 const COMPARISON_ROWS = [
-  { feature: 'Agent Workspaces', values: ['Up to 3', 'Up to 5', 'Unlimited', '20 seats'] },
-  { feature: 'Tool Calls / mo', values: ['20,000', '200,000', '200,000', '200,000'] },
-  { feature: 'App Integrations', values: ['850+', '850+', '850+', '850+'] },
-  { feature: 'Telegram + WhatsApp', values: ['✓', '✓', '✓', '✓'] },
-  { feature: 'Slack + Discord', values: ['—', '✓', '✓', '✓'] },
-  { feature: 'Web Scraping', values: ['—', '✓', '✓', '✓'] },
-  { feature: 'GoHighLevel (GHL)', values: ['—', '—', '✓', '✓'] },
-  { feature: 'API Access', values: ['—', '—', '✓', '✓'] },
-  { feature: 'Support', values: ['Email 48hr', 'Priority 12hr', 'Dedicated 4hr', 'Dedicated 4hr'] },
-  { feature: 'Claude API Key', values: ['—', '—', 'Included', 'Included'] },
+  { feature: 'Agent Workspaces', values: ['Up to 3', 'Up to 5', 'Unlimited'] },
+  { feature: 'Tool Calls / mo', values: ['20,000', '200,000', '200,000'] },
+  { feature: 'App Integrations', values: ['850+', '850+', '850+'] },
+  { feature: 'Telegram + WhatsApp', values: ['✓', '✓', '✓'] },
+  { feature: 'Slack + Discord', values: ['—', '✓', '✓'] },
+  { feature: 'Web Scraping', values: ['—', '✓', '✓'] },
+  { feature: 'GoHighLevel (GHL)', values: ['—', '—', '✓'] },
+  { feature: 'API Access', values: ['—', '—', '✓'] },
+  { feature: 'Support', values: ['Email 48hr', 'Priority 12hr', 'Dedicated 4hr'] },
 ]
 
 export default function AmpereStylePricing() {
@@ -152,7 +135,7 @@ export default function AmpereStylePricing() {
 
       {/* Pricing cards */}
       <div className="px-6 pb-16 max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {plans.map((plan) => (
             <div
               key={plan.name}

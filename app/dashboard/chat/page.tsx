@@ -1,5 +1,6 @@
 'use client'
 
+export const metadata = { title: 'Chat — ClawOps' };
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 

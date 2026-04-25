@@ -5,8 +5,23 @@ import GlobalStarField from "@/components/ui/GlobalStarField";
 
 export const metadata: Metadata = {
   title: {
-    default: "ClawOps — The OS your business runs on.",
-    template: "%s | ClawOps",
+    default: 'ClawOps — The OS your business runs on.',
+    template: '%s | ClawOps',
+  },
+  other: {
+    // Fallback page titles for pages that cant export metadata (client components)
+    // Auth pages
+    '/auth/signup': 'Sign Up',
+    '/auth/login': 'Log In',
+    // Dashboard pages
+    '/dashboard': 'Dashboard',
+    '/dashboard/chat': 'Chat',
+    '/dashboard/agents': 'Agents',
+    '/dashboard/tools': 'Tools',
+    '/dashboard/plugins': 'Plugins',
+    '/dashboard/missions': 'Missions',
+    '/dashboard/logs': 'Logs',
+    '/dashboard/terminal': 'Mission Control',
   },
   description:
     "The autonomous AI OS for businesses that want to scale without hiring.  Sales, Support, Research, and Ops agents that run 24/7 — autonomously. Manage from Telegram, WhatsApp, or Slack. Flat monthly pricing from $49/mo.",

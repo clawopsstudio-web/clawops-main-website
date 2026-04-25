@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+export const metadata = { title: 'Plugins — ClawOps' };
 import { createClient } from '@/lib/supabase/client'
 
 interface Plugin {

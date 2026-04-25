@@ -9,17 +9,27 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useState, useEffect } from 'react'
+import {
+  LayoutDashboard,
+  MessageSquare,
+  Bot,
+  Wrench,
+  Puzzle,
+  Target,
+  ScrollText,
+  Terminal,
+} from 'lucide-react'
 import type { User } from '@supabase/supabase-js'
 
 const NAV = [
-  { href: '/dashboard', label: 'Overview', icon: '▪' },
-  { href: '/dashboard/chat', label: 'Chat', icon: '#', primary: true },
-  { href: '/dashboard/agents', label: 'Agents', icon: '◈' },
-  { href: '/dashboard/tools', label: 'Tools', icon: '◉' },
-  { href: '/dashboard/plugins', label: 'Plugins', icon: '◎' },
-  { href: '/dashboard/missions', label: 'Missions', icon: '◇' },
-  { href: '/dashboard/logs', label: 'Logs', icon: '▫' },
-  { href: '/dashboard/terminal', label: 'Mission Control', icon: '▸' },
+  { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
+  { href: '/dashboard/chat', label: 'Chat', icon: MessageSquare, primary: true },
+  { href: '/dashboard/agents', label: 'Agents', icon: Bot },
+  { href: '/dashboard/tools', label: 'Tools', icon: Wrench },
+  { href: '/dashboard/plugins', label: 'Plugins', icon: Puzzle },
+  { href: '/dashboard/missions', label: 'Missions', icon: Target },
+  { href: '/dashboard/logs', label: 'Logs', icon: ScrollText },
+  { href: '/dashboard/terminal', label: 'Mission Control', icon: Terminal },
 ]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -105,8 +115,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   item.primary ? 'font-semibold' : '',
                 ].join(' ')}
               >
-                <span className="text-[10px] opacity-50 w-3 text-center">{item.icon}</span>
-                {item.label}
+                <item.icon className="w-4 h-4 text-white/40" />
+                <span>{item.label}</span>
               </Link>
             )
           })}
@@ -117,9 +127,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <span className="text-[11px] text-white/30 capitalize">
               {user?.user_metadata?.plan ?? 'Personal'}
             </span>
-            <span className="text-[10px] bg-white/8 text-white/50 px-2 py-0.5 rounded cursor-pointer hover:bg-white/15 transition-colors">
-              Upgrade
-            </span>
+            {user?.user_metadata?.plan !== 'business' && (
+              <span className="text-[10px] bg-white/8 text-white/50 px-2 py-0.5 rounded cursor-pointer hover:bg-white/15 transition-colors">
+                Upgrade
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-2.5 px-2 py-2 rounded-lg hover:bg-white/4 transition-colors cursor-pointer group">
             <div className="w-7 h-7 bg-white/10 rounded-full flex items-center justify-center text-[11px] font-bold text-white/60 shrink-0">
