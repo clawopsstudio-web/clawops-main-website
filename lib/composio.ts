@@ -33,14 +33,14 @@ export async function createUserSession(clerkUserId: string, toolkits: string[])
 // 2. Get OAuth connect link for a specific app
 // ──────────────────────────────────────────────────────────────────────────────
 
-export async function getConnectLink(clerkUserId: string, appName: string): Promise<string> {
+export async function getConnectLink(clerkUserId: string, appName: string, redirectUrl?: string): Promise<string> {
   const toolset = getToolSet()
   const entity = await toolset.getEntity(clerkUserId)
 
   const connection = await entity.initiateConnection({
     appName: appName.toUpperCase(),
     // @ts-expect-error - unblocking deploy
-    redirectUrl: 'https://connect.clawops.studio/oauth/callback',
+    redirectUrl: redirectUrl ?? 'https://connect.clawops.studio/oauth/callback',
     long_redirect_url: true,
   })
 

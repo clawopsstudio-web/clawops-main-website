@@ -26,7 +26,8 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const connectUrl = await getConnectLink(userId, appName)
+    const redirectUri = "https://clawops.studio/dashboard/tools?connected=true"
+    const connectUrl = await getConnectLink(userId, appName, redirectUri)
 
     return NextResponse.json({ connectUrl })
   } catch (err: any) {
