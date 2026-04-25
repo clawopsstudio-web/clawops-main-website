@@ -32,7 +32,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
-  const [userPlan, setUserPlan] = useState('Personal')
+  const [userPlan, setUserPlan] = useState('')
   const [user, setUser] = useState<any>(null)
   const [hermesLive, setHermesLive] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -124,10 +124,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Plan + user */}
         <div className="p-3 border-t border-white/5 space-y-1">
           <div className="flex items-center justify-between px-3 py-1.5">
-            <span className="text-[11px] text-white/30 capitalize">{userPlan}</span>
-            {userPlan !== 'business' && (
-              <span className="text-[10px] bg-white/8 text-white/50 px-2 py-0.5 rounded cursor-pointer hover:bg-white/15 transition-colors">
-                Upgrade
+            <span className="text-[11px] text-white/30 capitalize">{userPlan || 'Personal'}</span>
+            {!userPlan && (
+              <span className="text-[10px] bg-[#e8ff47]/10 text-[#e8ff47]/70 px-2 py-0.5 rounded">
+                Loading
+              </span>
+            )}
+            {userPlan === 'business' && (
+              <span className="text-[10px] bg-emerald-500/10 text-emerald-400/70 px-2 py-0.5 rounded">
+                Active
               </span>
             )}
           </div>
