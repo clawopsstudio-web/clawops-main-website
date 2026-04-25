@@ -1,14 +1,9 @@
-/**
- * app/dashboard/layout.tsx
- * Phase 3 dashboard shell — ClawOps Studio
- * Auth: Supabase session (replaced Clerk)
- */
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { useState, useEffect } from 'react'
 import {
   LayoutDashboard,
   MessageSquare,
@@ -19,7 +14,8 @@ import {
   ScrollText,
   Terminal,
 } from 'lucide-react'
-import type { User } from '@supabase/supabase-js'
+
+const ADMIN_UID = '5a1f1a65-b620-46dc-879d-c67e69ba0c04'
 
 const NAV = [
   { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
@@ -36,33 +32,37 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
-  const [user, setUser] = useState<User | null>(null)
+  const [userPlan, setUserPlan] = useState('Personal')
+  const [user, setUser] = useState<any>(null)
   const [hermesLive, setHermesLive] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Get current user
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user)
+    supabase.auth.getUser().then(async ({ data }) => {
+      setUser(data.user ?? null)
       if (!data.user) {
         router.push('/auth/login')
-      } else {
-        setIsLoading(false)
+        return
       }
+      // Fetch plan from profiles table
+      const { data: prof } = await supabase
+        .from('profiles')
+        .select('plan')
+        .eq('id', data.user.id)
+        .single()
+      if (prof?.plan) setUserPlan(prof.plan)
+      setIsLoading(false)
     })
-
     // Hermes status poll
     const check = async () => {
       try {
-        const res = await fetch('/api/hermes/status')
-        setHermesLive(res.ok)
-      } catch {
-        setHermesLive(false)
-      }
+        const r = await fetch('/api/hermes/status')
+        setHermesLive(r.ok)
+      } catch { setHermesLive(false) }
     }
     check()
-    const interval = setInterval(check, 30_000)
-    return () => clearInterval(interval)
+    const id = setInterval(check, 30_000)
+    return () => clearInterval(id)
   }, [router, supabase])
 
   const handleLogout = async () => {
@@ -71,13 +71,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     router.refresh()
   }
 
-  const initials = user?.user_metadata?.full_name
-    ? user.user_metadata.full_name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
-    : user?.email?.[0]?.toUpperCase() ?? '?'
-
-  const displayName = user?.user_metadata?.full_name ?? user?.email?.split('@')[0] ?? 'User'
-  const displayEmail = user?.email ?? ''
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
@@ -85,6 +78,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </div>
     )
   }
+
+  const initials = user?.user_metadata?.full_name
+    ? user.user_metadata.full_name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
+    : user?.email?.[0]?.toUpperCase() ?? '?'
+
+  const displayName = user?.user_metadata?.full_name ?? user?.email?.split('@')[0] ?? 'User'
+  const isAdmin = user?.id === ADMIN_UID
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a] text-white">
@@ -106,28 +106,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {NAV.map(item => {
             const active = pathname === item.href
             return (
-              <Link
-                key={item.href}
-                href={item.href}
+              <Link key={item.href} href={item.href}
                 className={[
                   'flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors',
-                  active ? 'bg-[#1a1a1a] text-white' : 'text-white/40 hover:text-white/70 hover:bg-white/4',
+                  active
+                    ? 'bg-[#1a1a1a] text-white font-semibold'
+                    : 'text-white/40 hover:text-white/70',
                   item.primary ? 'font-semibold' : '',
-                ].join(' ')}
-              >
-                <item.icon className="w-4 h-4 text-white/40" />
+                ].join(' ')}>
+                <item.icon className="w-4 h-4" />
                 <span>{item.label}</span>
               </Link>
             )
           })}
         </nav>
 
+        {/* Plan + user */}
         <div className="p-3 border-t border-white/5 space-y-1">
           <div className="flex items-center justify-between px-3 py-1.5">
-            <span className="text-[11px] text-white/30 capitalize">
-              {user?.user_metadata?.plan ?? 'Personal'}
-            </span>
-            {user?.user_metadata?.plan !== 'business' && (
+            <span className="text-[11px] text-white/30 capitalize">{userPlan}</span>
+            {userPlan !== 'business' && (
               <span className="text-[10px] bg-white/8 text-white/50 px-2 py-0.5 rounded cursor-pointer hover:bg-white/15 transition-colors">
                 Upgrade
               </span>
@@ -139,15 +137,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[12px] text-white/80 truncate font-medium">{displayName}</p>
-              <p className="text-[10px] text-white/30 truncate">{displayEmail}</p>
             </div>
+            <button onClick={handleLogout} className="text-white/30 hover:text-red-400 transition-colors shrink-0" title="Sign out">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M21 15l-5-5-5-5m5 5-5 5 5" />
+              </svg>
+            </button>
           </div>
-          <button
-            onClick={handleLogout}
-            className="w-full text-left px-3 py-2 text-[11px] text-white/30 hover:text-white/60 hover:bg-white/4 rounded-lg transition-colors"
-          >
-            Sign out
-          </button>
         </div>
       </aside>
 

@@ -167,12 +167,29 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        {/* Agent chat placeholder */}
+        {/* Agent chat panel */}
         <div className="bg-[#111] border border-white/5 rounded-2xl p-6">
-          <h2 className="text-white font-semibold mb-3">Chat with your agent</h2>
-          <div className="bg-black/30 rounded-xl p-6 text-center text-white/20 text-sm border border-white/5">
-            Your AI agent workspace will appear here once provisioned.
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-white font-semibold">Chat with your agent</h2>
           </div>
+          {isAdmin ? (
+            <a
+              href="/dashboard/chat"
+              className="flex items-center justify-between bg-black/30 rounded-xl p-6 border border-white/5 hover:border-[#e8ff47]/30 transition-colors group"
+            >
+              <div className="text-left">
+                <p className="text-white/80 text-sm font-medium">Your team is ready</p>
+                <p className="text-white/30 text-xs mt-1">3 agents active · Click to chat</p>
+              </div>
+              <span className="text-[#e8ff47] group-hover:translate-x-1 transition-transform">
+                Go to Chat →
+              </span>
+            </a>
+          ) : (
+            <div className="bg-black/30 rounded-xl p-6 text-center text-white/20 text-sm border border-white/5">
+              Your AI agent workspace will appear here once provisioned.
+            </div>
+          )}
         </div>
       </div>
     </div>

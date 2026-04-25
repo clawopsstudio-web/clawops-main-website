@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-export const metadata = { title: 'Plugins — ClawOps' };
+export const metadata = { title: 'Plugins — ClawOps' }
 import { createClient } from '@/lib/supabase/client'
 
 interface Plugin {
@@ -11,7 +11,7 @@ interface Plugin {
   category?: string
 }
 
-const STATIC_PLUGINS: Plugin[] = [
+const STATIC_PLUGINS = [
   { name: 'Web Scraper', desc: 'Scrape any URL and return structured data', source: 'firecrawl-py', status: 'available', category: 'Data' },
   { name: 'Email Parser', desc: 'Extract structured data from raw email content', source: 'mailparser', status: 'available', category: 'Communication' },
   { name: 'PDF Reader', desc: 'Extract and summarise PDF content', source: 'pymupdf', status: 'available', category: 'Documents' },
@@ -32,22 +32,74 @@ const CATEGORY_COLORS: Record<string, string> = {
   Search: 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30',
 }
 
+interface SubmitModalProps {
+  onClose: () => void
+}
+
+function SubmitModal({ onClose }: SubmitModalProps) {
+  const [form, setForm] = useState({ name: '', repo: '', desc: '' })
+  const [done, setDone] = useState(false)
+  const set = (k: keyof typeof form, v: string) => setForm(prev => ({ ...prev, [k]: v }))
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-[#111] border border-white/10 rounded-2xl p-6 w-full max-w-md">
+        <button onClick={onClose} className="absolute top-4 right-4 text-white/30 hover:text-white/60">✕</button>
+        {done ? (
+          <div className="text-center py-8">
+            <div className="text-4xl mb-4">✅</div>
+            <p className="text-[#e8ff47] font-semibold mb-2">Thanks! We&apos;ll review your plugin.</p>
+            <p className="text-white/40 text-sm">We&apos;ll reach out if it fits our library.</p>
+          </div>
+        ) : (
+          <form onSubmit={(e) => { e.preventDefault(); setDone(true) }} className="space-y-4">
+            <div>
+              <label className="text-white/60 text-xs block mb-1.5">Plugin name</label>
+              <input value={form.name} onChange={e => set('name', e.target.value)} required placeholder="Web Scraper"
+                className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2.5 text-white/70 text-sm focus:outline-none focus:border-white/20" />
+            </div>
+            <div>
+              <label className="text-white/60 text-xs block mb-1.5">GitHub repo URL</label>
+              <input value={form.repo} onChange={e => set('repo', e.target.value)} required placeholder="https://github.com/you/plugin"
+                className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2.5 text-white/70 text-sm focus:outline-none focus:border-white/20" />
+            </div>
+            <div>
+              <label className="text-white/60 text-xs block mb-1.5">Description</label>
+              <textarea value={form.desc} onChange={e => set('desc', e.target.value)} required rows={3} placeholder="What does this plugin do?"
+                className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2.5 text-white/70 text-sm focus:outline-none focus:border-white/20 resize-none" />
+            </div>
+            <div className="flex gap-3 pt-2">
+              <button type="button" onClick={onClose}
+                className="flex-1 py-2.5 border border-white/10 text-white/50 rounded-xl text-sm hover:bg-white/5">Cancel</button>
+              <button type="submit"
+                className="flex-1 py-2.5 bg-[#e8ff47] hover:bg-[#d4eb3a] text-black font-bold rounded-xl text-sm">Submit Plugin</button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export default function PluginsPage() {
-  const [plugins, setPlugins] = useState<Plugin[]>(STATIC_PLUGINS)
+  const [plugins, setPlugins] = useState<Plugin[]>(STATIC_PLUGINS as Plugin[])
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState<string>('all')
+  const [filter, setFilter] = useState('all')
+  const [showModal, setShowModal] = useState(false)
+  const [installed, setInstalled] = useState<Set<string>>(new Set())
 
   useEffect(() => {
-    // Try to fetch from GitHub (clawops-studio/plugins repo)
     fetch('https://raw.githubusercontent.com/clawopsstudio-web/plugins/main/plugins.json')
       .then(r => r.json())
       .then((data: Plugin[]) => { if (data?.length) setPlugins(data) })
-      .catch(() => {/* fallback to static */})
+      .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
 
-  const categories = ['all', ...Array.from(new Set(plugins.map(p => p.category || 'Other')))]
+  const categories = ['all']
   const filtered = filter === 'all' ? plugins : plugins.filter(p => (p.category || 'Other') === filter)
+
+  const install = (name: string) => setInstalled(prev => new Set([...prev, name]))
 
   return (
     <div className="p-6 space-y-6">
@@ -56,22 +108,15 @@ export default function PluginsPage() {
           <h1 className="text-white font-black text-xl">Plugins</h1>
           <p className="text-white/40 text-sm mt-1">Extend your agent with open-source tools</p>
         </div>
-        <a
-          href="https://github.com/clawops-studio/plugins"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs text-white/40 hover:text-white/70 border border-white/20 hover:border-white/40 px-3 py-1.5 rounded-lg transition-colors"
-        >
+        <button onClick={() => setShowModal(true)}
+          className="text-xs text-white/40 hover:text-white/70 border border-white/20 hover:border-white/40 px-3 py-1.5 rounded-lg transition-colors">
           + Submit Plugin
-        </a>
+        </button>
       </div>
 
-      {/* Filter tabs */}
       <div className="flex gap-2 flex-wrap">
         {categories.map(cat => (
-          <button
-            key={cat}
-            onClick={() => setFilter(cat)}
+          <button key={cat} onClick={() => setFilter(cat)}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
               filter === cat
                 ? 'bg-[#e8ff47] text-[#0a0a0a]'
@@ -83,9 +128,8 @@ export default function PluginsPage() {
         ))}
       </div>
 
-      {/* Plugin grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {filtered.map((plugin) => (
+        {filtered.map(plugin => (
           <div key={plugin.name} className="bg-white/5 border border-white/10 rounded-xl p-5 hover:border-white/20 transition-colors">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2">
@@ -102,9 +146,14 @@ export default function PluginsPage() {
             <div className="flex items-center justify-between">
               <span className="text-[10px] text-white/25 font-mono">via {plugin.source}</span>
               {plugin.status === 'available' ? (
-                <button className="text-xs font-medium text-[#e8ff47] hover:underline">
-                  Install →
-                </button>
+                installed.has(plugin.name) ? (
+                  <span className="text-xs font-medium text-emerald-400">Installed ✅</span>
+                ) : (
+                  <button onClick={() => install(plugin.name)}
+                    className="text-xs font-medium text-[#e8ff47] hover:underline">
+                    Install →
+                  </button>
+                )
               ) : (
                 <span className="text-[10px] text-white/30">Coming Soon</span>
               )}
@@ -114,10 +163,10 @@ export default function PluginsPage() {
       </div>
 
       {filtered.length === 0 && !loading && (
-        <div className="text-center py-12 text-white/30 text-sm">
-          No plugins in this category yet.
-        </div>
+        <div className="text-center py-12 text-white/30 text-sm">No plugins in this category yet.</div>
       )}
+
+      {showModal && <SubmitModal onClose={() => setShowModal(false)} />}
     </div>
   )
 }
