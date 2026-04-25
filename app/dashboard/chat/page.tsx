@@ -113,7 +113,7 @@ export default function ChatPage() {
       const res = await fetch('/api/chat/message', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text }),
+        body: JSON.stringify({ message: text, agentId: activeId }),
       })
       const data = await res.json()
       if (data.content) {
@@ -230,6 +230,26 @@ export default function ChatPage() {
               </div>
             )
           })}
+          {/* Typing indicator */}
+          {sending && (
+            <div className="flex gap-3">
+              <div className={`w-7 h-7 rounded-full ${agent.bg} flex items-center justify-center text-[10px] font-bold shrink-0 ${agent.color}`}>
+                {agent.name[0]}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-baseline gap-2 mb-1">
+                  <span className="text-white/80 text-xs font-semibold">{agent.name}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-1">
+                    <div className="w-2 h-2 bg-white/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <div className="w-2 h-2 bg-white/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <div className="w-2 h-2 bg-white/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           <div ref={messagesEnd} />
         </div>
 
