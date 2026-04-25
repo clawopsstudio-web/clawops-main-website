@@ -220,7 +220,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     supabase.auth.getUser().then(async ({ data }) => {
       setUser(data.user ?? null)
       if (!data.user) {
-        router.push('/auth/login')
+        router.push('/auth/login');
         return
       }
       // Fetch plan from profiles table; onboarding tracked in localStorage
@@ -238,7 +238,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     // Hermes status poll
     const check = async () => {
       try {
-        const r = await fetch('/api/hermes/status')
+        const r = await fetch('/api/hermes/status');
         setHermesLive(r.ok)
       } catch { setHermesLive(false) }
     }
@@ -248,8 +248,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [router, supabase])
 
   const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' })
-    router.push('/auth/login')
+    await fetch('/api/auth/logout', { method: 'POST' });
+    router.push('/auth/login');
     router.refresh()
   }
 
