@@ -17,17 +17,24 @@ const NVIDIA_BASE_URL = 'https://integrate.api.nvidia.com/v1'
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN
 const ADMIN_CHAT_ID = '381136631' // Pulkit's Telegram chat ID
 
-// Agent names mapped by agent ID
-const AGENT_NAMES: Record<string, { name: string }> = {
-  ryan: { name: 'Ryan' },
-  arjun: { name: 'Arjun' },
-  helena: { name: 'Helena' },
+// Agent UUIDs to names mapping
+const AGENT_UUIDS: Record<string, string> = {
+  'f4720d9d-cf17-4990-aaf4-b4f8688e7b9a': 'Ryan',
+  '67965911-391f-4930-ab0b-0f036672f414': 'Arjun',
+  'd8008e7c-bb65-4c66-9dbf-e840d5cb3f53': 'Helena',
 }
 
-function getAgentInfo(agentId?: string) {
-  if (!agentId || agentId === 'all') return null
-  const key = agentId.toLowerCase()
-  return AGENT_NAMES[key] ?? null
+async function getAgentInfo(supabase: any, agentId?: string) {
+  if (!agentId || agentId === '00000000-0000-0000-0000-000000000000' || agentId === 'all') {
+    return null
+  }
+  // First check our known UUIDs
+  const knownName = AGENT_UUIDS[agentId]
+  if (knownName) return { name: knownName }
+  // Fallback: look up in agents table
+  const { data } = await supabase.from('agents').select('name').eq('id', agentId).single()
+  if (data?.name) return { name: data.name }
+  return null
 }
 
 async function handleTelegramCommand(message: string, userId: string): Promise<{ sent: boolean; result?: string; error?: string }> {
@@ -100,7 +107,7 @@ export async function POST(req: NextRequest) {
   }
 
   const supabase = createClient()
-  const agentInfo = getAgentInfo(agentId)
+  const agentInfo = await getAgentInfo(supabase, agentId)
   const NO_AGENT = '00000000-0000-0000-0000-000000000000'
 
   // ── Telegram command detection ────────────────────────────────────────────
