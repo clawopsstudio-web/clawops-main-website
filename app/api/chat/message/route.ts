@@ -15,10 +15,6 @@ const NVIDIA_API_KEY = process.env.NVIDIA_API_KEY
 const NVIDIA_BASE_URL = 'https://integrate.api.nvidia.com/v1'
 
 // Agent names mapped by agent ID
-const AGENT_NAMES: Record<string, { name: string; avatar: string }> = {
-  'ryan': { name: 'Ryan', avatar: 'R' },
-  'arjun': { name: 'Arjun', avatar: 'A' },
-  'helena': { name: 'Helena', avatar: 'H' },
 }
 
 function getAgentInfo(agentId?: string) {
@@ -89,8 +85,6 @@ export async function POST(req: NextRequest) {
   const base = {
     user_id: userId,
     agent_id: agentId ?? NO_AGENT,
-    sender_name: 'You',
-    avatar: 'Y',
     created_at: now,
   }
   try {
@@ -102,8 +96,6 @@ export async function POST(req: NextRequest) {
     await supabase.from('chat_messages').insert({
       ...base,
       role: 'assistant',
-      sender_name: agentName,
-      avatar: agentInfo?.avatar ?? 'A',
       content: aiContent,
     })
   } catch (err) {
