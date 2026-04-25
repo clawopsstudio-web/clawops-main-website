@@ -39,9 +39,7 @@ export async function getConnectLink(clerkUserId: string, appName: string, redir
 
   const connection = await entity.initiateConnection({
     appName: appName.toUpperCase(),
-    // @ts-expect-error - unblocking deploy
-    redirectUrl: redirectUrl ?? 'https://connect.clawops.studio/oauth/callback',
-    long_redirect_url: true,
+    redirectUri: redirectUrl ?? 'https://clawops.studio/api/composio/oauth/callback',
   })
 
   // @ts-expect-error - unblocking deploy
