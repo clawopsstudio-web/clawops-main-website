@@ -12,11 +12,13 @@ const MONTHLY_PLANS = [
     badge: null,
     features: [
       '3 AI agents',
-      'Free AI model (Groq Llama)',
+      'Free AI model (Groq)',
       '20,000 tool calls/mo',
       '850+ app integrations',
       'Telegram + WhatsApp',
       'VPS: 8GB RAM, 100GB SSD',
+      'Smithery MCP Library',
+      'Bring Your Own API Key',
       'Email support (48hr response)',
     ],
   },
@@ -34,6 +36,8 @@ const MONTHLY_PLANS = [
       'Telegram + WhatsApp + Slack + Discord',
       'Web scraping included',
       'VPS: 16GB RAM, 200GB SSD',
+      'Smithery MCP Library',
+      'Bring Your Own API Key',
       'Priority support (12hr response)',
     ],
   },
@@ -51,6 +55,8 @@ const MONTHLY_PLANS = [
       'All platforms + GoHighLevel + API access',
       'Web scraping included',
       'VPS: 32GB RAM, 500GB SSD',
+      'Smithery MCP Library',
+      'Bring Your Own API Key',
       'Dedicated support (4hr SLA)',
     ],
   },
@@ -64,20 +70,20 @@ const ANNUAL_PLANS = [
 
 const ADDON_PLANS = [
   {
-    name: 'Claude API — 5x',
-    price: 50,
+    name: 'Smithery MCP Server',
+    price: 29,
     badge: 'ADD-ON',
-    description: '5M tokens/mo · 1,000 req per 5hr window',
-    models: 'Claude Haiku + Sonnet 4.6 + Opus 4.6 + Opus 4.7',
-    note: 'Get API key via support chat',
+    description: 'Access 1,000+ MCP tools and integrations',
+    models: 'Connect any Smithery MCP server to your agents',
+    note: 'Available on all plans',
   },
   {
-    name: 'Claude API — 20x',
-    price: 99,
-    badge: 'ADD-ON',
-    description: '20M tokens/mo · 2,000 req per 5hr window',
-    models: 'Claude Haiku + Sonnet 4.6 + Opus 4.6 + Opus 4.7',
-    note: 'Get API key via support chat',
+    name: 'Bring Your Own API Key',
+    price: 0,
+    badge: 'FREE',
+    description: 'Use your own Claude/OpenAI/Groq API keys',
+    models: 'Full flexibility with your own API credentials',
+    note: 'Already included in all plans',
   },
 ]
 
@@ -91,6 +97,9 @@ const COMPARISON_ROWS = [
   { feature: 'Web Scraping', values: ['—', '✓', '✓'] },
   { feature: 'GoHighLevel (GHL)', values: ['—', '—', '✓'] },
   { feature: 'API Access', values: ['—', '—', '✓'] },
+  { feature: 'Native Tools (Terminal, File, Web, Code)', values: ['✓', '✓', '✓'] },
+  { feature: 'Smithery MCP Library', values: ['✓', '✓', '✓'] },
+  { feature: 'MCP Server Connections', values: ['—', '—', '✓'] },
   { feature: 'Bring Your Own API Key', values: ['✓', '✓', '✓'] },
   { feature: 'VPS Specs', values: ['8GB RAM / 100GB', '16GB RAM / 200GB', '32GB RAM / 500GB'] },
   { feature: 'Support', values: ['Email 48hr', 'Priority 12hr', 'Dedicated 4hr'] },
@@ -112,10 +121,10 @@ export default function AmpereStylePricing() {
           className="text-5xl md:text-6xl font-black text-white mb-5 leading-none"
           style={{ fontFamily: 'var(--font-cabinet, sans-serif)', letterSpacing: '-0.02em' }}
         >
-          One price. All agents.
+          Deploy AI agents that work 24/7
         </h1>
         <p className="text-white/50 text-lg max-w-md mx-auto mb-8">
-          No per-user fees. No token billing. Pick a plan, connect your tools, deploy your team.
+          3 agents on Personal · Free Groq model · Claude Sonnet 4.6 on Team &amp; Business. No per-user fees. No token billing.
         </p>
 
         {/* Monthly / Annual toggle */}
@@ -212,10 +221,10 @@ export default function AmpereStylePricing() {
             ADD-ON
           </p>
           <h2 className="text-xl font-black text-white mb-1" style={{ fontFamily: 'var(--font-cabinet, sans-serif)' }}>
-            Claude API Access
+            Add-ons &amp; Extras
           </h2>
           <p className="text-white/40 text-sm mb-6">
-            Add direct Claude API access to any plan. Billed alongside your base plan.
+            Extend your plan with additional tools and capabilities.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
