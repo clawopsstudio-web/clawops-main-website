@@ -6,11 +6,16 @@ import { createClient } from '@/lib/supabase/client'
 const ADMIN_USER_ID = '5a1f1a65-b620-46dc-879d-c67e69ba0c04'
 
 const ROLES = ['Sales', 'Support', 'Research', 'Marketing', 'Operations', 'Custom']
-const MODELS = [
-  { id: 'moonshotai/kimi-k2-thinking', label: 'Kimi K2 (default)' },
-  { id: 'openai/gpt-4o', label: 'GPT-4o' },
-  { id: 'anthropic/claude-sonnet-4-20250514', label: 'Claude Sonnet 4' },
+
+// Provider options
+const PROVIDERS = [
+  { id: 'custom-api-codemax-pro', name: 'Codemax (Claude)', models: ['claude-sonnet-4-6', 'claude-opus-4-6', 'claude-haiku-4-5-20251001'] },
+  { id: 'openai-codex', name: 'OpenAI Codex', models: ['gpt-5.4', 'gpt-5.4-mini', 'gpt-5.3-codex'] },
+  { id: 'openrouter', name: 'OpenRouter', models: ['openrouter/google/gemini-2.5-pro', 'openrouter/anthropic/claude-sonnet'] },
+  { id: 'nvidia', name: 'NVIDIA', models: ['nvidia/llama-3.1-nemotron-70b', 'nvidia/mistral-nemo'] },
+  { id: 'custom', name: 'Custom Provider', models: [] },
 ]
+
 const TOOLS = [
   { id: 'gmail',    label: 'Gmail',    connected: true },
   { id: 'telegram', label: 'Telegram', connected: true },
@@ -29,15 +34,31 @@ const DEMO_AGENTS = [
   { id: 'demo-helena', name: 'Helena', role: 'Support Agent', status: 'running', system_prompt: 'You are Helena, the customer support agent. Handle ticket triage, resolve common issues, and escalate when needed.', toolsConnected: 2, lastRan: '28 min ago', description: 'Helena handles support tickets, triage, and customer communication.' },
 ]
 
-const CONFIG_TABS = ['Identity', 'Behaviour', 'Skills & Tools', 'Channels', 'Missions'] as const
+const CONFIG_TABS = ['Identity', 'Behaviour', 'Skills & Tools', 'Channels', 'Missions', 'Runtime'] as const
 type ConfigTab = typeof CONFIG_TABS[number]
 
 interface AgentRecord {
-  id: string; name: string; role: string; status?: string
-  system_prompt?: string; description?: string; personality?: string; language?: string
+  id: string
+  name: string
+  role: string
+  status?: string
+  sync_status?: 'synced' | 'not_synced' | 'sync_failed'
+  system_prompt?: string
+  description?: string
+  personality?: string
+  language?: string
+  provider?: string
+  model_id?: string
+  temperature?: number
+  max_tokens?: number
   channels?: { dashboard: boolean; telegram: boolean; whatsapp: boolean; slack: boolean }
   tools?: string[]
 }
+
+const DEFAULT_PROVIDER = 'custom-api-codemax-pro'
+const DEFAULT_MODEL = 'claude-sonnet-4-6'
+const DEFAULT_TEMPERATURE = 0.7
+const DEFAULT_MAX_TOKENS = 8192
 
 export default function AgentsPage() {
   const [agents, setAgents] = useState<AgentRecord[]>([])
@@ -49,10 +70,14 @@ export default function AgentsPage() {
   const [newName, setNewName] = useState('')
   const [newRole, setNewRole] = useState('Sales')
   const [newPrompt, setNewPrompt] = useState('')
-  const [newModel, setNewModel] = useState(MODELS[0].id)
+  const [newProvider, setNewProvider] = useState(DEFAULT_PROVIDER)
+  const [newModel, setNewModel] = useState(DEFAULT_MODEL)
+  const [newTemperature, setNewTemperature] = useState(DEFAULT_TEMPERATURE)
+  const [newMaxTokens, setNewMaxTokens] = useState(DEFAULT_MAX_TOKENS)
   const [selectedTools, setSelectedTools] = useState<string[]>(['gmail'])
   const [creating, setCreating] = useState(false)
   const [createStep, setCreateStep] = useState<'idle' | 'creating' | 'initializing' | 'done'>('idle')
+  const [createError, setCreateError] = useState<string | null>(null)
 
   // Config form state
   const [cfgName, setCfgName] = useState('')
@@ -60,20 +85,32 @@ export default function AgentsPage() {
   const [cfgColor, setCfgColor] = useState(AVATAR_COLORS[0])
   const [cfgDesc, setCfgDesc] = useState('')
   const [cfgPrompt, setCfgPrompt] = useState('')
+  const [cfgProvider, setCfgProvider] = useState(DEFAULT_PROVIDER)
+  const [cfgModel, setCfgModel] = useState(DEFAULT_MODEL)
+  const [cfgTemperature, setCfgTemperature] = useState(DEFAULT_TEMPERATURE)
+  const [cfgMaxTokens, setCfgMaxTokens] = useState(DEFAULT_MAX_TOKENS)
   const [cfgPersonality, setCfgPersonality] = useState('Professional')
   const [cfgLanguage, setCfgLanguage] = useState('English')
   const [cfgTools, setCfgTools] = useState<string[]>([])
   const [cfgChannels, setCfgChannels] = useState({ dashboard: true, telegram: false, whatsapp: false, slack: false })
   const [cfgSaved, setCfgSaved] = useState(false)
+  const [cfgSaving, setCfgSaving] = useState(false)
+  const [cfgSyncStatus, setCfgSyncStatus] = useState<'synced' | 'not_synced' | 'sync_failed'>('not_synced')
+  const [syncing, setSyncing] = useState(false)
 
   const supabase = createClient()
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (data.user?.id !== ADMIN_USER_ID) return
-      supabase.from('agents').select('id, name, role, status, system_prompt').then(({ data }) => setAgents(data ?? []))
+      supabase.from('agents').select('id, name, role, status, sync_status, system_prompt, provider, model_id, temperature, max_tokens').then(({ data }) => setAgents(data ?? []))
     })
   }, [])
+
+  const getModelsForProvider = (providerId: string) => {
+    const provider = PROVIDERS.find(p => p.id === providerId)
+    return provider?.models ?? []
+  }
 
   const openConfigModal = (agent: AgentRecord) => {
     setConfigAgent(agent)
@@ -83,10 +120,15 @@ export default function AgentsPage() {
     setCfgColor(AVATAR_COLORS[agent.name.charCodeAt(0) % AVATAR_COLORS.length])
     setCfgDesc(agent.description ?? '')
     setCfgPrompt(agent.system_prompt ?? '')
+    setCfgProvider(agent.provider ?? DEFAULT_PROVIDER)
+    setCfgModel(agent.model_id ?? DEFAULT_MODEL)
+    setCfgTemperature(agent.temperature ?? DEFAULT_TEMPERATURE)
+    setCfgMaxTokens(agent.max_tokens ?? DEFAULT_MAX_TOKENS)
     setCfgPersonality(agent.personality ?? 'Professional')
     setCfgLanguage(agent.language ?? 'English')
     setCfgTools(agent.tools ?? ['gmail'])
     setCfgChannels(agent.channels ?? { dashboard: true, telegram: false, whatsapp: false, slack: false })
+    setCfgSyncStatus(agent.sync_status ?? 'not_synced')
     setCfgSaved(false)
   }
 
@@ -96,21 +138,68 @@ export default function AgentsPage() {
 
   const saveConfig = async () => {
     if (!configAgent) return
+    setCfgSaving(true)
+    
     const { error } = await supabase.from('agents').update({
       name: cfgName,
       role: cfgRole,
       system_prompt: cfgPrompt,
       description: cfgDesc,
+      provider: cfgProvider,
+      model_id: cfgModel,
+      temperature: cfgTemperature,
+      max_tokens: cfgMaxTokens,
       personality: cfgPersonality,
       language: cfgLanguage,
       tools: cfgTools,
       channels: cfgChannels,
     }).eq('id', configAgent.id)
+    
+    setCfgSaving(false)
     if (!error) {
-      setAgents(prev => prev.map(a => a.id === configAgent.id ? { ...a, name: cfgName, role: cfgRole, system_prompt: cfgPrompt, description: cfgDesc, personality: cfgPersonality, language: cfgLanguage, tools: cfgTools, channels: cfgChannels } : a))
+      setAgents(prev => prev.map(a => a.id === configAgent.id ? { 
+        ...a, 
+        name: cfgName, 
+        role: cfgRole, 
+        system_prompt: cfgPrompt, 
+        description: cfgDesc,
+        provider: cfgProvider,
+        model_id: cfgModel,
+        temperature: cfgTemperature,
+        max_tokens: cfgMaxTokens,
+        personality: cfgPersonality,
+        language: cfgLanguage,
+        tools: cfgTools,
+        channels: cfgChannels,
+      } : a))
       setCfgSaved(true)
       setTimeout(() => setCfgSaved(false), 2000)
     }
+  }
+
+  const syncAgent = async () => {
+    if (!configAgent) return
+    setSyncing(true)
+    
+    try {
+      const res = await fetch('/api/agents/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agent_ids: [configAgent.id] }),
+      })
+      const data = await res.json()
+      
+      if (res.ok) {
+        setCfgSyncStatus('synced')
+        setAgents(prev => prev.map(a => a.id === configAgent.id ? { ...a, sync_status: 'synced' } : a))
+      } else {
+        setCfgSyncStatus('sync_failed')
+      }
+    } catch {
+      setCfgSyncStatus('sync_failed')
+    }
+    
+    setSyncing(false)
   }
 
   const toggleToolNew = (id: string) => {
@@ -124,29 +213,76 @@ export default function AgentsPage() {
     if (!newName.trim()) return
     setCreating(true)
     setCreateStep('creating')
-    const { data, error } = await supabase.from('agents').insert({
-      name: newName.trim(), role: newRole, status: 'initializing',
-      system_prompt: newPrompt || defaultPrompt(newName, newRole),
-      model: newModel, tools: selectedTools,
-    }).select().single()
-    if (error || !data) { setCreating(false); setCreateStep('idle'); return }
-    setCreateStep('initializing')
-    await new Promise(r => setTimeout(r, 3000))
-    await supabase.from('agents').update({ status: 'active' }).eq('id', data.id)
-    setAgents(prev => [...prev.filter(a => a.id !== data.id), data])
-    setCreateStep('done')
-    await new Promise(r => setTimeout(r, 600))
-    closeNewModal()
+    setCreateError(null)
+    
+    try {
+      const res = await fetch('/api/agents', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newName.trim(),
+          role: newRole,
+          system_prompt: newPrompt || defaultPrompt(newName, newRole),
+          provider: newProvider,
+          model_id: newModel,
+          temperature: newTemperature,
+          max_tokens: newMaxTokens,
+          tools: selectedTools,
+        }),
+      })
+      
+      const data = await res.json()
+      
+      if (!res.ok) {
+        setCreateError(data.error || 'Failed to create agent')
+        setCreating(false)
+        setCreateStep('idle')
+        return
+      }
+      
+      setCreateStep('initializing')
+      await new Promise(r => setTimeout(r, 3000))
+      await supabase.from('agents').update({ status: 'active' }).eq('id', data.agent.id)
+      setAgents(prev => [...prev.filter(a => a.id !== data.agent.id), data.agent])
+      setCreateStep('done')
+      await new Promise(r => setTimeout(r, 600))
+      closeNewModal()
+    } catch (err) {
+      setCreateError('Network error. Please try again.')
+      setCreating(false)
+      setCreateStep('idle')
+    }
   }
 
   const closeNewModal = () => {
-    setShowModal(false); setCreating(false); setCreateStep('idle')
-    setNewName(''); setNewRole('Sales'); setNewPrompt(''); setNewModel(MODELS[0].id); setSelectedTools(['gmail'])
+    setShowModal(false)
+    setCreating(false)
+    setCreateStep('idle')
+    setCreateError(null)
+    setNewName('')
+    setNewRole('Sales')
+    setNewPrompt('')
+    setNewProvider(DEFAULT_PROVIDER)
+    setNewModel(DEFAULT_MODEL)
+    setNewTemperature(DEFAULT_TEMPERATURE)
+    setNewMaxTokens(DEFAULT_MAX_TOKENS)
+    setSelectedTools(['gmail'])
   }
 
   const getCardColor = (name: string) => AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length]
 
   const displayAgents = agents.length > 0 ? agents : []
+
+  const getSyncBadge = (status?: string) => {
+    switch (status) {
+      case 'synced':
+        return <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Synced</span>
+      case 'sync_failed':
+        return <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">Sync Failed</span>
+      default:
+        return <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">Not Synced</span>
+    }
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -170,15 +306,21 @@ export default function AgentsPage() {
             <div key={a.id} className="bg-[#111] border border-white/7 rounded-xl p-5">
               <div className="flex items-start justify-between mb-3">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center text-black font-black text-sm" style={{ backgroundColor: color }}>{a.name[0]}</div>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full ${
-                  a.status === 'running' || a.status === 'active' ? 'bg-emerald-950 text-emerald-400' :
-                  a.status === 'initializing' ? 'bg-yellow-950 text-yellow-400 animate-pulse' : 'bg-white/8 text-white/40'
-                }`}>
-                  {a.status === 'initializing' ? 'initializing...' : (a.status ?? 'idle')}
-                </span>
+                <div className="flex flex-col items-end gap-1">
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full ${
+                    a.status === 'running' || a.status === 'active' ? 'bg-emerald-950 text-emerald-400' :
+                    a.status === 'initializing' ? 'bg-yellow-950 text-yellow-400 animate-pulse' : 'bg-white/8 text-white/40'
+                  }`}>
+                    {a.status === 'initializing' ? 'initializing...' : (a.status ?? 'idle')}
+                  </span>
+                  {getSyncBadge(a.sync_status)}
+                </div>
               </div>
               <p className="text-white font-bold text-sm mb-0.5">{a.name}</p>
               <p className="text-white/30 text-xs">{a.role ?? 'General'}</p>
+              {a.model_id && (
+                <p className="text-white/20 text-[10px] mt-0.5">{a.model_id.split('/').pop()}</p>
+              )}
               {demo && <p className="text-white/20 text-[10px] mt-1">Last ran: {demo.lastRan}</p>}
               <div className="flex gap-2 mt-4">
                 <Link href="/dashboard/chat" className="text-[10px] text-white/40 hover:text-white/70">Chat →</Link>
@@ -212,6 +354,7 @@ export default function AgentsPage() {
               </div>
               <div className="flex items-center gap-3">
                 {cfgSaved && <span className="text-emerald-400 text-xs">✓ Saved</span>}
+                {getSyncBadge(cfgSyncStatus)}
                 <button onClick={() => setConfigAgent(null)} className="text-white/30 hover:text-white text-lg">✕</button>
               </div>
             </div>
@@ -226,6 +369,12 @@ export default function AgentsPage() {
                   {tab}
                 </button>
               ))}
+              <button onClick={() => setConfigTab('Runtime')}
+                className={`px-4 py-3 text-xs font-medium border-b-2 transition-colors ${
+                  configTab === 'Runtime' ? 'text-white border-[#e8ff47]' : 'text-white/40 border-transparent hover:text-white/70'
+                }`}>
+                Runtime
+              </button>
             </div>
 
             {/* Tab content */}
@@ -379,13 +528,117 @@ export default function AgentsPage() {
                   </Link>
                 </div>
               )}
+
+              {/* Runtime Tab */}
+              {configTab === 'Runtime' && (
+                <div className="space-y-5">
+                  <div className="bg-[#111] border border-white/8 rounded-xl p-4 space-y-4">
+                    <h4 className="text-white/80 text-sm font-medium">Provider Configuration</h4>
+                    
+                    <div>
+                      <label className="text-white/50 text-xs block mb-1.5">Provider</label>
+                      <select 
+                        value={cfgProvider} 
+                        onChange={e => { 
+                          setCfgProvider(e.target.value)
+                          const models = getModelsForProvider(e.target.value)
+                          if (models.length > 0) setCfgModel(models[0])
+                        }} 
+                        className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-3 py-2.5 text-white/80 text-sm focus:outline-none focus:border-white/20"
+                      >
+                        {PROVIDERS.map(p => (
+                          <option key={p.id} value={p.id}>{p.name}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="text-white/50 text-xs block mb-1.5">Model ID</label>
+                      {getModelsForProvider(cfgProvider).length > 0 ? (
+                        <select 
+                          value={cfgModel} 
+                          onChange={e => setCfgModel(e.target.value)} 
+                          className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-3 py-2.5 text-white/80 text-sm focus:outline-none focus:border-white/20"
+                        >
+                          {getModelsForProvider(cfgProvider).map(m => (
+                            <option key={m} value={m}>{m.split('/').pop()}</option>
+                          ))}
+                        </select>
+                      ) : (
+                        <input 
+                          value={cfgModel} 
+                          onChange={e => setCfgModel(e.target.value)} 
+                          placeholder="e.g. custom-model-name"
+                          className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-3 py-2.5 text-white/80 text-sm focus:outline-none focus:border-white/20"
+                        />
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-white/50 text-xs block mb-1.5">
+                          Temperature: <span className="text-white/70">{cfgTemperature}</span>
+                        </label>
+                        <input 
+                          type="range" 
+                          min="0" 
+                          max="1" 
+                          step="0.1" 
+                          value={cfgTemperature} 
+                          onChange={e => setCfgTemperature(parseFloat(e.target.value))}
+                          className="w-full accent-[#e8ff47]"
+                        />
+                        <div className="flex justify-between text-[10px] text-white/30 mt-1">
+                          <span>Precise</span>
+                          <span>Creative</span>
+                        </div>
+                      </div>
+                      <div>
+                        <label className="text-white/50 text-xs block mb-1.5">Max Tokens</label>
+                        <input 
+                          type="number" 
+                          value={cfgMaxTokens} 
+                          onChange={e => setCfgMaxTokens(parseInt(e.target.value) || 8192)}
+                          min="256"
+                          max="200000"
+                          className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-3 py-2.5 text-white/80 text-sm focus:outline-none focus:border-white/20"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-[#111] border border-white/8 rounded-xl p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <h4 className="text-white/80 text-sm font-medium">Sync to Runtime</h4>
+                        <p className="text-white/40 text-[10px] mt-0.5">Push configuration to Hermes VPS</p>
+                      </div>
+                      {getSyncBadge(cfgSyncStatus)}
+                    </div>
+                    <button 
+                      onClick={syncAgent}
+                      disabled={syncing}
+                      className="w-full py-2.5 bg-[#e8ff47] hover:bg-[#d4eb3a] disabled:opacity-50 text-black font-bold text-sm rounded-xl transition-colors flex items-center justify-center gap-2"
+                    >
+                      {syncing ? (
+                        <>
+                          <span className="animate-spin">⟳</span>
+                          Syncing...
+                        </>
+                      ) : (
+                        'Sync to Hermes'
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Footer */}
             <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-white/5 shrink-0">
               <button onClick={() => setConfigAgent(null)} className="px-4 py-2.5 text-white/40 text-sm hover:text-white/70 transition-colors">Cancel</button>
-              <button onClick={saveConfig} className="px-5 py-2.5 bg-[#e8ff47] hover:bg-[#d4eb3a] text-black font-bold text-sm rounded-xl transition-colors">
-                Save changes
+              <button onClick={saveConfig} disabled={cfgSaving} className="px-5 py-2.5 bg-[#e8ff47] hover:bg-[#d4eb3a] disabled:opacity-50 text-black font-bold text-sm rounded-xl transition-colors">
+                {cfgSaving ? 'Saving...' : 'Save changes'}
               </button>
             </div>
           </div>
@@ -403,6 +656,11 @@ export default function AgentsPage() {
             <div className="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
               {createStep === 'idle' || createStep === 'creating' ? (
                 <>
+                  {createError && (
+                    <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-red-400 text-xs">
+                      {createError}
+                    </div>
+                  )}
                   <div>
                     <label className="text-white/50 text-xs block mb-1.5">Agent name *</label>
                     <input value={newName} onChange={e => { setNewName(e.target.value); if (!newPrompt) setNewPrompt(defaultPrompt(e.target.value, newRole)) }}
@@ -417,17 +675,83 @@ export default function AgentsPage() {
                   </div>
                   <div>
                     <label className="text-white/50 text-xs block mb-1.5">System prompt</label>
-                    <textarea value={newPrompt} onChange={e => setNewPrompt(e.target.value)} rows={4}
+                    <textarea value={newPrompt} onChange={e => setNewPrompt(e.target.value)} rows={3}
                       placeholder="You are Ryan, a sales agent who..."
                       className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white/70 text-sm focus:outline-none focus:border-white/20 resize-none font-mono" />
                   </div>
-                  <div>
-                    <label className="text-white/50 text-xs block mb-1.5">Model</label>
-                    <select value={newModel} onChange={e => setNewModel(e.target.value)}
-                      className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2.5 text-white/80 text-sm focus:outline-none">
-                      {MODELS.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
-                    </select>
+
+                  {/* Provider/Model Section */}
+                  <div className="bg-[#111] border border-white/8 rounded-xl p-4 space-y-3">
+                    <h4 className="text-white/60 text-xs font-medium">AI Configuration</h4>
+                    
+                    <div>
+                      <label className="text-white/50 text-xs block mb-1.5">Provider</label>
+                      <select 
+                        value={newProvider} 
+                        onChange={e => { 
+                          setNewProvider(e.target.value)
+                          const models = getModelsForProvider(e.target.value)
+                          if (models.length > 0) setNewModel(models[0])
+                        }}
+                        className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-3 py-2.5 text-white/80 text-sm focus:outline-none focus:border-white/20"
+                      >
+                        {PROVIDERS.map(p => (
+                          <option key={p.id} value={p.id}>{p.name}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="text-white/50 text-xs block mb-1.5">Model</label>
+                      {getModelsForProvider(newProvider).length > 0 ? (
+                        <select 
+                          value={newModel} 
+                          onChange={e => setNewModel(e.target.value)} 
+                          className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-3 py-2.5 text-white/80 text-sm focus:outline-none focus:border-white/20"
+                        >
+                          {getModelsForProvider(newProvider).map(m => (
+                            <option key={m} value={m}>{m.split('/').pop()}</option>
+                          ))}
+                        </select>
+                      ) : (
+                        <input 
+                          value={newModel} 
+                          onChange={e => setNewModel(e.target.value)} 
+                          placeholder="custom-model-id"
+                          className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-3 py-2.5 text-white/80 text-sm focus:outline-none focus:border-white/20"
+                        />
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-white/50 text-xs block mb-1">
+                          Temperature: <span className="text-white/70">{newTemperature}</span>
+                        </label>
+                        <input 
+                          type="range" 
+                          min="0" 
+                          max="1" 
+                          step="0.1" 
+                          value={newTemperature} 
+                          onChange={e => setNewTemperature(parseFloat(e.target.value))}
+                          className="w-full accent-[#e8ff47]"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/50 text-xs block mb-1.5">Max Tokens</label>
+                        <input 
+                          type="number" 
+                          value={newMaxTokens} 
+                          onChange={e => setNewMaxTokens(parseInt(e.target.value) || 8192)}
+                          min="256"
+                          max="200000"
+                          className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-3 py-2 text-white/80 text-sm focus:outline-none focus:border-white/20"
+                        />
+                      </div>
+                    </div>
                   </div>
+
                   <div>
                     <label className="text-white/50 text-xs block mb-2">Tools access</label>
                     <div className="grid grid-cols-3 gap-2">

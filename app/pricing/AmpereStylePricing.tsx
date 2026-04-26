@@ -11,10 +11,12 @@ const MONTHLY_PLANS = [
     highlight: false,
     badge: null,
     features: [
-      '1 agent workspace (up to 3)',
+      '3 AI agents',
+      'Free AI model (Groq Llama)',
       '20,000 tool calls/mo',
       '850+ app integrations',
       'Telegram + WhatsApp',
+      'VPS: 8GB RAM, 100GB SSD',
       'Email support (48hr response)',
     ],
   },
@@ -25,11 +27,13 @@ const MONTHLY_PLANS = [
     highlight: true,
     badge: 'MOST POPULAR',
     features: [
-      '1 agent workspace (up to 5)',
+      '5 AI agents',
+      '5x Claude Sonnet 4.6 (included)',
       '200,000 tool calls/mo',
       '850+ app integrations',
       'Telegram + WhatsApp + Slack + Discord',
       'Web scraping included',
+      'VPS: 16GB RAM, 200GB SSD',
       'Priority support (12hr response)',
     ],
   },
@@ -40,11 +44,13 @@ const MONTHLY_PLANS = [
     highlight: false,
     badge: null,
     features: [
-      '1 agent workspace (unlimited)',
+      'Unlimited AI agents',
+      '20x Claude Sonnet 4.6 (included)',
       '200,000 tool calls/mo',
       '850+ app integrations',
       'All platforms + GoHighLevel + API access',
       'Web scraping included',
+      'VPS: 32GB RAM, 500GB SSD',
       'Dedicated support (4hr SLA)',
     ],
   },
@@ -76,7 +82,8 @@ const ADDON_PLANS = [
 ]
 
 const COMPARISON_ROWS = [
-  { feature: 'Agent Workspaces', values: ['Up to 3', 'Up to 5', 'Unlimited'] },
+  { feature: 'AI Agents', values: ['3', '5', 'Unlimited'] },
+  { feature: 'Included AI Model', values: ['Groq (Free)', 'Claude Sonnet 4.6 (5x)', 'Claude Sonnet 4.6 (20x)'] },
   { feature: 'Tool Calls / mo', values: ['20,000', '200,000', '200,000'] },
   { feature: 'App Integrations', values: ['850+', '850+', '850+'] },
   { feature: 'Telegram + WhatsApp', values: ['✓', '✓', '✓'] },
@@ -84,6 +91,8 @@ const COMPARISON_ROWS = [
   { feature: 'Web Scraping', values: ['—', '✓', '✓'] },
   { feature: 'GoHighLevel (GHL)', values: ['—', '—', '✓'] },
   { feature: 'API Access', values: ['—', '—', '✓'] },
+  { feature: 'Bring Your Own API Key', values: ['✓', '✓', '✓'] },
+  { feature: 'VPS Specs', values: ['8GB RAM / 100GB', '16GB RAM / 200GB', '32GB RAM / 500GB'] },
   { feature: 'Support', values: ['Email 48hr', 'Priority 12hr', 'Dedicated 4hr'] },
 ]
 
