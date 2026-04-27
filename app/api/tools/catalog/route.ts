@@ -63,42 +63,45 @@ async function fetchFromComposio(): Promise<CatalogTool[] | null> {
   }
 
   try {
-    const res = await fetch('https://api.composio.dev/v2/tools/apps?limit=200', {
+    // Use the correct API path discovered from SDK tracing: /api/v3/toolkits
+    const res = await fetch('https://backend.composio.dev/api/v3/toolkits?limit=250', {
       headers: {
         'x-api-key': apiKey,
         'Content-Type': 'application/json',
       },
-      next: { revalidate: 300 }, // Cache for 5 minutes
+      next: { revalidate: 300 },
     })
 
     if (!res.ok) {
-      console.error(`[tools/catalog] Composio API error: ${res.status}`)
+      const text = await res.text().catch(() => '')
+      console.error(`[tools/catalog] Composio API error: ${res.status}`, text.slice(0, 200))
       return null
     }
 
     const data = await res.json()
-    const items = data.items ?? data.apps ?? []
+    const items = data.items ?? data.toolkits ?? []
 
     return items.map((item: any) => {
-      const name = item.name ?? item.appName ?? 'Unknown'
-      const slug = (item.key ?? item.slug ?? name).toLowerCase().replace(/[^a-z0-9]/g, '')
-      const categories = item.categories ?? []
-      const category = categories[0] ?? 'Integration'
-      const description = item.description ?? `Connect ${name} to enable agent actions`
-      const icon = item.logo ?? null
+      const name = item.name ?? 'Unknown'
+      const slug = item.slug?.toLowerCase() ?? name.toLowerCase().replace(/[^a-z0-9]/g, '')
+      const meta = item.meta ?? {}
+      const categories = meta.categories ?? []
+      const category = categories[0]?.name ?? categories[0]?.id ?? 'Integration'
+      const description = meta.description ?? `Connect ${name} to enable agent actions`
+      const logo = meta.logo ?? null
 
       return {
         id: slug,
         slug,
         name,
-        category,
+        category: category.charAt(0).toUpperCase() + category.slice(1),
         description,
-        icon: icon ?? '🔗',
+        icon: logo ?? '🔗',
         isFeatured: FEATURED_TOOL_SLUGS.includes(slug),
       }
     })
-  } catch (err) {
-    console.error('[tools/catalog] Composio fetch error:', err)
+  } catch (err: any) {
+    console.error('[tools/catalog] Composio fetch error:', err?.message ?? err)
     return null
   }
 }

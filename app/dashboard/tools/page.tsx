@@ -306,10 +306,21 @@ function BrowseModal({
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div
-                        className="w-8 h-8 rounded-lg bg-white/8 flex items-center justify-center text-sm font-bold text-white/70 flex-shrink-0"
+                        className="w-8 h-8 rounded-lg bg-white/8 flex items-center justify-center text-sm font-bold text-white/70 flex-shrink-0 overflow-hidden"
                         title={tool.name}
                       >
-                        {tool.icon}
+                        {tool.icon.startsWith('http') ? (
+                          <img
+                            src={tool.icon}
+                            alt={tool.name}
+                            className="w-5 h-5 object-contain"
+                            onError={e => {
+                              ;(e.target as HTMLImageElement).style.display = 'none'
+                            }}
+                          />
+                        ) : (
+                          <span>{tool.icon}</span>
+                        )}
                       </div>
                       {isConnected && (
                         <CheckCircle2 size={14} className="text-emerald-400 flex-shrink-0" />
