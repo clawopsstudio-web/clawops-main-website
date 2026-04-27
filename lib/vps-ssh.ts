@@ -153,15 +153,12 @@ export async function streamSSH(
       if (!connection) { settled = true; clearTimeout(timer); resolve(); return }
 
       try {
-        const parts = command.trim().split(/\s+/)
-        const cmd = parts[0]
-        const args = parts.slice(1)
-        const stream = connection.exec(cmd, args, {
-          onStdout: (chunk: Buffer) => { if (!settled) onChunk(chunk.toString()) },
-          onStderr: (chunk: Buffer) => { if (!settled) onChunk('[ERR] ' + chunk.toString()) },
-          onClose: () => { if (!settled) { settled = true; clearTimeout(timer); resolve() } },
+        connection.exec(command, (err, stream) => {
+          if (err) { reject(err); return }
+          stream.on('close', () => { if (!settled) { settled = true; clearTimeout(timer); resolve() } })
+          stream.on('data', (chunk: Buffer) => { if (!settled) onChunk(chunk.toString()) })
+          stream.stderr.on('data', (chunk: Buffer) => { if (!settled) onChunk('[ERR] ' + chunk.toString()) })
         })
-        if (stream) stream.on?.('error', () => { if (!settled) { settled = true; clearTimeout(timer); resolve() } })
       } catch (e) {
         if (!settled) { settled = true; clearTimeout(timer); resolve() }
       }
