@@ -31,7 +31,7 @@ const NAV = [
   { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/dashboard/logs', label: 'Logs', icon: ScrollText },
   { href: '/dashboard/settings', label: 'Settings', icon: Settings },
-  { href: '/dashboard/terminal', label: 'Ops Panel', icon: Terminal },
+  { href: '/dashboard/terminal', label: 'Mission Control', icon: Terminal },
 ]
 
 const TOOLS_TO_CONNECT = [
