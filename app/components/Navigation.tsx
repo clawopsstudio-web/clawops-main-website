@@ -18,10 +18,7 @@ export default function Navigation() {
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
         <a href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-[#e8ff47] flex items-center justify-center">
-            <span className="text-[#0a0a0a] font-bold text-sm">CO</span>
-          </div>
-          <span className="text-white font-bold text-lg">ClawOps</span>
+          <img src="/logo-clawpops.png" alt="ClawOps Studio" className="h-8 w-auto" />
         </a>
 
         {/* Desktop Nav */}
