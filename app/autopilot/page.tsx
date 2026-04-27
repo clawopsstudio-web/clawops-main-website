@@ -178,13 +178,6 @@ export default function AutopilotPage() {
           </div>
 
         </div>
-
-        <div className="text-center mt-16 py-12 border-t border-white/10">
-          <h2 className="text-2xl font-black text-white mb-4">Ready to run on autopilot?</h2>
-          <a href="/auth/signup" className="inline-block bg-[#e8ff47] text-[#0a0a0a] font-bold px-8 py-4 rounded-xl hover:bg-[#d4eb3a] transition-colors">
-            Start Your OS →
-          </a>
-        </div>
       </main>
       <Footer />
     </>

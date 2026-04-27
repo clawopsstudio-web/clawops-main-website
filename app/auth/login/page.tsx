@@ -88,15 +88,10 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="text-center text-white/30 text-xs mt-4">
+        <p className="text-center text-white/30 text-xs mt-6">
           Don&apos;t have an account?{' '}
           <Link href="/auth/signup" className="text-[#e8ff47] hover:underline">
             Sign up
-          </Link>
-        </p>
-        <p className="text-center text-white/20 text-xs">
-          <Link href="/auth/forgot-password" className="hover:text-white/40 transition-colors">
-            Forgot password?
           </Link>
         </p>
       </div>

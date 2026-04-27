@@ -3,20 +3,22 @@
 import { motion, animate, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
-function CountUp({ value, suffix = "", trigger }: { value: number; suffix?: string; trigger?: boolean }) {
-  const [display, setDisplay] = useState(0)
+function CountUp({ value, suffix = "" }: { value: number; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.8 });
+  const [display, setDisplay] = useState(0);
 
   useEffect(() => {
-    if (!trigger) return
+    if (!isInView) return;
     const controls = animate(0, value, {
-      duration: 1.5,
+      duration: 2,
       ease: [0.16, 1, 0.3, 1],
       onUpdate: (v) => setDisplay(Math.round(v)),
-    })
-    return () => controls.stop()
-  }, [trigger, value])
+    });
+    return () => controls.stop();
+  }, [isInView, value]);
 
-  return <span>{display}{suffix}</span>
+  return <span ref={ref}>{display}{suffix}</span>;
 }
 
 const stats = [
@@ -72,7 +74,7 @@ export default function SocialProof() {
           {stats.map((stat) => (
             <div key={stat.label} className="text-center">
               <div className="text-3xl font-bold md:text-5xl" style={{ background: "linear-gradient(135deg, #e8ff47, #e8ff47)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-                <CountUp value={stat.value} suffix={stat.suffix} trigger={isInView} />
+                <CountUp value={stat.value} suffix={stat.suffix} />
               </div>
               <p className="mt-1 text-xs text-[rgba(255,255,255,0.4)] md:text-sm">{stat.label}</p>
             </div>

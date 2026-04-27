@@ -17,7 +17,7 @@ create table public.profiles (
   full_name text,
   company text,
   avatar_url text,
-  plan text default 'personal' check (plan in ('personal', 'power', 'team', 'business', 'enterprise')),
+  plan text default 'personal' check (plan in ('personal', 'power', 'team', 'enterprise')),
   stripe_customer_id text,
   stripe_subscription_id text,
   webhook_secret text,
@@ -72,7 +72,7 @@ create table public.vps_instances (
 create table public.subscriptions (
   id text primary key,
   user_id uuid references auth.users(id) on delete cascade,
-  plan text not null check (plan in ('personal', 'power', 'team', 'business', 'enterprise')),
+  plan text not null check (plan in ('personal', 'power', 'team', 'enterprise')),
   status text not null check (status in ('active', 'cancelled', 'past_due', 'suspended')),
   paypal_subscription_id text,
   paypal_customer_id text,

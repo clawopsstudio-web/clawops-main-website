@@ -7,7 +7,6 @@ const NAV_LINKS = [
   { label: 'Agents', href: '/agents' },
   { label: 'Autopilot', href: '/autopilot' },
   { label: 'Pricing', href: '/pricing' },
-  { label: 'Done For You', href: '/done-for-you' },
 ];
 
 export default function Navigation() {

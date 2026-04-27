@@ -36,41 +36,20 @@ export async function POST(req: NextRequest) {
 
   // ── 1. Onboarding submission (marks admin as active/pre-provisioned) ──────
   try {
-    // First try to find existing row
-    const { data: existing } = await supabase
+    const { error } = await supabase
       .from('onboarding_submissions')
-      .select('id')
-      .eq('clerk_user_id', ADMIN_USER_ID)
-      .maybeSingle()
-
-    const row: Record<string, string> = {
-      clerk_user_id: ADMIN_USER_ID,
-      full_name: 'ClawOps Studio Admin',
-      business_name: 'ClawOps Studio',
-      agent_name: 'ClawOps Admin',
-      plan: 'enterprise',
-      status: 'active',
-      dashboard_url: 'https://demo.app.clawops.studio',
-      vps_ip: '178.238.232.52',
-      paid_at: new Date().toISOString(),
-      provisioned_at: new Date().toISOString(),
-    }
-    // vps_ip may not exist yet — only add if the column is present
-    // (will be added via schema migration when Pulkit runs the SQL)
-
-    let error
-    if (existing) {
-      const result = await supabase
-        .from('onboarding_submissions')
-        .update(row)
-        .eq('id', existing.id)
-      error = result.error
-    } else {
-      const result = await supabase
-        .from('onboarding_submissions')
-        .insert(row)
-      error = result.error
-    }
+      .upsert({
+        clerk_user_id: ADMIN_USER_ID,
+        email: 'clawops.studio@gmail.com',
+        business_name: 'ClawOps Studio',
+        agent_name: 'ClawOps Admin',
+        plan: 'enterprise',
+        status: 'active',
+        dashboard_url: 'https://demo.app.clawops.studio',
+        vps_ip: '178.238.232.52',
+        paid_at: new Date().toISOString(),
+        provisioned_at: new Date().toISOString(),
+      }, { onConflict: 'clerk_user_id' })
 
     if (error) throw error
     results.push('onboarding_submissions: seeded')
@@ -105,9 +84,9 @@ export async function POST(req: NextRequest) {
 
   for (const agent of agents) {
     try {
-      // Delete existing agent with same name for this user, then re-insert
-      await supabase.from('agents').delete().eq('user_id', ADMIN_USER_ID).eq('name', agent.name)
-      const { error } = await supabase.from('agents').insert(agent)
+      const { error } = await supabase
+        .from('agents')
+        .upsert({ ...agent }, { onConflict: 'user_id,name' })
       if (error) throw error
       results.push(`agent: ${agent.name} — seeded`)
     } catch (err: any) {

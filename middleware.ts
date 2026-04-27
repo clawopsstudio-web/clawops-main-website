@@ -24,14 +24,13 @@ const PUBLIC_PATHS = [
   '/integrations',
 ]
 
-// Public API paths (exact match or prefix)
+// Public API paths (prefix match)
 const PUBLIC_API_PATHS = [
   '/api/webhooks',
   '/api/provision',
   '/api/auth',
   '/api/composio/callback',
   '/api/checkout',
-  '/api/admin',
 ]
 
 // Root → redirect logged-in users to dashboard, else to login
