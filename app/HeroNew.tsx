@@ -290,7 +290,7 @@ export default function HeroNew() {
                 transition={{ duration: 0.6, delay: 0.3 }}
                 className="flex flex-wrap gap-4 mb-12">
                 <Link href="/start?plan=personal"
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-[#e8ff47] to-[#d4eb3a] hover:opacity-90 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(0,212,255,0.3)] active:scale-[0.98] text-white font-semibold px-8 py-4 rounded-xl transition-all text-base">
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-[#e8ff47] to-[#d4eb3a] hover:opacity-90 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(0,212,255,0.3)] active:scale-[0.98] text-[#0a0a0a] font-semibold px-8 py-4 rounded-xl transition-all text-base">
                   Start for $49
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m-7-7l7 7-7-7" />
