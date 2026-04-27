@@ -142,29 +142,24 @@ export async function streamSSH(
 
   const { vps_ip, vps_root_password } = await getVPS(userId)
 
-  return withSSH(vps_ip, vps_root_password, (ssh) => {
-    return new Promise<void>((resolve, reject) => {
-      let settled = false
-      const timer = setTimeout(() => {
-        if (!settled) { settled = true; resolve() }
-      }, timeoutMs)
+  return withSSH(vps_ip, vps_root_password, async (ssh) => {
+    let settled = false
+    const timer = setTimeout(() => {
+      if (!settled) { settled = true }
+    }, timeoutMs)
 
-      const connection = ssh.connection
-      if (!connection) { settled = true; clearTimeout(timer); resolve(); return }
-
-      try {
-        const parts = command.trim().split(/\s+/)
-        const cmd = parts[0]
-        const args = parts.slice(1)
-        const stream = connection.exec(cmd, args, {
-          onStdout: (chunk: Buffer) => { if (!settled) onChunk(chunk.toString()) },
-          onStderr: (chunk: Buffer) => { if (!settled) onChunk('[ERR] ' + chunk.toString()) },
-          onClose: () => { if (!settled) { settled = true; clearTimeout(timer); resolve() } },
-        })
-        if (stream) stream.on?.('error', () => { if (!settled) { settled = true; clearTimeout(timer); resolve() } })
-      } catch (e) {
-        if (!settled) { settled = true; clearTimeout(timer); resolve() }
-      }
-    })
+    try {
+      const parts = command.trim().split(/\s+/)
+      const fullCmd = parts.join(' ')
+      await ssh.execCommand(fullCmd, {
+        onStdout: (chunk: Buffer) => { if (!settled) onChunk(chunk.toString()) },
+        onStderr: (chunk: Buffer) => { if (!settled) onChunk('[ERR] ' + chunk.toString()) },
+      })
+      settled = true
+    } catch (e) {
+      settled = true
+    } finally {
+      clearTimeout(timer)
+    }
   })
 }
