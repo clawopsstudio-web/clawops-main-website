@@ -232,7 +232,7 @@ function AgentCard({ agent, onDeploy }: { agent: typeof AGENTS[0]; onDeploy: () 
           `}
           style={{ backgroundColor: agent.color, color: '#0a0a0a' }}
         >
-          DEPLOY →
+          RECRUIT →
         </Link>
       </div>
     </motion.div>
