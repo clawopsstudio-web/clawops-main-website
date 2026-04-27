@@ -48,7 +48,7 @@ export default function Footer() {
                   title={`${label} link coming soon`}
                   className="w-9 h-9 rounded-lg flex items-center justify-center text-[rgba(255,255,255,0.28)] border border-[rgba(255,255,255,0.08)] cursor-default"
                 >
-                  <span className="text-[10px] font-mono">--</span>
+                  <span className="text-[10px] font-mono">{label === 'Twitter/X' ? '𝕏' : 'in'}</span>
                 </span>
               ))}
             </div>

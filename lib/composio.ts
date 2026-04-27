@@ -1,100 +1,125 @@
 /**
- * lib/composio.ts — Composio integration using Shared Auth
+ * lib/composio.ts — Composio v1.x (@composio/core)
  *
- * Uses ComposioToolSet from composio-core (v0.5.x)
- * All OAuth handled by Composio — no clientId/clientSecret needed.
- * Every user gets their own isolated entity (entity_id = clerk_user_id)
+ * Composio SDK docs: docs.composio.dev
+ * Key patterns:
+ * - composio.create(userId) → Session
+ * - session.toolkits() → all toolkits + connection status
+ * - session.authorize(slug, { callbackUrl }) → redirect URL
+ * - session.authorize().waitForConnection() → poll until done
+ * - composio.connectedAccounts.delete(id) → disconnect
  */
 
-import { ComposioToolSet } from 'composio-core'
+import { Composio } from '@composio/core'
 
-function env(key: string): string {
-  const val = process.env[key]
-  if (!val) throw new Error(`Missing env var: ${key}`)
-  return val
+function getComposio() {
+  const apiKey = process.env.COMPOSIO_API_KEY
+  if (!apiKey) throw new Error('COMPOSIO_API_KEY not set')
+  return new Composio({ apiKey })
 }
 
-function getToolSet(): ComposioToolSet {
-  return new ComposioToolSet({ apiKey: env('COMPOSIO_API_KEY') })
+// ─── List toolkits + their connection status ───────────────────────────
+
+export interface ToolkitInfo {
+  slug: string
+  name: string
+  logo: string | null
+  isNoAuth: boolean
+  isConnected: boolean
+  connectedAccountId: string | null
+  connection?: {
+    isActive: boolean
+    createdAt?: string | null
+  }
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// 1. Create a user session / entity
-// ──────────────────────────────────────────────────────────────────────────────
+export async function listToolkits(userId: string): Promise<ToolkitInfo[]> {
+  const composio = getComposio()
+  const session = await composio.create(userId)
+  const { items } = await session.toolkits()
 
-export async function createUserSession(clerkUserId: string, toolkits: string[]) {
-  const toolset = getToolSet()
-  const entity = await toolset.getEntity(clerkUserId)
-  // Ensure entity is ready — Composio creates it on first access
-  return { entityId: clerkUserId, entity }
+  return items.map(t => ({
+    slug: t.slug,
+    name: t.name,
+    logo: t.logo ?? null,
+    isNoAuth: t.isNoAuth ?? false,
+    isConnected: t.connection?.isActive ?? false,
+    connectedAccountId: t.connection?.authConfig?.id ?? null,
+  }))
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// 2. Get OAuth connect link for a specific app
-// ──────────────────────────────────────────────────────────────────────────────
+export async function getToolStatus(userId: string, slug: string): Promise<boolean> {
+  const all = await listToolkits(userId)
+  return all.some(t => t.slug === slug && t.isConnected)
+}
 
-export async function getConnectLink(clerkUserId: string, appName: string): Promise<string> {
-  const toolset = getToolSet()
-  const entity = await toolset.getEntity(clerkUserId)
+// ─── List toolkits + their connection status ───────────────────────────
 
-  const connection = await entity.initiateConnection({
-    appName: appName.toUpperCase(),
-    // @ts-expect-error - unblocking deploy
-    redirectUrl: 'https://connect.clawops.studio/oauth/callback',
-    long_redirect_url: true,
+export async function createUserSession(userId: string, toolkits: string[]) {
+  const composio = getComposio()
+  const session = await composio.create(userId)
+
+  // Pre-authorize toolkits so they're ready when user clicks connect
+  for (const toolkit of toolkits) {
+    try {
+      await session.authorize(toolkit, {
+        callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://clawops.studio'}/api/composio/callback`,
+      })
+    } catch (err: any) {
+      console.error('[composio] Failed to pre-authorize', toolkit, err.message)
+    }
+  }
+
+  return { userId, session }
+}
+
+// ─── Get OAuth connect link for a specific app ──────────────────────────
+
+export async function getOAuthRedirectUrl(
+  userId: string,
+  slug: string
+): Promise<string> {
+  const composio = getComposio()
+  const session = await composio.create(userId)
+
+  const request = await session.authorize(slug, {
+    callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://clawops.studio'}/api/composio/callback`,
   })
 
-  // @ts-expect-error - unblocking deploy
-  return connection.redirectUrl
+  if (!request.redirectUrl) {
+    throw new Error(`No redirect URL from Composio for ${slug}`)
+  }
+
+  return request.redirectUrl
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// 3. Check if user has an active connection for a specific app
-// ──────────────────────────────────────────────────────────────────────────────
+// ─── Check if user has an active connection for a specific app ───────────
 
-export async function getConnectionStatus(clerkUserId: string, appName: string) {
-  const toolset = getToolSet()
-  const entity = await toolset.getEntity(clerkUserId)
-  const connections = await entity.getConnections()
-
-  const connection = connections.find(
-    (c: any) => c.app?.unique_id?.toUpperCase() === appName.toUpperCase()
-    || c.appName?.toUpperCase() === appName.toUpperCase()
-    || c.app_name?.toUpperCase() === appName.toUpperCase()
-  )
-
-  if (!connection) {
-    return { connected: false, connectedAt: null }
-  }
+export async function getConnectionStatus(userId: string, appName: string) {
+  const all = await listToolkits(userId)
+  const toolkit = all.find(t => t.slug === appName.toLowerCase())
 
   return {
-    connected: true,
-    // @ts-expect-error - unblocking deploy
-    connectedAccountId: connection.id ?? connection.connectionId ?? null,
-    // @ts-expect-error - unblocking deploy
-    connectedAt: connection.createdAt ?? connection.created_at ?? null,
+    connected: toolkit?.isConnected ?? false,
+    connectedAccountId: toolkit?.connectedAccountId ?? null,
+    connectedAt: toolkit?.connection?.createdAt ?? null,
   }
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// 4. Activate paid Composio plan for an entity (team + business plans)
-// ──────────────────────────────────────────────────────────────────────────────
+// ─── Activate paid Composio plan for an entity (team + business plans) ───
 
-export async function activateComposioPaidPlan(clerkUserId: string): Promise<void> {
-  // Composio paid plan activation — called via their management API
-  // The entity is already created when user first connects an app.
-  // This call activates the $29/mo Composio tier for this entity.
-  const apiKey = env('COMPOSIO_API_KEY')
+export async function activateComposioPaidPlan(userId: string): Promise<void> {
+  const apiKey = process.env.COMPOSIO_API_KEY!
   const body = JSON.stringify({
-    entity_id: clerkUserId,
-    plan: 'pro', // or 'team' — Composio plan identifier
+    user_id: userId,
+    plan: 'team', // or 'pro' — Composio plan identifier
   })
 
-  const res = await fetch('https://backend.composio.dev/v2/entity/upgrade', {
+  const res = await fetch('https://backend.composio.dev/v2/user/upgrade', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-API-KEY': apiKey,
+      'Authorization': `Bearer ${apiKey}`,
     },
     body,
   })
@@ -106,9 +131,20 @@ export async function activateComposioPaidPlan(clerkUserId: string): Promise<voi
   }
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// 5. Log a connection event to Supabase user_connections table
-// ──────────────────────────────────────────────────────────────────────────────
+// ─── Wait for OAuth completion (server-side poll) ───────────────────────
+
+export async function waitForConnection(
+  userId: string,
+  slug: string,
+  timeoutMs = 120_000
+): Promise<{ id: string }> {
+  const composio = getComposio()
+  const session = await composio.create(userId)
+  const request = await session.authorize(slug)
+  return request.waitForConnection(timeoutMs)
+}
+
+// ─── Log a connection event to Supabase user_connections table ──────────
 
 export async function upsertConnection(params: {
   supabaseAdmin: any
@@ -131,4 +167,28 @@ export async function upsertConnection(params: {
     }, {
       onConflict: 'clerk_user_id,app_name',
     })
+}
+
+// ─── Process OAuth callback ─────────────────────────────────────────────
+
+export interface OAuthCallbackResult {
+  status: 'success' | 'failed'
+  connectedAccountId?: string
+  error?: string
+}
+
+export function parseOAuthCallback(url: URL): OAuthCallbackResult {
+  const status = url.searchParams.get('status')
+  const connectedAccountId = url.searchParams.get('connected_account_id')
+  if (status === 'success' && connectedAccountId) {
+    return { status: 'success', connectedAccountId }
+  }
+  return { status: 'failed', error: `Auth failed: ${status}` }
+}
+
+// ─── Disconnect ────────────────────────────────────────────────────────
+
+export async function disconnectAccount(accountId: string): Promise<void> {
+  const composio = getComposio()
+  await composio.connectedAccounts.delete(accountId)
 }

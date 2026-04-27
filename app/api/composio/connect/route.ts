@@ -1,39 +1,19 @@
-/**
- * app/api/composio/connect/route.ts — Initiate OAuth connection for a user
- * POST { clerkUserId, appName }
- * Returns { connectUrl: string }
- *
- * WHITE-LABEL: Never exposes "Composio" in response
- */
-
 import { NextRequest, NextResponse } from 'next/server'
-import { getConnectLink } from '@/lib/composio'
 import { getUserIdFromRequest } from '@/lib/auth-server'
+import { getOAuthRedirectUrl } from '@/lib/composio'
 
 export async function POST(req: NextRequest) {
+  const userId = await getUserIdFromRequest(req)
+  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const { appName } = await req.json()
+  if (!appName) return NextResponse.json({ error: 'appName required' }, { status: 400 })
+
   try {
-    const userId = await getUserIdFromRequest(req)
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const { appName } = await req.json()
-
-    if (!appName) {
-      return NextResponse.json(
-        { error: 'appName is required' },
-        { status: 400 }
-      )
-    }
-
-    const connectUrl = await getConnectLink(userId, appName)
-
-    return NextResponse.json({ connectUrl })
+    const redirectUrl = await getOAuthRedirectUrl(userId, appName)
+    return NextResponse.json({ connectUrl: redirectUrl })
   } catch (err: any) {
-    console.error('[composio/connect]', err?.message)
-    return NextResponse.json(
-      { error: 'Connection failed, please try again' },
-      { status: 500 }
-    )
+    console.error('[composio/connect]', err.message)
+    return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }

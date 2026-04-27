@@ -68,7 +68,7 @@ export default function CTA() {
                 background: "linear-gradient(135deg, #e8ff47, #e8ff47)",
               }}
             >
-              Start Free →
+  Start Your OS →
               <span className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ boxShadow: "0 0 40px rgba(0,212,255,0.35)" }} />
             </a>
             <a
