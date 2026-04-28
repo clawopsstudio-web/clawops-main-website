@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 const VPS_HOST = process.env.VPS_HOST || '178.238.232.52'
-const VPS_SCREENSHOT_PORT = '5555'
+const SCREENSHOT_PORT = '5555'
 
 export async function POST(req: NextRequest) {
   let url: string
@@ -34,11 +34,11 @@ export async function POST(req: NextRequest) {
 
   try {
     // Proxy to VPS screenshot service
-    const response = await fetch(`http://${VPS_HOST}:${VPS_SCREENSHOT_PORT}/screenshot`, {
+    const response = await fetch(`http://${VPS_HOST}:${SCREENSHOT_PORT}/screenshot`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url }),
-      signal: AbortSignal.timeout(30000),
+      signal: AbortSignal.timeout(35000),
     })
 
     if (!response.ok) {

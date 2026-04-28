@@ -3,26 +3,18 @@
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-const ADMIN_UID = '5a1f1a65-b620-46dc-879d-c67e69ba0c04'
-
-// Agent display info — keyed by agent UUID
-const AGENT_MAP: Record<string, { name: string; color: string; bg: string }> = {
-  '00000000-0000-0000-0000-000000000000': { name: 'General', color: 'text-white',   bg: 'bg-white/20' },
-  'f4720d9d-cf17-4990-aaf4-b4f8688e7b9a': { name: 'Ryan',   color: 'text-blue-400',   bg: 'bg-blue-500' },
-  '67965911-391f-4930-ab0b-0f036672f414': { name: 'Arjun',  color: 'text-yellow-400', bg: 'bg-yellow-500' },
-  'd8008e7c-bb65-4c66-9dbf-e840d5cb3f53': { name: 'Helena', color: 'text-green-400',  bg: 'bg-green-500' },
+// Agent display info
+const AGENT_MAP: Record<string, { name: string; color: string; bg: string; role: string }> = {
+  '00000000-0000-0000-0000-000000000000': { name: 'ClawOps', color: 'text-white', bg: 'bg-purple-500', role: 'General Assistant' },
+  'f4720d9d-cf17-4990-aaf4-b4f8688e7b9a': { name: 'Ryan', color: 'text-blue-400', bg: 'bg-blue-500', role: 'Sales Agent' },
+  '67965911-391f-4930-ab0b-0f036672f414': { name: 'Arjun', color: 'text-yellow-400', bg: 'bg-yellow-500', role: 'Research Agent' },
+  'd8008e7c-bb65-4c66-9dbf-e840d5cb3f53': { name: 'Tyler', color: 'text-green-400', bg: 'bg-green-500', role: 'Marketing Agent' },
 }
 
-function getAgent(id?: string): { name: string; color: string; bg: string } {
+function getAgent(id?: string) {
   if (!id) return AGENT_MAP['00000000-0000-0000-0000-000000000000']
-  return AGENT_MAP[id] ?? { name: 'Agent', color: 'text-white/60', bg: 'bg-white/10' }
+  return AGENT_MAP[id] ?? { name: 'Agent', color: 'text-white/60', bg: 'bg-white/10', role: 'AI Agent' }
 }
-
-const SUGGESTED_PROMPTS_ADMIN = [
-  'Ryan, find me 10 SaaS founders in London on LinkedIn',
-  "Arjun, research our top 3 competitors' pricing strategies",
-  'Helena, draft a reply to an angry customer who waited 3 days',
-]
 
 interface Message {
   id: string
@@ -49,7 +41,6 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
-  const [workspaceId, setWorkspaceId] = useState<string | null>(null)
   const messagesEnd = useRef<HTMLDivElement>(null)
 
   // Get current user
@@ -57,7 +48,7 @@ export default function ChatPage() {
     supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? ''))
   }, [])
 
-  // Load thread list from API
+  // Load thread list
   useEffect(() => {
     if (!userId) return
     fetch('/api/chat/threads')
@@ -65,8 +56,6 @@ export default function ChatPage() {
       .then(data => {
         if (data.threads) {
           setThreads(data.threads)
-          setWorkspaceId(data.workspaceId ?? null)
-          // Auto-select first thread if none selected
           if (!activeThread && data.threads.length > 0) {
             setActiveThread(data.threads[0])
           }
@@ -77,27 +66,69 @@ export default function ChatPage() {
 
   // Load messages when thread changes
   useEffect(() => {
-    if (!activeThread) return
+    if (!activeThread?.id) return
     fetch(`/api/chat/messages?threadId=${activeThread.id}`)
       .then(r => r.json())
       .then(data => {
         if (data.messages) setMessages(data.messages)
-        messagesEnd.current?.scrollIntoView()
+        messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
       })
       .catch(err => console.error('Failed to load messages:', err))
   }, [activeThread])
 
   const send = async () => {
     if (!input.trim() || sending) return
-    // If no active thread, create a new one first
-    if (!activeThread?.id) {
-      startNewConversation()
-      return
-    }
+
     const text = input.trim()
     setInput('')
     setSending(true)
 
+    // If no thread, create one first
+    if (!activeThread?.id) {
+      // Create a new thread
+      try {
+        const res = await fetch('/api/chat/message', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text }),
+        })
+        const data = await res.json()
+        if (data.content) {
+          // Refresh threads
+          const threadsRes = await fetch('/api/chat/threads')
+          const threadsData = await threadsRes.json()
+          if (threadsData.threads) {
+            setThreads(threadsData.threads)
+            const newThread = threadsData.threads[0]
+            if (newThread) {
+              setActiveThread(newThread)
+              setMessages([{
+                id: `temp-${Date.now()}`,
+                agent_id: newThread.agent_id,
+                role: 'user',
+                content: text,
+                created_at: new Date().toISOString(),
+              }, {
+                id: `temp-${Date.now() + 1}`,
+                agent_id: newThread.agent_id,
+                role: 'assistant',
+                content: data.content,
+                created_at: new Date().toISOString(),
+              }])
+            }
+          }
+        }
+      } catch {
+        alert('Failed to send message. Please try again.')
+      } finally {
+        setSending(false)
+        return
+      }
+      setSending(false)
+      return
+    }
+
+    // Add user message immediately
     const tempMsg: Message = {
       id: `temp-${Date.now()}`,
       agent_id: activeThread.agent_id,
@@ -106,7 +137,7 @@ export default function ChatPage() {
       created_at: new Date().toISOString(),
     }
     setMessages(prev => [...prev, tempMsg])
-    messagesEnd.current?.scrollIntoView()
+    messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
 
     try {
       const res = await fetch('/api/chat/message', {
@@ -129,62 +160,36 @@ export default function ChatPage() {
         }
         setMessages(prev => [...prev, aiMsg])
 
-        // If this was a new thread, the response includes the threadId
-        if (data.threadId && data.threadId !== activeThread.id) {
-          // Reload threads to pick up the new thread
-          const threadsRes = await fetch('/api/chat/threads')
-          const threadsData = await threadsRes.json()
-          if (threadsData.threads) {
-            setThreads(threadsData.threads)
-            const newThread = threadsData.threads.find(
-              (t: Thread) => t.id === data.threadId
-            )
-            if (newThread) setActiveThread(newThread)
-          }
-        } else {
-          // Update last message preview in thread list
-          setThreads(prev =>
-            prev.map(t =>
-              t.id === activeThread.id
-                ? { ...t, last_message: data.content.slice(0, 60), last_time: new Date().toISOString() }
-                : t
-            )
+        // Update thread preview
+        setThreads(prev =>
+          prev.map(t =>
+            t.id === activeThread.id
+              ? { ...t, last_message: data.content.slice(0, 60), last_time: new Date().toISOString() }
+              : t
           )
-        }
+        )
       }
     } catch {
       setMessages(prev => [...prev, {
         id: `temp-${Date.now()}`,
         agent_id: activeThread.agent_id,
         role: 'assistant',
-        content: 'Error: Could not reach Hermes.',
+        content: 'Error: Could not reach AI service.',
         created_at: new Date().toISOString(),
       }])
     } finally {
       setSending(false)
-      messagesEnd.current?.scrollIntoView()
+      messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
     }
   }
 
   const startNewConversation = () => {
-    // Select "General" agent as default for new conversation
-    const generalThread: Thread = {
-      id: '',
-      agent_id: '00000000-0000-0000-0000-000000000000',
-      title: 'New conversation',
-      last_message: '',
-      last_time: '',
-      created_at: '',
-    }
-    setActiveThread(generalThread)
+    setActiveThread(null)
     setMessages([])
+    setInput('')
   }
 
-  const isAdmin = userId === ADMIN_UID
   const activeAgent = getAgent(activeThread?.agent_id)
-  const displayName = activeThread?.title && activeThread.title !== 'New conversation'
-    ? activeThread.title
-    : activeAgent.name
 
   return (
     <div className="flex h-[calc(100vh-44px)]">
@@ -212,7 +217,10 @@ export default function ChatPage() {
             return (
               <button
                 key={t.id}
-                onClick={() => setActiveThread(t)}
+                onClick={() => {
+                  setActiveThread(t)
+                  setInput('')
+                }}
                 className={`w-full text-left px-3 py-2.5 rounded-lg text-xs transition-colors ${
                   isActive ? 'bg-[#1a1a1a] text-white font-semibold' : 'text-white/40 hover:text-white/70'
                 }`}
@@ -228,6 +236,35 @@ export default function ChatPage() {
             )
           })}
         </div>
+
+        {/* Agent selector */}
+        <div className="p-3 border-t border-white/5">
+          <p className="text-white/20 text-[10px] uppercase tracking-widest mb-2">Agents</p>
+          <div className="space-y-1">
+            {Object.entries(AGENT_MAP).slice(1).map(([id, agent]) => (
+              <button
+                key={id}
+                onClick={() => {
+                  setActiveThread({
+                    id: '',
+                    agent_id: id,
+                    title: `New ${agent.name} chat`,
+                    last_message: '',
+                    last_time: '',
+                    created_at: '',
+                  })
+                  setMessages([])
+                }}
+                className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-white/5 text-xs"
+              >
+                <div className={`w-4 h-4 rounded-full ${agent.bg} flex items-center justify-center text-[6px] font-bold ${agent.color}`}>
+                  {agent.name[0]}
+                </div>
+                <span className="text-white/60">{agent.name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Chat main */}
@@ -237,38 +274,23 @@ export default function ChatPage() {
             {activeAgent.name[0]}
           </div>
           <div>
-            <p className="text-white font-semibold text-sm">{displayName}</p>
-            <p className="text-white/30 text-xs">AI Agent</p>
+            <p className="text-white font-semibold text-sm">{activeAgent.name}</p>
+            <p className="text-white/30 text-xs">{activeAgent.role}</p>
           </div>
+          {!activeThread?.id && (
+            <span className="ml-auto text-xs text-yellow-400/60 bg-yellow-400/10 px-2 py-1 rounded-full">
+              New chat
+            </span>
+          )}
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {messages.length === 0 && (
             <div className="text-center mt-12">
-              {isAdmin ? (
-                <div className="space-y-4">
-                  <div className="text-white/20 text-sm">
-                    <p>Your team is ready. What would you like to do?</p>
-                    <p className="text-xs mt-1 text-white/15">Pick a prompt below or type your own</p>
-                  </div>
-                  <div className="flex flex-col gap-2 max-w-md mx-auto">
-                    {SUGGESTED_PROMPTS_ADMIN.map((p, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setInput(p)}
-                        className="text-left px-4 py-3 rounded-xl bg-white/5 border border-white/8 text-white/60 text-xs hover:bg-white/10 hover:text-white/80 transition-all"
-                      >
-                        {p}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div className="mt-20 text-white/20 text-sm">
-                  <p>No messages yet.</p>
-                  <p className="text-xs mt-1">Start a conversation.</p>
-                </div>
-              )}
+              <div className="text-white/20 text-sm mb-4">
+                <p>Start a conversation with {activeAgent.name}</p>
+                <p className="text-xs mt-1 text-white/15">Type a message below or select an agent</p>
+              </div>
             </div>
           )}
           {messages.map(msg => {
@@ -294,7 +316,6 @@ export default function ChatPage() {
               </div>
             )
           })}
-          {/* Typing indicator */}
           {sending && (
             <div className="flex gap-3">
               <div className={`w-7 h-7 rounded-full ${activeAgent.bg} flex items-center justify-center text-[10px] font-bold shrink-0 ${activeAgent.color}`}>
@@ -310,6 +331,7 @@ export default function ChatPage() {
                     <div className="w-2 h-2 bg-white/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                     <div className="w-2 h-2 bg-white/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                   </div>
+                  <span className="text-white/30 text-xs">Thinking...</span>
                 </div>
               </div>
             </div>
@@ -330,7 +352,7 @@ export default function ChatPage() {
             <button
               onClick={send}
               disabled={!input.trim() || sending}
-              className="px-4 py-2.5 bg-[#e8ff47] hover:bg-[#d4eb3a] text-black font-bold text-sm rounded-xl disabled:opacity-40 shrink-0"
+              className="px-4 py-2.5 bg-[#e8ff47] hover:bg-[#d4eb3a] text-black font-bold text-sm rounded-xl disabled:opacity-40 disabled:cursor-not-allowed shrink-0 transition-colors"
             >
               {sending ? '...' : 'Send'}
             </button>
