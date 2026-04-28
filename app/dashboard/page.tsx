@@ -28,7 +28,8 @@ interface Agent {
   agent_name: string
   agent_role: string
   status: string
-  config: any
+  tools: string[]
+  hermes_agent_id: string
 }
 
 interface MissionLog {
@@ -88,9 +89,9 @@ export default function DashboardPage() {
           setVps(vpsData)
         }
 
-        // Fetch user's agents
+        // Fetch user's agents (from vps_agents table)
         const { data: agentsData } = await supabase
-          .from('agent_instances')
+          .from('vps_agents')
           .select('*')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false })
@@ -99,16 +100,20 @@ export default function DashboardPage() {
           setAgents(agentsData)
         }
 
-        // Fetch recent missions
-        const { data: missionsData } = await supabase
-          .from('mission_logs')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('started_at', { ascending: false })
-          .limit(10)
-
-        if (missionsData) {
-          setMissions(missionsData)
+        // Fetch recent missions (skip if table doesn't exist)
+        try {
+          const { data: missionsData } = await supabase
+            .from('mission_logs')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('started_at', { ascending: false })
+            .limit(10)
+          if (missionsData) {
+            setMissions(missionsData)
+          }
+        } catch (e) {
+          // Table might not exist, skip
+          console.log('mission_logs not available')
         }
 
         // Fetch connected tools
