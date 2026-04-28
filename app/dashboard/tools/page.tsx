@@ -267,7 +267,7 @@ export default function ToolsPage() {
                 <div className="flex items-center justify-between mb-2">
                   <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
                     <span className="text-xs font-bold text-white/60">
-                      {TOOL_ICONS[tool.tool_slug]?.[0] || 'T'}
+                      {TOOL_ICONS[tool.slug]?.[0] || 'T'}
                     </span>
                   </div>
                   {isConnected(tool.slug) ? (
@@ -351,7 +351,7 @@ export default function ToolsPage() {
                       <div className="flex items-center justify-between mb-2">
                         <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
                           <span className="text-sm font-bold text-white/60">
-                            {TOOL_ICONS[tool.tool_slug]?.[0] || 'T'}
+                            {TOOL_ICONS[tool.slug]?.[0] || 'T'}
                           </span>
                         </div>
                         {isConnected(tool.slug) ? (
