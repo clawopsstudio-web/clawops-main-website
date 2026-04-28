@@ -15,6 +15,8 @@ import {
   ScrollText,
   Terminal,
   Settings,
+  FolderOpen,
+  Globe,
 } from 'lucide-react'
 
 const PRODUCT_NAME = process.env.NEXT_PUBLIC_PRODUCT_NAME ?? 'Hermes'
@@ -31,6 +33,8 @@ const NAV = [
   { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/dashboard/logs', label: 'Logs', icon: ScrollText },
   { href: '/dashboard/settings', label: 'Settings', icon: Settings },
+  { href: '/dashboard/projects', label: 'Projects', icon: FolderOpen },
+  { href: '/dashboard/browser', label: 'Browser', icon: Globe },
   { href: '/dashboard/terminal', label: 'Mission Control', icon: Terminal },
 ]
 
