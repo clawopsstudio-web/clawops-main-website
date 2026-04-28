@@ -35,6 +35,9 @@ const PUBLIC_API_PATHS = [
   '/api/composio/callback',
   '/api/checkout',
   '/api/admin',
+  '/api/tools/catalog',
+  '/api/browser/screenshot',
+  '/api/hermes/status',
 ]
 
 // Root → redirect logged-in users to dashboard, else to login
