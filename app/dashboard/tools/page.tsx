@@ -235,7 +235,7 @@ export default function ToolsPage() {
                   <div className="flex items-center justify-between mb-2">
                     <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
                       <span className="text-xs font-bold text-white/60">
-                        {TOOL_ICONS[tool.slug]?.[0] || 'T'}
+                        {TOOL_ICONS[tool.tool_slug]?.[0] || 'T'}
                       </span>
                     </div>
                     <span className="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full">
@@ -244,7 +244,7 @@ export default function ToolsPage() {
                   </div>
                   <p className="text-white font-medium text-sm">{tool.tool_name}</p>
                   <button
-                    onClick={() => disconnectTool(tool.slug)}
+                    onClick={() => disconnectTool(tool.tool_slug)}
                     className="text-white/30 hover:text-red-400 text-xs mt-2 transition-colors"
                   >
                     Disconnect
@@ -267,7 +267,7 @@ export default function ToolsPage() {
                 <div className="flex items-center justify-between mb-2">
                   <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
                     <span className="text-xs font-bold text-white/60">
-                      {TOOL_ICONS[tool.slug]?.[0] || 'T'}
+                      {TOOL_ICONS[tool.tool_slug]?.[0] || 'T'}
                     </span>
                   </div>
                   {isConnected(tool.slug) ? (
@@ -351,7 +351,7 @@ export default function ToolsPage() {
                       <div className="flex items-center justify-between mb-2">
                         <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
                           <span className="text-sm font-bold text-white/60">
-                            {TOOL_ICONS[tool.slug]?.[0] || 'T'}
+                            {TOOL_ICONS[tool.tool_slug]?.[0] || 'T'}
                           </span>
                         </div>
                         {isConnected(tool.slug) ? (
