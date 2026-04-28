@@ -52,19 +52,16 @@ export default function Navbar() {
         <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <div
-              className="flex h-8 w-8 items-center justify-center rounded-lg transition-transform hover:scale-105"
-              style={{
-                background: "linear-gradient(135deg, #e8ff47, #e8ff47)",
-                boxShadow: "0 0 16px rgba(0,212,255,0.4)",
-              }}
-            >
-              <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4 text-white" aria-hidden="true">
-                <path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor" opacity="0.9"/>
-                <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+            <div className="flex items-center gap-2">
+              <img
+                src="/logo-clawpops.png"
+                alt="ClawOps Studios"
+                className="h-10 w-auto"
+                style={{
+                  filter: "drop-shadow(0 0 10px rgba(0,212,255,0.3))",
+                }}
+              />
             </div>
-            <span className="ml-2 text-white font-bold text-lg">ClawOps</span>
           </Link>
 
           {/* Desktop nav */}
