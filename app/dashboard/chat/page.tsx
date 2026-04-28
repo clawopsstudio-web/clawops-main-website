@@ -88,7 +88,12 @@ export default function ChatPage() {
   }, [activeThread])
 
   const send = async () => {
-    if (!input.trim() || sending || !activeThread) return
+    if (!input.trim() || sending) return
+    // If no active thread, create a new one first
+    if (!activeThread?.id) {
+      startNewConversation()
+      return
+    }
     const text = input.trim()
     setInput('')
     setSending(true)
