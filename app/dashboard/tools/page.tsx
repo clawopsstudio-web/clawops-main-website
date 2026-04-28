@@ -208,7 +208,7 @@ export default function ToolsPage() {
             onClick={() => setShowCatalog(true)}
             className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white/80 text-sm rounded-lg transition-colors"
           >
-            Browse All Tools →
+            Browse {data?.total || 100}+ Tools →
           </button>
         </div>
 

@@ -1,6 +1,5 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { useState, useEffect } from 'react'
 
 interface BrowserHistory {
   url: string
@@ -15,56 +14,23 @@ export default function BrowserPage() {
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [history, setHistory] = useState<BrowserHistory[]>([])
-  const [vpsStatus, setVpsStatus] = useState<string>('checking')
-  const iframeRef = useRef<HTMLIFrameElement>(null)
-
-  useEffect(() => {
-    async function checkVps() {
-      try {
-        const res = await fetch('/api/hermes/status')
-        if (res.ok) {
-          setVpsStatus('online')
-        } else {
-          setVpsStatus('offline')
-        }
-      } catch {
-        setVpsStatus('offline')
-      }
-    }
-    checkVps()
-  }, [])
-
-  const navigate = (newUrl: string) => {
-    let finalUrl = newUrl.trim()
-    if (!finalUrl) return
-    
-    // Add protocol if missing
-    if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
-      finalUrl = 'https://' + finalUrl
-    }
-    
-    setUrl(finalUrl)
-    setInputUrl(new URL(finalUrl).hostname)
-    setScreenshot(null)
-    setError(null)
-    
-    // Add to history
-    setHistory(prev => [{
-      url: finalUrl,
-      title: new URL(finalUrl).hostname,
-      timestamp: new Date().toISOString(),
-    }, ...prev.slice(0, 9)])
-  }
 
   const takeScreenshot = async () => {
     setLoading(true)
     setError(null)
+    setScreenshot(null)
     
     try {
+      // Normalize URL
+      let finalUrl = url.trim()
+      if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
+        finalUrl = 'https://' + finalUrl
+      }
+
       const res = await fetch('/api/browser/screenshot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ url: finalUrl }),
       })
       
       if (!res.ok) {
@@ -76,200 +42,149 @@ export default function BrowserPage() {
       
       if (data.imageUrl) {
         setScreenshot(data.imageUrl)
+        setHistory(prev => [{
+          url: finalUrl,
+          title: new URL(finalUrl).hostname,
+          timestamp: new Date().toISOString(),
+        }, ...prev.slice(0, 9)])
+      } else if (data.screenshot) {
+        // Base64 screenshot
+        setScreenshot(`data:image/png;base64,${data.screenshot}`)
+        setHistory(prev => [{
+          url: finalUrl,
+          title: new URL(finalUrl).hostname,
+          timestamp: new Date().toISOString(),
+        }, ...prev.slice(0, 9)])
       } else {
-        throw new Error('No image in response')
+        throw new Error('No screenshot in response')
       }
     } catch (err: any) {
-      console.error('[browser] Screenshot error:', err)
+      console.error('[browser] Error:', err)
       setError(err.message || 'Failed to take screenshot')
     } finally {
       setLoading(false)
     }
   }
 
+  const handleNavigate = () => {
+    let finalUrl = inputUrl.trim()
+    if (!finalUrl) return
+    if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
+      finalUrl = 'https://' + finalUrl
+    }
+    setUrl(finalUrl)
+  }
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      navigate(inputUrl)
+      handleNavigate()
     }
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col">
-      {/* Browser Chrome */}
-      <div className="bg-[#1a1a1a] border-b border-white/10">
-        {/* URL Bar */}
-        <div className="flex items-center gap-2 px-4 py-3">
-          <div className="flex items-center gap-1">
-            <button className="w-8 h-8 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
-              ←
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
-              →
-            </button>
-            <button 
-              onClick={() => navigate(url)}
-              className="w-8 h-8 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
-            >
-              ↻
-            </button>
-          </div>
-          
-          <div className="flex-1 flex items-center gap-2 bg-[#111] border border-white/10 rounded-lg px-3 py-2">
-            <span className="text-white/40 text-sm">🔒</span>
-            <input
-              type="text"
-              value={inputUrl}
-              onChange={e => setInputUrl(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Enter URL..."
-              className="flex-1 bg-transparent text-white text-sm placeholder-white/30 focus:outline-none"
-            />
-            <button
-              onClick={() => navigate(inputUrl)}
-              className="text-white/40 hover:text-white transition-colors"
-            >
-              →
-            </button>
-          </div>
-          
-          <button
-            onClick={takeScreenshot}
-            disabled={loading || !url}
-            className="px-4 py-2 bg-[#e8ff47] hover:bg-[#d4eb3a] text-black text-sm font-bold rounded-lg transition-colors disabled:opacity-50"
-          >
-            {loading ? 'Capturing...' : '📸 Capture'}
-          </button>
-        </div>
-        
-        {/* Quick Links */}
-        <div className="flex items-center gap-2 px-4 pb-3">
-          {[
-            { name: 'Google', url: 'https://google.com' },
-            { name: 'GitHub', url: 'https://github.com' },
-            { name: 'Twitter', url: 'https://twitter.com' },
-          ].map(site => (
-            <button
-              key={site.name}
-              onClick={() => navigate(site.url)}
-              className="px-3 py-1 bg-white/5 hover:bg-white/10 rounded text-white/60 text-xs transition-colors"
-            >
-              {site.name}
-            </button>
-          ))}
-          <div className="flex-1" />
-          <div className="flex items-center gap-2 text-xs text-white/30">
-            <div className={`w-1.5 h-1.5 rounded-full ${vpsStatus === 'online' ? 'bg-emerald-400' : 'bg-red-400'}`} />
-            {vpsStatus === 'online' ? 'Screenshot ready' : 'VPS offline'}
-          </div>
+    <div className="flex h-[calc(100vh-64px)]">
+      {/* Sidebar - History */}
+      <div className="w-64 bg-[#111] border-r border-white/10 p-4 overflow-y-auto">
+        <h2 className="text-white/40 text-xs font-semibold uppercase mb-4">History</h2>
+        <div className="space-y-2">
+          {history.length === 0 ? (
+            <p className="text-white/30 text-sm">No history yet</p>
+          ) : (
+            history.map((item, i) => (
+              <button
+                key={i}
+                onClick={() => {
+                  setUrl(item.url)
+                  setInputUrl(new URL(item.url).hostname)
+                }}
+                className="w-full text-left p-2 rounded-lg hover:bg-white/5 transition-colors"
+              >
+                <p className="text-white/70 text-xs truncate">{item.title}</p>
+                <p className="text-white/30 text-[10px]">{new Date(item.timestamp).toLocaleTimeString()}</p>
+              </button>
+            ))
+          )}
         </div>
       </div>
 
-      {/* Content Area */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Main Browser View */}
-        <div className="flex-1 flex flex-col">
-          {error ? (
-            <div className="flex-1 flex items-center justify-center">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <span className="text-3xl">⚠️</span>
-                </div>
-                <p className="text-white font-bold mb-2">Screenshot Failed</p>
-                <p className="text-white/50 text-sm mb-4">{error}</p>
-                <button
-                  onClick={takeScreenshot}
-                  className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm rounded-lg transition-colors"
-                >
-                  Try Again
-                </button>
-              </div>
+      {/* Main Browser Area */}
+      <div className="flex-1 flex flex-col">
+        {/* URL Bar */}
+        <div className="bg-[#1a1a1a] border-b border-white/10 p-3">
+          <div className="flex gap-2">
+            <div className="flex-1 flex items-center bg-white/5 border border-white/10 rounded-lg px-3">
+              <span className="text-white/30 text-sm mr-2">🔒</span>
+              <input
+                type="text"
+                value={inputUrl}
+                onChange={e => setInputUrl(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Enter URL..."
+                className="flex-1 bg-transparent text-white text-sm py-2 focus:outline-none"
+              />
             </div>
-          ) : screenshot ? (
-            <div className="flex-1 overflow-auto p-4">
-              <div className="bg-white rounded-xl overflow-hidden shadow-2xl max-w-5xl mx-auto">
-                <img 
-                  src={screenshot} 
-                  alt="Website screenshot"
-                  className="w-full h-auto"
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="flex-1 flex items-center justify-center">
-              <div className="text-center">
-                <div className="w-20 h-20 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <span className="text-4xl">🌐</span>
-                </div>
-                <p className="text-white font-bold text-lg mb-2">Interactive Browser</p>
-                <p className="text-white/50 text-sm mb-6 max-w-md">
-                  Enter a URL above to browse. Click "Capture" to take a screenshot.
-                  Your agents can also browse and you&apos;ll see their view here.
-                </p>
-                <div className="flex items-center gap-4 justify-center">
-                  <button
-                    onClick={() => navigate('https://google.com')}
-                    className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm rounded-lg transition-colors"
-                  >
-                    Try Google
-                  </button>
-                  <button
-                    onClick={() => navigate('https://github.com')}
-                    className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm rounded-lg transition-colors"
-                  >
-                    Try GitHub
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+            <button
+              onClick={handleNavigate}
+              className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm rounded-lg transition-colors"
+            >
+              Go
+            </button>
+            <button
+              onClick={takeScreenshot}
+              disabled={loading}
+              className="px-4 py-2 bg-[#e8ff47] hover:bg-[#d4eb3a] text-black text-sm font-bold rounded-lg transition-colors disabled:opacity-50"
+            >
+              {loading ? '...' : '📸'}
+            </button>
+          </div>
         </div>
 
-        {/* Sidebar - History & Agent View */}
-        <div className="w-64 bg-[#111] border-l border-white/5 p-4 overflow-y-auto">
-          {/* Agent View Section */}
-          <div className="mb-6">
-            <h3 className="text-white/40 text-xs uppercase tracking-wider mb-3">Agent View</h3>
-            <div className="bg-[#1a1a1a] border border-white/10 rounded-xl p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-6 h-6 bg-emerald-500/20 rounded flex items-center justify-center">
-                  <span className="text-[10px]">A</span>
-                </div>
-                <span className="text-white text-sm font-medium">Arjun</span>
-              </div>
-              <p className="text-white/30 text-xs mb-3">Last viewed:</p>
-              <div className="space-y-2">
-                <div className="text-xs text-white/60 bg-white/5 rounded px-2 py-1">
-                  competitor-analysis.com
-                </div>
-                <div className="text-xs text-white/60 bg-white/5 rounded px-2 py-1">
-                  shopify.com/pricing
-                </div>
-              </div>
+        {/* Content Area */}
+        <div className="flex-1 bg-white/5 flex items-center justify-center overflow-auto p-6">
+          {loading && (
+            <div className="text-center">
+              <div className="w-12 h-12 border-2 border-white/20 border-t-[#e8ff47] rounded-full animate-spin mx-auto mb-4" />
+              <p className="text-white/50 text-sm">Taking screenshot...</p>
             </div>
-          </div>
+          )}
 
-          {/* Your History */}
-          <div>
-            <h3 className="text-white/40 text-xs uppercase tracking-wider mb-3">Your History</h3>
-            {history.length === 0 ? (
-              <p className="text-white/30 text-xs">No browsing history yet</p>
-            ) : (
-              <div className="space-y-2">
-                {history.map((item, i) => (
-                  <button
-                    key={i}
-                    onClick={() => navigate(item.url)}
-                    className="w-full text-left p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
-                  >
-                    <p className="text-white text-xs truncate">{item.title}</p>
-                    <p className="text-white/30 text-[10px]">
-                      {new Date(item.timestamp).toLocaleTimeString()}
-                    </p>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          {error && (
+            <div className="text-center max-w-md">
+              <div className="text-4xl mb-4">⚠️</div>
+              <h3 className="text-white font-semibold mb-2">Screenshot Failed</h3>
+              <p className="text-white/40 text-sm mb-4">{error}</p>
+              <button
+                onClick={takeScreenshot}
+                className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm rounded-lg transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
+          )}
+
+          {screenshot && !loading && (
+            <div className="w-full">
+              <img
+                src={screenshot}
+                alt="Screenshot"
+                className="w-full rounded-lg shadow-2xl"
+              />
+            </div>
+          )}
+
+          {!screenshot && !loading && !error && (
+            <div className="text-center">
+              <div className="text-6xl mb-4">🌐</div>
+              <h3 className="text-white font-semibold mb-2">Browser</h3>
+              <p className="text-white/40 text-sm mb-4">Enter a URL and click 📸 to take a screenshot</p>
+              <button
+                onClick={takeScreenshot}
+                className="px-6 py-3 bg-[#e8ff47] hover:bg-[#d4eb3a] text-black font-bold text-sm rounded-xl transition-colors"
+              >
+                Take Screenshot of Google
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
