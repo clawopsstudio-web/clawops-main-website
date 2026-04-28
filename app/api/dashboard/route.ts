@@ -17,15 +17,15 @@ export async function GET(request: NextRequest) {
     const [profileResult, instancesResult, agentsResult, skillsResult] = await Promise.all([
       supabase.from('profiles').select('*').eq('id', userId).single(),
       supabase.from('vps_instances').select('*').eq('user_id', userId),
-      supabase.from('agent_instances').select('*').eq('user_id', userId).eq('status', 'active'),
-      supabase.from('user_skills').select('*').eq('user_id', userId).eq('status', 'installed'),
+      supabase.from('vps_agents').select('*').eq('user_id', userId).eq('status', 'active'),
+      supabase.from('user_tools').select('*').eq('user_id', userId).eq('status', 'connected'),
     ])
 
     return NextResponse.json({
       profile: profileResult.data,
       instances: instancesResult.data || [],
       activeAgents: agentsResult.data?.length || 0,
-      installedSkills: skillsResult.data?.length || 0,
+      connectedTools: skillsResult.data?.length || 0,
       user: { id: userId, email: profileResult.data?.email },
     })
   } catch (error: any) {
