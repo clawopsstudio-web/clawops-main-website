@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { useHermesStatus } from '@/components/providers/HermesStatusProvider'
 
 const AGENT_COLORS: Record<string, string> = {
   Ryan: '#22c55e', Arjun: '#f59e0b', Helena: '#3b82f6',
@@ -39,6 +40,9 @@ export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  // Shared Hermes status from layout provider — avoids double-polling
+  const { hermesOnline, hermesStatus: ctxHermesStatus } = useHermesStatus()
 
   // Fetch user display name first (needed immediately for greeting)
   useEffect(() => {
@@ -114,7 +118,11 @@ export default function DashboardPage() {
     </div>
   )
 
-  const { instances, agents, tools, hermesStatus, hermesOnline, recentActivity, missions, stats } = data
+  const { instances, agents, tools, hermesStatus: apiHermesStatus, hermesOnline: apiHermesOnline, recentActivity, missions, stats } = data
+
+  // Prefer context Hermes status; fall back to API response
+  const hermesStatus = ctxHermesStatus ?? apiHermesStatus
+  const hermesOnline_final = hermesOnline || apiHermesOnline
   const vps = instances[0] ?? null
   const displayName = userName || data.profile?.full_name || 'User'
 
@@ -146,7 +154,7 @@ export default function DashboardPage() {
             <p className="text-white/40 text-sm mt-1">
               {vps
                 ? `${vps.name ?? 'Your VPS'} is ${vps.status}`
-                : hermesOnline
+                : hermesOnline_final
                   ? 'Hermes is online — no VPS instance linked yet'
                   : 'Connect a VPS to get started'}
             </p>
@@ -208,10 +216,10 @@ export default function DashboardPage() {
             <div className="bg-[#111] border border-white/7 rounded-xl p-4">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-white/30 text-xs">Hermes Status</span>
-                <div className={`w-1.5 h-1.5 rounded-full ${hermesOnline ? 'bg-emerald-400' : 'bg-red-400'}`} />
+                <div className={`w-1.5 h-1.5 rounded-full ${hermesOnline_final ? 'bg-emerald-400' : 'bg-red-400'}`} />
               </div>
               <p className="text-white font-black text-2xl mb-0.5 capitalize">
-                {hermesOnline ? 'Online' : 'Offline'}
+                {hermesOnline_final ? 'Online' : 'Offline'}
               </p>
               <p className="text-white/30 text-[10px]">
                 {hermesStatus?.gateway_platforms
