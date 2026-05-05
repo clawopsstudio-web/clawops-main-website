@@ -15,118 +15,59 @@ function getTimeOfDay(): string {
   return 'evening'
 }
 
-interface VPSInstance {
-  id: string
-  name: string
-  tunnel_url: string
-  status: string
-  agent_count: number
-}
-
-interface Agent {
-  id: string
-  agent_name: string
-  agent_role: string
-  status: string
-  tools: string[]
-  hermes_agent_id: string
-}
-
-interface MissionLog {
-  id: string
-  agent_id: string
-  mission_type: string
-  status: string
-  started_at: string
-  completed_at: string | null
-}
-
-interface ToolConnection {
-  id: string
-  tool_name: string
-  status: string
-  connected_at: string
+interface DashboardData {
+  profile: any
+  instances: any[]
+  agents: any[]
+  tools: any[]
+  hermesStatus: any
+  hermesOnline: boolean
+  recentActivity: any[]
+  missions: any[]
+  stats: {
+    activeAgents: number
+    connectedTools: number
+    totalInstances: number
+    onlineInstances: number
+    completedMissions: number
+    runningMissions: number
+  }
 }
 
 export default function DashboardPage() {
-  const [userId, setUserId] = useState<string | null>(null)
   const [userName, setUserName] = useState('')
-  const [vps, setVps] = useState<VPSInstance | null>(null)
-  const [agents, setAgents] = useState<Agent[]>([])
-  const [missions, setMissions] = useState<MissionLog[]>([])
-  const [tools, setTools] = useState<ToolConnection[]>([])
+  const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // Fetch user display name first (needed immediately for greeting)
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        const name = user.user_metadata?.full_name ?? user.email?.split('@')[0] ?? 'User'
+        setUserName(name)
+      } else {
+        // No user — the layout will redirect, just show loading
+      }
+    })
+  }, [])
+
+  // Fetch all dashboard data from API
   useEffect(() => {
     async function loadDashboard() {
       try {
-        const supabase = createClient()
-        
-        // Get current user
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!user) {
-          setError('Not logged in')
-          setLoading(false)
-          return
-        }
-
-        setUserId(user.id)
-        setUserName(
-          user.user_metadata?.full_name 
-            ?? user.email?.split('@')[0] 
-            ?? 'User'
-        )
-
-        // Fetch user's VPS instance
-        const { data: vpsData } = await supabase
-          .from('vps_instances')
-          .select('*')
-          .eq('user_id', user.id)
-          .single()
-
-        if (vpsData) {
-          setVps(vpsData)
-        }
-
-        // Fetch user's agents (from vps_agents table)
-        const { data: agentsData } = await supabase
-          .from('vps_agents')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false })
-
-        if (agentsData && agentsData.length > 0) {
-          setAgents(agentsData)
-        }
-
-        // Fetch recent missions (skip if table doesn't exist)
-        try {
-          const { data: missionsData } = await supabase
-            .from('mission_logs')
-            .select('*')
-            .eq('user_id', user.id)
-            .order('started_at', { ascending: false })
-            .limit(10)
-          if (missionsData) {
-            setMissions(missionsData)
+        const res = await fetch('/api/dashboard')
+        if (!res.ok) {
+          if (res.status === 401) {
+            // Auth handled by layout — stay on loading briefly
+            setLoading(false)
+            return
           }
-        } catch (e) {
-          // Table might not exist, skip
-          console.log('mission_logs not available')
+          throw new Error(`Failed to load dashboard (${res.status})`)
         }
-
-        // Fetch connected tools
-        const { data: toolsData } = await supabase
-          .from('user_tools')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('status', 'connected')
-
-        if (toolsData) {
-          setTools(toolsData)
-        }
-
+        const json: DashboardData = await res.json()
+        setData(json)
       } catch (err: any) {
         console.error('[dashboard] Error:', err)
         setError(err.message)
@@ -137,6 +78,23 @@ export default function DashboardPage() {
 
     loadDashboard()
   }, [])
+
+  // Polling: refresh every 60 seconds
+  useEffect(() => {
+    if (!data) return
+    const id = setInterval(async () => {
+      try {
+        const res = await fetch('/api/dashboard')
+        if (res.ok) {
+          const json: DashboardData = await res.json()
+          setData(json)
+        }
+      } catch {
+        // Silently ignore polling failures
+      }
+    }, 60_000)
+    return () => clearInterval(id)
+  }, [!!data])
 
   if (loading) return (
     <div className="flex items-center justify-center min-h-[400px]">
@@ -150,9 +108,30 @@ export default function DashboardPage() {
     </div>
   )
 
-  const activeAgents = agents.filter(a => a.status === 'active').length
-  const runningMissions = missions.filter(m => m.status === 'running').length
-  const completedMissions = missions.filter(m => m.status === 'completed').length
+  if (!data) return (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <div className="text-white/30 text-sm">Loading...</div>
+    </div>
+  )
+
+  const { instances, agents, tools, hermesStatus, hermesOnline, recentActivity, missions, stats } = data
+  const vps = instances[0] ?? null
+  const displayName = userName || data.profile?.full_name || 'User'
+
+  // Merge hermesStatus.platforms into agents display
+  const platformAgents = hermesStatus?.gateway_platforms
+    ? Object.entries(hermesStatus.gateway_platforms).map(([platform, info]: [string, any]) => ({
+        id: platform,
+        agent_name: platform.charAt(0).toUpperCase() + platform.slice(1),
+        agent_role: `${platform} bot`,
+        status: info.state === 'connected' ? 'active' : 'inactive',
+        tools: [],
+        hermes_agent_id: platform,
+      }))
+    : []
+
+  // Combine DB agents + Hermes platform agents
+  const allAgents = [...agents, ...platformAgents]
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
@@ -162,22 +141,26 @@ export default function DashboardPage() {
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-2xl font-black text-white">
-              Good {getTimeOfDay()}, {userName.split(' ')[0]}
+              Good {getTimeOfDay()}, {displayName.split(' ')[0]}
             </h1>
             <p className="text-white/40 text-sm mt-1">
-              {vps ? `Your ${vps.name} is ${vps.status}` : 'Setting up your workspace...'}
+              {vps
+                ? `${vps.name ?? 'Your VPS'} is ${vps.status}`
+                : hermesOnline
+                  ? 'Hermes is online — no VPS instance linked yet'
+                  : 'Connect a VPS to get started'}
             </p>
           </div>
           {vps && (
             <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-full">
               <div className={`w-2 h-2 rounded-full ${vps.status === 'online' ? 'bg-emerald-400' : 'bg-red-400'}`} />
-              <span className="text-white/60 text-xs">{vps.tunnel_url}</span>
+              <span className="text-white/60 text-xs">{vps.tunnel_url ?? vps.hermes_url ?? 'vps'}</span>
             </div>
           )}
         </div>
 
-        {/* No VPS - Show Setup CTA */}
-        {!vps && (
+        {/* No VPS + no agents — Show Setup CTA */}
+        {!vps && agents.length === 0 && (
           <div className="bg-gradient-to-r from-[#1a1a1a] to-[#111] border border-white/10 rounded-2xl p-8 text-center">
             <div className="w-16 h-16 bg-[#e8ff47]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <span className="text-3xl">🚀</span>
@@ -186,7 +169,7 @@ export default function DashboardPage() {
             <p className="text-white/50 text-sm mb-6 max-w-md mx-auto">
               Connect your first tool to get started. Your agents will be ready to work for you 24/7.
             </p>
-            <Link 
+            <Link
               href="/dashboard/tools"
               className="inline-flex items-center gap-2 px-6 py-3 bg-[#e8ff47] hover:bg-[#d4eb3a] text-black font-bold text-sm rounded-xl transition-colors"
             >
@@ -195,23 +178,23 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* VPS Status & KPIs */}
-        {vps && (
+        {/* KPIs */}
+        {(vps || agents.length > 0) && (
           <div className="grid grid-cols-4 gap-4">
             <div className="bg-[#111] border border-white/7 rounded-xl p-4">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-white/30 text-xs">Agents Active</span>
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
               </div>
-              <p className="text-white font-black text-2xl mb-0.5">{activeAgents}</p>
-              <p className="text-white/30 text-[10px]">{agents.length} total configured</p>
+              <p className="text-white font-black text-2xl mb-0.5">{stats.activeAgents}</p>
+              <p className="text-white/30 text-[10px]">{allAgents.length} total configured</p>
             </div>
             <div className="bg-[#111] border border-white/7 rounded-xl p-4">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-white/30 text-xs">Tools Connected</span>
                 <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
               </div>
-              <p className="text-white font-black text-2xl mb-0.5">{tools.length}</p>
+              <p className="text-white font-black text-2xl mb-0.5">{stats.connectedTools}</p>
               <p className="text-white/30 text-[10px]">Integrations active</p>
             </div>
             <div className="bg-[#111] border border-white/7 rounded-xl p-4">
@@ -219,32 +202,64 @@ export default function DashboardPage() {
                 <span className="text-white/30 text-xs">Missions Run</span>
                 <div className="w-1.5 h-1.5 rounded-full bg-purple-400" />
               </div>
-              <p className="text-white font-black text-2xl mb-0.5">{completedMissions}</p>
-              <p className="text-white/30 text-[10px]">{runningMissions} running now</p>
+              <p className="text-white font-black text-2xl mb-0.5">{stats.completedMissions}</p>
+              <p className="text-white/30 text-[10px]">{stats.runningMissions} running now</p>
             </div>
             <div className="bg-[#111] border border-white/7 rounded-xl p-4">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-white/30 text-xs">VPS Status</span>
-                <div className={`w-1.5 h-1.5 rounded-full ${vps.status === 'online' ? 'bg-emerald-400' : 'bg-red-400'}`} />
+                <span className="text-white/30 text-xs">Hermes Status</span>
+                <div className={`w-1.5 h-1.5 rounded-full ${hermesOnline ? 'bg-emerald-400' : 'bg-red-400'}`} />
               </div>
-              <p className="text-white font-black text-2xl mb-0.5 capitalize">{vps.status}</p>
-              <p className="text-white/30 text-[10px]">{vps.name}</p>
+              <p className="text-white font-black text-2xl mb-0.5 capitalize">
+                {hermesOnline ? 'Online' : 'Offline'}
+              </p>
+              <p className="text-white/30 text-[10px]">
+                {hermesStatus?.gateway_platforms
+                  ? `${Object.keys(hermesStatus.gateway_platforms).length} platform${Object.keys(hermesStatus.gateway_platforms).length !== 1 ? 's' : ''}`
+                  : vps?.name ?? 'No instance'}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Hermes Status — Platforms */}
+        {hermesStatus?.gateway_platforms && (
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-white font-semibold text-sm">Hermes Platforms</h2>
+              <span className="text-white/30 text-xs">v{hermesStatus.version}</span>
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              {Object.entries(hermesStatus.gateway_platforms).map(([platform, info]: [string, any]) => (
+                <div key={platform} className="bg-[#111] border border-white/7 rounded-xl p-4">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className={`w-3 h-3 rounded-full ${info.state === 'connected' ? 'bg-emerald-400' : 'bg-red-400'}`} />
+                    <p className="text-white font-bold text-sm capitalize">{platform}</p>
+                  </div>
+                  <p className="text-white/40 text-xs mb-1">
+                    {info.state === 'connected' ? 'Connected' : info.error_message ?? 'Disconnected'}
+                  </p>
+                  {info.error_code && (
+                    <p className="text-red-400/60 text-[10px]">Error: {info.error_code}</p>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         )}
 
         {/* Agent Status */}
-        {agents.length > 0 && (
+        {allAgents.length > 0 && (
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-white font-semibold text-sm">Your AI Agents</h2>
               <Link href="/dashboard/agents" className="text-white/40 hover:text-white/70 text-xs transition-colors">Manage →</Link>
             </div>
             <div className="grid grid-cols-3 gap-3">
-              {agents.map(agent => (
+              {allAgents.map(agent => (
                 <div key={agent.id} className="bg-[#111] border border-white/7 rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-3">
-                    <div 
+                    <div
                       className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm"
                       style={{ backgroundColor: AGENT_COLORS[agent.agent_name] || '#6b7280' }}
                     >
@@ -257,13 +272,13 @@ export default function DashboardPage() {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className={`text-[10px] px-2 py-0.5 rounded-full ${
-                      agent.status === 'active' 
-                        ? 'bg-emerald-500/10 text-emerald-400' 
+                      agent.status === 'active'
+                        ? 'bg-emerald-500/10 text-emerald-400'
                         : 'bg-white/10 text-white/40'
                     }`}>
                       {agent.status === 'active' ? '● Running' : '○ Stopped'}
                     </span>
-                    <Link 
+                    <Link
                       href={`/dashboard/chat?agent=${agent.id}`}
                       className="text-[10px] text-white/40 hover:text-white/70 transition-colors"
                     >
@@ -276,16 +291,49 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Recent Missions */}
-        {missions.length > 0 && (
+        {/* Recent Activity */}
+        {recentActivity.length > 0 && (
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-white font-semibold text-sm">Recent Chats</h2>
+              <Link href="/dashboard/chat" className="text-white/40 hover:text-white/70 text-xs transition-colors">View all →</Link>
+            </div>
+            <div className="bg-[#111] border border-white/7 rounded-xl overflow-hidden">
+              {recentActivity.slice(0, 5).map((session: any, i: number) => (
+                <div
+                  key={session.id ?? i}
+                  className={`flex items-center justify-between px-4 py-3 ${i < recentActivity.length - 1 ? 'border-b border-white/5' : ''}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                    <div>
+                      <p className="text-white/80 text-sm">{session.title ?? 'Chat session'}</p>
+                      <p className="text-white/30 text-xs">
+                        {session.last_active
+                          ? new Date(session.last_active).toLocaleString()
+                          : `${session.message_count ?? 0} messages`}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white/40 capitalize">
+                    {session.source}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Mission Logs (fallback when no Hermes sessions) */}
+        {missions.length > 0 && recentActivity.length === 0 && (
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-white font-semibold text-sm">Recent Activity</h2>
               <Link href="/dashboard/tasks" className="text-white/40 hover:text-white/70 text-xs transition-colors">View all →</Link>
             </div>
             <div className="bg-[#111] border border-white/7 rounded-xl overflow-hidden">
-              {missions.slice(0, 5).map((mission, i) => (
-                <div 
+              {missions.slice(0, 5).map((mission: any, i: number) => (
+                <div
                   key={mission.id}
                   className={`flex items-center justify-between px-4 py-3 ${i < missions.length - 1 ? 'border-b border-white/5' : ''}`}
                 >

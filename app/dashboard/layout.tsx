@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import HermesStatusProvider, { useHermesStatus } from '@/components/providers/HermesStatusProvider'
 import {
   LayoutDashboard,
   MessageSquare,
@@ -213,25 +214,27 @@ function OnboardingModal({ displayName, onComplete }: { displayName: string; onC
   )
 }
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+// Inner shell — uses the Hermes status provider (must be inside it)
+function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
   const [userPlan, setUserPlan] = useState('')
   const [user, setUser] = useState<any>(null)
-  const [hermesLive, setHermesLive] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [avatarOpen, setAvatarOpen] = useState(false)
+
+  // Hermes status from shared provider (avoids duplicate polling)
+  const { hermesOnline: hermesLive } = useHermesStatus()
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data }) => {
       setUser(data.user ?? null)
       if (!data.user) {
-        router.push('/auth/login');
+        router.push('/auth/login')
         return
       }
-      // Fetch plan from profiles table; onboarding tracked in localStorage
       const { data: prof } = await supabase
         .from('profiles')
         .select('plan')
@@ -242,25 +245,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       if (!onboarded) setShowOnboarding(true)
       setIsLoading(false)
     })
-
-    // Hermes status poll (10s timeout)
-    const check = async () => {
-      try {
-        const controller = new AbortController()
-        const timeout = setTimeout(() => controller.abort(), 10_000)
-        const r = await fetch('/api/hermes/status', { signal: controller.signal })
-        clearTimeout(timeout)
-        setHermesLive(r.ok)
-      } catch { setHermesLive(false) }
-    }
-    check()
-    const id = setInterval(check, 30_000)
-    return () => clearInterval(id)
   }, [router, supabase])
 
   const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    router.push('/auth/login');
+    await fetch('/api/auth/logout', { method: 'POST' })
+    router.push('/auth/login')
     router.refresh()
   }
 
@@ -282,7 +271,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     : user?.email?.[0]?.toUpperCase() ?? '?'
 
   const displayName = user?.user_metadata?.full_name ?? user?.email?.split('@')[0] ?? 'User'
-  const isAdmin = user?.id === ADMIN_UID
 
   return (
     <>
@@ -399,5 +387,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </div>
     </>
+  )
+}
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <HermesStatusProvider>
+      <DashboardShell>{children}</DashboardShell>
+    </HermesStatusProvider>
   )
 }

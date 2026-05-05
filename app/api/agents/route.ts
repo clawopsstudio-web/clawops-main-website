@@ -1,113 +1,143 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getUserIdFromRequest } from '@/lib/auth-server'
-import { supabaseAdmin } from '@/lib/supabase/admin'
-
-// Default provider/model config (fallback)
-const FALLBACK_PROVIDER = 'groq'
-const FALLBACK_MODEL = 'llama-3.3-70b-versatile'
-const DEFAULT_TEMPERATURE = 0.7
-const DEFAULT_MAX_TOKENS = 8192
+/**
+ * app/api/agents/route.ts
+ * GET  /api/agents?workspaceId=xxx - List workspace agents
+ * POST /api/agents                  - Create new agent for workspace
+ */
+import { NextRequest, NextResponse } from 'next/server';
+import { requireAuth, verifyWorkspaceAccess } from '@/lib/auth-server';
+import { createServerClient } from '@/lib/supabase/server';
 
 export async function GET(request: NextRequest) {
-  try {
-    const userId = await getUserIdFromRequest(request)
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const authResult = await requireAuth(request);
+  if (authResult instanceof NextResponse) return authResult;
+  const { userId } = authResult;
 
-    const { data, error } = await supabaseAdmin
-      .from('agents')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-
-    if (error) throw error
-    return NextResponse.json({ agents: data })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  const workspaceId = request.nextUrl.searchParams.get('workspaceId');
+  if (!workspaceId) {
+    return NextResponse.json({ error: 'workspaceId is required' }, { status: 400 });
   }
+
+  const hasAccess = await verifyWorkspaceAccess(userId, workspaceId);
+  if (!hasAccess) {
+    return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+  }
+
+  const supabase = createServerClient();
+
+  // Fetch agents with tools
+  const { data: agents, error } = await supabase
+    .from('workspace_agents')
+    .select(`
+      *,
+      agent_tools(
+        id,
+        enabled,
+        tools(
+          id,
+          name,
+          display_name,
+          icon,
+          category
+        )
+      )
+    `)
+    .eq('workspace_id', workspaceId)
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  // Flatten agent_tools into tools array for easier frontend use
+  const formattedAgents = (agents || []).map((agent: any) => ({
+    ...agent,
+    tools: (agent.agent_tools || [])
+      .filter((at: any) => at.enabled)
+      .map((at: any) => at.tools)
+      .filter(Boolean),
+    agent_tools: undefined, // remove nested join from response
+  }));
+
+  return NextResponse.json({ agents: formattedAgents });
 }
 
 export async function POST(request: NextRequest) {
+  const authResult = await requireAuth(request);
+  if (authResult instanceof NextResponse) return authResult;
+  const { userId } = authResult;
+
   try {
-    const userId = await getUserIdFromRequest(request)
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const body = await request.json();
+    const { workspaceId, name, role, model, profile, systemPrompt, description, color, toolIds } = body;
 
-    const body = await request.json()
-    const { name, role, description, system_prompt, provider, model_id, temperature, max_tokens, tools } = body
-
-    if (!name?.trim()) {
-      return NextResponse.json({ error: 'Agent name is required' }, { status: 400 })
+    if (!workspaceId || !name || !role) {
+      return NextResponse.json(
+        { error: 'workspaceId, name, and role are required' },
+        { status: 400 }
+      );
     }
 
-    // Check subscription limits (max_agents)
-    // Get user's plan from subscriptions table
-    const { data: subscription } = await supabaseAdmin
-      .from('subscriptions')
-      .select('plan')
-      .eq('workspace_user_id', userId)
-      .eq('status', 'active')
-      .single()
-
-    const userPlan = subscription?.plan ?? 'personal' // Default to personal if no subscription
-
-    // Get full plan config including default model/provider
-    const { data: planConfig } = await supabaseAdmin
-      .from('plan_config')
-      .select('max_agents, default_model, default_provider')
-      .eq('plan', userPlan)
-      .single()
-
-    // -1 means unlimited
-    const maxAgents = planConfig?.max_agents ?? 3
-    
-    // Use plan's default model/provider, or fallback to Groq (free tier)
-    const defaultProvider = planConfig?.default_provider || FALLBACK_PROVIDER
-    const defaultModel = planConfig?.default_model || FALLBACK_MODEL
-
-    const { count } = await supabaseAdmin
-      .from('agents')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-
-    if (maxAgents !== -1 && (count ?? 0) >= maxAgents) {
-      return NextResponse.json({
-        error: `Agent limit reached. Your ${userPlan} plan allows ${maxAgents} agent${maxAgents !== 1 ? 's' : ''}. Upgrade to create more.`
-      }, { status: 403 })
+    const hasAccess = await verifyWorkspaceAccess(userId, workspaceId);
+    if (!hasAccess) {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
-    const { data: workspace } = await supabaseAdmin
-      .from('workspaces')
-      .select('id')
-      .eq('user_id', userId)
-      .single()
+    const supabase = createServerClient();
 
-    const agent = {
-      user_id: userId,
-      workspace_id: workspace?.id ?? null,
-      name: name.trim(),
-      role: role || 'General',
-      description: description || '',
-      system_prompt: system_prompt || `You are ${name.trim()}, an AI agent. Work autonomously, prioritize tasks, and report back clearly.`,
-      provider: provider || defaultProvider,
-      model_id: model_id || defaultModel,
-      temperature: temperature ?? DEFAULT_TEMPERATURE,
-      max_tokens: max_tokens ?? DEFAULT_MAX_TOKENS,
-      tools: tools || [],
-      status: 'initializing',
-      sync_status: 'not_synced',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    }
-
-    const { data, error } = await supabaseAdmin
-      .from('agents')
-      .insert(agent)
+    // Create the agent
+    const { data: agent, error } = await supabase
+      .from('workspace_agents')
+      .insert({
+        workspace_id: workspaceId,
+        name,
+        role,
+        model: model || null,
+        profile: profile || 'default',
+        system_prompt: systemPrompt || null,
+        description: description || null,
+        color: color || '#6366f1',
+        status: 'inactive',
+        tools: [],
+      })
       .select()
-      .single()
+      .single();
 
-    if (error) throw error
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
 
-    return NextResponse.json({ agent: data })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    // Link tools if provided
+    if (toolIds && Array.isArray(toolIds) && toolIds.length > 0) {
+      const agentToolLinks = toolIds.map((toolId: string) => ({
+        agent_id: agent.id,
+        tool_id: toolId,
+        enabled: true,
+      }));
+
+      const { error: toolLinkError } = await supabase
+        .from('agent_tools')
+        .insert(agentToolLinks);
+
+      if (toolLinkError) {
+        console.error('Error linking tools:', toolLinkError);
+      }
+    }
+
+    // Log activity
+    await supabase.rpc('log_activity', {
+      p_workspace_id: workspaceId,
+      p_agent_id: agent.id,
+      p_type: 'agent_action',
+      p_message: `Created agent: ${name}`,
+      p_metadata: { action: 'created', role },
+    });
+
+    return NextResponse.json({ agent }, { status: 201 });
+  } catch (error) {
+    console.error('Create agent error:', error);
+    return NextResponse.json(
+      { error: 'Failed to create agent', details: error instanceof Error ? error.message : 'Unknown error' },
+      { status: 500 }
+    );
   }
 }

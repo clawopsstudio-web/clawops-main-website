@@ -1,118 +1,222 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getUserIdFromRequest } from '@/lib/auth-server'
-import { supabaseAdmin } from '@/lib/supabase/admin'
+/**
+ * app/api/agents/[id]/route.ts
+ * GET  /api/agents/[id] - Get agent details
+ * PUT  /api/agents/[id] - Update agent
+ * DELETE /api/agents/[id] - Remove agent
+ */
+import { NextRequest, NextResponse } from 'next/server';
+import { requireAuth } from '@/lib/auth-server';
+import { createServerClient } from '@/lib/supabase/server';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const userId = await getUserIdFromRequest(request)
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
-    const { id } = await params
-
-    const { data, error } = await supabaseAdmin
-      .from('agents')
-      .select('*')
-      .eq('id', id)
-      .eq('user_id', userId)
-      .single()
-
-    if (error) throw error
-    if (!data) return NextResponse.json({ error: 'Agent not found' }, { status: 404 })
-
-    return NextResponse.json({ agent: data })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
-  }
+interface RouteParams {
+  params: Promise<{ id: string }>;
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: RouteParams) {
+  const authResult = await requireAuth(request);
+  if (authResult instanceof NextResponse) return authResult;
+  const { userId } = authResult;
+  const { id } = await params;
+
+  const supabase = createServerClient();
+
+  // Get agent and verify workspace ownership
+  const { data: agent, error } = await supabase
+    .from('workspace_agents')
+    .select(`
+      *,
+      agent_tools(
+        id,
+        enabled,
+        config,
+        tools(
+          id,
+          name,
+          display_name,
+          icon,
+          category,
+          description
+        )
+      )
+    `)
+    .eq('id', id)
+    .single();
+
+  if (error || !agent) {
+    return NextResponse.json({ error: 'Agent not found' }, { status: 404 });
+  }
+
+  // Verify workspace ownership
+  const { data: workspace } = await supabase
+    .from('workspaces')
+    .select('id')
+    .eq('id', agent.workspace_id)
+    .eq('user_id', userId)
+    .single();
+
+  if (!workspace) {
+    return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+  }
+
+  // Format tools
+  const formattedAgent = {
+    ...agent,
+    tools: (agent.agent_tools || [])
+      .filter((at: any) => at.enabled)
+      .map((at: any) => ({ ...at.tools, config: at.config })),
+    agent_tools: undefined,
+  };
+
+  return NextResponse.json({ agent: formattedAgent });
+}
+
+export async function PUT(request: NextRequest, { params }: RouteParams) {
+  const authResult = await requireAuth(request);
+  if (authResult instanceof NextResponse) return authResult;
+  const { userId } = authResult;
+  const { id } = await params;
+
   try {
-    const userId = await getUserIdFromRequest(request)
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const body = await request.json();
+    const { name, role, model, profile, systemPrompt, description, color, status, toolIds } = body;
 
-    const { id } = await params
-    const body = await request.json()
-    const { name, role, description, system_prompt, provider, model_id, temperature, max_tokens, sync_status, tools, status, channels, personality, language } = body
+    const supabase = createServerClient();
 
-    // Verify ownership
-    const { data: existing } = await supabaseAdmin
-      .from('agents')
-      .select('id')
+    // Get agent and verify workspace ownership
+    const { data: existingAgent, error: fetchError } = await supabase
+      .from('workspace_agents')
+      .select('workspace_id')
       .eq('id', id)
-      .eq('user_id', userId)
-      .single()
+      .single();
 
-    if (!existing) return NextResponse.json({ error: 'Agent not found' }, { status: 404 })
-
-    const updateData: Record<string, unknown> = {
-      updated_at: new Date().toISOString(),
+    if (fetchError || !existingAgent) {
+      return NextResponse.json({ error: 'Agent not found' }, { status: 404 });
     }
 
-    if (name !== undefined) updateData.name = name
-    if (role !== undefined) updateData.role = role
-    if (description !== undefined) updateData.description = description
-    if (system_prompt !== undefined) updateData.system_prompt = system_prompt
-    if (provider !== undefined) updateData.provider = provider
-    if (model_id !== undefined) updateData.model_id = model_id
-    if (temperature !== undefined) updateData.temperature = temperature
-    if (max_tokens !== undefined) updateData.max_tokens = max_tokens
-    if (sync_status !== undefined) updateData.sync_status = sync_status
-    if (tools !== undefined) updateData.tools = tools
-    if (status !== undefined) updateData.status = status
-    if (channels !== undefined) updateData.channels = channels
-    if (personality !== undefined) updateData.personality = personality
-    if (language !== undefined) updateData.language = language
+    // Verify workspace ownership
+    const { data: workspace } = await supabase
+      .from('workspaces')
+      .select('id')
+      .eq('id', existingAgent.workspace_id)
+      .eq('user_id', userId)
+      .single();
 
-    const { data, error } = await supabaseAdmin
-      .from('agents')
-      .update(updateData)
+    if (!workspace) {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+    }
+
+    // Build update payload
+    const updates: Record<string, any> = {};
+    if (name !== undefined) updates.name = name;
+    if (role !== undefined) updates.role = role;
+    if (model !== undefined) updates.model = model;
+    if (profile !== undefined) updates.profile = profile;
+    if (systemPrompt !== undefined) updates.system_prompt = systemPrompt;
+    if (description !== undefined) updates.description = description;
+    if (color !== undefined) updates.color = color;
+    if (status !== undefined) updates.status = status;
+
+    // Update agent
+    const { data: agent, error } = await supabase
+      .from('workspace_agents')
+      .update(updates)
       .eq('id', id)
       .select()
-      .single()
+      .single();
 
-    if (error) throw error
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
 
-    return NextResponse.json({ agent: data })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    // Update tools if provided
+    if (toolIds !== undefined && Array.isArray(toolIds)) {
+      // Remove existing tool links
+      await supabase
+        .from('agent_tools')
+        .delete()
+        .eq('agent_id', id);
+
+      // Add new tool links
+      if (toolIds.length > 0) {
+        const agentToolLinks = toolIds.map((toolId: string) => ({
+          agent_id: id,
+          tool_id: toolId,
+          enabled: true,
+        }));
+
+        await supabase
+          .from('agent_tools')
+          .insert(agentToolLinks);
+      }
+    }
+
+    // Log activity
+    await supabase.rpc('log_activity', {
+      p_workspace_id: existingAgent.workspace_id,
+      p_agent_id: id,
+      p_type: 'agent_action',
+      p_message: `Updated agent: ${agent.name}`,
+      p_metadata: { action: 'updated', changes: Object.keys(body) },
+    });
+
+    return NextResponse.json({ agent });
+  } catch (error) {
+    console.error('Update agent error:', error);
+    return NextResponse.json(
+      { error: 'Failed to update agent', details: error instanceof Error ? error.message : 'Unknown error' },
+      { status: 500 }
+    );
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const userId = await getUserIdFromRequest(request)
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+export async function DELETE(request: NextRequest, { params }: RouteParams) {
+  const authResult = await requireAuth(request);
+  if (authResult instanceof NextResponse) return authResult;
+  const { userId } = authResult;
+  const { id } = await params;
 
-    const { id } = await params
+  const supabase = createServerClient();
 
-    // Verify ownership
-    const { data: existing } = await supabaseAdmin
-      .from('agents')
-      .select('id')
-      .eq('id', id)
-      .eq('user_id', userId)
-      .single()
+  // Get agent and verify workspace ownership
+  const { data: agent, error: fetchError } = await supabase
+    .from('workspace_agents')
+    .select('workspace_id, name')
+    .eq('id', id)
+    .single();
 
-    if (!existing) return NextResponse.json({ error: 'Agent not found' }, { status: 404 })
-
-    const { error } = await supabaseAdmin
-      .from('agents')
-      .delete()
-      .eq('id', id)
-
-    if (error) throw error
-
-    return NextResponse.json({ success: true })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  if (fetchError || !agent) {
+    return NextResponse.json({ error: 'Agent not found' }, { status: 404 });
   }
+
+  // Verify workspace ownership
+  const { data: workspace } = await supabase
+    .from('workspaces')
+    .select('id')
+    .eq('id', agent.workspace_id)
+    .eq('user_id', userId)
+    .single();
+
+  if (!workspace) {
+    return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+  }
+
+  // Delete agent (agent_tools will cascade)
+  const { error } = await supabase
+    .from('workspace_agents')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  // Log activity
+  await supabase.rpc('log_activity', {
+    p_workspace_id: agent.workspace_id,
+    p_type: 'agent_action',
+    p_message: `Deleted agent: ${agent.name}`,
+    p_metadata: { action: 'deleted', agentId: id },
+  });
+
+  return NextResponse.json({ success: true });
 }
