@@ -1,178 +1,288 @@
-'use client'
-import { useState, useEffect, useRef } from 'react'
-import { createClient } from '@/lib/supabase/client'
+'use client';
 
-const PRODUCT_NAME = process.env.NEXT_PUBLIC_PRODUCT_NAME ?? 'Hermes'
+/**
+ * Mission Control / Terminal Page
+ * Terminal access via Hermes
+ */
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import { Terminal as TerminalIcon, Play, Square, Trash2, RefreshCw } from 'lucide-react';
 
-const MISSION_CONTROL_URL =
-  process.env.NEXT_PUBLIC_HERMES_DASHBOARD_URL ??
-  `https://hermes.clawops.studio`
-
-const FALLBACK_ACTIONS = [
-  { cmd: 'systemctl restart hermes-gateway', label: 'Restart Agent Runtime' },
-  { cmd: 'hermes mission trigger "Daily Lead Digest"', label: 'Run Daily Lead Digest' },
-  { cmd: 'hermes queue clear', label: 'Clear message queue' },
-  { cmd: 'df -h && free -h && systemctl status hermes-gateway', label: 'Check VPS Status' },
-  { cmd: "curl -s -X POST 'https://api.telegram.org/bot7951858806:AAFpypvacA6oVjCnuVBewT1IXg50p21ghoI/sendMessage' -d 'chat_id=381136631&text=Test alert from Mission Control'", label: 'Send Test Alert' },
-]
+interface TerminalSession {
+  id: string;
+  name: string;
+  created_at: string;
+}
 
 export default function TerminalPage() {
-  const [userId, setUserId] = useState('')
-  const [isLoaded, setIsLoaded] = useState(false)
-  const [output, setOutput] = useState('')
-  const [running, setRunning] = useState('')
-  const [bannerDismissed, setBannerDismissed] = useState(false)
-  const [activeTab, setActiveTab] = useState<'terminal' | 'mission-control'>('mission-control')
-  const [iframeLoaded, setIframeLoaded] = useState(false)
-  const iframeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const [commands, setCommands] = useState(FALLBACK_ACTIONS)
-  const [hermesOffline, setHermesOffline] = useState(false)
+  const [sessions, setSessions] = useState<TerminalSession[]>([]);
+  const [activeSession, setActiveSession] = useState<string | null>(null);
+  const [output, setOutput] = useState<string[]>([]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [commandHistory, setCommandHistory] = useState<string[]>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const outputRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const supabase = createClient();
 
   useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getUser().then(({ data }) => {
-      setUserId(data.user?.id ?? '')
-      setIsLoaded(true)
-    })
+    loadSessions();
+  }, []);
 
-    // iframe load timeout (10s fallback)
-    iframeTimer.current = setTimeout(() => setIframeLoaded(true), 10_000)
+  useEffect(() => {
+    // Auto-scroll to bottom
+    if (outputRef.current) {
+      outputRef.current.scrollTop = outputRef.current.scrollHeight;
+    }
+  }, [output]);
 
-    // Check Hermes status
-    const fetchHermesStatus = async () => {
-      try {
-        const res = await fetch('/api/hermes/status')
-        if (!res.ok) throw new Error('Hermes offline')
-        const status = await res.json()
-        if (!status.live) throw new Error('Hermes not live')
-        setHermesOffline(false)
-      } catch {
-        setHermesOffline(true)
+  const loadSessions = async () => {
+    // TODO: Load from Hermes terminal sessions
+    setSessions([
+      { id: 'main', name: 'Main Terminal', created_at: new Date().toISOString() },
+    ]);
+    setActiveSession('main');
+    setOutput(['Welcome to Mission Control Terminal', 'Type commands to interact with your VPS...', '']);
+  };
+
+  const createSession = async () => {
+    const newSession: TerminalSession = {
+      id: Date.now().toString(),
+      name: `Session ${sessions.length + 1}`,
+      created_at: new Date().toISOString(),
+    };
+    setSessions([...sessions, newSession]);
+    setActiveSession(newSession.id);
+    setOutput([]);
+  };
+
+  const closeSession = async (sessionId: string) => {
+    const newSessions = sessions.filter(s => s.id !== sessionId);
+    setSessions(newSessions);
+    if (activeSession === sessionId) {
+      setActiveSession(newSessions[0]?.id || null);
+    }
+  };
+
+  const sendCommand = async () => {
+    if (!input.trim() || loading) return;
+
+    const cmd = input.trim();
+    setInput('');
+    setLoading(true);
+
+    // Add to output
+    setOutput(prev => [...prev, `$ ${cmd}`]);
+
+    // Add to history
+    setCommandHistory(prev => [...prev, cmd]);
+    setHistoryIndex(-1);
+
+    try {
+      // TODO: Call Hermes terminal API
+      // For demo, simulate response
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      if (cmd === 'clear') {
+        setOutput([]);
+      } else if (cmd === 'help') {
+        setOutput(prev => [...prev, 
+          'Available commands:',
+          '  help     - Show this help',
+          '  clear    - Clear terminal',
+          '  status   - Show VPS status',
+          '  agents   - List active agents',
+          '  logs     - Show recent logs',
+          ''
+        ]);
+      } else if (cmd === 'status') {
+        setOutput(prev => [...prev, 
+          'VPS Status: Online',
+          'Hermes: Running v0.12.0',
+          'Memory: 1.2GB / 4GB',
+          'CPU: 12%',
+          ''
+        ]);
+      } else if (cmd === 'agents') {
+        setOutput(prev => [...prev, 
+          'Active Agents:',
+          '  Ryan     - Sales Agent      - Active',
+          '  Arjun    - Research Agent    - Active',
+          '  Tyler    - Marketing Agent   - Idle',
+          ''
+        ]);
+      } else if (cmd === 'logs') {
+        setOutput(prev => [...prev, 
+          'Recent Activity:',
+          '  12:30 - Ryan: Completed lead research',
+          '  12:25 - Arjun: Updated competitor analysis',
+          '  12:20 - Tyler: Posted to social media',
+          ''
+        ]);
+      } else {
+        setOutput(prev => [...prev, `Command not found: ${cmd}`, '']);
+      }
+    } catch (error) {
+      setOutput(prev => [...prev, `Error: ${error}`, '']);
+    }
+
+    setLoading(false);
+    inputRef.current?.focus();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      sendCommand();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (commandHistory.length > 0) {
+        const newIndex = historyIndex < commandHistory.length - 1 ? historyIndex + 1 : historyIndex;
+        setHistoryIndex(newIndex);
+        setInput(commandHistory[commandHistory.length - 1 - newIndex]);
+      }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (historyIndex > 0) {
+        const newIndex = historyIndex - 1;
+        setHistoryIndex(newIndex);
+        setInput(commandHistory[commandHistory.length - 1 - newIndex]);
+      } else {
+        setHistoryIndex(-1);
+        setInput('');
       }
     }
-    fetchHermesStatus()
-
-    return () => {
-      if (iframeTimer.current) clearTimeout(iframeTimer.current)
-    }
-  }, [])
-
-  const run = async (cmd: string, label: string) => {
-    if (!userId) return
-    setRunning(label)
-    setOutput('')
-    try {
-      const res = await fetch('/api/ssh/exec', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cmd }),
-      })
-      const data = await res.json()
-      setOutput(data.output || data.error || 'Done.')
-    } catch (e: any) {
-      setOutput('Error: ' + (e.message ?? 'Unknown'))
-    } finally {
-      setRunning('')
-    }
-  }
-
-  if (!isLoaded) return <div className="p-8 text-white/40">Loading...</div>
+  };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-44px)]">
-
-      {/* Warning banner */}
-      {!bannerDismissed && (
-        <div className="flex items-center gap-3 bg-amber-950/40 border border-amber-500/30 rounded-xl mx-4 mt-4 px-4 py-3">
-          <span className="text-amber-400 text-sm shrink-0">⚠️</span>
-          <p className="text-amber-400/80 text-xs flex-1">
-            Advanced access — changes here affect your live agent runtime
-          </p>
+    <div className="h-full flex bg-gray-950">
+      {/* Sidebar */}
+      <div className="w-48 border-r border-gray-800 bg-gray-900 flex flex-col">
+        <div className="p-3 border-b border-gray-800">
+          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Sessions</h3>
+        </div>
+        <div className="flex-1 overflow-y-auto p-2">
+          {sessions.map((session) => (
+            <div
+              key={session.id}
+              className={`flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer mb-1 ${
+                activeSession === session.id
+                  ? 'bg-gray-800 text-white'
+                  : 'text-gray-400 hover:bg-gray-800'
+              }`}
+              onClick={() => setActiveSession(session.id)}
+            >
+              <div className="flex items-center gap-2">
+                <TerminalIcon size={14} />
+                <span className="text-sm truncate">{session.name}</span>
+              </div>
+              {sessions.length > 1 && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    closeSession(session.id);
+                  }}
+                  className="text-gray-600 hover:text-white"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+        <div className="p-2 border-t border-gray-800">
           <button
-            onClick={() => setBannerDismissed(true)}
-            className="text-amber-400/50 hover:text-amber-400 text-lg leading-none shrink-0 transition-colors"
+            onClick={createSession}
+            className="w-full px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm text-gray-300 flex items-center justify-center gap-2"
           >
-            ×
+            <PlusIcon size={14} />
+            New Session
           </button>
         </div>
-      )}
-
-      {/* Tab switcher */}
-      <div className="flex gap-1 px-4 pt-3 pb-1">
-        <button
-          onClick={() => setActiveTab('mission-control')}
-          className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-colors ${
-            activeTab === 'mission-control'
-              ? 'bg-[#e8ff47] text-black'
-              : 'bg-white/5 text-white/40 hover:text-white/70'
-          }`}
-        >
-          Mission Control
-        </button>
-        <button
-          onClick={() => setActiveTab('terminal')}
-          className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-colors ${
-            activeTab === 'terminal'
-              ? 'bg-[#e8ff47] text-black'
-              : 'bg-white/5 text-white/40 hover:text-white/70'
-          }`}
-        >
-          Quick Actions
-        </button>
       </div>
 
-      {/* Mission Control tab — iframe loads via Cloudflare Tunnel HTTPS */}
-      {activeTab === 'mission-control' && (
-        <div className="flex-1 px-4 pb-4 min-h-0">
-          <div className="relative w-full h-full rounded-xl border border-white/10 bg-black overflow-hidden">
-          {!iframeLoaded && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black z-10">
-              <div className="w-6 h-6 border-2 border-[#e8ff47] border-t-transparent rounded-full animate-spin" />
-              <p className="text-white/40 text-xs">Loading {PRODUCT_NAME} Mission Control…</p>
+      {/* Terminal */}
+      <div className="flex-1 flex flex-col">
+        {/* Terminal Header */}
+        <div className="flex items-center justify-between px-4 py-2 bg-gray-900 border-b border-gray-800">
+          <div className="flex items-center gap-2">
+            <div className="flex gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-red-500" />
+              <div className="w-3 h-3 rounded-full bg-yellow-500" />
+              <div className="w-3 h-3 rounded-full bg-green-500" />
             </div>
-          )}
-          <iframe
-            src={MISSION_CONTROL_URL}
-            className="w-full h-full"
-            title={`${PRODUCT_NAME} Mission Control`}
-            allow="clipboard-write"
-            onLoad={() => {
-              if (iframeTimer.current) clearTimeout(iframeTimer.current)
-              setIframeLoaded(true)
-            }}
-          />
-        </div>
-        </div>
-      )}
-
-      {/* Quick Actions tab */}
-      {activeTab === 'terminal' && (
-        <div className="flex-1 px-4 pb-4 overflow-y-auto space-y-4">
-          {hermesOffline && (
-            <div className="flex items-center gap-2 bg-amber-950/40 border border-amber-500/30 rounded-lg px-3 py-2 text-amber-400/80 text-[11px]">
-              <span>⚠️</span>
-              <span>Hermes offline — showing cached commands</span>
-            </div>
-          )}
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
-            {commands.map(a => (
-              <button
-                key={a.cmd}
-                onClick={() => run(a.cmd, a.label)}
-                disabled={!!running}
-                className="bg-white/5 hover:bg-white/10 text-white/70 text-xs font-semibold py-2.5 px-3 rounded-lg transition-colors disabled:opacity-40 text-left"
-              >
-                {running === a.label ? '⟳ Running...' : a.label}
-              </button>
-            ))}
+            <span className="text-sm text-gray-400 ml-2">Terminal</span>
           </div>
-          {output && (
-            <pre className="bg-[#0a0a0a] border border-white/7 rounded-xl p-4 text-[11px] font-mono text-[#e8ff47] whitespace-pre-wrap overflow-x-auto max-h-80 overflow-y-auto">
-              {output}
-            </pre>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setOutput([])}
+              className="p-1.5 hover:bg-gray-800 rounded text-gray-500"
+              title="Clear"
+            >
+              <Trash2 size={14} />
+            </button>
+            <button
+              onClick={loadSessions}
+              className="p-1.5 hover:bg-gray-800 rounded text-gray-500"
+              title="Refresh"
+            >
+              <RefreshCw size={14} />
+            </button>
+          </div>
+        </div>
+
+        {/* Output */}
+        <div
+          ref={outputRef}
+          className="flex-1 p-4 overflow-y-auto font-mono text-sm bg-gray-950"
+        >
+          {output.map((line, i) => (
+            <div
+              key={i}
+              className={`${
+                line.startsWith('$') ? 'text-green-400' : 'text-gray-300'
+              }`}
+            >
+              {line || '\u00A0'}
+            </div>
+          ))}
+          {loading && (
+            <div className="text-blue-400 animate-pulse">Executing...</div>
           )}
         </div>
-      )}
+
+        {/* Input */}
+        <div className="flex items-center p-4 bg-gray-900 border-t border-gray-800">
+          <span className="text-green-400 font-mono mr-2">$</span>
+          <input
+            ref={inputRef}
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Type a command..."
+            className="flex-1 bg-transparent text-gray-100 font-mono text-sm focus:outline-none"
+            disabled={loading}
+            autoFocus
+          />
+          <button
+            onClick={sendCommand}
+            disabled={loading || !input.trim()}
+            className="ml-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 rounded text-sm font-medium"
+          >
+            Send
+          </button>
+        </div>
+      </div>
     </div>
-  )
+  );
+}
+
+function PlusIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
+      <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
 }

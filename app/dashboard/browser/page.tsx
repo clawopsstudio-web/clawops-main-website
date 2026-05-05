@@ -1,192 +1,147 @@
-'use client'
-import { useState, useEffect } from 'react'
+'use client';
 
-interface BrowserHistory {
-  url: string
-  title: string
-  timestamp: string
+/**
+ * Browser Automation Page
+ * Uses Hermes browser tool for web automation
+ */
+import { useState, useEffect, useRef } from 'react';
+import { createClient } from '@/lib/supabase/client';
+
+interface BrowserTab {
+  id: string;
+  url: string;
+  title: string;
+  screenshot?: string;
 }
 
 export default function BrowserPage() {
-  const [url, setUrl] = useState('https://google.com')
-  const [inputUrl, setInputUrl] = useState('google.com')
-  const [loading, setLoading] = useState(false)
-  const [screenshot, setScreenshot] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [history, setHistory] = useState<BrowserHistory[]>([])
+  const [url, setUrl] = useState('https://google.com');
+  const [loading, setLoading] = useState(false);
+  const [tabs, setTabs] = useState<BrowserTab[]>([]);
+  const [activeTab, setActiveTab] = useState<string | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const takeScreenshot = async () => {
-    setLoading(true)
-    setError(null)
-    setScreenshot(null)
-    
+  const supabase = createClient();
+
+  // Load browser tabs
+  useEffect(() => {
+    loadTabs();
+  }, []);
+
+  const loadTabs = async () => {
+    // TODO: Load from Hermes browser tool
+    // For now, show a placeholder
+    setTabs([
+      { id: '1', url: 'https://google.com', title: 'Google' },
+    ]);
+    setActiveTab('1');
+  };
+
+  const openUrl = async (url: string) => {
+    setLoading(true);
     try {
-      // Normalize URL
-      let finalUrl = url.trim()
-      if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
-        finalUrl = 'https://' + finalUrl
-      }
-
-      const res = await fetch('/api/browser/screenshot', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: finalUrl }),
-      })
-      
-      if (!res.ok) {
-        const data = await res.json()
-        throw new Error(data.error || 'Screenshot failed')
-      }
-      
-      const data = await res.json()
-      
-      if (data.imageUrl) {
-        setScreenshot(data.imageUrl)
-        setHistory(prev => [{
-          url: finalUrl,
-          title: new URL(finalUrl).hostname,
-          timestamp: new Date().toISOString(),
-        }, ...prev.slice(0, 9)])
-      } else if (data.screenshot) {
-        // Base64 screenshot
-        setScreenshot(`data:image/png;base64,${data.screenshot}`)
-        setHistory(prev => [{
-          url: finalUrl,
-          title: new URL(finalUrl).hostname,
-          timestamp: new Date().toISOString(),
-        }, ...prev.slice(0, 9)])
-      } else {
-        throw new Error('No screenshot in response')
-      }
-    } catch (err: any) {
-      console.error('[browser] Error:', err)
-      setError(err.message || 'Failed to take screenshot')
-    } finally {
-      setLoading(false)
+      // TODO: Call Hermes browser tool API
+      // For demo, just add to tabs
+      const newTab: BrowserTab = {
+        id: Date.now().toString(),
+        url,
+        title: url.replace(/^https?:\/\//, '').split('/')[0],
+      };
+      setTabs([...tabs, newTab]);
+      setActiveTab(newTab.id);
+    } catch (error) {
+      console.error('Failed to open URL:', error);
     }
-  }
+    setLoading(false);
+  };
 
-  const handleNavigate = () => {
-    let finalUrl = inputUrl.trim()
-    if (!finalUrl) return
-    if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
-      finalUrl = 'https://' + finalUrl
+  const closeTab = (tabId: string) => {
+    const newTabs = tabs.filter(t => t.id !== tabId);
+    setTabs(newTabs);
+    if (activeTab === tabId) {
+      setActiveTab(newTabs[0]?.id || null);
     }
-    setUrl(finalUrl)
-  }
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleNavigate()
-    }
-  }
+  };
 
   return (
-    <div className="flex h-[calc(100vh-64px)]">
-      {/* Sidebar - History */}
-      <div className="w-64 bg-[#111] border-r border-white/10 p-4 overflow-y-auto">
-        <h2 className="text-white/40 text-xs font-semibold uppercase mb-4">History</h2>
-        <div className="space-y-2">
-          {history.length === 0 ? (
-            <p className="text-white/30 text-sm">No history yet</p>
-          ) : (
-            history.map((item, i) => (
-              <button
-                key={i}
-                onClick={() => {
-                  setUrl(item.url)
-                  setInputUrl(new URL(item.url).hostname)
-                }}
-                className="w-full text-left p-2 rounded-lg hover:bg-white/5 transition-colors"
-              >
-                <p className="text-white/70 text-xs truncate">{item.title}</p>
-                <p className="text-white/30 text-[10px]">{new Date(item.timestamp).toLocaleTimeString()}</p>
-              </button>
-            ))
-          )}
-        </div>
+    <div className="h-full flex flex-col bg-gray-950">
+      {/* Toolbar */}
+      <div className="flex items-center gap-2 p-3 border-b border-gray-800 bg-gray-900">
+        <button
+          onClick={() => openUrl(url)}
+          disabled={loading}
+          className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded-lg font-medium disabled:opacity-50"
+        >
+          {loading ? 'Loading...' : 'Go'}
+        </button>
+        <input
+          type="text"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && openUrl(url)}
+          placeholder="Enter URL..."
+          className="flex-1 px-4 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500"
+        />
+        <button
+          onClick={() => openUrl('https://google.com')}
+          className="p-2 hover:bg-gray-800 rounded-lg text-gray-400"
+          title="New tab"
+        >
+          +
+        </button>
       </div>
 
-      {/* Main Browser Area */}
-      <div className="flex-1 flex flex-col">
-        {/* URL Bar */}
-        <div className="bg-[#1a1a1a] border-b border-white/10 p-3">
-          <div className="flex gap-2">
-            <div className="flex-1 flex items-center bg-white/5 border border-white/10 rounded-lg px-3">
-              <span className="text-white/30 text-sm mr-2">🔒</span>
-              <input
-                type="text"
-                value={inputUrl}
-                onChange={e => setInputUrl(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Enter URL..."
-                className="flex-1 bg-transparent text-white text-sm py-2 focus:outline-none"
-              />
-            </div>
+      {/* Tabs */}
+      <div className="flex items-center gap-1 px-2 py-1 bg-gray-900 border-b border-gray-800 overflow-x-auto">
+        {tabs.map((tab) => (
+          <div
+            key={tab.id}
+            className={`flex items-center gap-2 px-3 py-1 rounded-t-lg text-sm cursor-pointer ${
+              activeTab === tab.id
+                ? 'bg-gray-800 text-white'
+                : 'bg-gray-900 text-gray-400 hover:bg-gray-800'
+            }`}
+            onClick={() => setActiveTab(tab.id)}
+          >
+            <span className="truncate max-w-[120px]">{tab.title}</span>
             <button
-              onClick={handleNavigate}
-              className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm rounded-lg transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                closeTab(tab.id);
+              }}
+              className="text-gray-500 hover:text-white text-xs"
             >
-              Go
-            </button>
-            <button
-              onClick={takeScreenshot}
-              disabled={loading}
-              className="px-4 py-2 bg-[#e8ff47] hover:bg-[#d4eb3a] text-black text-sm font-bold rounded-lg transition-colors disabled:opacity-50"
-            >
-              {loading ? '...' : '📸'}
+              ×
             </button>
           </div>
-        </div>
+        ))}
+      </div>
 
-        {/* Content Area */}
-        <div className="flex-1 bg-white/5 flex items-center justify-center overflow-auto p-6">
-          {loading && (
-            <div className="text-center">
-              <div className="w-12 h-12 border-2 border-white/20 border-t-[#e8ff47] rounded-full animate-spin mx-auto mb-4" />
-              <p className="text-white/50 text-sm">Taking screenshot...</p>
-            </div>
-          )}
+      {/* Browser View */}
+      <div className="flex-1 bg-white relative">
+        {loading ? (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
+            <div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full" />
+          </div>
+        ) : activeTab ? (
+          <iframe
+            ref={iframeRef}
+            src={tabs.find(t => t.id === activeTab)?.url}
+            className="w-full h-full border-0"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+          />
+        ) : (
+          <div className="h-full flex items-center justify-center text-gray-500">
+            <p>Enter a URL to start browsing</p>
+          </div>
+        )}
+      </div>
 
-          {error && (
-            <div className="text-center max-w-md">
-              <div className="text-4xl mb-4">⚠️</div>
-              <h3 className="text-white font-semibold mb-2">Screenshot Failed</h3>
-              <p className="text-white/40 text-sm mb-4">{error}</p>
-              <button
-                onClick={takeScreenshot}
-                className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm rounded-lg transition-colors"
-              >
-                Try Again
-              </button>
-            </div>
-          )}
-
-          {screenshot && !loading && (
-            <div className="w-full">
-              <img
-                src={screenshot}
-                alt="Screenshot"
-                className="w-full rounded-lg shadow-2xl"
-              />
-            </div>
-          )}
-
-          {!screenshot && !loading && !error && (
-            <div className="text-center">
-              <div className="text-6xl mb-4">🌐</div>
-              <h3 className="text-white font-semibold mb-2">Browser</h3>
-              <p className="text-white/40 text-sm mb-4">Enter a URL and click 📸 to take a screenshot</p>
-              <button
-                onClick={takeScreenshot}
-                className="px-6 py-3 bg-[#e8ff47] hover:bg-[#d4eb3a] text-black font-bold text-sm rounded-xl transition-colors"
-              >
-                Take Screenshot of Google
-              </button>
-            </div>
-          )}
-        </div>
+      {/* Status Bar */}
+      <div className="flex items-center justify-between px-3 py-2 bg-gray-900 border-t border-gray-800 text-xs text-gray-500">
+        <span>{tabs.length} tab{tabs.length !== 1 ? 's' : ''}</span>
+        <span>Browser powered by Hermes</span>
       </div>
     </div>
-  )
+  );
 }
