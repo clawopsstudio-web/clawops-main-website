@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
   // Get VPS instance for workspace
   const { data: vps, error } = await supabase
     .from('vps_instances')
-    .select('hermes_url, hermes_token')
+    .select('id, hermes_url, hermes_token')
     .eq('workspace_id', workspaceId)
     .limit(1)
     .single();
