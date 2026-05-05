@@ -127,13 +127,21 @@ export async function POST(request: NextRequest) {
 
     // Update session
     if (chatSessionId) {
-      await supabase
+      const { data: existing } = await supabase
         .from('chat_sessions')
-        .update({
-          last_message: message,
-          message_count: supabase.sql`message_count + 2`,
-        })
-        .eq('id', chatSessionId);
+        .select('message_count')
+        .eq('id', chatSessionId)
+        .single();
+
+      if (existing) {
+        await supabase
+          .from('chat_sessions')
+          .update({
+            last_message: message,
+            message_count: (existing.message_count ?? 0) + 2,
+          })
+          .eq('id', chatSessionId);
+      }
     }
 
     // Log activity

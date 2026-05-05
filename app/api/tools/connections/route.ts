@@ -4,8 +4,7 @@
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
-import { createClient as createServerClient } from '@/lib/supabase/server'
-import { cookies } from 'next/headers'
+import { createServerClient, createServerClientWithAuth } from '@/lib/supabase/server'
 
 function getAdminClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -15,8 +14,8 @@ function getAdminClient() {
 }
 
 export async function GET(_req: NextRequest) {
-  const cookieStore = await cookies()
-  const supabase = await createServerClient(cookieStore)
+  const supabase = await createServerClientWithAuth()
+  if (!supabase) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const { data: { user } } = await supabase.auth.getUser()
   if (!user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -34,8 +33,8 @@ export async function GET(_req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const cookieStore = await cookies()
-  const supabase = await createServerClient(cookieStore)
+  const supabase = await createServerClientWithAuth()
+  if (!supabase) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const { data: { user } } = await supabase.auth.getUser()
   if (!user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
