@@ -1,6 +1,6 @@
--- ClawOps Studio — Supabase Database Schema
+-- ClawOps Studio - Complete Database Schema
+-- Last updated: 2026-05-05
 -- Run this in Supabase Dashboard → SQL Editor
--- Last updated: 2026-04-21
 
 -- =============================================
 -- EXTENSIONS
@@ -11,16 +11,14 @@ create extension if not exists "pgcrypto";
 -- =============================================
 -- PROFILES (extends auth.users)
 -- =============================================
-create table public.profiles (
+create table if not exists public.profiles (
   id uuid references auth.users(id) on delete cascade primary key,
   email text,
   full_name text,
   company text,
   avatar_url text,
+  avatar_color text default '#6366f1',
   plan text default 'personal' check (plan in ('personal', 'power', 'team', 'business', 'enterprise')),
-  stripe_customer_id text,
-  stripe_subscription_id text,
-  webhook_secret text,
   timezone text default 'Asia/Kolkata',
   created_at timestamptz default now(),
   updated_at timestamptz default now()
@@ -46,36 +44,243 @@ create trigger on_auth_user_created
   for each row execute procedure public.handle_new_user();
 
 -- =============================================
--- VPS INSTANCES
+-- WORKSPACES
 -- =============================================
-create table public.vps_instances (
-  id uuid default uuid_generate_v4() primary key,
-  user_id uuid references auth.users(id) on delete cascade,
-  instance_id text unique,
+create table if not exists public.workspaces (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid not null references auth.users(id) on delete cascade,
   name text not null,
-  tunnel_url text unique not null,
-  vps_ip text,
-  product_id text,
-  region text,
-  specs jsonb default '{}',
-  status text default 'online' check (status in ('online', 'offline', 'error', 'tracked')),
-  agent_count integer default 0,
-  openclaw_version text,
-  last_heartbeat timestamptz,
+  slug text unique not null,
+  logo_url text,
+  default_vps_id uuid,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
 
+-- Index for faster lookups
+create index if not exists idx_workspaces_user_id on workspaces(user_id);
+create index if not exists idx_workspaces_slug on workspaces(slug);
+
 -- =============================================
--- SUBSCRIPTIONS (PayPal billing)
+-- VPS INSTANCES
 -- =============================================
-create table public.subscriptions (
+create table if not exists public.vps_instances (
+  id uuid default gen_random_uuid() primary key,
+  workspace_id uuid references workspaces(id) on delete set null,
+  name text not null,
+  hermes_url text not null,
+  hermes_token text,
+  hci_url text,
+  vps_ip text,
+  region text,
+  status text default 'offline' check (status in ('online', 'offline', 'error', 'provisioning')),
+  last_heartbeat timestamptz,
+  last_health_check timestamptz,
+  health_error text,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+-- Indexes
+create index if not exists idx_vps_workspace_id on vps_instances(workspace_id);
+create index if not exists idx_vps_status on vps_instances(status);
+
+-- =============================================
+-- WORKSPACE AGENTS
+-- =============================================
+create table if not exists public.workspace_agents (
+  id uuid default gen_random_uuid() primary key,
+  workspace_id uuid not null references workspaces(id) on delete cascade,
+  name text not null,
+  role text not null,
+  model text,
+  profile text default 'default',
+  status text default 'inactive' check (status in ('active', 'inactive', 'error')),
+  system_prompt text,
+  description text,
+  color text default '#6366f1',
+  tools text[] default '{}',
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+-- Indexes
+create index if not exists idx_agents_workspace_id on workspace_agents(workspace_id);
+create index if not exists idx_agents_role on workspace_agents(role);
+
+-- =============================================
+-- TASKS
+-- =============================================
+create table if not exists public.tasks (
+  id uuid default gen_random_uuid() primary key,
+  workspace_id uuid not null references workspaces(id) on delete cascade,
+  agent_id uuid references workspace_agents(id) on delete set null,
+  title text not null,
+  description text,
+  status text default 'pending' check (status in ('pending', 'running', 'completed', 'failed', 'cancelled')),
+  priority text default 'medium' check (priority in ('low', 'medium', 'high', 'urgent')),
+  hermes_session_id text,
+  result jsonb,
+  error text,
+  started_at timestamptz,
+  completed_at timestamptz,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+-- Indexes
+create index if not exists idx_tasks_workspace_id on tasks(workspace_id);
+create index if not exists idx_tasks_agent_id on tasks(agent_id);
+create index if not exists idx_tasks_status on tasks(status);
+
+-- =============================================
+-- ACTIVITY LOGS
+-- =============================================
+create table if not exists public.activity_logs (
+  id uuid default gen_random_uuid() primary key,
+  workspace_id uuid not null references workspaces(id) on delete cascade,
+  agent_id uuid references workspace_agents(id) on delete set null,
+  task_id uuid references tasks(id) on delete set null,
+  type text not null check (type in ('chat', 'task', 'tool_call', 'system', 'agent_action', 'error')),
+  message text,
+  metadata jsonb default '{}',
+  created_at timestamptz default now()
+);
+
+-- Indexes
+create index if not exists idx_logs_workspace_id on activity_logs(workspace_id);
+create index if not exists idx_logs_agent_id on activity_logs(agent_id);
+create index if not exists idx_logs_type on activity_logs(type);
+create index if not exists idx_logs_created_at on activity_logs(created_at desc);
+
+-- =============================================
+-- CHAT SESSIONS
+-- =============================================
+create table if not exists public.chat_sessions (
+  id uuid default gen_random_uuid() primary key,
+  workspace_id uuid not null references workspaces(id) on delete cascade,
+  agent_id uuid references workspace_agents(id) on delete set null,
+  hermes_session_id text,
+  title text,
+  last_message text,
+  message_count integer default 0,
+  status text default 'active' check (status in ('active', 'archived')),
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+-- Indexes
+create index if not exists idx_chat_workspace_id on chat_sessions(workspace_id);
+create index if not exists idx_chat_agent_id on chat_sessions(agent_id);
+
+-- =============================================
+-- CHAT MESSAGES
+-- =============================================
+create table if not exists public.chat_messages (
+  id uuid default gen_random_uuid() primary key,
+  session_id uuid not null references chat_sessions(id) on delete cascade,
+  role text not null check (role in ('user', 'assistant', 'system')),
+  content text not null,
+  metadata jsonb default '{}',
+  created_at timestamptz default now()
+);
+
+-- Indexes
+create index if not exists idx_messages_session_id on chat_messages(session_id);
+create index if not exists idx_messages_created_at on chat_messages(created_at);
+
+-- =============================================
+-- TOOLS
+-- =============================================
+create table if not exists public.tools (
+  id uuid default gen_random_uuid() primary key,
+  name text unique not null,
+  display_name text not null,
+  description text,
+  icon text,
+  category text,
+  config_schema jsonb default '{}',
+  enabled boolean default true,
+  created_at timestamptz default now()
+);
+
+-- Seed default tools
+insert into public.tools (name, display_name, description, icon, category) values
+  ('gmail', 'Gmail', 'Send and receive emails via Gmail', '📧', 'communication'),
+  ('calendar', 'Google Calendar', 'Manage calendar events', '📅', 'productivity'),
+  ('github', 'GitHub', 'Manage repositories and issues', '🐙', 'development'),
+  ('notion', 'Notion', 'Read and write to Notion', '📝', 'productivity'),
+  ('slack', 'Slack', 'Send messages to Slack', '💬', 'communication'),
+  ('websearch', 'Web Search', 'Search the web', '🔍', 'information'),
+  ('browser', 'Browser', 'Automate web browser actions', '🌐', 'automation'),
+  ('terminal', 'Terminal', 'Execute shell commands', '💻', 'development')
+on conflict (name) do nothing;
+
+-- =============================================
+-- AGENT TOOLS (mapping)
+-- =============================================
+create table if not exists public.agent_tools (
+  id uuid default gen_random_uuid() primary key,
+  agent_id uuid not null references workspace_agents(id) on delete cascade,
+  tool_id uuid not null references tools(id) on delete cascade,
+  config jsonb default '{}',
+  enabled boolean default true,
+  unique(agent_id, tool_id)
+);
+
+-- Index
+create index if not exists idx_agent_tools_agent_id on agent_tools(agent_id);
+
+-- =============================================
+-- PLUGINS
+-- =============================================
+create table if not exists public.plugins (
+  id uuid default gen_random_uuid() primary key,
+  name text unique not null,
+  display_name text not null,
+  description text,
+  icon text,
+  category text,
+  price integer default 0,
+  is_featured boolean default false,
+  config_schema jsonb default '{}',
+  created_at timestamptz default now()
+);
+
+-- Seed default plugins
+insert into public.plugins (name, display_name, description, icon, category, is_featured) values
+  ('web-scraper', 'Web Scraper', 'Scrape content from any website', '🕷️', 'data', true),
+  ('pdf-reader', 'PDF Reader', 'Extract text from PDF files', '📄', 'data', true),
+  ('email-parser', 'Email Parser', 'Parse and extract data from emails', '📬', 'automation', false),
+  ('image-analysis', 'Image Analysis', 'Analyze and extract info from images', '🖼️', 'ai', true),
+  ('data-exporter', 'Data Exporter', 'Export data to CSV, JSON, Excel', '📊', 'data', false)
+on conflict (name) do nothing;
+
+-- =============================================
+-- WORKSPACE PLUGINS (installed)
+-- =============================================
+create table if not exists public.workspace_plugins (
+  id uuid default gen_random_uuid() primary key,
+  workspace_id uuid not null references workspaces(id) on delete cascade,
+  plugin_id uuid not null references plugins(id) on delete cascade,
+  status text default 'installed' check (status in ('installed', 'uninstalled', 'error')),
+  config jsonb default '{}',
+  installed_at timestamptz default now(),
+  unique(workspace_id, plugin_id)
+);
+
+-- =============================================
+-- SUBSCRIPTIONS (Stripe/Paddle billing)
+-- =============================================
+create table if not exists public.subscriptions (
   id text primary key,
   user_id uuid references auth.users(id) on delete cascade,
+  workspace_id uuid references workspaces(id) on delete set null,
   plan text not null check (plan in ('personal', 'power', 'team', 'business', 'enterprise')),
-  status text not null check (status in ('active', 'cancelled', 'past_due', 'suspended')),
-  paypal_subscription_id text,
-  paypal_customer_id text,
+  status text not null check (status in ('active', 'cancelled', 'past_due', 'suspended', 'trialing')),
+  stripe_customer_id text,
+  stripe_subscription_id text,
+  stripe_price_id text,
   current_period_start timestamptz,
   current_period_end timestamptz,
   cancel_at_period_end boolean default false,
@@ -83,166 +288,242 @@ create table public.subscriptions (
   updated_at timestamptz default now()
 );
 
--- =============================================
--- USER SKILLS (installed agent skills)
--- =============================================
-create table public.user_skills (
-  id uuid default uuid_generate_v4() primary key,
-  user_id uuid references auth.users(id) on delete cascade,
-  skill_id text not null,
-  status text default 'installed' check (status in ('installed', 'failed', 'removed')),
-  config_data jsonb default '{}',
-  installed_at timestamptz default now(),
-  unique(user_id, skill_id)
-);
+-- Index
+create index if not exists idx_subscriptions_user_id on subscriptions(user_id);
+create index if not exists idx_subscriptions_status on subscriptions(status);
 
 -- =============================================
--- AGENT INSTANCES (running agents per VPS)
+-- API KEYS (for programmatic access)
 -- =============================================
-create table public.agent_instances (
-  id uuid default uuid_generate_v4() primary key,
-  user_id uuid references auth.users(id) on delete cascade,
-  vps_id uuid references public.vps_instances(id) on delete cascade,
-  agent_name text not null,
-  agent_role text,
-  status text default 'active' check (status in ('active', 'stopped', 'error')),
-  config jsonb default '{}',
-  created_at timestamptz default now(),
-  updated_at timestamptz default now()
+create table if not exists public.api_keys (
+  id uuid default gen_random_uuid() primary key,
+  workspace_id uuid not null references workspaces(id) on delete cascade,
+  name text not null,
+  key_hash text not null,
+  last_used timestamptz,
+  expires_at timestamptz,
+  created_at timestamptz default now()
 );
 
--- =============================================
--- MISSION LOGS (agent activity tracking)
--- =============================================
-create table public.mission_logs (
-  id uuid default uuid_generate_v4() primary key,
-  user_id uuid references auth.users(id) on delete cascade,
-  agent_id uuid references public.agent_instances(id) on delete set null,
-  mission_type text,
-  status text check (status in ('running', 'completed', 'failed')),
-  input_data jsonb default '{}',
-  output_data jsonb default '{}',
-  tokens_used integer,
-  cost_usd numeric(10,4),
-  started_at timestamptz default now(),
-  completed_at timestamptz
-);
+-- Index
+create index if not exists idx_api_keys_workspace_id on api_keys(workspace_id);
 
 -- =============================================
--- ROW LEVEL SECURITY (RLS)
+-- ROW LEVEL SECURITY (RLS) POLICIES
 -- =============================================
 
 -- Enable RLS on all tables
-alter table public.profiles enable row level security;
-alter table public.vps_instances enable row level security;
-alter table public.subscriptions enable row level security;
-alter table public.user_skills enable row level security;
-alter table public.agent_instances enable row level security;
-alter table public.mission_logs enable row level security;
+alter table profiles enable row level security;
+alter table workspaces enable row level security;
+alter table vps_instances enable row level security;
+alter table workspace_agents enable row level security;
+alter table tasks enable row level security;
+alter table activity_logs enable row level security;
+alter table chat_sessions enable row level security;
+alter table chat_messages enable row level security;
+alter table tools enable row level security;
+alter table agent_tools enable row level security;
+alter table plugins enable row level security;
+alter table workspace_plugins enable row level security;
+alter table subscriptions enable row level security;
+alter table api_keys enable row level security;
 
--- Profiles: users can only see/edit their own profile
-create policy "Users can view own profile" on public.profiles for select using (auth.uid() = id);
-create policy "Users can update own profile" on public.profiles for update using (auth.uid() = id);
+-- Profiles: Users can only see/update their own profile
+create policy "Profiles are viewable by owner" on profiles
+  for select using (auth.uid() = id);
 
--- VPS Instances: users can only see/edit their own instances
-create policy "Users can manage own instances" on public.vps_instances for all using (auth.uid() = user_id);
+create policy "Profiles are updateable by owner" on profiles
+  for update using (auth.uid() = id);
 
--- Subscriptions: users can only see their own subscription
-create policy "Users can view own subscriptions" on public.subscriptions for select using (auth.uid() = user_id);
-create policy "Users can manage own subscriptions" on public.subscriptions for all using (auth.uid() = user_id);
+-- Workspaces: Users can only see/manage their own workspaces
+create policy "Workspaces are viewable by owner" on workspaces
+  for select using (auth.uid() = user_id);
 
--- User Skills: users can only see their own skills
-create policy "Users can manage own skills" on public.user_skills for all using (auth.uid() = user_id);
+create policy "Workspaces are insertable by owner" on workspaces
+  for insert with check (auth.uid() = user_id);
 
--- Agent Instances: users can only see their own agents
-create policy "Users can manage own agents" on public.agent_instances for all using (auth.uid() = user_id);
+create policy "Workspaces are updateable by owner" on workspaces
+  for update using (auth.uid() = user_id);
 
--- Mission Logs: users can only see their own logs
-create policy "Users can manage own mission logs" on public.mission_logs for all using (auth.uid() = user_id);
+create policy "Workspaces are deletable by owner" on workspaces
+  for delete using (auth.uid() = user_id);
 
--- Service role bypass: anon key users can read but service role can do everything
--- (Supabase handles this automatically)
+-- VPS Instances: Viewable if workspace belongs to user
+create policy "VPS instances are viewable by workspace owner" on vps_instances
+  for select using (
+    workspace_id in (select id from workspaces where user_id = auth.uid())
+  );
+
+create policy "VPS instances are insertable by workspace owner" on vps_instances
+  for insert with check (
+    workspace_id in (select id from workspaces where user_id = auth.uid())
+  );
+
+create policy "VPS instances are updateable by workspace owner" on vps_instances
+  for update using (
+    workspace_id in (select id from workspaces where user_id = auth.uid())
+  );
+
+create policy "VPS instances are deletable by workspace owner" on vps_instances
+  for delete using (
+    workspace_id in (select id from workspaces where user_id = auth.uid())
+  );
+
+-- Workspace Agents: Viewable if workspace belongs to user
+create policy "Agents are viewable by workspace owner" on workspace_agents
+  for select using (
+    workspace_id in (select id from workspaces where user_id = auth.uid())
+  );
+
+create policy "Agents are insertable by workspace owner" on workspace_agents
+  for insert with check (
+    workspace_id in (select id from workspaces where user_id = auth.uid())
+  );
+
+create policy "Agents are updateable by workspace owner" on workspace_agents
+  for update using (
+    workspace_id in (select id from workspaces where user_id = auth.uid())
+  );
+
+create policy "Agents are deletable by workspace owner" on workspace_agents
+  for delete using (
+    workspace_id in (select id from workspaces where user_id = auth.uid())
+  );
+
+-- Tasks: Viewable if workspace belongs to user
+create policy "Tasks are viewable by workspace owner" on tasks
+  for select using (
+    workspace_id in (select id from workspaces where user_id = auth.uid())
+  );
+
+create policy "Tasks are insertable by workspace owner" on tasks
+  for insert with check (
+    workspace_id in (select id from workspaces where user_id = auth.uid())
+  );
+
+create policy "Tasks are updateable by workspace owner" on tasks
+  for update using (
+    workspace_id in (select id from workspaces where user_id = auth.uid())
+  );
+
+-- Activity Logs: Viewable if workspace belongs to user
+create policy "Logs are viewable by workspace owner" on activity_logs
+  for select using (
+    workspace_id in (select id from workspaces where user_id = auth.uid())
+  );
+
+create policy "Logs are insertable by workspace owner" on activity_logs
+  for insert with check (
+    workspace_id in (select id from workspaces where user_id = auth.uid())
+  );
+
+-- Chat Sessions: Viewable if workspace belongs to user
+create policy "Chat sessions are viewable by workspace owner" on chat_sessions
+  for select using (
+    workspace_id in (select id from workspaces where user_id = auth.uid())
+  );
+
+create policy "Chat sessions are insertable by workspace owner" on chat_sessions
+  for insert with check (
+    workspace_id in (select id from workspaces where user_id = auth.uid())
+  );
+
+-- Chat Messages: Viewable if session belongs to user's workspace
+create policy "Messages are viewable by session owner" on chat_messages
+  for select using (
+    session_id in (
+      select id from chat_sessions 
+      where workspace_id in (select id from workspaces where user_id = auth.uid())
+    )
+  );
+
+create policy "Messages are insertable by session owner" on chat_messages
+  for insert with check (
+    session_id in (
+      select id from chat_sessions 
+      where workspace_id in (select id from workspaces where user_id = auth.uid())
+    )
+  );
+
+-- Tools: Public read access
+create policy "Tools are viewable by everyone" on tools
+  for select using (enabled = true);
+
+-- Agent Tools: Viewable if agent belongs to user's workspace
+create policy "Agent tools are viewable by workspace owner" on agent_tools
+  for select using (
+    agent_id in (
+      select id from workspace_agents 
+      where workspace_id in (select id from workspaces where user_id = auth.uid())
+    )
+  );
+
+create policy "Agent tools are manageable by workspace owner" on agent_tools
+  for all using (
+    agent_id in (
+      select id from workspace_agents 
+      where workspace_id in (select id from workspaces where user_id = auth.uid())
+    )
+  );
+
+-- Plugins: Public read access
+create policy "Plugins are viewable by everyone" on plugins
+  for select using (true);
+
+-- Workspace Plugins: Manageable by workspace owner
+create policy "Workspace plugins are manageable by owner" on workspace_plugins
+  for all using (
+    workspace_id in (select id from workspaces where user_id = auth.uid())
+  );
+
+-- Subscriptions: Users can only see their own
+create policy "Subscriptions are viewable by owner" on subscriptions
+  for select using (auth.uid() = user_id);
+
+create policy "Subscriptions are manageable by owner" on subscriptions
+  for all using (auth.uid() = user_id);
+
+-- API Keys: Users can only see/manage their own
+create policy "API keys are viewable by workspace owner" on api_keys
+  for select using (
+    workspace_id in (select id from workspaces where user_id = auth.uid())
+  );
+
+create policy "API keys are manageable by workspace owner" on api_keys
+  for all using (
+    workspace_id in (select id from workspaces where user_id = auth.uid())
+  );
 
 -- =============================================
--- INDEXES
+-- HELPER FUNCTIONS
 -- =============================================
-create index if not exists idx_vps_instances_user_id on public.vps_instances(user_id);
-create index if not exists idx_vps_instances_tunnel on public.vps_instances(tunnel_url);
-create index if not exists idx_subscriptions_user_id on public.subscriptions(user_id);
-create index if not exists idx_subscriptions_status on public.subscriptions(status);
-create index if not exists idx_user_skills_user_id on public.user_skills(user_id);
-create index if not exists idx_agent_instances_user_id on public.agent_instances(user_id);
-create index if not exists idx_mission_logs_user_id on public.mission_logs(user_id);
-create index if not exists idx_mission_logs_agent_id on public.mission_logs(agent_id);
-create index if not exists idx_mission_logs_started on public.mission_logs(started_at desc);
 
--- Onboarding submissions (public form - no auth required to submit)
-create table if not exists public.onboarding_submissions (
-  id uuid primary key default gen_random_uuid(),
-  full_name text not null,
-  business_name text not null,
-  website_url text,
-  industry text not null,
-  business_description text,
-  goals jsonb not null default '[]',
-  tools_crm jsonb not null default '[]',
-  tools_email jsonb not null default '[]',
-  tools_comms jsonb not null default '[]',
-  tools_workspace jsonb not null default '[]',
-  tools_social jsonb not null default '[]',
-  agent_name text,
-  agent_tone text,
-  plan text,
-  clerk_user_id text,
+-- Function to get workspace ID for current user
+create or replace function public.get_workspace_id()
+returns uuid as $$
+  select id from workspaces where user_id = auth.uid() limit 1;
+$$ language sql security definer stable;
 
-  -- User lifecycle status
-  -- signed_up  → Clerk user created, no form submitted yet
-  -- pending_payment → Form completed, awaiting payment
-  -- paid       → Stripe payment confirmed
-  -- provisioning → VPS + agents being set up
-  -- active     → Fully provisioned, dashboard live
-  -- abandoned  → 7+ days no payment, marked by cron
-  status text not null default 'pending_payment',
+-- Function to log activity
+create or replace function public.log_activity(
+  p_workspace_id uuid,
+  p_type text,
+  p_message text,
+  p_agent_id uuid default null,
+  p_task_id uuid default null,
+  p_metadata jsonb default '{}'
+)
+returns void as $$
+begin
+  insert into activity_logs (workspace_id, agent_id, task_id, type, message, metadata)
+  values (p_workspace_id, p_agent_id, p_task_id, p_type, p_message, p_metadata);
+end;
+$$ language plpgsql security definer;
 
-  stripe_session_id text,
-
-  -- Lifecycle timestamps
-  signed_up_at timestamptz,     -- set when Clerk user is created
-  paid_at timestamptz,         -- set when Stripe checkout.session.completed fires
-  provisioned_at timestamptz,   -- set when VPS is live and dashboard URL sent
-  abandoned_at timestamptz,      -- set by cron after 7 days no payment
-
-  -- Provisioning details (set during Phase 2)
-  composio_entity_id text,
-  vps_instance_id text,
-  dashboard_url text,
-
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
--- Cron job: mark submissions abandoned after 7 days pending_payment
--- Run daily: update onboarding_submissions set abandoned_at = now()
---   where status = 'pending_payment' and created_at < now() - interval '7 days';
--- After marking abandoned, optionally email user via notification service.
-
--- RLS: allow insert from anyone (public form), but only service role can read/update
-alter table public.onboarding_submissions enable row level security;
-
--- Anyone can INSERT (public form submission)
-create policy "Anyone can submit onboarding form"
-  on public.onboarding_submissions
-  for insert
-  with check (true);
-
--- Only service role can SELECT/UPDATE (internal use)
-create policy "Service role full access"
-  on public.onboarding_submissions
-  for all
-  using (auth.role() = 'service_role');
-
--- Auto-update updated_at
-create or replace function public.handle_updated_at()
+-- =============================================
+-- TRIGGER: Auto-update updated_at
+-- =============================================
+create or replace function public.update_updated_at()
 returns trigger as $$
 begin
   new.updated_at = now();
@@ -250,164 +531,26 @@ begin
 end;
 $$ language plpgsql;
 
-create trigger onboarding_submissions_updated_at
-  before update on public.onboarding_submissions
-  for each row execute function public.handle_updated_at();
+create trigger update_profiles_updated_at
+  before update on profiles
+  for each row execute procedure update_updated_at();
 
--- ─── contact_submissions ───────────────────────────────────────────────
-create table if not exists public.contact_submissions (
-  id          bigint generated by default as identity primary key,
-  name        text not null,
-  email       text not null,
-  message     text not null,
-  created_at  timestamp with time zone default now()
-);
+create trigger update_workspaces_updated_at
+  before update on workspaces
+  for each row execute procedure update_updated_at();
 
-alter table public.contact_submissions enable row level security;
+create trigger update_vps_instances_updated_at
+  before update on vps_instances
+  for each row execute procedure update_updated_at();
 
-create policy "Public can insert contact_submissions"
-  on public.contact_submissions
-  for insert
-  with check (true);
+create trigger update_workspace_agents_updated_at
+  before update on workspace_agents
+  for each row execute procedure update_updated_at();
 
-create policy "Service role can read contact_submissions"
-  on public.contact_submissions
-  for select
-  using (auth.role() = 'service_role');
+create trigger update_tasks_updated_at
+  before update on tasks
+  for each row execute procedure update_updated_at();
 
--- ─── provisioning_logs ─────────────────────────────────────────────────
--- All Contabo/VPS/provisioning API calls logged here for audit trail
-create table if not exists public.provisioning_logs (
-  id          uuid default gen_random_uuid() primary key,
-  user_id     text not null,
-  action      text not null,
-  payload     jsonb,
-  response    jsonb,
-  status      text,
-  created_at  timestamptz default now()
-);
-
-alter table public.provisioning_logs enable row level security;
-
--- Only service role can write/read (internal audit log)
-create policy "Service role full access provisioning_logs"
-  on public.provisioning_logs
-  for all
-  using (auth.role() = 'service_role');
-
--- =============================================
--- PHASE 2 UPDATES (2026-04-22)
--- =============================================
-
--- Add composio_entity_created flag
-alter table public.onboarding_submissions
-  add column if not exists composio_entity_created boolean not null default false;
-
--- Add user channel columns (users bring their own tokens/webhooks)
-alter table public.onboarding_submissions
-  add column if not exists user_telegram_bot_token text,
-  add column if not exists user_whatsapp_number text,
-  add column if not exists user_slack_webhook_url text,
-  add column if not exists user_discord_webhook_url text;
-
--- Update profiles plan enum — remove old tiers, add new 3-tier structure
-alter table public.profiles
-  drop constraint if exists profiles_plan_check;
-
-alter table public.profiles
-  add constraint profiles_plan_check
-  check (plan in ('personal', 'team', 'business'))
-  deferrable initially immediate;
-
--- Add stripe-related payment status column
-alter table public.onboarding_submissions
-  add column if not exists payment_status text default 'pending'
-  check (payment_status in ('pending', 'paid', 'failed', 'refunded'));
-
--- =============================================
--- ─── Dashboard tables (2026-04-24) ───────────────────────────────────────────
--- agents: per-user AI agents with system prompts
-CREATE TABLE IF NOT EXISTS public.agents (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id TEXT NOT NULL,
-  name TEXT NOT NULL,
-  role TEXT,
-  status TEXT DEFAULT 'idle',
-  system_prompt TEXT,
-  created_at TIMESTAMPTZ DEFAULT now()
-);
-ALTER TABLE public.agents ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users manage own agents" ON public.agents
-  FOR ALL USING (auth.uid()::TEXT = user_id);
-
--- missions: agent tasks with full history
-CREATE TABLE IF NOT EXISTS public.missions (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id TEXT NOT NULL,
-  agent_id UUID REFERENCES public.agents(id) ON DELETE SET NULL,
-  title TEXT,
-  prompt TEXT,
-  output TEXT,
-  status TEXT DEFAULT 'completed',
-  started_at TIMESTAMPTZ DEFAULT now(),
-  completed_at TIMESTAMPTZ,
-  created_at TIMESTAMPTZ DEFAULT now()
-);
-ALTER TABLE public.missions ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users manage own missions" ON public.missions
-  FOR ALL USING (auth.uid()::TEXT = user_id);
-
--- logs: activity and error log
-CREATE TABLE IF NOT EXISTS public.logs (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  agent TEXT,
-  message TEXT,
-  level TEXT DEFAULT 'info',
-  created_at TIMESTAMPTZ DEFAULT now()
-);
-ALTER TABLE public.logs ENABLE ROW LEVEL SECURITY;
--- Logs are append-only, read by own user
-CREATE POLICY "Users read own logs" ON public.logs
-  FOR SELECT USING (true);
-CREATE POLICY "Service can insert logs" ON public.logs
-  FOR INSERT WITH CHECK (true);
-
--- user_model_config: per-user AI model preferences
-CREATE TABLE IF NOT EXISTS public.user_model_config (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id TEXT NOT NULL,
-  provider TEXT NOT NULL,
-  model_name TEXT,
-  api_key_set BOOLEAN DEFAULT FALSE,
-  custom_base_url TEXT,
-  updated_at TIMESTAMPTZ DEFAULT now()
-);
-ALTER TABLE public.user_model_config ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users manage own model config" ON public.user_model_config
-  FOR ALL USING (auth.uid()::TEXT = user_id);
-
--- installed_mcp_servers: Composio MCP tool integrations
-CREATE TABLE IF NOT EXISTS public.installed_mcp_servers (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id TEXT NOT NULL,
-  server_name TEXT NOT NULL,
-  smithery_id TEXT,
-  status TEXT DEFAULT 'installing',
-  connected BOOLEAN DEFAULT FALSE,
-  installed_at TIMESTAMPTZ DEFAULT now()
-);
-ALTER TABLE public.installed_mcp_servers ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users manage own integrations" ON public.installed_mcp_servers
-  FOR ALL USING (auth.uid()::TEXT = user_id);
-
--- onboarding_submissions: add vps_ip column if not exists
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns
-    WHERE table_schema = 'public' AND table_name = 'onboarding_submissions' AND column_name = 'vps_ip'
-  ) THEN
-    ALTER TABLE public.onboarding_submissions ADD COLUMN vps_ip TEXT;
-  END IF;
-END $$;
-
+create trigger update_chat_sessions_updated_at
+  before update on chat_sessions
+  for each row execute procedure update_updated_at();
