@@ -3,111 +3,92 @@
 import { useState } from 'react'
 import Link from 'next/link'
 
-const MONTHLY_PLANS = [
+const SERVICES = [
   {
-    name: 'Personal',
-    price: 49,
-    description: 'Perfect for solo operators',
-    highlight: false,
-    badge: null,
-    features: [
-      '3 AI agents',
-'Premium AI Models',
-      '20,000 tool calls/mo',
-      '850+ app integrations',
-      'Telegram + WhatsApp',
-      'VPS: 8GB RAM, 100GB SSD',
-      'Composio Integrations (850+)',
-      'Bring Your Own API Key',
-      'Email support (48hr response)',
-    ],
-  },
-  {
-    name: 'Team',
-    price: 149,
-    description: 'Growing teams',
+    name: 'AI Sales Agent',
+    price: 'From $499/mo',
+    description: 'Automated outreach, lead qualification, and CRM updates',
     highlight: true,
     badge: 'MOST POPULAR',
     features: [
-      '5 AI agents',
-'Premium AI Models (included)',
-      '200,000 tool calls/mo',
-      '850+ app integrations',
-      'Telegram + WhatsApp + Slack + Discord',
-      'Web scraping included',
-      'VPS: 16GB RAM, 200GB SSD',
-      'Composio Integrations (850+)',
-      'Bring Your Own API Key',
-      'Priority support (12hr response)',
+      'Personalized cold outreach at scale',
+      'LinkedIn profile enrichment',
+      'Lead qualification & scoring',
+      'CRM updates & follow-up reminders',
+      'Weekly performance reports',
+      'Dedicated setup & optimization',
     ],
   },
   {
-    name: 'Business',
-    price: 299,
-    description: 'Established businesses',
+    name: 'AI Research Agent',
+    price: 'From $399/mo',
+    description: 'Continuous market intelligence and competitor monitoring',
     highlight: false,
     badge: null,
     features: [
-      'Unlimited AI agents',
-'Premium AI Models (included)',
-      '200,000 tool calls/mo',
-      '850+ app integrations',
-      'All platforms + GoHighLevel + API access',
-      'Web scraping included',
-      'VPS: 32GB RAM, 500GB SSD',
-      'Composio Integrations (850+)',
-      'Bring Your Own API Key',
-      'Dedicated support (4hr SLA)',
+      'Competitor tracking & analysis',
+      'Market trend monitoring',
+      'Industry news summaries',
+      'Custom research reports',
+      'Data extraction &整理',
+      'Slack/email digest delivery',
+    ],
+  },
+  {
+    name: 'AI Support Agent',
+    price: 'From $449/mo',
+    description: '24/7 customer support that handles tickets autonomously',
+    highlight: false,
+    badge: null,
+    features: [
+      'Ticket triage & categorization',
+      'Auto-responses for common queries',
+      'Escalation to human when needed',
+      'Multi-channel (email, chat, social)',
+      'Knowledge base integration',
+      'SLA monitoring & reporting',
     ],
   },
 ]
 
-const ANNUAL_PLANS = [
-  { ...MONTHLY_PLANS[0], price: 39 },
-  { ...MONTHLY_PLANS[1], price: 119 },
-  { ...MONTHLY_PLANS[2], price: 239 },
-]
-
-const ADDON_PLANS = [
+const PROCESS_STEPS = [
   {
-    name: 'Composio Integration',
-    price: 29,
-    badge: 'ADD-ON',
-    description: 'Access 1,000+ MCP tools and integrations',
-    models: 'Connect 850+ apps including Gmail, Slack, Notion, and more',
-    note: 'Available on all plans',
+    step: '01',
+    title: 'Discovery Call',
+    description: 'We learn about your business, goals, and current workflows.',
   },
   {
-    name: 'Bring Your Own API Key',
-    price: 0,
-    badge: 'FREE',
-    description: 'Use your own Claude/OpenAI/Groq API keys',
-    models: 'Full flexibility with your own API credentials',
-    note: 'Already included in all plans',
+    step: '02',
+    title: 'Custom Setup',
+    description: 'We configure your AI agents with your industry, tools, and brand voice.',
+  },
+  {
+    step: '03',
+    title: 'Go Live',
+    description: 'Your agents are deployed and working within days, not weeks.',
+  },
+  {
+    step: '04',
+    title: 'Ongoing Optimization',
+    description: 'We monitor, tweak, and improve every week — at no extra cost.',
   },
 ]
 
 const COMPARISON_ROWS = [
-  { feature: 'AI Agents', values: ['3', '5', 'Unlimited'] },
-  { feature: 'Included AI Model', values: ['Groq (Free)', 'Claude Sonnet 4.6 (5x)', 'Claude Sonnet 4.6 (20x)'] },
-  { feature: 'Tool Calls / mo', values: ['20,000', '200,000', '200,000'] },
-  { feature: 'App Integrations', values: ['850+', '850+', '850+'] },
-  { feature: 'Telegram + WhatsApp', values: ['✓', '✓', '✓'] },
-  { feature: 'Slack + Discord', values: ['—', '✓', '✓'] },
-  { feature: 'Web Scraping', values: ['—', '✓', '✓'] },
-  { feature: 'GoHighLevel (GHL)', values: ['—', '—', '✓'] },
-  { feature: 'API Access', values: ['—', '—', '✓'] },
-  { feature: 'Native Tools (Terminal, File, Web, Code)', values: ['✓', '✓', '✓'] },
-  { feature: 'Composio Integrations', values: ['850+', '850+', '850+'] },
-  { feature: 'MCP Server Connections', values: ['—', '—', '✓'] },
-  { feature: 'Bring Your Own API Key', values: ['✓', '✓', '✓'] },
-  { feature: 'VPS Specs', values: ['8GB RAM / 100GB', '16GB RAM / 200GB', '32GB RAM / 500GB'] },
-  { feature: 'Support', values: ['Email 48hr', 'Priority 12hr', 'Dedicated 4hr'] },
+  { feature: 'Custom AI Agent Setup', values: ['✓', '✓', '✓'] },
+  { feature: 'Ongoing Monitoring & Optimization', values: ['✓', '✓', '✓'] },
+  { feature: 'Weekly Performance Reports', values: ['✓', '✓', '✓'] },
+  { feature: 'Tool Integrations (850+)', values: ['✓', '✓', '✓'] },
+  { feature: 'Slack/Email Digest', values: ['✓', '✓', '✓'] },
+  { feature: 'Dedicated Account Manager', values: ['✓', '✓', '✓'] },
+  { feature: 'Custom Workflow Development', values: ['—', '✓', '✓'] },
+  { feature: 'Multi-Agent Orchestration', values: ['—', '—', '✓'] },
+  { feature: 'Priority Support (4hr SLA)', values: ['—', '—', '✓'] },
+  { feature: 'White-Label Options', values: ['—', '—', '✓'] },
 ]
 
 export default function AmpereStylePricing() {
-  const [annual, setAnnual] = useState(false)
-  const plans = annual ? ANNUAL_PLANS : MONTHLY_PLANS
+  const [showComparison, setShowComparison] = useState(false)
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
@@ -121,188 +102,178 @@ export default function AmpereStylePricing() {
           className="text-5xl md:text-6xl font-black text-white mb-5 leading-none"
           style={{ fontFamily: 'var(--font-cabinet, sans-serif)', letterSpacing: '-0.02em' }}
         >
-          Deploy AI agents that work 24/7
+          AI agents built for your business
         </h1>
-        <p className="text-white/50 text-lg max-w-md mx-auto mb-8">
-          3 agents on Personal · Free Groq model · Claude Sonnet 4.6 on Team &amp; Business. No per-user fees. No token billing.
+        <p className="text-white/50 text-lg max-w-xl mx-auto mb-8">
+          We don't just hand you software. We build, deploy, and manage your AI team — so you can focus on what matters.
         </p>
 
-        {/* Monthly / Annual toggle */}
-        <div className="inline-flex items-center gap-3 bg-[#111] border border-white/10 rounded-full p-1">
-          <button
-            onClick={() => setAnnual(false)}
-            className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${
-              !annual ? 'bg-[#e8ff47] text-[#0a0a0a]' : 'text-white/40 hover:text-white/70'
-            }`}
-          >
-            Monthly
-          </button>
-          <button
-            onClick={() => setAnnual(true)}
-            className={`px-5 py-2 rounded-full text-sm font-semibold transition-all flex items-center gap-2 ${
-              annual ? 'bg-[#e8ff47] text-[#0a0a0a]' : 'text-white/40 hover:text-white/70'
-            }`}
-          >
-            Annual
-            <span className="text-[10px] bg-[#0a0a0a] text-[#e8ff47] px-1.5 py-0.5 rounded-full font-bold">
-              2 months free
-            </span>
-          </button>
-        </div>
+        {/* Toggle */}
+        <button
+          onClick={() => setShowComparison(!showComparison)}
+          className="text-white/40 hover:text-white/70 text-sm transition-colors underline underline-offset-4"
+        >
+          {showComparison ? 'Hide comparison' : 'Compare all features'}
+        </button>
       </div>
 
-      {/* Pricing cards */}
-      <div className="px-6 pb-16 max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {plans.map((plan) => (
-            <div
-              key={plan.name}
-              className={`
-                rounded-2xl flex flex-col
-                ${plan.highlight
-                  ? 'bg-[#111] border-2 border-[#e8ff47]'
-                  : 'bg-[#111] border border-white/7'
-                }
-              `}
-            >
-              {plan.badge && (
-                <div className="bg-[#e8ff47] text-black text-xs font-bold text-center py-2 rounded-t-2xl">
-                  {plan.badge}
+      {/* Service Cards */}
+      {!showComparison && (
+        <div className="px-6 pb-16 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {SERVICES.map((service) => (
+              <div
+                key={service.name}
+                className={`
+                  rounded-2xl flex flex-col
+                  ${service.highlight
+                    ? 'bg-[#111] border-2 border-[#e8ff47]'
+                    : 'bg-[#111] border border-white/7'
+                  }
+                `}
+              >
+                {service.badge && (
+                  <div className="bg-[#e8ff47] text-black text-xs font-bold text-center py-2 rounded-t-2xl">
+                    {service.badge}
+                  </div>
+                )}
+
+                <div className="p-6 flex flex-col flex-1">
+                  <h3 className="text-lg font-bold text-white mb-1">{service.name}</h3>
+                  <p className="text-white/40 text-sm mb-4 leading-relaxed">{service.description}</p>
+
+                  <div className="mb-6">
+                    <span className="text-3xl font-black text-white">{service.price}</span>
+                  </div>
+
+                  <ul className="space-y-3 mb-8 flex-1">
+                    {service.features.map((feature, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm text-white/60">
+                        <span className="text-[#e8ff47] mt-0.5">✓</span>
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Link
+                    href="/start"
+                    className={`
+                      w-full py-3 rounded-xl font-semibold text-sm text-center transition-all block
+                      ${service.highlight
+                        ? 'bg-[#e8ff47] hover:bg-[#d4eb3a] text-[#0a0a0a]'
+                        : 'bg-white/8 hover:bg-white/12 text-white border border-white/10'
+                      }
+                    `}
+                  >
+                    Get Started →
+                  </Link>
                 </div>
-              )}
-
-              <div className="p-5 flex flex-col flex-1">
-                <h3 className="text-base font-bold text-white mb-1">{plan.name}</h3>
-                <p className="text-white/40 text-xs mb-4 leading-relaxed">{plan.description}</p>
-
-                <div className="mb-4">
-                  <span className="text-3xl font-black text-white">${plan.price}</span>
-                  <span className="text-white/40 text-sm ml-1">/mo</span>
-                  {annual && (
-                    <div className="text-[10px] text-emerald-400 mt-0.5">
-                      ${plan.price * 12}/yr billed annually
-                    </div>
-                  )}
-                </div>
-
-                <Link
-                  href={`/start?plan=${plan.name.toLowerCase()}`}
-                  className={`
-                    w-full py-2.5 rounded-xl font-semibold text-sm text-center transition-all mb-4 block
-                    ${plan.highlight
-                      ? 'bg-[#e8ff47] hover:bg-[#d4eb3a] text-[#0a0a0a]'
-                      : 'bg-white/8 hover:bg-white/12 text-white border border-white/10'
-                    }
-                  `}
-                >
-                  Start {plan.name} →
-                </Link>
-
-                <ul className="space-y-2 flex-1">
-                  {plan.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-xs">
-                      <svg className="w-3.5 h-3.5 text-[#e8ff47] mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span className="text-white/55">{f}</span>
-                    </li>
-                  ))}
-                </ul>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* Enterprise note */}
+          <div className="mt-12 text-center">
+            <p className="text-white/40 text-sm mb-4">
+              Need a custom solution or multiple agents?
+            </p>
+            <Link
+              href="/contact"
+              className="inline-flex items-center gap-2 text-[#e8ff47] hover:text-[#d4eb3a] font-medium transition-colors"
+            >
+              Talk to us — we'll build exactly what you need →
+            </Link>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Claude API Add-on section */}
-      <div className="px-6 pb-16 max-w-4xl mx-auto">
-        <div className="border border-white/7 bg-[#0d0d0d] rounded-2xl p-6">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-[rgba(232,255,71,0.5)] mb-4">
-            ADD-ON
-          </p>
-          <h2 className="text-xl font-black text-white mb-1" style={{ fontFamily: 'var(--font-cabinet, sans-serif)' }}>
-            Add-ons &amp; Extras
-          </h2>
-          <p className="text-white/40 text-sm mb-6">
-            Extend your plan with additional tools and capabilities.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {ADDON_PLANS.map((addon) => (
-              <div key={addon.name} className="bg-[#111] border border-white/7 rounded-xl p-5">
-                <div className="flex items-start justify-between mb-2">
-                  <div>
-                    <p className="text-white font-bold text-sm">{addon.name}</p>
-                    <p className="text-white/40 text-xs mt-0.5">{addon.description}</p>
-                  </div>
-                  <div className="text-right shrink-0 ml-4">
-                    <span className="text-xl font-black text-white">+${addon.price}</span>
-                    <span className="text-white/40 text-xs ml-1">/mo</span>
-                  </div>
+      {/* Comparison Table */}
+      {showComparison && (
+        <div className="px-6 pb-16 max-w-4xl mx-auto">
+          <div className="rounded-2xl border border-white/10 bg-[#111] overflow-hidden">
+            {/* Header */}
+            <div className="grid grid-cols-4 border-b border-white/10">
+              <div className="p-4 text-sm text-white/40">Feature</div>
+              {SERVICES.map((s) => (
+                <div key={s.name} className="p-4 text-center">
+                  <div className="text-sm font-bold text-white">{s.name}</div>
+                  <div className="text-xs text-white/40 mt-1">{s.price}</div>
                 </div>
-                <p className="text-white/50 text-xs mb-3">{addon.models}</p>
-                <p className="text-white/30 text-xs italic">{addon.note}</p>
+              ))}
+            </div>
+
+            {/* Rows */}
+            {COMPARISON_ROWS.map((row, i) => (
+              <div key={i} className="grid grid-cols-4 border-b border-white/5 last:border-0">
+                <div className="p-4 text-sm text-white/60">{row.feature}</div>
+                {row.values.map((val, j) => (
+                  <div key={j} className="p-4 text-center text-[#e8ff47]">
+                    {val}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 text-center">
+            <button
+              onClick={() => setShowComparison(false)}
+              className="text-white/40 hover:text-white/70 text-sm transition-colors underline underline-offset-4"
+            >
+              Back to services
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* How It Works */}
+      <div className="border-t border-white/5 py-24 px-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16">
+            <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(232,255,71,0.6)] mb-4">
+              HOW IT WORKS
+            </p>
+            <h2 className="text-4xl font-black text-white">
+              From conversation to working AI team
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {PROCESS_STEPS.map((step) => (
+              <div key={step.step} className="bg-[#111] rounded-xl p-6 border border-white/7">
+                <div className="text-4xl font-black text-[#e8ff47]/20 mb-4">{step.step}</div>
+                <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
+                <p className="text-sm text-white/50 leading-relaxed">{step.description}</p>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Comparison table */}
-      <div className="border-y border-white/5 py-16 px-6">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-center text-sm font-semibold uppercase tracking-widest text-white/30 mb-8">
-            Everything compared
-          </h2>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-white/10">
-                  <th className="text-left py-3 pr-4 text-xs font-semibold text-white/40 w-48">Feature</th>
-                  {plans.map(p => (
-                    <th key={p.name} className="py-3 px-4 text-center text-xs font-bold text-white">
-                      {p.name}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {COMPARISON_ROWS.map((row, i) => (
-                  <tr key={row.feature} className={i < COMPARISON_ROWS.length - 1 ? 'border-b border-white/5' : ''}>
-                    <td className="py-3 pr-4 text-xs text-white/55">{row.feature}</td>
-                    {row.values.map((v, j) => (
-                      <td key={j} className="py-3 px-4 text-center text-xs font-medium" style={{
-                        color: v === '✓' ? '#e8ff47' : v === '—' ? 'rgba(255,255,255,0.18)' : '#fff'
-                      }}>
-                        {v}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom CTA */}
-      <div className="py-24 px-6 border-t border-white/5 text-center">
-        <div className="max-w-lg mx-auto">
-          <h2 className="text-2xl font-black text-white mb-3"
-            style={{ fontFamily: 'var(--font-cabinet, sans-serif)' }}>
-            Not sure which plan fits?
-          </h2>
-          <p className="text-white/50 mb-6 text-sm">
-            Start with Personal. Upgrade anytime as your team grows.
-          </p>
+      {/* CTA */}
+      <div className="border-t border-white/5 py-20 px-6 text-center">
+        <h2 className="text-3xl md:text-4xl font-black text-white mb-4">
+          Ready to build your AI team?
+        </h2>
+        <p className="text-white/50 text-lg mb-8 max-w-md mx-auto">
+          Start with a discovery call. No commitment, no pressure — just figuring out if we're a good fit.
+        </p>
+        <div className="flex flex-wrap gap-4 justify-center">
           <Link
-            href="/start?plan=personal"
-            className="inline-block px-8 py-4 bg-[#e8ff47] hover:bg-[#d4eb3a] text-[#0a0a0a] font-bold rounded-xl transition-colors"
+            href="/start"
+            className="px-8 py-4 bg-[#e8ff47] hover:bg-[#d4eb3a] text-[#0a0a0a] font-bold rounded-xl transition-colors"
           >
-            Start for $49 →
+            Start Your OS →
+          </Link>
+          <Link
+            href="/contact"
+            className="px-8 py-4 bg-white/8 hover:bg-white/12 text-white border border-white/10 rounded-xl transition-colors"
+          >
+            Talk to Us
           </Link>
         </div>
       </div>
+
     </div>
   )
 }

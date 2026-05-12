@@ -35,7 +35,7 @@ export default function Footer() {
               <span className="text-white font-bold text-lg group-hover:text-[#e8ff47] transition-colors">ClawOps</span>
             </a>
             <p className="text-[rgba(255,255,255,0.45)] text-sm leading-relaxed max-w-xs">
-              The Agentic OS for your business. Deploy AI agent teams that work 24/7 — with 5,400+ skills &amp; plugins included.
+              We build and manage AI agent teams for your business. Stop doing everything yourself — let us handle the work.
             </p>
             <p className="text-[rgba(255,255,255,0.2)] text-[10px] font-mono mt-3">
               ClawOps — The Agentic OS
@@ -103,7 +103,7 @@ export default function Footer() {
             &copy; {currentYear} ClawOps Studio. All rights reserved.
           </p>
           <p className="text-[rgba(255,255,255,0.2)] text-xs font-mono">
-            The Agentic OS for Your Business &middot; 5,400+ Skills &amp; Plugins &middot; Pay once
+            AI agents built for your business &middot; We manage, you grow
           </p>
         </div>
       </div>

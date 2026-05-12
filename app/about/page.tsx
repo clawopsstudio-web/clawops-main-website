@@ -4,7 +4,7 @@ import Footer from '../../components/sections/Footer'
 
 export const metadata: Metadata = {
   title: 'About — ClawOps Studio',
-  description: 'We built ClawOps because hiring is broken for small teams. An operating system for businesses that run lean.',
+  description: 'We build and manage AI agent teams for businesses. Stop doing everything yourself.',
 }
 
 export default function AboutPage() {
@@ -23,10 +23,13 @@ export default function AboutPage() {
               className="text-5xl md:text-6xl font-black text-white mb-8 leading-none"
               style={{ fontFamily: 'var(--font-cabinet)', letterSpacing: '-0.02em' }}
             >
-              The OS your
+              We build your AI team.
               <br />
-              <span className="text-[#e8ff47]">business runs on.</span>
+              <span className="text-[#e8ff47]">You run your business.</span>
             </h1>
+            <p className="text-white/50 text-lg max-w-xl mx-auto leading-relaxed">
+              ClawOps is a service company — not software. We build, deploy, and manage AI agents specifically for your business. No prompts to write, no configuration to manage. Just results.
+            </p>
           </div>
 
           {/* Story */}
@@ -37,45 +40,55 @@ export default function AboutPage() {
               </p>
               <div className="space-y-5 text-lg text-white/70 leading-relaxed">
                 <p>
-                  ClawOps was built because hiring is broken for small teams.
+                  Hiring is broken for small teams. The options are brutal: hire an employee you can't afford, outsource to an agency that doesn't know your business, or do everything yourself and burn out by Wednesday.
                 </p>
                 <p>
-                  The options are brutal: hire an employee you can't afford, outsource to an agency that doesn't know your business, or do everything yourself and burn out by Wednesday.
+                  We built ClawOps because we were living this problem. We needed sales, research, and support capabilities — but not enough to justify hiring full-time people for each role.
                 </p>
                 <p>
-                  We're not an agency and we're not traditional software. We're an operating system for businesses that run lean — a team of AI agents that work around the clock, know your business, and execute without you in the room.
+                  So we built AI agents that could do this work. Not generic chatbots — specialized agents configured for our industry, our tools, and our way of working.
                 </p>
                 <p>
-                  Founded by <strong className="text-white">Pulkit</strong>, built in 2026.
+                  Now we do the same for other businesses. We don't just hand you software. We build your AI team, connect it to your tools, and manage it — forever.
                 </p>
               </div>
             </div>
           </div>
 
-          {/* What we believe */}
+          {/* What we do */}
           <div className="border-t border-white/5 py-24 px-6">
-            <div className="max-w-2xl mx-auto">
-              <p className="text-white/40 text-sm font-mono uppercase tracking-widest mb-6">
-                What we believe
-              </p>
-              <div className="space-y-6">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-16">
+                <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(232,255,71,0.6)] mb-4">
+                  WHAT WE DO
+                </p>
+                <h2 className="text-4xl font-black text-white">
+                  AI agents. Built for your business. Managed by us.
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {[
                   {
-                    title: 'Proactive beats reactive',
-                    body: 'Every big AI company waits for you to ask. We built agents that run on schedules and triggers — working while you sleep.',
+                    title: 'We Build',
+                    description: 'Custom AI agents configured for your industry, goals, and workflows.',
+                    icon: '🔧',
                   },
                   {
-                    title: 'Small teams deserve enterprise tools',
-                    body: 'The automation and intelligence that Fortune 500 companies pay millions for — available to a one-person business at $49/month.',
+                    title: 'We Deploy',
+                    description: 'Connected to your tools and working within days, not weeks.',
+                    icon: '🚀',
                   },
                   {
-                    title: 'No prompt engineering required',
-                    body: 'You set goals. Your agents figure out the execution. No AI fluency needed, no LLM expertise required.',
+                    title: 'We Manage',
+                    description: 'Ongoing monitoring, optimization, and improvement — every week.',
+                    icon: '📈',
                   },
-                ].map(item => (
-                  <div key={item.title} className="bg-[#111] rounded-2xl border border-white/7 p-6">
-                    <h3 className="text-white font-bold text-base mb-2">{item.title}</h3>
-                    <p className="text-white/50 text-sm leading-relaxed">{item.body}</p>
+                ].map((item, i) => (
+                  <div key={i} className="bg-[#111] rounded-xl p-6 border border-white/7">
+                    <div className="text-3xl mb-4">{item.icon}</div>
+                    <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
+                    <p className="text-white/50 text-sm leading-relaxed">{item.description}</p>
                   </div>
                 ))}
               </div>
@@ -84,56 +97,34 @@ export default function AboutPage() {
 
           {/* Founder */}
           <div className="border-t border-white/5 py-24 px-6">
-            <div className="max-w-2xl mx-auto">
-              <p className="text-white/40 text-sm font-mono uppercase tracking-widest mb-6">
-                The founder
+            <div className="max-w-2xl mx-auto text-center">
+              <p className="font-mono text-xs uppercase tracking-widest text-white/40 mb-6">
+                FOUNDER
               </p>
-              <div className="bg-[#111] rounded-2xl border border-white/7 p-8 flex items-start gap-6">
-                {/* Robot avatar for Pulkit */}
-                <div className="w-20 h-20 rounded-2xl bg-[#1a1a1a] border border-white/10 shrink-0 flex items-center justify-center overflow-hidden">
-                  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                    <rect width="200" height="200" fill="#111" />
-                    <line x1="100" y1="30" x2="100" y2="50" stroke="#e8ff47" strokeWidth="3" />
-                    <circle cx="100" cy="24" r="8" fill="#e8ff47" opacity="0.9" />
-                    <rect x="50" y="48" width="100" height="80" rx="16" fill="#1a1a1a" stroke="#e8ff47" strokeWidth="2.5" />
-                    <rect x="68" y="68" width="26" height="26" rx="6" fill="#e8ff47" opacity="0.9" />
-                    <rect x="106" y="68" width="26" height="26" rx="6" fill="#e8ff47" opacity="0.9" />
-                    <rect x="75" y="75" width="12" height="12" rx="3" fill="#0a0a0a" />
-                    <rect x="113" y="75" width="12" height="12" rx="3" fill="#0a0a0a" />
-                    <rect x="76" y="108" width="48" height="10" rx="5" fill="#e8ff47" opacity="0.4" />
-                    <rect x="60" y="136" width="80" height="52" rx="12" fill="#1a1a1a" stroke="#e8ff47" strokeWidth="2.5" />
-                    <circle cx="100" cy="158" r="14" fill="#e8ff47" opacity="0.15" />
-                    <circle cx="100" cy="158" r="8" fill="#e8ff47" opacity="0.5" />
-                  </svg>
+              <div className="inline-block">
+                <div className="w-20 h-20 rounded-full bg-[#e8ff47]/20 flex items-center justify-center mb-4 mx-auto">
+                  <span className="text-3xl">👨‍💻</span>
                 </div>
-                <div>
-                  <h3 className="text-white font-bold text-lg mb-1">Pulkit</h3>
-                  <p className="text-[#e8ff47] text-sm mb-3">Founder, ClawOps Studio</p>
-                  <p className="text-white/50 text-sm leading-relaxed">
-                    Builder, not a founder story. Worked in AI automation before deciding the whole thing needed to be simpler. Still building.
-                  </p>
-                </div>
+                <h3 className="text-2xl font-bold text-white mb-2">Pulkit</h3>
+                <p className="text-white/50 text-sm">Founder, ClawOps Studio</p>
               </div>
             </div>
           </div>
 
           {/* CTA */}
-          <div className="border-t border-white/5 py-24 px-6 text-center">
-            <div className="max-w-xl mx-auto">
-              <h2 className="text-3xl font-black text-white mb-4"
-                style={{ fontFamily: 'var(--font-cabinet)' }}>
-                Ready to run your business differently?
-              </h2>
-              <p className="text-white/50 mb-8">
-                Your AI team is ready. Set up takes 5 minutes.
-              </p>
-              <a
-                href="/start"
-                className="inline-block px-10 py-4 bg-[#e8ff47] hover:bg-[#d4eb3a] text-[#0a0a0a] font-bold rounded-xl transition-colors"
-              >
-                Get started →
-              </a>
-            </div>
+          <div className="border-t border-white/5 py-20 px-6 text-center">
+            <h2 className="text-3xl font-black text-white mb-4">
+              Ready to meet your AI team?
+            </h2>
+            <p className="text-white/50 text-lg mb-8 max-w-md mx-auto">
+              Start with a conversation. Tell us about your business and we'll show you what's possible.
+            </p>
+            <a
+              href="/start"
+              className="inline-block bg-[#e8ff47] text-[#0a0a0a] font-bold px-8 py-4 rounded-xl hover:bg-[#d4eb3a] transition-colors"
+            >
+              Start Your OS →
+            </a>
           </div>
 
         </div>

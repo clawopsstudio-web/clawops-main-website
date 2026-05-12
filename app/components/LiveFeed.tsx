@@ -3,22 +3,23 @@
 import { motion } from 'framer-motion';
 
 const ACTIVITY_ITEMS = [
-  { agent: 'Ryan', action: 'Qualified 12 leads from SaaS companies', time: '3 min ago' },
-  { agent: 'Arjun', action: 'Researched 8 competitors in fintech space', time: '8 min ago' },
-  { agent: 'Helena', action: 'Handled 5 support tickets', time: '12 min ago' },
-  { agent: 'Ryan', action: 'Sent outreach to 20 prospects', time: '15 min ago' },
-  { agent: 'Arjun', action: 'Generated market report for Q4', time: '22 min ago' },
-  { agent: 'Helena', action: 'Escalated 2 complex tickets to human', time: '31 min ago' },
-  { agent: 'Ryan', action: 'Enriched 45 LinkedIn profiles', time: '45 min ago' },
-  { agent: 'Arjun', action: 'Monitored 15 news sources', time: '1 hr ago' },
-  { agent: 'Helena', action: 'Drafted 8 support replies', time: '1.5 hr ago' },
-  { agent: 'Ryan', action: 'Updated CRM with 30 new contacts', time: '2 hr ago' },
+  { agent: 'Ryan', action: 'Sent outreach to 20 prospects', time: '3 min ago' },
+  { agent: 'Arjun', action: 'Generated market report for Q4', time: '8 min ago' },
+  { agent: 'Helena', action: 'Resolved 5 support tickets', time: '12 min ago' },
+  { agent: 'Ryan', action: 'Qualified 12 leads from SaaS companies', time: '15 min ago' },
+  { agent: 'Arjun', action: 'Monitored 15 competitor websites', time: '22 min ago' },
+  { agent: 'Helena', action: 'Escalated 2 tickets to client', time: '31 min ago' },
+  { agent: 'Tyler', action: 'Scheduled 8 social media posts', time: '45 min ago' },
+  { agent: 'Arjun', action: 'Delivered weekly research digest', time: '1 hr ago' },
+  { agent: 'Tyler', action: 'Created content for 3 platforms', time: '1.5 hr ago' },
+  { agent: 'Ryan', action: 'Booked 3 meetings this week', time: '2 hr ago' },
 ];
 
 const AGENT_COLORS: Record<string, string> = {
   Ryan: '#e8ff47',
   Arjun: '#10b981',
   Helena: '#f59e0b',
+  Tyler: '#a78bfa',
 };
 
 export default function LiveFeed() {
@@ -32,7 +33,7 @@ export default function LiveFeed() {
           <div className="flex items-center gap-3">
             <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span className="text-xs font-mono uppercase tracking-wider text-white/30">
-              Live Agent Activity
+              Our AI Team at Work
             </span>
           </div>
         </div>

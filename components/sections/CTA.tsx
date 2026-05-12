@@ -56,13 +56,13 @@ export default function CTA() {
           {/* Sub */}
           <p className="text-white/50 text-lg md:text-xl mb-10 max-w-xl mx-auto">
             Stop losing deals to agencies that respond in seconds, not hours.
-            Deploy your first AI agent today — it takes less than 3 minutes.
+            We build and manage your AI team — you focus on growing your business.
           </p>
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="/auth/signup"
+              href="/start"
               className="group relative px-8 py-4 rounded-xl font-bold text-[#0a0a0a] text-sm tracking-wide transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(0,212,255,0.3)]"
               style={{
                 background: "linear-gradient(135deg, #e8ff47, #e8ff47)",
@@ -72,7 +72,7 @@ export default function CTA() {
               <span className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ boxShadow: "0 0 40px rgba(0,212,255,0.35)" }} />
             </a>
             <a
-              href="#pricing"
+              href="/pricing"
               className="px-8 py-4 rounded-xl font-semibold text-sm border border-[rgba(255,255,255,0.16)] text-white/80 hover:border-[#e8ff47]/50 hover:text-white hover:bg-[rgba(0,212,255,0.04)] transition-all duration-300"
             >
               See Pricing
@@ -81,7 +81,7 @@ export default function CTA() {
 
           {/* Trust line */}
           <p className="text-white/25 text-xs mt-6">
-            No credit card required &bull; Setup in 30 minutes &bull; Cancel anytime
+            Discovery call included &bull; Custom solution for your business &bull; Ongoing optimization
           </p>
         </motion.div>
       </div>

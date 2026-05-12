@@ -27,16 +27,16 @@ export default function AgentsPage() {
       {/* Header */}
       <div className="pt-32 pb-16 px-6 text-center">
         <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(232,255,71,0.6)] mb-4">
-          THE AGENTIC OS
+          OUR SERVICES
         </p>
         <h1
           className="text-5xl md:text-7xl font-black text-white mb-5 leading-none tracking-tight"
           style={{ fontFamily: 'var(--font-cabinet, sans-serif)', letterSpacing: '-0.03em' }}
         >
-          YOUR AGENTS
+          YOUR AI TEAM
         </h1>
         <p className="text-white/40 text-base max-w-md mx-auto">
-          Pick your team. Deploy in minutes.
+          We build and manage your AI agents. You focus on your business.
         </p>
       </div>
 

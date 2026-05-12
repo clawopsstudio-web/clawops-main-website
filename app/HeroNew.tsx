@@ -212,9 +212,9 @@ function FloatingCards() {
 }
 
 const QUICK_STATS = [
-  { value: "$3,000", label: "Avg saved vs new hire" },
-  { value: "24/7", label: "Autonomous operation" },
-  { value: "3 min", label: "From signup to live" },
+  { value: "$3,000+", label: "Avg saved vs new hire" },
+  { value: "24/7", label: "AI agents working" },
+  { value: "3-5 days", label: "From call to live" },
 ]
 
 export default function HeroNew() {
@@ -280,7 +280,7 @@ export default function HeroNew() {
                 style={{ y: subtextY }}
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="text-lg md:text-xl text-[rgba(255,255,255,0.5)] mb-10 max-w-xl leading-relaxed">
-                One workspace. Multiple agents. Working while you sleep.
+                We build and manage your AI team — so you can focus on growing your business.
               </motion.p>
 
               <motion.div
@@ -291,14 +291,14 @@ export default function HeroNew() {
                 className="flex flex-wrap gap-4 mb-12">
                 <Link href="/start?plan=personal"
                   className="inline-flex items-center gap-2 bg-gradient-to-r from-[#e8ff47] to-[#d4eb3a] hover:opacity-90 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(0,212,255,0.3)] active:scale-[0.98] text-[#0a0a0a] font-semibold px-8 py-4 rounded-xl transition-all text-base">
-                  Start for $49
+                  Start Your OS →
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m-7-7l7 7-7-7" />
                   </svg>
                 </Link>
                 <Link href="#how-it-works"
                   className="inline-flex items-center gap-2 bg-[rgba(255,255,255,0.06)] hover:bg-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] active:scale-[0.98] border border-[rgba(255,255,255,0.1)] text-white font-medium px-8 py-4 rounded-xl transition-all text-base">
-                  See how it works
+                  See what we build
                 </Link>
               </motion.div>
 

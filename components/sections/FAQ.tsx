@@ -12,49 +12,49 @@ type FAQItem = {
 
 const faqs: FAQItem[] = [
   {
-    question: "How is this different from a chatbot or AI assistant?",
+    question: "How is this different from hiring a developer to build AI agents?",
     answer:
-      "Chatbots and assistants require you to prompt them for every task. ClawOps workers are preconfigured automation systems — they don't wait for you to ask. They're connected to your tools, run on schedules or triggers, and handle real operational workflows: research pipelines, support queues, content operations, ops tasks. Think digital employees, not chatbots.",
+      "We don't just build agents and leave you to figure it out. We build, deploy, AND manage your AI team. We configure them for your specific business, connect them to your tools, monitor their performance, and optimize them weekly. You get results — we handle the work.",
   },
   {
-    question: "What does 'running in my apps' actually mean?",
+    question: "What does the service include?",
     answer:
-      "Workers are deployed as chat-based interfaces inside Telegram, WhatsApp, Discord, or Slack — the apps your team already uses. You message the worker like a colleague: 'Find me 10 prospects in the SaaS space' or 'Summarize this week's support tickets.' The worker operates using browser automation, API calls, and webhooks behind the scenes.",
+      "Everything: custom agent configuration, tool integrations, deployment, monitoring, and ongoing optimization. You tell us what you need — we build it, manage it, and report on it. No prompts to write, no configuration to manage, no technical skills needed.",
   },
   {
     question: "Do I need to be tech-savvy?",
     answer:
-      "Not at all. ClawOps is designed for founders, operations managers, and teams — not developers. You don't need to write code, manage prompts, or handle infrastructure. We take care of the entire setup and integration.",
+      "Not at all. ClawOps is designed for founders, operations managers, and teams — not developers. You don't need to write code, manage prompts, or handle infrastructure. We take care of the entire setup and management.",
   },
   {
     question: "How long does it take to get started?",
     answer:
-      "Your VPS is provisioned and your first agent is live in 3 minutes. Pre-built integrations connect in minutes. No strategy call needed unless you want one.",
+      "From discovery call to your first agent going live is typically 3-5 days. We start with a 30-minute conversation to understand your needs, then we build and deploy. No technical setup required on your end.",
   },
   {
     question: "Do you need access to my sensitive data?",
     answer:
-      "We follow strict security protocols. Agents only access the specific data streams needed for their tasks. We leverage secure, enterprise-grade infrastructure and can support custom VPC or data-residency requirements.",
+      "Agents only access the specific data streams needed for their tasks. We follow strict security protocols, use enterprise-grade infrastructure, and can support custom VPC or data-residency requirements if needed.",
   },
   {
-    question: "What if I use tools without APIs?",
+    question: "What if the agent makes a mistake?",
     answer:
-      "We have you covered. Our agents use Virtual Chrome — real browser automation that lets them interact with any web-based application, even if it lacks a formal API or integration, just like a human team member would.",
+      "We monitor every agent continuously. Support agents route unresolved issues to you. For data-sensitive tasks, agents surface confidence scores and flag anomalies. We optimize weekly to reduce errors and improve performance.",
   },
   {
     question: "Is this only for agencies?",
     answer:
-      "No. While agencies were our starting point, ClawOps is built for any business that runs on workflows: service businesses, SaaS companies, e-commerce operations, consulting firms, and automation-heavy teams. If you have repeatable work that should be automated, a worker can handle it.",
+      "No. While agencies were our starting point, ClawOps is built for any business that runs on workflows: service businesses, SaaS companies, e-commerce operations, consulting firms, and automation-heavy teams. If you have repeatable work that should be automated, we can handle it.",
   },
   {
-    question: "What happens if the worker makes a mistake?",
+    question: "What if I need multiple agents?",
     answer:
-      "Workers are configured with guardrails and escalation paths. For support agents, unresolved issues get routed to a human. For data-sensitive tasks, workers surface confidence scores and flag anomalies. We monitor performance continuously and optimize over time.",
+      "Most clients start with one high-impact role and expand once they see results. There's no minimum commitment. We can add roles as your operations scale — and we'll advise you on what's next based on what we see working.",
   },
   {
-    question: "Can I start with one worker and expand?",
+    question: "What's the pricing model?",
     answer:
-      "Absolutely. Most clients start with one high-impact role — typically a support, research, or ops worker — and expand once they see results. There's no minimum commitment. You can add roles as your operations scale.",
+      "Flat monthly retainer per agent role. We don't charge per task or per message. You get unlimited agent actions within your plan. Pricing starts based on complexity — we discuss this in the discovery call.",
   },
 ];
 

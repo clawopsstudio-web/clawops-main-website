@@ -6,23 +6,23 @@ import { motion, useInView } from "framer-motion";
 const steps = [
   {
     number: "01",
-    title: "Install Your OS",
-    description: "Point ClawOps at your infrastructure. Our installer handles the rest — kernel, models, agent runtime, and 5,400+ skills & plugins. Your AI OS boots in 30 minutes — pre-configured, not blank.",
-    detail: "Powered by ClawOps's multi-agent runtime",
+    title: "Discovery Call",
+    description: "We learn about your business, your goals, and the workflows you want to automate. No jargon, no technical questions — just understanding what you need.",
+    detail: "30-minute conversation",
     color: "#e8ff47",
   },
   {
     number: "02",
-    title: "Connect Your Apps",
-    description: "Connect Gmail, Notion, Slack, and 500+ apps — like installing apps on a new phone. Each integration unlocks new agent capabilities. No API glue needed.",
-    detail: "Gmail, Notion, Slack, HubSpot — like an app store",
+    title: "Custom Build",
+    description: "We configure your AI agents with your industry, tools, brand voice, and workflows. Every agent is built specifically for your business — not a generic template.",
+    detail: "Built for your business",
     color: "#e8ff47",
   },
   {
     number: "03",
-    title: "Boot Your Agent Team",
-    description: "Pick your vertical. Install the skills & plugins. Your agents wake up and start running — following up with leads, resolving tickets, building reports. On their own. 24/7.",
-    detail: "Autonomous 24/7 operation — you only step in when needed",
+    title: "Go Live & Grow",
+    description: "Your agents are deployed and working within days. We monitor performance, optimize weekly, and scale as your business grows — at no extra cost.",
+    detail: "Ongoing management included",
     color: "#e8ff47",
   },
 ];
@@ -68,7 +68,7 @@ export default function HowItWorks() {
             From Signup to Running AI Team<br className="hidden md:block" /> in Under 30 Minutes
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-base md:text-lg text-[rgba(255,255,255,0.45)] leading-relaxed">
-            No DevOps. No configuration. No terminal. Your agents arrive pre-configured with skills and plugins — ready to work, not ready to be set up.
+            We build and manage everything. You just tell us what you need — and your AI team goes to work.
           </p>
         </motion.div>
 
@@ -101,9 +101,9 @@ export default function HowItWorks() {
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={isInView ? { opacity: 1, scale: 1 } : undefined}
           transition={{ duration: 0.5, delay: 0.8 }}
           className="mx-auto mt-12 max-w-sm rounded-2xl border border-[rgba(0,212,255,0.15)] bg-[rgba(0,212,255,0.03)] p-6 text-center">
-          <div className="text-3xl font-bold text-white">&lt; 30 minutes</div>
+          <div className="text-3xl font-bold text-white">Days, not months</div>
           <p className="mt-2 text-sm text-[rgba(255,255,255,0.45)]">
-            From signup to your AI agent team up and running
+            From discovery call to your AI team going live
           </p>
         </motion.div>
       </div>
