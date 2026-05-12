@@ -342,13 +342,13 @@ export default function UseCasesPageClient() {
       <div className="relative px-6 py-20">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-[-0.03em] text-white">
-            Ready to deploy your AI team?
+            Ready to hire your AI team?
           </h2>
           <p className="mt-4 text-[rgba(255,255,255,0.5)]">
-            Start with one worker and expand as you see results. No minimum commitment.
+            Start with one AI employee and expand as you see results. No minimum commitment.
           </p>
           <a
-            href="/pricing"
+            href="/start"
             className="mt-8 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#e8ff47] to-[#e8ff47] px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-[rgba(0,212,255,0.2)] transition-all hover:-translate-y-0.5 hover:shadow-xl"
           >
             View Pricing

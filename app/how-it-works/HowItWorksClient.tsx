@@ -6,10 +6,10 @@ import { motion, useInView, useScroll, useTransform } from "framer-motion";
 const FLOW_STEPS = [
   {
     step: "01",
-    label: "Subscribe",
-    title: "Pick Your Plan",
+    label: "Start",
+    title: "Start Your OS",
     description:
-      "Choose the plan that fits your workload. Starter, Pro, or Agency. You're up and running in minutes.",
+      "Book a discovery call. We learn about your business and build your first AI employee. Live within 48 hours.",
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 2L2 7l10 5 10-5-10-5z"/>
@@ -171,9 +171,9 @@ export default function HowItWorksClient() {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8ff47" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
               <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
             </svg>
-            <span className="text-sm text-white/70">Target deployment:</span>
+            <span className="text-sm text-white/70">Your first AI employee live:</span>
             <span className="text-sm font-bold text-white">48 hours</span>
-            <span className="text-xs text-[rgba(255,255,255,0.3)]">(fastest: 4 hours)</span>
+            <span className="text-xs text-[rgba(255,255,255,0.3)]">(or sooner)</span>
           </motion.div>
         </motion.div>
       </div>
@@ -349,7 +349,7 @@ export default function HowItWorksClient() {
           >
             <p className="pre-label mb-3">DETAILED TIMELINE</p>
             <h2 className="text-[clamp(1.5rem,4vw,2.5rem)] font-bold tracking-[-0.03em] text-white">
-              What Happens After You Subscribe
+              What Happens After You Start
             </h2>
           </motion.div>
 

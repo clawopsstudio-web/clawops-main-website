@@ -23,7 +23,7 @@ const TEAM = [
 const VALUES = [
   {
     title: "Speed over perfection",
-    desc: "Ship fast. Iterate faster. A working product beats a perfect plan.",
+    desc: "We build fast. Deliver faster. AI employees that work beat perfect plans.",
     color: "#e8ff47",
   },
   {
@@ -72,7 +72,7 @@ export default function CompanyPageClient() {
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-base text-[rgba(255,255,255,0.5)] sm:text-lg">
             ClawOps Studio is building the infrastructure layer for AI-native businesses.
-            We make it dead simple to deploy, manage, and scale AI workers.
+            We make it dead simple to build, manage, and scale AI workers for your business.
           </p>
         </motion.div>
       </div>

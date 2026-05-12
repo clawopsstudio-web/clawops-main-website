@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     '/dashboard/terminal': 'Mission Control',
   },
   description:
-    "The autonomous AI OS for businesses that want to scale without hiring.  Sales, Support, Research, and Ops agents that run 24/7 — autonomously. Manage from Telegram, WhatsApp, or Slack. Flat monthly pricing from $49/mo.",
+    "We build and manage AI employees for your business. Sales, Support, Research, and Ops employees working 24/7. Flat monthly rate, unlimited actions, zero infrastructure headaches.",
   keywords: "AI workforce, autonomous AI, agentic OS, scale without hiring, business AI automation, AI agents run 24/7, ClawOps, autonomous business, AI that runs itself",
   metadataBase: new URL('https://clawops.studio'),
   alternates: {
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "ClawOps — The Agentic OS for Businesses That Scale",
     description:
-      "The autonomous AI OS for businesses.  Agents run your Sales, Support, and Ops 24/7 — without you prompting them. Scale without hiring.",
+      "We build and manage AI employees for your business. Sales, Support, Research, and Ops employees working 24/7. Flat monthly rate, unlimited actions.",
     type: "website",
     locale: "en_US",
     siteName: "ClawOps",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "ClawOps — The Agentic OS for Businesses That Scale",
     description:
-      "Autonomous AI agents that run your business 24/7.  Scale without hiring.",
+      "We build and manage AI employees for your business. Scale without hiring.",
     creator: "@ClawOps",
   },
   robots: {
@@ -66,17 +66,16 @@ export const metadata: Metadata = {
 
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  name: 'ClawOps — AI Agent Platform',
-  description: 'The Agentic OS for businesses that want to scale without hiring.  Autonomous agents running Sales, Support, and Ops 24/7. Flat pricing from $49/mo.',
-  applicationCategory: 'BusinessApplication',
-  operatingSystem: 'Self-hosted (Ampere ARM)',
+  '@type': 'Service',
+  name: 'ClawOps — AI Employee Service',
+  description: 'We build and manage AI employees for your business. Unlimited actions, flat monthly rate.',
+  applicationCategory: 'ProfessionalService',
   offers: {
     '@type': 'AggregateOffer',
-    lowPrice: '49',
-    highPrice: '499',
+    lowPrice: '999',
+    highPrice: '999',
     priceCurrency: 'USD',
-    offerCount: '3',
+    offerCount: '1',
   },
   provider: {
     '@type': 'Organization',

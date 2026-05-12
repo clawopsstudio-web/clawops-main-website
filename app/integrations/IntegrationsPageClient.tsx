@@ -223,7 +223,7 @@ export default function IntegrationsPageClient() {
               },
               {
                 title: "Tool Registry",
-                desc: "Browse and add tools from our registry. Community-contributed MCP servers for popular platforms.",
+                desc: "We connect to 850+ tools. Custom integrations built on request.",
                 color: "#00FF88",
               },
             ].map((item, i) => (
