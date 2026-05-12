@@ -5,48 +5,48 @@ import Link from 'next/link'
 
 const SERVICES = [
   {
-    name: 'AI Sales Agent',
-    price: 'From $499/mo',
+    name: 'AI Sales Employee',
+    price: 'From $999/mo',
     description: 'Automated outreach, lead qualification, and CRM updates',
     highlight: true,
     badge: 'MOST POPULAR',
     features: [
-      'Personalized cold outreach at scale',
-      'LinkedIn profile enrichment',
-      'Lead qualification & scoring',
-      'CRM updates & follow-up reminders',
+      'Unlimited outreach & follow-ups',
+      'Unlimited lead enrichment',
+      'Unlimited CRM updates',
       'Weekly performance reports',
       'Dedicated setup & optimization',
+      'Ongoing management included',
     ],
   },
   {
-    name: 'AI Research Agent',
-    price: 'From $399/mo',
+    name: 'AI Research Employee',
+    price: 'From $799/mo',
     description: 'Continuous market intelligence and competitor monitoring',
     highlight: false,
     badge: null,
     features: [
-      'Competitor tracking & analysis',
-      'Market trend monitoring',
-      'Industry news summaries',
+      'Unlimited competitor tracking',
+      'Unlimited market monitoring',
       'Custom research reports',
-      'Data extraction &整理',
+      'Daily intelligence briefings',
       'Slack/email digest delivery',
+      'Ongoing management included',
     ],
   },
   {
-    name: 'AI Support Agent',
-    price: 'From $449/mo',
+    name: 'AI Support Employee',
+    price: 'From $899/mo',
     description: '24/7 customer support that handles tickets autonomously',
     highlight: false,
     badge: null,
     features: [
-      'Ticket triage & categorization',
-      'Auto-responses for common queries',
-      'Escalation to human when needed',
+      'Unlimited ticket handling',
       'Multi-channel (email, chat, social)',
+      'Escalation to human when needed',
       'Knowledge base integration',
       'SLA monitoring & reporting',
+      'Ongoing management included',
     ],
   },
 ]
@@ -59,18 +59,18 @@ const PROCESS_STEPS = [
   },
   {
     step: '02',
-    title: 'Custom Setup',
-    description: 'We configure your AI agents with your industry, tools, and brand voice.',
+    title: 'Custom Build',
+    description: 'We configure your AI employee with your industry, tools, and brand voice.',
   },
   {
     step: '03',
-    title: 'Go Live',
-    description: 'Your agents are deployed and working within days, not weeks.',
+    title: '48 Hours to Live',
+    description: 'Your first AI employee is deployed and working within 48 hours.',
   },
   {
     step: '04',
-    title: 'Ongoing Optimization',
-    description: 'We monitor, tweak, and improve every week — at no extra cost.',
+    title: 'Ongoing Management',
+    description: 'We monitor, optimize, and improve every week — at no extra cost.',
   },
 ]
 
@@ -102,10 +102,10 @@ export default function AmpereStylePricing() {
           className="text-5xl md:text-6xl font-black text-white mb-5 leading-none"
           style={{ fontFamily: 'var(--font-cabinet, sans-serif)', letterSpacing: '-0.02em' }}
         >
-          AI agents built for your business
+          Your AI employees.
         </h1>
         <p className="text-white/50 text-lg max-w-xl mx-auto mb-8">
-          We don't just hand you software. We build, deploy, and manage your AI team — so you can focus on what matters.
+          We build, deploy, and manage unlimited AI employees for your business. Flat monthly rate. No usage caps. No surprises.
         </p>
 
         {/* Toggle */}

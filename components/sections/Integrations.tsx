@@ -76,13 +76,13 @@ export default function Integrations() {
           className="text-center mb-12 md:mb-14"
         >
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(255,255,255,0.4)]">
-            APP STORE
+            CONNECTIONS
           </p>
           <h2 className="mt-3 text-[clamp(1.75rem,4vw,2.5rem)] font-bold tracking-[-0.03em] text-white md:text-5xl">
-            500+ Apps. One AI OS.<br className="hidden md:block" /> Zero API Bills.
+            Your AI employees connect<br className="hidden md:block" /> to everything you use.
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-base md:text-lg text-[rgba(255,255,255,0.45)] leading-relaxed">
-            Connect Gmail, Notion, Slack, and 500+ other tools — like installing apps on your phone. Pre-built, pre-authenticated, running on your infrastructure.
+            We connect to your tools, your data, and your workflows. Gmail, Notion, Slack, HubSpot — if your team uses it, your AI employees can too.
           </p>
         </motion.div>
 
@@ -98,22 +98,17 @@ export default function Integrations() {
               variants={item}
               className="rounded-2xl border border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.02)] p-5"
             >
-              <div
-                className="mb-4 inline-block rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider"
-                style={{ background: `${cat.color}12`, color: cat.color }}
-              >
-                {cat.label}
-              </div>
-              <ul className="space-y-2">
-                {cat.items.map((tool) => (
-                  <li key={tool} className="flex items-center gap-2.5 text-sm text-[rgba(255,255,255,0.5)]">
-                    <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5 flex-shrink-0" style={{ color: cat.color }} aria-hidden="true">
-                      <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                    {tool}
-                  </li>
+              <h3 className="text-sm font-bold text-white mb-3 uppercase tracking-wider">{cat.label}</h3>
+              <div className="flex flex-wrap gap-2">
+                {cat.items.map((app) => (
+                  <span
+                    key={app}
+                    className="px-2.5 py-1 rounded-full text-xs bg-white/5 text-white/60 border border-white/8"
+                  >
+                    {app}
+                  </span>
                 ))}
-              </ul>
+              </div>
             </motion.div>
           ))}
         </motion.div>
@@ -121,14 +116,17 @@ export default function Integrations() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : undefined}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="mt-10 text-center"
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mt-12 text-center"
         >
-          <p className="text-sm text-[rgba(255,255,255,0.3)]">
-            Don&apos;t see your tool? Our MCP protocol connects to any REST API.
+          <p className="text-white/40 text-sm mb-4">
+            Don't see your tool? We connect to virtually anything.
           </p>
-          <Link href="/contact" className="mt-2 inline-block text-sm font-medium text-[#e8ff47] hover:text-white hover:bg-white/5 px-3 py-1.5 rounded-lg transition-all">
-            Request an integration &rarr;
+          <Link
+            href="/start"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#e8ff47] hover:bg-[#d4eb3a] text-[#0a0a0a] font-semibold rounded-xl transition-colors"
+          >
+            Tell us what you use →
           </Link>
         </motion.div>
       </div>

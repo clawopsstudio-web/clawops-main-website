@@ -2,11 +2,12 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import Link from "next/link";
 
 const useCases = [
   {
     title: "Autonomous Sales",
-    description: "Your Sales Agent doesn't wait for you. It proactively reaches out to new leads, follows up on stale deals, enriches CRM data, and schedules calls — autonomously. You wake up to a pipeline that's been growing while you slept.",
+    description: "Your Sales Employee doesn't wait for you. It proactively reaches out to new leads, follows up on stale deals, enriches CRM data, and schedules calls — autonomously. You wake up to a pipeline that's been growing while you slept.",
     badge: "SALES",
     badgeColor: "#e8ff47",
     icon: (
@@ -14,48 +15,48 @@ const useCases = [
         <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
-    metrics: "340 leads enriched / week — autonomously",
+    outcome: "340 leads enriched per week",
     color: "#e8ff47",
   },
   {
     title: "24/7 Support Automation",
-    description: "Your Support Agent handles tickets around the clock — on WhatsApp, Telegram, or Slack. It answers FAQs, routes complex issues, and escalates only what truly needs human judgment. Your response time goes from hours to seconds.",
+    description: "Your Support Employee handles tickets around the clock — on WhatsApp, Telegram, or Slack. It answers FAQs, routes complex issues, and escalates only what truly needs human judgment. Your response time goes from hours to seconds.",
     badge: "SUPPORT",
-    badgeColor: "#e8ff47",
+    badgeColor: "#10b981",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">
         <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
-    metrics: "80% tickets resolved without human input",
-    color: "#e8ff47",
+    outcome: "80% tickets resolved without human input",
+    color: "#10b981",
   },
   {
     title: "Market Research on Autopilot",
-    description: "Your Research Agent monitors competitors, tracks pricing changes, scrapes market data, and alerts you to opportunities — every day, automatically. Intelligence flows to you before your competitors know what's happening.",
+    description: "Your Research Employee monitors competitors, tracks pricing changes, scrapes market data, and alerts you to opportunities — every day, automatically. Intelligence flows to you before your competitors know what's happening.",
     badge: "RESEARCH",
-    badgeColor: "#e8ff47",
+    badgeColor: "#a78bfa",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">
         <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="1.6" />
         <path d="M21 21l-4.35-4.35" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
       </svg>
     ),
-    metrics: "Daily intelligence delivered before 8 AM",
-    color: "#e8ff47",
+    outcome: "Daily intelligence before 8 AM",
+    color: "#a78bfa",
   },
   {
     title: "Operations That Run Themselves",
-    description: "Your Ops Agent pulls data every morning, builds reports, monitors your tools, and flags anomalies — without you asking. You arrive at work with a full brief. The data work is already done.",
+    description: "Your Ops Employee pulls data every morning, builds reports, monitors your tools, and flags anomalies — without you asking. You arrive at work with a full brief. The data work is already done.",
     badge: "OPS",
-    badgeColor: "#e8ff47",
+    badgeColor: "#fb923c",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" aria-hidden="true">
         <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
       </svg>
     ),
-    metrics: "Daily reports delivered — zero manual work",
-    color: "#e8ff47",
+    outcome: "Daily reports delivered — zero manual work",
+    color: "#fb923c",
   },
 ];
 
@@ -83,13 +84,13 @@ export default function UseCases() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={isInView ? { opacity: 1, y: 0 } : undefined}
           transition={{ duration: 0.6 }} className="text-center">
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(255,255,255,0.5)]">
-            Autonomous Use Cases
+            What we build
           </p>
           <h2 className="mt-3 text-[clamp(1.5rem,4vw,2rem)] font-bold tracking-[-0.03em] text-white md:text-5xl">
-            Scale Every Department.<br className="hidden md:block" /> Without Hiring a Single Person.
+            Your AI employees handle<br className="hidden md:block" /> what eats your day.
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-[rgba(255,255,255,0.5)]">
-            Every agent runs autonomously — executing tasks, following schedules, and reporting back. Your business grows. Headcount doesn't.
+            We build employees for sales, support, research, and ops. Each one works 24/7 — autonomously. You get outcomes, not tasks.
           </p>
         </motion.div>
 
@@ -115,11 +116,11 @@ export default function UseCases() {
                     <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     <path d="M22 4L12 14.01l-3-3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                  <span className="text-xs font-medium text-[#10b981]">{uc.metrics}</span>
+                  <span className="text-xs font-medium text-[#10b981]">{uc.outcome}</span>
                 </div>
-                <a href="/auth/signup" className="text-xs font-medium text-[rgba(255,255,255,0.3)] hover:text-white hover:bg-white/5 px-2 py-1 rounded transition-all">
-                  Activate &rarr;
-                </a>
+                <Link href="/start" className="text-xs font-medium text-[rgba(255,255,255,0.3)] hover:text-white hover:bg-white/5 px-2 py-1 rounded transition-all">
+                  Get started →
+                </Link>
               </div>
             </motion.div>
           ))}

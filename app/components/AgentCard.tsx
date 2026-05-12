@@ -161,7 +161,7 @@ function AgentCard({ agent, onRecruit }: { agent: typeof AGENTS[0]; onRecruit: (
         <button onClick={onRecruit}
           className="w-full py-3 rounded-xl font-bold text-sm text-center transition-all hover:brightness-110 active:scale-[0.98]"
           style={{ backgroundColor: agent.color, color: '#0a0a0a' }}>
-          RECRUIT →
+          HIRE →
         </button>
       </div>
     </motion.div>
@@ -268,7 +268,7 @@ function AgentModal({ agent, onClose }: { agent: typeof AGENTS[0]; onClose: () =
             <a href="/start"
               className="block w-full py-4 rounded-xl font-bold text-center text-sm transition-all hover:brightness-110 active:scale-[0.98]"
               style={{ backgroundColor: agent.color, color: '#0a0a0a' }}>
-              Recruit {agent.name} →
+              Hire {agent.name} →
             </a>
           </div>
         </div>

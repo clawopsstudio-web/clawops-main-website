@@ -166,10 +166,10 @@ export default function AutopilotPage() {
                 Ready to set the intensity?
               </h2>
               <p className="text-white/40 mb-8 text-sm">
-                Your OS goes live within 2 hours of signup.
+                Your first AI employee goes live within 48 hours.
               </p>
               <Link
-                href="/auth/signup"
+                href="/start"
                 className="inline-block px-10 py-4 bg-[#e8ff47] hover:bg-[#d4eb3a] text-[#0a0a0a] font-bold rounded-xl transition-colors"
               >
                 Start Your OS →
@@ -181,7 +181,7 @@ export default function AutopilotPage() {
 
         <div className="text-center mt-16 py-12 border-t border-white/10">
           <h2 className="text-2xl font-black text-white mb-4">Ready to run on autopilot?</h2>
-          <a href="/auth/signup" className="inline-block bg-[#e8ff47] text-[#0a0a0a] font-bold px-8 py-4 rounded-xl hover:bg-[#d4eb3a] transition-colors">
+          <a href="/start" className="inline-block bg-[#e8ff47] text-[#0a0a0a] font-bold px-8 py-4 rounded-xl hover:bg-[#d4eb3a] transition-colors">
             Start Your OS →
           </a>
         </div>

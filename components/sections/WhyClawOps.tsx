@@ -3,54 +3,26 @@
 import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
-const comparisonRows = [
+const reasons = [
   {
-    feature: "Setup Time",
-    diy: "2–4 weeks",
-    clawops: "< 5 minutes",
-    clawopsGood: true,
+    title: "You focus on your business",
+    description: "We handle everything — building, deploying, monitoring, and optimizing your AI employees. You just tell us what you need done.",
+    icon: "🎯",
   },
   {
-    feature: "Monthly Cost",
-    diy: "$200–$800+ in API + hosting + tools",
-    clawops: "Starts at $49/mo, everything included",
-    clawopsGood: true,
+    title: "Unlimited everything",
+    description: "No caps on agents, no usage limits, no surprise bills. Your AI employees work as hard as your business needs them to.",
+    icon: "⚡",
   },
   {
-    feature: "No-Code Setup",
-    diy: "Requires developer or technical founder",
-    clawops: "One-click install, no code needed",
-    clawopsGood: true,
+    title: "48 hours to your first AI employee",
+    description: "From discovery call to deployed and working. We move fast — because your time is valuable.",
+    icon: "🚀",
   },
   {
-    feature: "Pre-Built Integrations",
-    diy: "Build each integration from scratch",
-    clawops: "Gmail, Notion, Slack, HubSpot + 500+ ready",
-    clawopsGood: true,
-  },
-  {
-    feature: "AI Agents That Actually Work",
-    diy: "Prompt engineering, fine-tuning, babysitting",
-    clawops: "Rules-based workflows, consistent outputs",
-    clawopsGood: true,
-  },
-  {
-    feature: "Browser Automation",
-    diy: "Fragile scripts that break on UI updates",
-    clawops: "AI-native browser control — even without APIs",
-    clawopsGood: true,
-  },
-  {
-    feature: "Ongoing Support",
-    diy: "Community forums, Stack Overflow",
-    clawops: "Direct support, workflow fixes included",
-    clawopsGood: true,
-  },
-  {
-    feature: "Scale Without Hiring",
-    diy: "Hire, onboard, manage more humans",
-    clawops: "Add agents in seconds, zero HR overhead",
-    clawopsGood: true,
+    title: "We manage, you grow",
+    description: "Weekly optimization, constant monitoring, and improvements included. You're never left hanging when something breaks.",
+    icon: "🛡️",
   },
 ];
 
@@ -67,11 +39,14 @@ export default function WhyClawOps() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
+          <p className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(232,255,71,0.6)] mb-4">
+            WHY US
+          </p>
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Why ClawOps vs. DIY?
+            Not an app. A team.
           </h2>
           <p className="text-[rgba(255,255,255,0.45)] max-w-xl mx-auto">
-            You could build this yourself. But why spend weeks and hundreds of dollars on tools when you could be up and running in 5 minutes?
+            We don't hand you software and leave. We build your AI employees, connect them to your business, and manage them — forever.
           </p>
         </motion.div>
 
@@ -79,61 +54,18 @@ export default function WhyClawOps() {
           initial={{ opacity: 0, y: 24 }}
           animate={isInView ? { opacity: 1, y: 0 } : undefined}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="overflow-x-auto"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
         >
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-[rgba(255,255,255,0.08)]">
-                <th className="text-left py-4 pr-6 font-semibold text-[rgba(255,255,255,0.4)] uppercase tracking-wider text-xs w-1/3">
-                  Feature
-                </th>
-                <th className="text-center py-4 px-6 font-semibold text-[rgba(255,255,255,0.4)] uppercase tracking-wider text-xs w-1/3">
-                  DIY / Building It Yourself
-                </th>
-                <th className="text-center py-4 pl-6 font-semibold text-[#e8ff47] uppercase tracking-wider text-xs w-1/3">
-                  ClawOps
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {comparisonRows.map((row, i) => (
-                <motion.tr
-                  key={row.feature}
-                  initial={{ opacity: 0, x: -12 }}
-                  animate={isInView ? { opacity: 1, x: 0 } : undefined}
-                  transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}
-                  className="border-b border-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.02)] transition-colors"
-                >
-                  <td className="py-4 pr-6 font-medium text-white text-sm">
-                    {row.feature}
-                  </td>
-                  <td className="py-4 px-6 text-center text-[rgba(255,255,255,0.38)] text-sm">
-                    {row.diy}
-                  </td>
-                  <td className="py-4 pl-6 text-center">
-                    <span className="inline-flex items-center gap-1.5 text-[#e8ff47] font-medium text-sm">
-                      <svg viewBox="0 0 12 12" fill="none" className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true">
-                        <circle cx="6" cy="6" r="6" fill="rgba(0,212,255,0.15)" />
-                        <path d="M3.5 6l1.8 1.8L8.5 4.5" stroke="#e8ff47" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                      {row.clawops}
-                    </span>
-                  </td>
-                </motion.tr>
-              ))}
-            </tbody>
-          </table>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : undefined}
-          transition={{ duration: 0.5, delay: 0.5 }}
-          className="mt-10 text-center"
-        >
-          <p className="text-[rgba(255,255,255,0.3)] text-sm">
-            Most teams spend $500–$2,000 in API costs and 3–4 weeks building what ClawOps gives you in 5 minutes.
-          </p>
+          {reasons.map((reason) => (
+            <div
+              key={reason.title}
+              className="bg-[#111] rounded-2xl p-6 border border-white/7 text-center"
+            >
+              <div className="text-3xl mb-4">{reason.icon}</div>
+              <h3 className="text-lg font-bold text-white mb-2">{reason.title}</h3>
+              <p className="text-sm text-white/50 leading-relaxed">{reason.description}</p>
+            </div>
+          ))}
         </motion.div>
       </div>
     </section>

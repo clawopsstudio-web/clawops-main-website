@@ -226,7 +226,7 @@ export default function TeamPageClient() {
           >
             Your AI workforce.
             <br />
-            <span style={{ color: '#e8ff47' }}>Ready to deploy.</span>
+            <span style={{ color: '#e8ff47' }}>Ready to hire.</span>
           </motion.h1>
 
           <motion.p
@@ -275,7 +275,7 @@ export default function TeamPageClient() {
               Build your team.
             </h2>
             <p className="text-white/40 text-sm mb-6 max-w-sm mx-auto">
-              Every plan starts with agents included. Scale up as your business grows. No per-agent fees.
+              We build unlimited agents. You only pay for the outcomes you need.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link

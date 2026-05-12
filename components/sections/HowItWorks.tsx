@@ -7,22 +7,22 @@ const steps = [
   {
     number: "01",
     title: "Discovery Call",
-    description: "We learn about your business, your goals, and the workflows you want to automate. No jargon, no technical questions — just understanding what you need.",
+    description: "We learn about your business, your goals, and the workflows you want to automate. No jargon — just understanding what you need.",
     detail: "30-minute conversation",
     color: "#e8ff47",
   },
   {
     number: "02",
     title: "Custom Build",
-    description: "We configure your AI agents with your industry, tools, brand voice, and workflows. Every agent is built specifically for your business — not a generic template.",
+    description: "We configure your AI employees with your industry, tools, brand voice, and workflows. Built specifically for your business.",
     detail: "Built for your business",
     color: "#e8ff47",
   },
   {
     number: "03",
-    title: "Go Live & Grow",
-    description: "Your agents are deployed and working within days. We monitor performance, optimize weekly, and scale as your business grows — at no extra cost.",
-    detail: "Ongoing management included",
+    title: "48 Hours to Live",
+    description: "Your first AI employee is deployed and working within 48 hours. No waiting months. No technical setup on your end.",
+    detail: "Live in 48 hours",
     color: "#e8ff47",
   },
 ];
@@ -101,9 +101,9 @@ export default function HowItWorks() {
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={isInView ? { opacity: 1, scale: 1 } : undefined}
           transition={{ duration: 0.5, delay: 0.8 }}
           className="mx-auto mt-12 max-w-sm rounded-2xl border border-[rgba(0,212,255,0.15)] bg-[rgba(0,212,255,0.03)] p-6 text-center">
-          <div className="text-3xl font-bold text-white">Days, not months</div>
+          <div className="text-3xl font-bold text-white">48 hours</div>
           <p className="mt-2 text-sm text-[rgba(255,255,255,0.45)]">
-            From discovery call to your AI team going live
+            From discovery call to your first AI employee live
           </p>
         </motion.div>
       </div>
