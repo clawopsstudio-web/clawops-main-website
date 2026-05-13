@@ -212,9 +212,9 @@ function FloatingCards() {
 }
 
 const QUICK_STATS = [
-  { value: "48 hrs", label: "To your first AI employee" },
-  { value: "Unlimited", label: "Actions & improvements" },
-  { value: "$0", label: "Infrastructure headaches" },
+  { value: "$3,000+", label: "Avg saved vs new hire" },
+  { value: "24/7", label: "AI employees working" },
+  { value: "48 hrs", label: "From call to live" },
 ]
 
 export default function HeroNew() {
@@ -261,7 +261,7 @@ export default function HeroNew() {
                 transition={{ duration: 0.6 }}
                 className="inline-flex items-center gap-2 mx-auto md:mx-0 bg-[rgba(0,212,255,0.08)] border border-[rgba(0,212,255,0.2)] text-[#e8ff47] px-4 py-1.5 rounded-full text-xs font-medium mb-8">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
-AI EMPLOYEE SERVICE
+AI OS — EARLY ACCESS
               </motion.div>
 
               <motion.h1
@@ -271,7 +271,7 @@ AI EMPLOYEE SERVICE
                 transition={{ duration: 0.7, delay: 0.1 }}
                 className="text-[clamp(2.5rem,7vw,5rem)] font-black leading-[1.05] tracking-[-0.03em] mb-6"
               >
-                <span className="text-white">Your AI Employee.</span>
+                <span className="text-white">The OS your business runs on.</span>
               </motion.h1>
 
               <motion.p
@@ -280,7 +280,7 @@ AI EMPLOYEE SERVICE
                 style={{ y: subtextY }}
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="text-lg md:text-xl text-[rgba(255,255,255,0.5)] mb-10 max-w-xl leading-relaxed">
-                We build and manage your AI employees — so you can focus on growing your business.
+                One OS. Multiple AI employees. Working while you sleep.
               </motion.p>
 
               <motion.div
