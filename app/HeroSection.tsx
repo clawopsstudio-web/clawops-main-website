@@ -50,8 +50,8 @@ export default function HeroSection() {
           transition={{ delay: 0.4 }}
           className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight"
         >
-          They don't wait for you.{' '}
-          <span className="text-[#e8ff47]">They work while you sleep.</span>
+          The OS your{' '}
+          <span className="text-[#e8ff47]">business runs on.</span>
         </motion.h1>
 
         {/* Subheadline */}
@@ -61,9 +61,9 @@ export default function HeroSection() {
           transition={{ delay: 0.6 }}
           className="text-xl text-white/60 mb-10 max-w-2xl mx-auto"
         >
-          Hire an AI team. Sales, marketing, research, operations. 
-          Agents with names, roles, and track records. 
-          They run 24/7 on cron. On heartbeat. On triggers.
+          AI agents that work 24/7. Sales, marketing, research, operations. 
+          Named agents with track records. 
+          Deploy a team in minutes. Scale forever.
         </motion.p>
 
         {/* CTAs */}
