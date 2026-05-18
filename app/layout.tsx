@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   description:
     "We build and manage AI employees for your business. Sales, Support, Research, and Ops employees working 24/7. Flat monthly rate, unlimited actions, zero infrastructure headaches.",
-  keywords: "AI workforce, autonomous AI, agentic OS, scale without hiring, business AI automation, AI agents run 24/7, ClawOps, autonomous business, AI that runs itself",
+  keywords: "AI workforce, autonomous AI, agentic OS, scale without hiring, business AI automation, AI agents run 24/7, ClawOps, autonomous business, AI that runs itself, AI employees for business",
   metadataBase: new URL('https://clawops.studio'),
   alternates: {
     canonical: '/',
@@ -68,20 +68,25 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Service',
   name: 'ClawOps — AI Employee Service',
-  description: 'We build and manage AI employees for your business. Unlimited actions, flat monthly rate.',
+  description: 'We build and manage unlimited AI employees for your business. One flat monthly rate. Sales, support, research, ops, and finance agents working 24/7.',
   applicationCategory: 'ProfessionalService',
   offers: {
     '@type': 'AggregateOffer',
-    lowPrice: '999',
-    highPrice: '999',
+    lowPrice: '499',
+    highPrice: '499',
     priceCurrency: 'USD',
     offerCount: '1',
+    availability: 'https://schema.org/InStock',
   },
   provider: {
     '@type': 'Organization',
     name: 'ClawOps Studio',
-    url: 'https://app.clawops.studio',
+    url: 'https://clawops.studio',
   },
+  areaServed: {
+    '@type': 'Worldwide',
+  },
+  serviceType: 'AI Employee Agency',
 };
 
 export default function RootLayout({
