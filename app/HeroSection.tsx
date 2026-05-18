@@ -50,8 +50,8 @@ export default function HeroSection() {
           transition={{ delay: 0.4 }}
           className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight"
         >
-          The OS your{' '}
-          <span className="text-[#e8ff47]">business runs on.</span>
+          Hire AI employees.{' '}
+          <span className="text-[#e8ff47]">Multiply your team.</span>
         </motion.h1>
 
         {/* Subheadline */}
