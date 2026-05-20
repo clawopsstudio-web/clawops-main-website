@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Script } from "next/script";
 import "./globals.css";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 import GlobalStarField from "@/components/ui/GlobalStarField";
@@ -102,6 +103,16 @@ export default function RootLayout({
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
           />
+          <Script
+            src="https://www.googletagmanager.com/gtag/js?id=G-WE93CT67CZ"
+            strategy="afterInteractive"
+          />
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-WE93CT67CZ');`}
+          </Script>
         </head>
         <body className="bg-[#0a0a0a] text-white antialiased overflow-x-hidden">
           <GlobalStarField />
