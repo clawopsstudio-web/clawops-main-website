@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Script } from "next/script";
+import Script from "next/script";
 import "./globals.css";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 import GlobalStarField from "@/components/ui/GlobalStarField";
 
 export const metadata: Metadata = {
   title: {
-    default: 'ClawOps — The OS your business runs on.',
-    template: '%s | ClawOps',
+    default: 'ClawOps Studio — AI Consulting, Agents & Automation',
+    template: '%s | ClawOps Studio',
   },
   other: {
     // Fallback page titles for pages that cant export metadata (client components)
@@ -25,8 +25,8 @@ export const metadata: Metadata = {
     '/dashboard/terminal': 'Mission Control',
   },
   description:
-    "We build and manage AI employees for your business. Sales, Support, Research, and Ops employees working 24/7. Flat monthly rate, unlimited actions, zero infrastructure headaches.",
-  keywords: "AI workforce, autonomous AI, agentic OS, scale without hiring, business AI automation, AI agents run 24/7, ClawOps, autonomous business, AI that runs itself",
+    "AI consulting, custom AI agents, and automation systems for SMB and mid-market teams. We design, build, integrate, and manage AI workflows around your business.",
+  keywords: "AI consulting, AI agents, AI automation, AI employees, n8n automation, business process automation, SMB AI consulting, ClawOps Studio, managed AI agents",
   metadataBase: new URL('https://clawops.studio'),
   alternates: {
     canonical: '/',
@@ -35,18 +35,18 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "ClawOps — The Agentic OS for Businesses That Scale",
+    title: "ClawOps Studio — AI Consulting, Agents & Automation",
     description:
-      "We build and manage AI employees for your business. Sales, Support, Research, and Ops employees working 24/7. Flat monthly rate, unlimited actions.",
+      "We build and manage custom AI agents and automation systems for SMB and mid-market teams.",
     type: "website",
     locale: "en_US",
-    siteName: "ClawOps",
+    siteName: "ClawOps Studio",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ClawOps — The Agentic OS for Businesses That Scale",
+    title: "ClawOps Studio — AI Consulting, Agents & Automation",
     description:
-      "We build and manage AI employees for your business. Scale without hiring.",
+      "Custom AI agents and automation systems built around your business.",
     creator: "@ClawOps",
   },
   robots: {
@@ -67,21 +67,14 @@ export const metadata: Metadata = {
 
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'Service',
-  name: 'ClawOps — AI Employee Service',
-  description: 'We build and manage AI employees for your business. Unlimited actions, flat monthly rate.',
-  applicationCategory: 'ProfessionalService',
-  offers: {
-    '@type': 'AggregateOffer',
-    lowPrice: '999',
-    highPrice: '999',
-    priceCurrency: 'USD',
-    offerCount: '1',
-  },
+  '@type': 'ProfessionalService',
+  name: 'ClawOps Studio — AI Consulting, Agents & Automation',
+  description: 'We design, build, integrate, and manage custom AI agents and automation systems for SMB and mid-market teams.',
+  serviceType: ['AI consulting', 'AI agent development', 'Business process automation', 'n8n automation'],
   provider: {
     '@type': 'Organization',
     name: 'ClawOps Studio',
-    url: 'https://app.clawops.studio',
+    url: 'https://clawops.studio',
   },
 };
 

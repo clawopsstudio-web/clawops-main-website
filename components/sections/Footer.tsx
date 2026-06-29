@@ -1,14 +1,17 @@
 "use client";
 
-const productLinks = [
-  { label: "Agents", href: "/agents" },
-  { label: "Autopilot", href: "/autopilot" },
-  { label: "Pricing", href: "/pricing" },
+import Link from 'next/link';
+
+const serviceLinks = [
+  { label: "AI Agents", href: "/#agent-teams" },
+  { label: "Automation Systems", href: "/#integrations" },
+  { label: "How It Works", href: "/#how-it-works" },
+  { label: "Start Assessment", href: "/start" },
 ];
 
 const companyLinks = [
   { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
+  { label: "Contact", href: "/start" },
 ];
 
 export default function Footer() {
@@ -19,12 +22,12 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-12">
           <div className="md:col-span-2">
-            <a href="#" className="inline-flex items-center gap-2 mb-4 group">
+            <Link href="/" className="inline-flex items-center gap-2 mb-4 group">
               <div
-                className="flex h-8 w-8 items-center justify-center rounded-lg text-white"
+                className="flex h-8 w-8 items-center justify-center rounded-lg text-black"
                 style={{
                   background: "linear-gradient(135deg, #e8ff47, #e8ff47)",
-                  boxShadow: "0 0 16px rgba(0,212,255,0.4)",
+                  boxShadow: "0 0 16px rgba(232,255,71,0.25)",
                 }}
               >
                 <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4" aria-hidden="true">
@@ -32,13 +35,13 @@ export default function Footer() {
                   <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <span className="text-white font-bold text-lg group-hover:text-[#e8ff47] transition-colors">ClawOps</span>
-            </a>
+              <span className="text-white font-bold text-lg group-hover:text-[#e8ff47] transition-colors">ClawOps Studio</span>
+            </Link>
             <p className="text-[rgba(255,255,255,0.45)] text-sm leading-relaxed max-w-xs">
-              We build and manage AI agent teams for your business. Stop doing everything yourself — let us handle the work.
+              AI consulting, custom AI agents, and automation systems for SMB and mid-market teams.
             </p>
             <p className="text-[rgba(255,255,255,0.2)] text-[10px] font-mono mt-3">
-              ClawOps — The Agentic OS
+              We design, build, integrate, and manage.
             </p>
             <div className="flex items-center gap-3 mt-6">
               {["Twitter/X", "LinkedIn"].map((label) => (
@@ -55,13 +58,13 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-white font-semibold text-sm mb-4">Product</h4>
+            <h4 className="text-white font-semibold text-sm mb-4">Services</h4>
             <ul className="space-y-3">
-              {productLinks.map((item) => (
+              {serviceLinks.map((item) => (
                 <li key={item.label}>
-                  <a href={item.href} className="text-[rgba(255,255,255,0.4)] hover:text-white text-sm transition-colors">
+                  <Link href={item.href} className="text-[rgba(255,255,255,0.4)] hover:text-white text-sm transition-colors">
                     {item.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -72,9 +75,9 @@ export default function Footer() {
             <ul className="space-y-3">
               {companyLinks.map((item) => (
                 <li key={item.label}>
-                  <a href={item.href} className="text-[rgba(255,255,255,0.4)] hover:text-white text-sm transition-colors">
+                  <Link href={item.href} className="text-[rgba(255,255,255,0.4)] hover:text-white text-sm transition-colors">
                     {item.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -89,9 +92,9 @@ export default function Footer() {
                 { label: "Cookie Policy", href: "/cookie-policy" },
               ].map((item) => (
                 <li key={item.label}>
-                  <a href={item.href} className="text-[rgba(255,255,255,0.4)] hover:text-white text-sm transition-colors">
+                  <Link href={item.href} className="text-[rgba(255,255,255,0.4)] hover:text-white text-sm transition-colors">
                     {item.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -103,7 +106,7 @@ export default function Footer() {
             &copy; {currentYear} ClawOps Studio. All rights reserved.
           </p>
           <p className="text-[rgba(255,255,255,0.2)] text-xs font-mono">
-            AI agents built for your business &middot; We manage, you grow
+            Custom AI agents &middot; n8n automations &middot; Managed AI systems
           </p>
         </div>
       </div>

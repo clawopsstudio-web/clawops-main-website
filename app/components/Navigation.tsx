@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const NAV_LINKS = [
-  { label: 'Agents', href: '/agents' },
-  { label: 'Autopilot', href: '/autopilot' },
-  { label: 'Pricing', href: '/pricing' },
-  { label: 'Done For You', href: '/done-for-you' },
+  { label: 'What We Build', href: '/#agent-teams' },
+  { label: 'How It Works', href: '/#how-it-works' },
+  { label: 'Tools', href: '/#integrations' },
+  { label: 'Contact', href: '/start' },
 ];
 
 export default function Navigation() {
@@ -16,12 +17,10 @@ export default function Navigation() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-white/10">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        {/* Logo */}
-        <a href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2" aria-label="ClawOps Studio home">
           <img src="/logo-clawpops.png" alt="ClawOps Studio" className="h-8 w-auto" />
-        </a>
+        </Link>
 
-        {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-8">
           {NAV_LINKS.map(link => (
             <a
@@ -34,26 +33,24 @@ export default function Navigation() {
           ))}
         </div>
 
-        {/* CTA */}
         <div className="flex items-center gap-3">
           <a
             href="/start"
             className="px-4 py-2 bg-[#e8ff47] text-[#0a0a0a] font-semibold text-sm rounded-xl hover:bg-[#e8ff47]/90 transition-colors"
           >
-            Start Your OS →
+            Start AI Assessment →
           </a>
 
-          {/* Mobile menu button */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             className="md:hidden text-white/60 p-2"
+            aria-label="Toggle menu"
           >
             {mobileOpen ? '✕' : '☰'}
           </button>
         </div>
       </div>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div

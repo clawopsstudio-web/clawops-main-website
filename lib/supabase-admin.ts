@@ -1,23 +1,38 @@
 /**
- * supabase-admin.ts — Server-side Supabase client with service role permissions.
- * Bypasses RLS. Use ONLY in secure API routes, never in client code.
+ * supabase-admin.ts — optional legacy Supabase helper.
+ *
+ * The public ClawOps Studio website no longer requires Supabase. This module is
+ * kept for legacy API routes, but the client is now lazy so importing those
+ * routes during Next.js build does not require Supabase environment variables.
  */
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+let _supabaseAdmin: SupabaseClient | null = null
 
-if (!supabaseUrl || !serviceRoleKey) {
-  throw new Error(
-    'Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY env vars'
-  )
+function getSupabaseAdmin(): SupabaseClient {
+  if (_supabaseAdmin) return _supabaseAdmin
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl || !serviceRoleKey) {
+    throw new Error('Supabase is not configured for this deployment')
+  }
+
+  _supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  })
+
+  return _supabaseAdmin
 }
 
-/** Service-role client — bypasses RLS, full database access */
-export const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
+/** Service-role client — lazy legacy proxy, only resolves when used */
+export const supabaseAdmin = new Proxy({} as SupabaseClient, {
+  get(_target, prop) {
+    return (getSupabaseAdmin() as any)[prop]
   },
 })
 
@@ -107,7 +122,6 @@ export async function logProvisioningEvent(params: {
     })
 
   if (error) {
-    // Log to console but don't throw — logging should never break provisioning
     console.error('[provisioning log error]', error.message)
   }
 }
